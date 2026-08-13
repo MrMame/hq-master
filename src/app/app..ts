@@ -7,15 +7,15 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
   template: `
     <!-- Ganzseitiger Container im Flexbox-Layout untereinander (flex-col) -->
-    <div class="min-h-screen bg-gray-700 text-gray-900 flex flex-col font-sans">
+    <div class="min-h-screen bg-black text-gray-900 flex flex-col font-sans">
 
       <!-- 1. Globale Navigationsleiste -->
-      <header class="bg-white border-b border-gray-200">
+      <header class="bg-yellow-500 border-b border-gray-600 border-8">
         <!-- Begrenzte Breite (max-w-4xl), zentriert (mx-auto), Innenabstand (p-4) -->
         <div class="max-w-4xl mx-auto p-4 flex items-center justify-between">
 
           <!-- Logo: Text fett (font-bold) und groß (text-lg) -->
-          <div class="font-bold text-lg text-blue-600">
+          <div class="font-bold text-lg text-yellow-800">
             HQ-Master
           </div>
 
@@ -40,10 +40,6 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
                Empty
             </a>
 
-            <!-- Einfacher Button mit runden Ecken (rounded) -->
-            <button class="bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700">
-              Aktion
-            </button>
           </nav>
 
         </div>
@@ -59,7 +55,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
       </main>
 
       <!-- 3. Globaler Footer -->
-      <header class="bg-white border-t border-gray-200 text-left p-4">
+      <header class="bg-yellow-500 border-b border-gray-600 border-8 text-left p-4">
         <p class="text-xs text-gray-500">
           &copy; 2026 HQ-Master. Alle Rechte vorbehalten.
         </p>

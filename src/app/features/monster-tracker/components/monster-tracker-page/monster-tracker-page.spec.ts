@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MonsterTracker } from './monster-tracker';
+import { MonsterTrackerPage } from './monster-tracker-page';
 
-describe('MonsterTracker', () => {
-  let component: MonsterTracker;
-  let fixture: ComponentFixture<MonsterTracker>;
+describe('MonsterTrackerPage', () => {
+  let component: MonsterTrackerPage;
+  let fixture: ComponentFixture<MonsterTrackerPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MonsterTracker],
+      imports: [MonsterTrackerPage],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MonsterTracker);
+    fixture = TestBed.createComponent(MonsterTrackerPage);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
