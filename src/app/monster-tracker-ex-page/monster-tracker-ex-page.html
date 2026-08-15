@@ -1,0 +1,26 @@
+<p>monster-tracker-ex-page works!</p>
+
+<div class="boundary-container">
+@for (item of items; track item.id) {
+  <div
+    class="draggable-box"
+    cdkDrag
+    [cdkDragFreeDragPosition]="{x: 0, y: 0}"
+    (cdkDragEnded)="onDragEnded($event, item)"
+    [style.left.px]="item.x"
+    [style.top.px]="item.y"
+>
+
+    <!-- Inhalt der Komponente -->
+    <div class="handle" cdkDragHandle>::: Griff zum Anfassen :::</div>
+    <div class="content">
+      <h4>{{ item.title }}</h4>
+      <p>Position: X: {{ item.x }}, Y: {{ item.y }}</p>
+    </div>
+
+  </div>
+}
+
+
+</div>
+

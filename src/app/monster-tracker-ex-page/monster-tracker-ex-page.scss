@@ -1,0 +1,43 @@
+/* Der Bereich, in dem sich die Boxen bewegen dürfen */
+.boundary-container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  background-color: #f5f5f5;
+  overflow: hidden;
+}
+
+/* Die verschiebbare Komponente */
+.draggable-box {
+  position: absolute; /* Extrem wichtig für freie Positionierung */
+  width: 200px;
+  min-height: 150px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  cursor: grab;
+}
+
+/* Stil während des Verschiebens */
+.draggable-box:active {
+  cursor: grabbing;
+}
+
+/* Der Griff zum Verschieben */
+.handle {
+  background: #3f51b5;
+  color: white;
+  padding: 5px;
+  font-size: 12px;
+  text-align: center;
+  cursor: move;
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+}
+
+.content {
+  padding: 10px;
+}

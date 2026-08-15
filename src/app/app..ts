@@ -28,10 +28,10 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
                Monster Tracker
             </a>
 
-            <a routerLink="/products"
+            <a routerLink="/monstertracker-ex"
                routerLinkActive="text-blue-600 font-bold"
                class="text-sm text-gray-600 hover:text-gray-900">
-               Empty
+               Monster Tracker Ex
             </a>
 
             <a routerLink="/profile"
