@@ -12,7 +12,7 @@
     (cdkDragEnded)="onDragEnded($event, movableMonsterItem)"
     [style.left.px]="movableMonsterItem.x"
     [style.top.px]="movableMonsterItem.y"
-    (click)="showItemOnTop(movableMonsterItem)"
+    (click)="showMovableMonsterItemOnTop(movableMonsterItem)"
 >
 
     <!-- Inhalt der Komponente -->
@@ -29,7 +29,7 @@
       </div>
     } @else {
       <div class="content">
-        <h4>{{ movableMonsterItem.title }}</h4>
+        <h4>{{ movableMonsterItem.id }}</h4>
         <p>Position: X: {{ movableMonsterItem.x }}, Y: {{ movableMonsterItem.y }}</p>
         <app-monster-card
           [monsterInfo]="movableMonsterItem.monsterInfo"

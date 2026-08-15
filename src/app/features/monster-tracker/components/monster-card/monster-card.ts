@@ -15,7 +15,7 @@ import { MonsterInfo } from '../../models/MonsterInfo';
     <span class="text-gray-600">Attack: {{ monsterInfo()?.attack }}</span><br>
     <span class="text-gray-600">Defense: {{ monsterInfo()?.defense }}</span><br>
     <span class="text-gray-600">Speed: {{ monsterInfo()?.speed }}</span><br>
-    <span class="text-gray-600">Abilities: {{ monsterInfo()?.abilities.join(', ') }}</span><br>
+    <span class="text-gray-600">Abilities: {{ monsterInfo()?.abilities?.join(', ') }}</span><br>
     <br>
     <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Details</button>
   </div>

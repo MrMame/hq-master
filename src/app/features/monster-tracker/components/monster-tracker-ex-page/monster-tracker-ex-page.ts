@@ -1,9 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DragDropModule, CdkDragEnd } from '@angular/cdk/drag-drop';
 import { MonsterCard} from '../monster-card/monster-card';
 import { MovableItem } from '../../models/MovableItem';
 import { MovableMonsterItem } from '../../models/MovableMonsterItem';
+import { MonsterInfo } from '../../models/MonsterInfo';
 
+import { MonstersDbService } from '../../services/monsters-db.service';
+import { Monsters } from '../../services/monsters';
 
 @Component({
   selector: 'app-monster-tracker-ex-page',
@@ -12,20 +15,41 @@ import { MovableMonsterItem } from '../../models/MovableMonsterItem';
   styleUrl: './monster-tracker-ex-page.scss',
 })
 export class MonsterTrackerExPage {
- // Liste der verschiebbaren Boxen mit Startpositionen
-  movableMonsterItems: MovableMonsterItem[] = [
-    new MovableMonsterItem(1, 'Komponente A', 50, 50, { id: 1, name: 'Monster A', type: 'Feuer', health: 100, attack: 20, defense: 10, speed: 15, abilities: ['Flammenwerfer'] ,image: './img/monster-icon-Gargoyle.png', description: 'Dies ist ein Beschreibung für Monster A.'}),
-    new MovableMonsterItem(2, 'Komponente B', 300, 150, { id: 2, name: 'Monster B', type: 'Wasser', health: 120, attack: 15, defense: 25, speed: 10, abilities: ['Aquatische Angriffe'] ,image: './img/monster-icon-Gargoyle.png', description: 'Dies ist ein Beschreibung für Monster B.'}),
-  ];
+
+  monsterDbService = inject(MonstersDbService);
+  monstersService = inject(Monsters);
+
+  private newMonsterCardPosition = { x: 50, y: 50 }; // Startposition für neue Monsterkarten
+
+  movableMonsterItems: MovableMonsterItem[] = [];
 
 
+  constructor() {
+    this.loadMonstersFromDb();
+  }
+
+
+  loadMonstersFromDb() {
+    const monstersFromDb: MonsterInfo[] = this.monsterDbService.getMonsters();
+    this.movableMonsterItems = monstersFromDb.map((monster, index) => {
+      return new MovableMonsterItem(index + 1,  50 + index * 100, 50 + index * 100, monster);
+    });
+  }
   addMonster() {
     const newId = this.movableMonsterItems.length + 1;
-    this.movableMonsterItems.push(new MovableMonsterItem(newId, `Komponente ${newId}`, 50, 50, { id: newId, name: `Monster ${newId}`, type: 'Unbekannt', health: 100, attack: 20, defense: 10, speed: 15, abilities: [] ,image: './img/monster-icon-Gargoyle.png', description: 'Dies ist ein Beschreibung für das neue Monster.'}));
+    this.movableMonsterItems.push(
+      new MovableMonsterItem(
+        newId,
+        this.newMonsterCardPosition.x,
+        this.newMonsterCardPosition.y,
+        this.monstersService.CreateNewRandomMonster()
+      )
+    );
+
 
   }
 
-  showItemOnTop(item: MovableItem) {
+  showMovableMonsterItemOnTop(item: MovableMonsterItem) {
     this.movableMonsterItems.forEach(i => i.showTop = false); // Setzt alle anderen Boxen auf false
     item.showTop = true;
   }

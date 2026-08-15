@@ -1,5 +1,5 @@
 export interface MonsterInfo {
-  id: number;
+  id: string;
   name: string;
   type: string;
   health: number;
