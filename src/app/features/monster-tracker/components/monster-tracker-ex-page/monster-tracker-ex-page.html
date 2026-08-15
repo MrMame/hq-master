@@ -1,0 +1,41 @@
+<p>monster-tracker-ex-page works!</p>
+
+<div class="boundary-container">
+@for (item of items; track item.id) {
+  <div
+    class="draggable-box"
+    [class.is-on-top]="item.showTop"
+    cdkDrag
+    [cdkDragFreeDragPosition]="{x: 0, y: 0}"
+    (cdkDragEnded)="onDragEnded($event, item)"
+    [style.left.px]="item.x"
+    [style.top.px]="item.y"
+    (click)="showBoxTop(item)"
+>
+
+    <!-- Inhalt der Komponente -->
+    <div class="handle" cdkDragHandle>::: Griff zum Anfassen :::
+      <!-- Button zum Minimieren/Maximieren -->
+      <button (click)="item.toggleMinimise(); $event.stopPropagation()">
+        {{ item.isMinimised ? '🗖 Maximieren' : '🗕 Minimieren' }}
+      </button>
+    </div>
+
+    @if(item.isMinimised) {
+      <div class="minimized-content">
+        <p>Inhalt minimiert</p>
+      </div>
+    } @else {
+      <div class="content">
+        <h4>{{ item.title }}</h4>
+        <p>Position: X: {{ item.x }}, Y: {{ item.y }}</p>
+        <app-monster-card></app-monster-card>
+      </div>
+    }
+
+  </div>
+}
+
+
+</div>
+
