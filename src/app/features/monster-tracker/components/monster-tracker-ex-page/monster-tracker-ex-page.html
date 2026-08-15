@@ -3,35 +3,37 @@
   <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="addMonster()">Add Monster</button>
 </div>
 <div class="boundary-container overflow-scroll  bg-gray-400">
-@for (item of items; track item.id) {
+@for (movableMonsterItem of movableMonsterItems; track movableMonsterItem.id) {
   <div
     class="draggable-box"
-    [class.is-on-top]="item.showTop"
+    [class.is-on-top]="movableMonsterItem.showTop"
     cdkDrag
     [cdkDragFreeDragPosition]="{x: 0, y: 0}"
-    (cdkDragEnded)="onDragEnded($event, item)"
-    [style.left.px]="item.x"
-    [style.top.px]="item.y"
-    (click)="showBoxTop(item)"
+    (cdkDragEnded)="onDragEnded($event, movableMonsterItem)"
+    [style.left.px]="movableMonsterItem.x"
+    [style.top.px]="movableMonsterItem.y"
+    (click)="showItemOnTop(movableMonsterItem)"
 >
 
     <!-- Inhalt der Komponente -->
     <div class="handle" cdkDragHandle>::: Griff zum Anfassen :::
       <!-- Button zum Minimieren/Maximieren -->
-      <button (click)="item.toggleMinimise(); $event.stopPropagation()">
-        {{ item.isMinimised ? '🗖 Maximieren' : '🗕 Minimieren' }}
+      <button (click)="movableMonsterItem.toggleMinimise(); $event.stopPropagation()">
+        {{ movableMonsterItem.isMinimised ? '🗖 Maximieren' : '🗕 Minimieren' }}
       </button>
     </div>
 
-    @if(item.isMinimised) {
+    @if(movableMonsterItem.isMinimised) {
       <div class="minimized-content">
         <p>Inhalt minimiert</p>
       </div>
     } @else {
       <div class="content">
-        <h4>{{ item.title }}</h4>
-        <p>Position: X: {{ item.x }}, Y: {{ item.y }}</p>
-        <app-monster-card></app-monster-card>
+        <h4>{{ movableMonsterItem.title }}</h4>
+        <p>Position: X: {{ movableMonsterItem.x }}, Y: {{ movableMonsterItem.y }}</p>
+        <app-monster-card
+          [monsterInfo]="movableMonsterItem.monsterInfo"
+        ></app-monster-card>
       </div>
     }
 
