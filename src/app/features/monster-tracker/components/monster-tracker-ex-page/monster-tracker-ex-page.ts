@@ -25,6 +25,13 @@ export class MonsterTrackerExPage {
     { id: 2, title: 'Komponente B', x: 300, y: 150 ,isMinimised: false,toggleMinimise: function() { this.isMinimised = !this.isMinimised; }, showTop: false },
   ];
 
+
+  addMonster() {
+    const newId = this.items.length + 1;
+    this.items.push({ id: newId, title: `Komponente ${newId}`, x: 50, y: 50, isMinimised: false, toggleMinimise: function() { this.isMinimised = !this.isMinimised; }, showTop: false });
+
+  }
+
   showBoxTop(item: MovableItem) {
     this.items.forEach(i => i.showTop = false); // Setzt alle anderen Boxen auf false
     item.showTop = true;

@@ -1,5 +1,7 @@
 <p>monster-tracker-ex-page works!</p>
-
+<div class="monster-tracker-ex-page-menue">
+  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="addMonster()">Add Monster</button>
+</div>
 <div class="boundary-container overflow-scroll  bg-gray-400">
 @for (item of items; track item.id) {
   <div
