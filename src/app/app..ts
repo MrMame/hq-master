@@ -47,7 +47,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 
       <!-- 2. Dynamischer Seiteninhalt -->
       <!-- flex-grow sorgt dafür, dass dieser Bereich den restlichen Platz einnimmt -->
-      <main class="grow max-w-4xl w-full mx-auto p-4 my-6">
+      <main class="grow max-w-8/12 w-full mx-auto p-4 my-6">
         <!-- Weißer Inhaltskasten mit Rahmen (border) und Innenabstand (p-6) -->
         <div class="bg-white border border-gray-200 rounded p-6">
           <router-outlet></router-outlet>
