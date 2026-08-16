@@ -13,7 +13,7 @@ export class MovableCharacterItem implements MovableItem {
     this.id = id;
     this.x = x;
     this.y = y;
-    this.isMinimised = false;
+    this.isMinimised = true;
     this.characterInfo = characterInfo;
     this.showTop = false;
   }

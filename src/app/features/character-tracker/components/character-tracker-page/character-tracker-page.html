@@ -17,11 +17,8 @@
   >
 
       <!-- Inhalt der Komponente -->
-      <div class="handle" cdkDragHandle>::: Griff zum Anfassen :::
-        <!-- Button zum Minimieren/Maximieren -->
-        <button (click)="movableCharacterItem.toggleMinimise(); $event.stopPropagation()">
-          {{ movableCharacterItem.isMinimised ? '🗖 Maximieren' : '🗕 Minimieren' }}
-        </button>
+      <div class="handle" cdkDragHandle (dblclick)="movableCharacterItem.toggleMinimise(); $event.stopPropagation()">
+        <span>::: {{ movableCharacterItem.characterInfo.name }} :::</span>
       </div>
 
       @if(movableCharacterItem.isMinimised) {
