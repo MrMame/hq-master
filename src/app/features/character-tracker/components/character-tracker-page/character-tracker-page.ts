@@ -5,8 +5,8 @@ import { MovableItem } from '../../models/MovableItem';
 import { MovableCharacterItem } from '../../models/MovableCharacterItem';
 import { CharacterInfo } from '../../models/CharacterInfo';
 
-import { CharactersDbService } from '../../services/CharactersDbService';
-import { MonsterCharacterCreatorService } from '../../services/MonsterCharacterCreatorService';
+import { CharactersDbService } from '../../services/databases/characters-database-service';
+import { MonsterCharacterCreatorService } from '../../services/character-creators/monster-character-creator-service';
 
 @Component({
   selector: 'app-monster-tracker-page',

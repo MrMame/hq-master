@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { CharactersDbService } from './CharactersDbService';
+import { CharactersDbService } from './characters-database-service';
 
 describe('CharactersDbService', () => {
   let service: CharactersDbService;

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MonsterCharacterCreatorService } from './MonsterCharacterCreatorService';
+import { MonsterCharacterCreatorService } from './monster-character-creator-service';
 
 describe('Monsters', () => {
   let service: MonsterCharacterCreatorService;

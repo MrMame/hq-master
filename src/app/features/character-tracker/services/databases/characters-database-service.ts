@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CharacterInfo } from '../models/CharacterInfo';
+import { CharacterInfo } from '../../models/CharacterInfo';
 
 @Injectable({
   providedIn: 'root',
