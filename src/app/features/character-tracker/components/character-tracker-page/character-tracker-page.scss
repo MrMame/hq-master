@@ -1,7 +1,7 @@
 /* Der Bereich, in dem sich die Boxen bewegen dürfen */
 .boundary-container {
   width: 100%;
-  height: 100vh;
+  height: 90%; /* Höhe des Containers */
   position: relative;
 }
 

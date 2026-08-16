@@ -12,7 +12,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
       <!-- 1. Globale Navigationsleiste -->
       <header class="bg-yellow-500 border-b border-gray-600 border-8">
         <!-- Begrenzte Breite (max-w-4xl), zentriert (mx-auto), Innenabstand (p-4) -->
-        <div class="max-w-4xl mx-auto p-4 flex items-center justify-between">
+        <div class="h-[30px] mx-auto p-4 flex items-center justify-between">
 
           <!-- Logo: Text fett (font-bold) und groß (text-lg) -->
           <div class="font-bold text-lg text-yellow-800">
@@ -40,20 +40,12 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 
       <!-- 2. Dynamischer Seiteninhalt -->
       <!-- flex-grow sorgt dafür, dass dieser Bereich den restlichen Platz einnimmt -->
-      <main class="grow max-w-8/12 w-full mx-auto p-4 my-6">
+      <main class=" w-full  p-4 ">
         <!-- Weißer Inhaltskasten mit Rahmen (border) und Innenabstand (p-6) -->
-        <div class="bg-white border border-gray-200 rounded p-6">
+        <div class="h-[85vh] bg-white border border-gray-200 rounded p-6">
           <router-outlet></router-outlet>
         </div>
       </main>
-
-      <!-- 3. Globaler Footer -->
-      <header class="bg-yellow-500 border-b border-gray-600 border-8 text-left p-4">
-        <p class="text-xs text-gray-500">
-          &copy; 2026 HQ-Master. Alle Rechte vorbehalten.
-        </p>
-      </header>
-
     </div>
   `,
   styles: ``
