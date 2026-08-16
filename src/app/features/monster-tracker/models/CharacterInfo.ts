@@ -1,4 +1,4 @@
-export interface MonsterInfo {
+export interface CharacterInfo {
   id: string;
   name: string;
   type: string;

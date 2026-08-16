@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { MonsterInfo } from '../models/MonsterInfo';
+import { CharacterInfo } from '../models/CharacterInfo';
 
 @Injectable({
   providedIn: 'root',
 })
-export class Monsters {
+export class MonsterCharacterCreatorService {
 
   private types :string[]= ['Feuer',
                             'Wasser',
@@ -27,7 +27,7 @@ export class Monsters {
                              './img/monster-icon-Zombie.png',
                             ];
 
-  CreateNewRandomMonster():MonsterInfo {
+  CreateNewRandomMonster():CharacterInfo {
     const randomId: string = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     const randomName = `Monster ${randomId}`;
     const randomType = this.types[Math.floor(Math.random() * this.types.length)];

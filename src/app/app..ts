@@ -21,11 +21,11 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 
           <!-- Navigations-Links nebeneinander (flex) mit Abstand dazwischen (space-x-4) -->
           <nav class="flex items-center space-x-4">
-            <a routerLink="/monstertracker"
+            <a routerLink="/charactertracker"
                routerLinkActive="text-blue-600 font-bold"
                [routerLinkActiveOptions]="{exact: true}"
                class="text-sm text-gray-600 hover:text-gray-900">
-               Monster Tracker
+               Character Tracker
             </a>
             <a routerLink="/profile"
                routerLinkActive="text-blue-600 font-bold"

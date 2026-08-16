@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 
-import { MonsterTrackerPage } from './features/monster-tracker/components/monster-tracker-page/monster-tracker-page.component';
+import { CharacterTrackerPage } from './features/monster-tracker/components/character-tracker-page/character-tracker-page';
 
 export const routes: Routes = [
-  { path: 'monstertracker', component: MonsterTrackerPage },
+  { path: 'charactertracker', component: CharacterTrackerPage },
 
 ];
