@@ -27,13 +27,6 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
                class="text-sm text-gray-600 hover:text-gray-900">
                Monster Tracker
             </a>
-
-            <a routerLink="/monstertracker-ex"
-               routerLinkActive="text-blue-600 font-bold"
-               class="text-sm text-gray-600 hover:text-gray-900">
-               Monster Tracker Ex
-            </a>
-
             <a routerLink="/profile"
                routerLinkActive="text-blue-600 font-bold"
                class="text-sm text-gray-600 hover:text-gray-900">

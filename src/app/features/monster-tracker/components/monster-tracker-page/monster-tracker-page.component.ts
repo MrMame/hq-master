@@ -6,15 +6,15 @@ import { MovableMonsterItem } from '../../models/MovableMonsterItem';
 import { MonsterInfo } from '../../models/MonsterInfo';
 
 import { MonstersDbService } from '../../services/monsters-db.service';
-import { Monsters } from '../../services/monsters';
+import { Monsters } from '../../services/monsters.service';
 
 @Component({
-  selector: 'app-monster-tracker-ex-page',
+  selector: 'app-monster-tracker-page',
   imports: [DragDropModule,MonsterCard],
-  templateUrl: './monster-tracker-ex-page.html',
-  styleUrl: './monster-tracker-ex-page.scss',
+  templateUrl: './monster-tracker-page.html',
+  styleUrl: './monster-tracker-page.scss',
 })
-export class MonsterTrackerExPage {
+export class MonsterTrackerPage {
 
   monsterDbService = inject(MonstersDbService);
   monstersService = inject(Monsters);
