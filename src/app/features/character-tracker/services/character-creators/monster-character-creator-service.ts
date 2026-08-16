@@ -1,21 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CharacterInfo } from '../../models/CharacterInfo';
+import { ElementalTypes } from '../../models/ElementalTypes';
+import { CharacterAbilities } from '../../models/CharacterAbilities';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MonsterCharacterCreatorService {
 
-  private types :string[]= ['Feuer',
-                            'Wasser',
-                            'Erde',
-                            'Luft'
-                          ];
-  private abilities :string[]= ['Flammenwerfer',
-                                'Aquatische Angriffe',
-                                'Erdbeben',
-                                'Windstoß'
-                              ];
   private images :string[]= ['./img/monster-icon-ChaosWarrior.png',
                              './img/monster-icon-FimirAbomination.png',
                              './img/monster-icon-Gargoyle.png',
@@ -28,14 +20,19 @@ export class MonsterCharacterCreatorService {
                             ];
 
   CreateNewRandomMonster():CharacterInfo {
+
+    // Holt alle String-Werte ('Feuer', 'Wasser', etc.) als Array
+    const elemntalTypesArray = Object.values(ElementalTypes);
+    const abilitiesArray = Object.values(CharacterAbilities);
+
     const randomId: string = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     const randomName = `Monster ${randomId}`;
-    const randomType = this.types[Math.floor(Math.random() * this.types.length)];
+    const randomType = elemntalTypesArray[Math.floor(Math.random() * elemntalTypesArray.length)];
     const randomHealth = Math.floor(Math.random() * 200) + 50;
     const randomAttack = Math.floor(Math.random() * 50) + 10;
     const randomDefense = Math.floor(Math.random() * 50) + 5;
     const randomSpeed = Math.floor(Math.random() * 30) + 5;
-    const randomAbilities = this.abilities.slice(0, Math.floor(Math.random() * this.abilities.length) + 1);
+    const randomAbilities = abilitiesArray.slice(0, Math.floor(Math.random() * abilitiesArray.length) + 1);
     const randomImage = this.images[Math.floor(Math.random() * this.images.length)];
     const randomDescription = `Dies ist eine zufällige Beschreibung für ${randomName}.`;
 

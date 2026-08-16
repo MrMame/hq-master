@@ -7,6 +7,7 @@ import { CharacterInfo } from '../../models/CharacterInfo';
 
 import { CharactersDbService } from '../../services/databases/characters-database-service';
 import { MonsterCharacterCreatorService } from '../../services/character-creators/monster-character-creator-service';
+import { HeroCharacterCreatorService } from '../../services/character-creators/hero-character-creator-service';
 
 @Component({
   selector: 'app-monster-tracker-page',
@@ -18,6 +19,7 @@ export class CharacterTrackerPage {
 
   monsterDbService = inject(CharactersDbService);
   monstersService = inject(MonsterCharacterCreatorService);
+  herosService = inject(HeroCharacterCreatorService);
 
   private newCharacterCardPosition = { x: 50, y: 50 }; // Startposition für neue Monsterkarten
 
@@ -48,24 +50,12 @@ export class CharacterTrackerPage {
   }
   addHero() {
     const newId = this.movableCharacterItems.length + 1;
-    const hero: CharacterInfo = {
-      id: `hero-${newId}`,
-      name: `Hero ${newId}`,
-      type: 'Hero',
-      health: 100,
-      attack: 20,
-      defense: 15,
-      speed: 10,
-      abilities: ['Slash', 'Shield Block'],
-      image: 'path/to/hero/image.png',
-      description: 'A brave hero ready to fight monsters.'
-    };
     this.movableCharacterItems.push(
       new MovableCharacterItem(
         newId,
         this.newCharacterCardPosition.x,
         this.newCharacterCardPosition.y,
-        hero
+        this.herosService.CreateNewRandomHero()
       )
     );
   }
