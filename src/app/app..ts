@@ -10,9 +10,9 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
     <div class="min-h-screen bg-black text-gray-900 flex flex-col font-sans">
 
       <!-- 1. Globale Navigationsleiste -->
-      <header class="bg-yellow-500 border-b border-gray-600 border-8">
+      <header class="h-[3em] bg-yellow-500 border-b border-black border-8">
         <!-- Begrenzte Breite (max-w-4xl), zentriert (mx-auto), Innenabstand (p-4) -->
-        <div class="h-[30px] mx-auto p-4 flex items-center justify-between">
+        <div class="flex items-center justify-between p-2">
 
           <!-- Logo: Text fett (font-bold) und groß (text-lg) -->
           <div class="font-bold text-lg text-yellow-800">
@@ -40,11 +40,9 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 
       <!-- 2. Dynamischer Seiteninhalt -->
       <!-- flex-grow sorgt dafür, dass dieser Bereich den restlichen Platz einnimmt -->
-      <main class=" w-full  p-4 ">
-        <!-- Weißer Inhaltskasten mit Rahmen (border) und Innenabstand (p-6) -->
-        <div class="h-[85vh] bg-white border border-gray-200 rounded p-6">
+      <main class="bg-white  p-4 rounded w-full h-[90vh]">
           <router-outlet></router-outlet>
-        </div>
+        
       </main>
     </div>
   `,

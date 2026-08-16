@@ -1,46 +1,47 @@
-<p>monster-tracker-ex-page works!</p>
-<div class="monster-tracker-ex-page-menue">
-  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="addMonster()">Add Monster</button>
-  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="addHero()">Add Hero</button>
-</div>
-<div class="boundary-container overflow-scroll  bg-gray-400">
-@for (movableCharacterItem of movableCharacterItems; track movableCharacterItem.id) {
-  <div
-    class="draggable-box"
-    [class.is-on-top]="movableCharacterItem.showTop"
-    cdkDrag
-    [cdkDragFreeDragPosition]="{x: 0, y: 0}"
-    (cdkDragEnded)="onDragEnded($event, movableCharacterItem)"
-    [style.left.px]="movableCharacterItem.x"
-    [style.top.px]="movableCharacterItem.y"
-    (click)="showMovableCharacterItemOnTop(movableCharacterItem)"
->
+<div class="character-tracker-page h-full">
+  <div class="monster-tracker-ex-page-menue">
+    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="addMonster()">Add Monster</button>
+    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="addHero()">Add Hero</button>
+  </div>
+  <div class="boundary-container overflow-scroll  bg-gray-400 h-[90%]">
+  @for (movableCharacterItem of movableCharacterItems; track movableCharacterItem.id) {
+    <div
+      class="draggable-box"
+      [class.is-on-top]="movableCharacterItem.showTop"
+      cdkDrag
+      [cdkDragFreeDragPosition]="{x: 0, y: 0}"
+      (cdkDragEnded)="onDragEnded($event, movableCharacterItem)"
+      [style.left.px]="movableCharacterItem.x"
+      [style.top.px]="movableCharacterItem.y"
+      (click)="showMovableCharacterItemOnTop(movableCharacterItem)"
+  >
 
-    <!-- Inhalt der Komponente -->
-    <div class="handle" cdkDragHandle>::: Griff zum Anfassen :::
-      <!-- Button zum Minimieren/Maximieren -->
-      <button (click)="movableCharacterItem.toggleMinimise(); $event.stopPropagation()">
-        {{ movableCharacterItem.isMinimised ? '🗖 Maximieren' : '🗕 Minimieren' }}
-      </button>
+      <!-- Inhalt der Komponente -->
+      <div class="handle" cdkDragHandle>::: Griff zum Anfassen :::
+        <!-- Button zum Minimieren/Maximieren -->
+        <button (click)="movableCharacterItem.toggleMinimise(); $event.stopPropagation()">
+          {{ movableCharacterItem.isMinimised ? '🗖 Maximieren' : '🗕 Minimieren' }}
+        </button>
+      </div>
+
+      @if(movableCharacterItem.isMinimised) {
+        <div class="minimized-content">
+          <p>Inhalt minimiert</p>
+        </div>
+      } @else {
+        <div class="content">
+          <h4>{{ movableCharacterItem.id }}</h4>
+          <p>Position: X: {{ movableCharacterItem.x }}, Y: {{ movableCharacterItem.y }}</p>
+          <app-character-card
+            [characterInfo]="movableCharacterItem.characterInfo"
+          ></app-character-card>
+        </div>
+      }
+
     </div>
+  }
 
-    @if(movableCharacterItem.isMinimised) {
-      <div class="minimized-content">
-        <p>Inhalt minimiert</p>
-      </div>
-    } @else {
-      <div class="content">
-        <h4>{{ movableCharacterItem.id }}</h4>
-        <p>Position: X: {{ movableCharacterItem.x }}, Y: {{ movableCharacterItem.y }}</p>
-        <app-character-card
-          [characterInfo]="movableCharacterItem.characterInfo"
-        ></app-character-card>
-      </div>
-    }
 
   </div>
-}
-
-
 </div>
 

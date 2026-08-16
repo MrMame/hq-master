@@ -8,7 +8,7 @@ import { CharacterInfo } from '../../models/CharacterInfo';
   template: `
   <div class="bg-white shadow-md rounded-lg p-4">
     <h2 class="text-xl font-bold mb-2">{{ characterInfo()?.name }}</h2>
-    <img src="{{characterInfo()?.image}}" alt="Monster Image" class="w-full h-32 object-cover mb-2 rounded">
+    <img src="{{characterInfo()?.image}}" alt="Monster Image" class="w-full h-auto object-cover mb-2 rounded">
     <p class="text-gray-700 mb-4">{{ characterInfo()?.description }}</p>
     <span class="text-gray-600">Type: {{ characterInfo()?.type }}</span><br>
     <span class="text-gray-600">Health: {{ characterInfo()?.health }}</span><br>
