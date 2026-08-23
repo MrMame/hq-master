@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject , signal} from '@angular/core';
 import { DragDropModule, CdkDragEnd } from '@angular/cdk/drag-drop';
 import { CharacterCard} from '../character-card/character-card';
 import { MovableItem } from '../../models/MovableItem';
@@ -32,7 +32,7 @@ export class CharacterTrackerPage {
 
   private newCharacterCardPosition = { x: 50, y: 50 }; // Startposition für neue Monsterkarten
 
-  movableCharacterItems: MovableCharacterItem[] = [];
+  movableCharacterItems = signal<MovableCharacterItem[]>([]);
 
 
   constructor() {
@@ -40,38 +40,43 @@ export class CharacterTrackerPage {
   }
 
 
-  loadMonstersFromDb() {
+     loadMonstersFromDb() {
     const monstersFromDb: CharacterInfo[] = this.monsterDbService.getMonsters();
-    this.movableCharacterItems = monstersFromDb.map((monster, index) => {
-      return new MovableCharacterItem(index + 1,  50 + index * 100, 50 + index * 100, monster);
+    const items = monstersFromDb.map((monster, index) => {
+      return new MovableCharacterItem(index + 1, 50 + index * 100, 50 + index * 100, monster);
     });
+    // 3. Signal-Wert setzen
+    this.movableCharacterItems.set(items);
   }
-  addMonster() {
-    const newId = this.movableCharacterItems.length + 1;
-    this.movableCharacterItems.push(
-      new MovableCharacterItem(
-        newId,
-        this.newCharacterCardPosition.x,
-        this.newCharacterCardPosition.y,
-        this.monstersService.CreateNewRandomMonster()
-      )
+    addMonster() {
+    const newId = this.movableCharacterItems().length + 1;
+    const newItem = new MovableCharacterItem(
+      newId,
+      this.newCharacterCardPosition.x,
+      this.newCharacterCardPosition.y,
+      this.monstersService.CreateNewRandomMonster()
     );
+    // 4. Signal updaten (erstellt neues Array-Inhalt)
+    this.movableCharacterItems.update(items => [...items, newItem]);
   }
   addHero() {
-    const newId = this.movableCharacterItems.length + 1;
-    this.movableCharacterItems.push(
-      new MovableCharacterItem(
-        newId,
-        this.newCharacterCardPosition.x,
-        this.newCharacterCardPosition.y,
-        this.herosService.CreateNewRandomHero()
-      )
+    const newId = this.movableCharacterItems().length + 1;
+    const newItem = new MovableCharacterItem(
+      newId,
+      this.newCharacterCardPosition.x,
+      this.newCharacterCardPosition.y,
+      this.herosService.CreateNewRandomHero()
     );
+    this.movableCharacterItems.update(items => [...items, newItem]);
   }
 
   showMovableCharacterItemOnTop(item: MovableCharacterItem) {
-    this.movableCharacterItems.forEach(i => i.showTop = false); // Setzt alle anderen Boxen auf false
-    item.showTop = true;
+    // Über das Signal mappen
+    this.movableCharacterItems.update(items => {
+      items.forEach(i => i.showTop = false);
+      item.showTop = true;
+      return [...items]; // Gibt eine neue Array-Referenz zurück
+    });
   }
 
   // Diese Funktion wird aufgerufen, wenn der Drag beendet wird
@@ -85,52 +90,36 @@ export class CharacterTrackerPage {
     event.source.reset();
   }
 
-  debugNachrichtAusgeben() {
-    console.log('Der Knopf wurde gedrückt!');
-  }
 
   removeMovableCharacteritem(item: MovableCharacterItem) {
-    const itemToRemove: MovableCharacterItem = item; 
-    this.movableCharacterItems = this.movableCharacterItems.filter(
-      item => item !== itemToRemove
-    );
-
-  } 
-
-  openDialog(): void {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      width: '350px' // Optionale Konfiguration der Breite
-    });
-
-    // Ergebnis nach dem Schließen abfangen
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('Der Dialog wurde geschlossen. Ergebnis:', result);
-      if (result === true) {
-        // Logik für "Bestätigen"
-      }
-    });
+    this.movableCharacterItems.update(items => items.filter(i => i !== item));
   }
 
 
 
-  openDamageTakenDialog(damageType: DamageTypes,movableCharacterItem:MovableCharacterItem): void {
-    const dialogRef = this.dialog.open(DamageTakenDialog, {
-      width: '350px' // Optionale Konfiguration der Breite
-    });
 
-    // Ergebnis nach dem Schließen abfangen
+  openDamageTakenDialog(damageType: DamageTypes, movableCharacterItem: MovableCharacterItem): void {
+    const dialogRef = this.dialog.open(DamageTakenDialog, { width: '350px' });
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Der Dialog wurde geschlossen. Ergebnis:', result);
-      if (result !== false) {
-        // Logik für "Bestätigen"
-        switch(damageType){
-          case DamageTypes.Normal:
-            movableCharacterItem.characterInfo.armor -= result;
-            break;
+      if (result !== undefined && result !== false) {
+        /* 5. Hier triggern wir die UI-Aktualisierung via .update()
+          Angular wouldn't recognize chaning values deeply inside Arrays. The trick is to
+          change the values deeply, then create a compltee new copy of the array and return it
+          ( return [...items]; ). Angular reccognize the whole new array and updates the UI
+        */
+        this.movableCharacterItems.update(items => {
+          switch(damageType) {
+            case DamageTypes.Normal:
+              movableCharacterItem.characterInfo.armor -= result;
+              break;
             case DamageTypes.Critical:
-            movableCharacterItem.characterInfo.health -= result;
-            break;
-        }
+              movableCharacterItem.characterInfo.health -= result;
+              break;
+          }
+          // Gibt ein flach kopiertes Array zurück, damit Angular die Änderung bemerkt
+          return [...items]; 
+        });
+
       }
     });
   }
