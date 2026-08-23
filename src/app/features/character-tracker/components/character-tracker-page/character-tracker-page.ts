@@ -80,7 +80,13 @@ export class CharacterTrackerPage {
     console.log('Der Knopf wurde gedrückt!');
   }
 
-  
+  removeMovableCharacteritem(item: MovableCharacterItem) {
+    const itemToRemove: MovableCharacterItem = item; 
+    this.movableCharacterItems = this.movableCharacterItems.filter(
+      item => item !== itemToRemove
+    );
+
+  } 
 
 
 }
