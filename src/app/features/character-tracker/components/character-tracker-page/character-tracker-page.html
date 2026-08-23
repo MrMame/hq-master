@@ -30,10 +30,10 @@
         <div class="flex flex-row items-center justify-center">
           <!-- Bild und Schnellionfos des Charakters -->
           <img draggable="false" src="{{movableCharacterItem.characterInfo.image}}" class="h-[48px] w-[48px] mr-4">
-          <button (click)="debugNachrichtAusgeben()" class="h-[30px] w-[30px] hover:bg-blue-700 text-white font-bold rounded">
+          <button (click)="openDamageTakenDialog(DamageTypes.Normal,movableCharacterItem)" class="h-[30px] w-[30px] hover:bg-blue-700 text-white font-bold rounded">
             <img draggable="false"src="./img/hit-normal.svg" alt="" class="object-contain">
           </button>
-          <button (click)="debugNachrichtAusgeben()" class="ml-4 h-[30px] w-[30px] hover:bg-red-700 text-white font-bold rounded">
+          <button (click)="openDamageTakenDialog(DamageTypes.Critical,movableCharacterItem)" class="ml-4 h-[30px] w-[30px] hover:bg-red-700 text-white font-bold rounded">
             <img draggable="false" src="./img/hit-critical.svg" alt="" class="object-contain">
           </button>
         </div>

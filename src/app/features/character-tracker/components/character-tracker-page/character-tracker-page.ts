@@ -11,6 +11,9 @@ import { HeroCharacterCreatorService } from '../../services/character-creators/h
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog';
 
+import { DamageTypes } from '../../models/DamageTypes';
+import { DamageTakenDialog } from '../damage-taken-dialog/damage-taken-dialog';
+
 @Component({
   selector: 'app-monster-tracker-page',
   imports: [DragDropModule,CharacterCard],
@@ -19,6 +22,9 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 })
 export class CharacterTrackerPage {
 
+  // Enum DamageTypes importieren und in der HTML-Komponente verfügbar machen
+  DamageTypes = DamageTypes;
+  
   monsterDbService = inject(CharactersDbService);
   monstersService = inject(MonsterCharacterCreatorService);
   herosService = inject(HeroCharacterCreatorService);
@@ -104,6 +110,31 @@ export class CharacterTrackerPage {
       }
     });
   }
+
+
+
+  openDamageTakenDialog(damageType: DamageTypes,movableCharacterItem:MovableCharacterItem): void {
+    const dialogRef = this.dialog.open(DamageTakenDialog, {
+      width: '350px' // Optionale Konfiguration der Breite
+    });
+
+    // Ergebnis nach dem Schließen abfangen
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Der Dialog wurde geschlossen. Ergebnis:', result);
+      if (result !== false) {
+        // Logik für "Bestätigen"
+        switch(damageType){
+          case DamageTypes.Normal:
+            movableCharacterItem.characterInfo.armor -= result;
+            break;
+            case DamageTypes.Critical:
+            movableCharacterItem.characterInfo.health -= result;
+            break;
+        }
+      }
+    });
+  }
+
 
 
 }
