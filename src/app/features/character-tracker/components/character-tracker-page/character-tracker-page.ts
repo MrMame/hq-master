@@ -8,6 +8,8 @@ import { CharacterInfo } from '../../models/CharacterInfo';
 import { CharactersDbService } from '../../services/databases/characters-database-service';
 import { MonsterCharacterCreatorService } from '../../services/character-creators/monster-character-creator-service';
 import { HeroCharacterCreatorService } from '../../services/character-creators/hero-character-creator-service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog';
 
 @Component({
   selector: 'app-monster-tracker-page',
@@ -20,6 +22,7 @@ export class CharacterTrackerPage {
   monsterDbService = inject(CharactersDbService);
   monstersService = inject(MonsterCharacterCreatorService);
   herosService = inject(HeroCharacterCreatorService);
+  dialog = inject(MatDialog); // Service injizieren
 
   private newCharacterCardPosition = { x: 50, y: 50 }; // Startposition für neue Monsterkarten
 
@@ -87,6 +90,20 @@ export class CharacterTrackerPage {
     );
 
   } 
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px' // Optionale Konfiguration der Breite
+    });
+
+    // Ergebnis nach dem Schließen abfangen
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Der Dialog wurde geschlossen. Ergebnis:', result);
+      if (result === true) {
+        // Logik für "Bestätigen"
+      }
+    });
+  }
 
 
 }
