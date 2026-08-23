@@ -8,6 +8,8 @@ import { CharacterInfo } from '../../models/CharacterInfo';
 import { CharactersDbService } from '../../services/databases/characters-database-service';
 import { MonsterCharacterCreatorService } from '../../services/character-creators/monster-character-creator-service';
 import { HeroCharacterCreatorService } from '../../services/character-creators/hero-character-creator-service';
+import { CombatCalculatorService } from '../../services/combat-calculator'
+
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog';
 
@@ -24,10 +26,10 @@ export class CharacterTrackerPage {
 
   // Enum DamageTypes importieren und in der HTML-Komponente verfügbar machen
   DamageTypes = DamageTypes;
-  
   monsterDbService = inject(CharactersDbService);
   monstersService = inject(MonsterCharacterCreatorService);
   herosService = inject(HeroCharacterCreatorService);
+  combatService = inject(CombatCalculatorService);
   dialog = inject(MatDialog); // Service injizieren
 
   private newCharacterCardPosition = { x: 50, y: 50 }; // Startposition für neue Monsterkarten
@@ -108,14 +110,16 @@ export class CharacterTrackerPage {
           ( return [...items]; ). Angular reccognize the whole new array and updates the UI
         */
         this.movableCharacterItems.update(items => {
-          switch(damageType) {
-            case DamageTypes.Normal:
-              movableCharacterItem.characterInfo.armor -= result;
-              break;
-            case DamageTypes.Critical:
-              movableCharacterItem.characterInfo.health -= result;
-              break;
-          }
+          // switch(damageType) {
+          //   case DamageTypes.Normal:
+          //     movableCharacterItem.characterInfo.armor -= result;
+          //     break;
+          //   case DamageTypes.Critical:
+          //     movableCharacterItem.characterInfo.health -= result;
+          //     break;
+          // }
+          this.combatService.applyDamage(movableCharacterItem,damageType,result);
+
           // Gibt ein flach kopiertes Array zurück, damit Angular die Änderung bemerkt
           return [...items]; 
         });
