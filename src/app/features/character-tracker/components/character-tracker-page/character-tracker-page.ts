@@ -69,13 +69,18 @@ export class CharacterTrackerPage {
   onDragEnded(event: CdkDragEnd, item: MovableItem) {
     // Holen der neuen Distanz relativ zur Startposition
     const offset = event.source.getFreeDragPosition();
-
     // Aktualisieren der finalen Position im Datenmodell
     item.x += offset.x;
     item.y += offset.y;
-
     // Setzt den internen CDK-Offset zurück, da wir die Position nun via Styles festlegen
     event.source.reset();
   }
+
+  debugNachrichtAusgeben() {
+    console.log('Der Knopf wurde gedrückt!');
+  }
+
+  
+
 
 }

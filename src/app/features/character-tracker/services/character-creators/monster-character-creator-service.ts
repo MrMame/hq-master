@@ -29,6 +29,7 @@ export class MonsterCharacterCreatorService {
     const randomName = `Monster ${randomId}`;
     const randomType = elemntalTypesArray[Math.floor(Math.random() * elemntalTypesArray.length)];
     const randomHealth = Math.floor(Math.random() * 200) + 50;
+    const randomArmor = Math.floor(Math.random() * 50) + 5;
     const randomAttack = Math.floor(Math.random() * 50) + 10;
     const randomDefense = Math.floor(Math.random() * 50) + 5;
     const randomSpeed = Math.floor(Math.random() * 30) + 5;
@@ -41,6 +42,7 @@ export class MonsterCharacterCreatorService {
       name: randomName,
       type: randomType,
       health: randomHealth,
+      armor: randomArmor,
       attack: randomAttack,
       defense: randomDefense,
       speed: randomSpeed,

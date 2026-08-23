@@ -3,6 +3,7 @@ export interface CharacterInfo {
   name: string;
   type: string;
   health: number;
+  armor: number;
   attack: number;
   defense: number;
   speed: number;

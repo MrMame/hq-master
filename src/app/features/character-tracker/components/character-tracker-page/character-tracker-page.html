@@ -10,25 +10,40 @@
       [class.is-on-top]="movableCharacterItem.showTop"
       cdkDrag
       [cdkDragFreeDragPosition]="{x: 0, y: 0}"
-      (cdkDragEnded)="onDragEnded($event, movableCharacterItem)"
+      (cdkDragEnded)="onDragEnded( $event, movableCharacterItem)"
       [style.left.px]="movableCharacterItem.x"
       [style.top.px]="movableCharacterItem.y"
       (click)="showMovableCharacterItemOnTop(movableCharacterItem)"
   >
 
-      <!-- Inhalt der Komponente -->
-      <div class="handle" cdkDragHandle (dblclick)="movableCharacterItem.toggleMinimise(); $event.stopPropagation()">
-        <span>::: {{ movableCharacterItem.characterInfo.name }} :::</span>
-      </div>
 
-      @if(movableCharacterItem.isMinimised) {
-        <div class="minimized-content">
-          <p>Inhalt minimiert</p>
+    <!-- Obere Griff-leiste-->
+    <div class="handle" cdkDragHandle (dblclick)="movableCharacterItem.toggleMinimise(); $event.stopPropagation()">
+      <span>::: {{ movableCharacterItem.characterInfo.name }} :::</span>
+    </div>
+
+    
+    @if(movableCharacterItem.isMinimised) {
+      
+
+      <div class="minimized-content p-1">
+        <div class="flex flex-row items-center justify-center">
+          <!-- Bild und Schnellionfos des Charakters -->
+          <img draggable="false" src="{{movableCharacterItem.characterInfo.image}}" class="h-[48px] w-[48px] mr-4">
+          <button (click)="debugNachrichtAusgeben()" class="h-[30px] w-[30px] hover:bg-blue-700 text-white font-bold rounded">
+            <img draggable="false"src="./img/hit-normal.svg" alt="" class="object-contain">
+          </button>
+          <button (click)="debugNachrichtAusgeben()" class="h-[30px] w-[30px] hover:bg-red-700 text-white font-bold rounded">
+            <img draggable="false" src="./img/hit-critical.svg" alt="" class="object-contain">
+          </button>
         </div>
+        <div class="flex flex-row items-center justify-center">
+          <span class="text-green-400 ml-2">{{ movableCharacterItem.characterInfo.health }}</span>
+          <span class="text-blue-400 ml-2">{{ movableCharacterItem.characterInfo.armor }}</span>
+        </div>
+      </div>
       } @else {
         <div class="content">
-          <h4>{{ movableCharacterItem.id }}</h4>
-          <p>Position: X: {{ movableCharacterItem.x }}, Y: {{ movableCharacterItem.y }}</p>
           <app-character-card
             [characterInfo]="movableCharacterItem.characterInfo"
           ></app-character-card>
