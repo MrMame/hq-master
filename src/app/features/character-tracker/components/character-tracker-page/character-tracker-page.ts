@@ -73,7 +73,7 @@ export class CharacterTrackerPage {
     this.movableCharacterItems.update(items => [...items, newItem]);
   }
   addCharacter(){
-    const dialogRef = this.dialog.open(AddCharacterDialog, { width: '350px' });
+    const dialogRef = this.dialog.open(AddCharacterDialog, { width: '80vw', maxWidth: '80vw' ,height: '80vh', maxHeight: '80vh'});
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined && result !== false) {
         const newId = this.movableCharacterItems().length + 1;
@@ -117,7 +117,7 @@ export class CharacterTrackerPage {
 
 
   openDamageTakenDialog(damageType: DamageTypes, movableCharacterItem: MovableCharacterItem): void {
-    const dialogRef = this.dialog.open(DamageTakenDialog, { width: '350px' });
+    const dialogRef = this.dialog.open(DamageTakenDialog, { width: '80vw', maxWidth: '80vw' ,height: '80vh', maxHeight: '80vh'});
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined && result !== false) {
         /* 5. Hier triggern wir die UI-Aktualisierung via .update()
