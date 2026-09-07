@@ -15,6 +15,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 
 import { DamageTypes } from '../../models/DamageTypes';
 import { DamageTakenDialog } from '../damage-taken-dialog/damage-taken-dialog';
+import { AddCharacterDialog } from '../add-character-dialog/add-character-dialog';
 
 @Component({
   selector: 'app-monster-tracker-page',
@@ -50,7 +51,7 @@ export class CharacterTrackerPage {
     // 3. Signal-Wert setzen
     this.movableCharacterItems.set(items);
   }
-    addMonster() {
+  addMonster() {
     const newId = this.movableCharacterItems().length + 1;
     const newItem = new MovableCharacterItem(
       newId,
@@ -70,6 +71,21 @@ export class CharacterTrackerPage {
       this.herosService.CreateNewRandomHero()
     );
     this.movableCharacterItems.update(items => [...items, newItem]);
+  }
+  addCharacter(){
+    const dialogRef = this.dialog.open(AddCharacterDialog, { width: '350px' });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined && result !== false) {
+        const newId = this.movableCharacterItems().length + 1;
+        const newItem = new MovableCharacterItem(
+          newId,
+          this.newCharacterCardPosition.x,
+          this.newCharacterCardPosition.y,
+          { ...result, id: newId }
+        );
+        this.movableCharacterItems.update(items => [...items, newItem]);
+      }
+    });
   }
 
   showMovableCharacterItemOnTop(item: MovableCharacterItem) {

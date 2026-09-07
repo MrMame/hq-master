@@ -2,6 +2,8 @@
   <div class="monster-tracker-ex-page-menue ">
     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="addMonster()">Add Monster</button>
     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="addHero()">Add Hero</button>
+    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="addCharacter()">Add Character</button>
+
   </div>
   <div class="boundary-container overflow-scroll  bg-gray-400 h-[100%]">
   @for (movableCharacterItem of movableCharacterItems(); track movableCharacterItem.id) {
