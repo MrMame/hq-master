@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component,inject, signal } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { GametimeService } from './core/services/gaming/gametime-service';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,10 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
           <div class="font-bold text-lg text-yellow-800">
             HQ-Master
           </div>
+          <div class="font-bold text-lg text-yellow-800">
+            Ingame Time: {{ gametimeService.gameTimeAsString }}
+          </div>
+          
 
           <!-- Navigations-Links nebeneinander (flex) mit Abstand dazwischen (space-x-4) -->
           <nav class="flex items-center space-x-4">
@@ -49,5 +54,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class App {
   protected readonly title = signal('hq-master');
+
+  public gametimeService =inject(GametimeService);
 
 }
