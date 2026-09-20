@@ -32,10 +32,10 @@ import { GametimeService } from './core/services/gaming/gametime-service';
                class="text-sm text-gray-600 hover:text-gray-900">
                Character Tracker
             </a>
-            <a routerLink="/profile"
+            <a routerLink="/timetracker"
                routerLinkActive="text-blue-600 font-bold"
                class="text-sm text-gray-600 hover:text-gray-900">
-               Empty
+               Time Tracker
             </a>
 
           </nav>

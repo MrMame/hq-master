@@ -46,7 +46,7 @@ import { CharactersDbService } from '../../../../core/services/persitents/charac
       
       <div class="flex-col m-3">
         <h3 class="text-gray-600">Abilities:</h3>
-        <span class="basis-1/3 text-gray-600">{{ info.abilities?.join(', ') }}</span>
+        <span class="basis-1/3 text-gray-600">{{ info.abilities.join(', ') }}</span>
       </div>
       <div class="flex-col m-3">
         <p class="basis-2/3 text-gray-700 mb-4">{{ info.description }}</p>
