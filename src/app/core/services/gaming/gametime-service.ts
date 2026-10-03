@@ -1,53 +1,52 @@
-import { Injectable } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GametimeService {
-  public gameDate: Date;
+  private readonly _gameTime = signal<Date>(new Date(2381, 0, 1, 23, 55, 0));
 
-  constructor() {
-    this.gameDate = new Date();
-    // Hinweis: Der Kommentar sagte 2381, aber 238 setzt das Jahr auf 238 n. Chr. 
-    // Wenn du das Jahr 2381 möchtest, trage direkt 2381 ein. 
-    // Der Monat 1 ist zudem Februar (da 0-basiert). Für Januar nutze 0.
-    this.gameDate.setFullYear(2381, 0, 1); 
-    this.gameDate.setHours(23, 55, 0, 0);
-  }
+  readonly gameTimeAsString = computed(() => {
+    const d = this._gameTime();
+    const hours = d.getHours().toString().padStart(2, '0');
+    const minutes = d.getMinutes().toString().padStart(2, '0');
+    const seconds = d.getSeconds().toString().padStart(2, '0');
+    const years = d.getFullYear();
+    const months = (d.getMonth() + 1).toString().padStart(2, '0');
+    const days = d.getDate().toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds} ${years}-${months}-${days}`;
+  });
 
   public setGameTime(hours: number, minutes: number, seconds: number): void {
-    this.gameDate.setHours(hours, minutes, seconds);
+    this._gameTime.update(d => {
+      const updated = new Date(d);
+      updated.setHours(hours, minutes, seconds);
+      return updated;
+    });
   }
 
-  /**
-   * Addiert eine bestimmte Anzahl an Stunden zur Spielzeit
-   */
   public addHours(hours: number): void {
-    this.gameDate.setHours(this.gameDate.getHours() + hours);
+    this._gameTime.update(d => {
+      const updated = new Date(d);
+      updated.setHours(updated.getHours() + hours);
+      return updated;
+    });
   }
 
-  /**
-   * Addiert eine bestimmte Anzahl an Minuten zur Spielzeit
-   */
   public addMinutes(minutes: number): void {
-    this.gameDate.setMinutes(this.gameDate.getMinutes() + minutes);
+    this._gameTime.update(d => {
+      const updated = new Date(d);
+      updated.setMinutes(updated.getMinutes() + minutes);
+      return updated;
+    });
   }
 
-  /**
-   * Addiert Stunden und Minuten gleichzeitig (optionale Komfortmethode)
-   */
   public addTime(hours: number, minutes: number = 0): void {
-    this.addHours(hours);
-    this.addMinutes(minutes);
-  }
-
-  public get gameTimeAsString(): string {
-    const years = this.gameDate.getFullYear();
-    const months = (this.gameDate.getMonth() + 1).toString().padStart(2, '0'); 
-    const days = this.gameDate.getDate().toString().padStart(2, '0');  
-    const hours = this.gameDate.getHours().toString().padStart(2, '0');
-    const minutes = this.gameDate.getMinutes().toString().padStart(2, '0');
-    const seconds = this.gameDate.getSeconds().toString().padStart(2, '0');
-    return `${hours}:${minutes}:${seconds} ${years}-${months}-${days}`;
+    this._gameTime.update(d => {
+      const updated = new Date(d);
+      updated.setHours(updated.getHours() + hours);
+      updated.setMinutes(updated.getMinutes() + minutes);
+      return updated;
+    });
   }
 }

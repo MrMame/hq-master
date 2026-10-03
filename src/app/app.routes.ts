@@ -1,10 +1,14 @@
 import { Routes } from '@angular/router';
 
-import { CharacterTrackerPage } from './features/character-tracker/components/character-tracker-page/character-tracker-page';
-import { TimeTrackerPage } from './features/time-tracker/components/time-tracker-page/time-tracker-page';
-
 export const routes: Routes = [
-  { path: 'charactertracker', component: CharacterTrackerPage },
-  { path: 'timetracker', component: TimeTrackerPage },
-
+  { path: '', redirectTo: 'charactertracker', pathMatch: 'full' },
+  {
+    path: 'charactertracker',
+    loadComponent: () => import('./features/character-tracker/components/character-tracker-page/character-tracker-page').then(m => m.CharacterTrackerPage)
+  },
+  {
+    path: 'timetracker',
+    loadComponent: () => import('./features/time-tracker/components/time-tracker-page/time-tracker-page').then(m => m.TimeTrackerPage)
+  },
+  { path: '**', redirectTo: 'charactertracker' },
 ];

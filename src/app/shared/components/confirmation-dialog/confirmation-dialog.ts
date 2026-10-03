@@ -1,4 +1,3 @@
-// confirmation-dialog.component.ts
 import { Component, inject } from '@angular/core';
 import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,10 +16,9 @@ import { MatButtonModule } from '@angular/material/button';
   `
 })
 export class ConfirmationDialogComponent {
-  // MatDialogRef nutzen, um den Dialog aus dem Code heraus zu steuern
   private dialogRef = inject(MatDialogRef<ConfirmationDialogComponent>);
 
   onNoClick(): void {
-    this.dialogRef.close(false); // Gibt 'false' zurück
+    this.dialogRef.close(false);
   }
 }

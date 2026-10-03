@@ -1,4 +1,4 @@
-import { Component,inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { GametimeService } from './core/services/gaming/gametime-service';
 
@@ -20,7 +20,7 @@ import { GametimeService } from './core/services/gaming/gametime-service';
             HQ-Master
           </div>
           <div class="font-bold text-lg text-yellow-800">
-            Ingame Time: {{ gametimeService.gameTimeAsString }}
+            Ingame Time: {{ gametimeService.gameTimeAsString() }}
           </div>
           
 
@@ -53,8 +53,5 @@ import { GametimeService } from './core/services/gaming/gametime-service';
   styles: ``
 })
 export class App {
-  protected readonly title = signal('hq-master');
-
-  public gametimeService =inject(GametimeService);
-
+  public gametimeService = inject(GametimeService);
 }

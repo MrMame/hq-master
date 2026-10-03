@@ -5,13 +5,13 @@ import { MovableItem } from '../../models/MovableItem';
 import { MovableCharacterItem } from '../../models/MovableCharacterItem';
 import { CharacterInfo } from '../../models/CharacterInfo';
 
-import { CharactersDbService } from '../../../../core/services/persitents/characters-database-service';
+import { CharactersDbService } from '../../../../core/services/persistent/characters-database-service';
 import { MonsterCharacterCreatorService } from '../../services/character-creators/monster-character-creator-service';
 import { HeroCharacterCreatorService } from '../../services/character-creators/hero-character-creator-service';
 import { CombatCalculatorService } from '../../services/combat-calculator'
 
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog';
+import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog';
 
 import { DamageTypes } from '../../models/DamageTypes';
 import { DamageTakenDialog } from '../damage-taken-dialog/damage-taken-dialog';

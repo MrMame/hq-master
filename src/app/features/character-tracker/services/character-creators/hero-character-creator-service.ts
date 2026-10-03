@@ -22,7 +22,7 @@ export class HeroCharacterCreatorService {
 
 
     const randomId: string = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    const randomName = `Monster ${randomId}`;
+    const randomName = `Hero ${randomId}`;
     const randomType = elemntalTypesArray[Math.floor(Math.random() * elemntalTypesArray.length)];
     const randomHealth = Math.floor(Math.random() * 200) + 50;
     const randomArmor = Math.floor(Math.random() * 50) + 5;

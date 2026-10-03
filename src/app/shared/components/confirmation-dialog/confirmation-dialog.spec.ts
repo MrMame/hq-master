@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 
-import { DamageTakenDialog } from './damage-taken-dialog';
+import { ConfirmationDialogComponent } from './confirmation-dialog';
 
-describe('DamageTakenDialog', () => {
-  let component: DamageTakenDialog;
-  let fixture: ComponentFixture<DamageTakenDialog>;
+describe('ConfirmationDialogComponent', () => {
+  let component: ConfirmationDialogComponent;
+  let fixture: ComponentFixture<ConfirmationDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DamageTakenDialog],
+      imports: [ConfirmationDialogComponent],
       providers: [{ provide: MatDialogRef, useValue: { close: () => {} } }],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DamageTakenDialog);
+    fixture = TestBed.createComponent(ConfirmationDialogComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
