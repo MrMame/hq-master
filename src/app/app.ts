@@ -37,6 +37,11 @@ import { GametimeService } from './core/services/gaming/gametime-service';
                class="text-sm text-gray-600 hover:text-gray-900">
                Time Tracker
             </a>
+            <a routerLink="/dungeontracker"
+               routerLinkActive="text-blue-600 font-bold"
+               class="text-sm text-gray-600 hover:text-gray-900">
+               Dungeon Tracker
+            </a>
 
           </nav>
 

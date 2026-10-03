@@ -10,5 +10,9 @@ export const routes: Routes = [
     path: 'timetracker',
     loadComponent: () => import('./features/time-tracker/components/time-tracker-page/time-tracker-page').then(m => m.TimeTrackerPage)
   },
+  {
+    path: 'dungeontracker',
+    loadComponent: () => import('./features/dungeon-tracker/components/dungeon-tracker-page/dungeon-tracker-page').then(m => m.DungeonTrackerPage)
+  },
   { path: '**', redirectTo: 'charactertracker' },
 ];

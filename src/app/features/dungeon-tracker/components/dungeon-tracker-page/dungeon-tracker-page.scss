@@ -1,0 +1,4 @@
+// Dungeon Token dragging: CDK drag preview stays crisp
+:host ::ng-deep .cdk-drag-preview {
+  opacity: 0.8;
+}

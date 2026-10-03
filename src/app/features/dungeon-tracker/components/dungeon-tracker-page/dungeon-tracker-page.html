@@ -1,0 +1,125 @@
+<div class="flex h-[90vh] bg-gray-900 text-white">
+
+  <!-- Linke Sidebar: Einstellungen -->
+  <aside class="w-64 flex-shrink-0 bg-gray-800 p-4 flex flex-col gap-4 overflow-y-auto">
+    <h2 class="text-yellow-400 font-bold text-lg">Dungeon Tracker</h2>
+
+    <!-- Bild Upload -->
+    <div>
+      <label class="block text-xs text-gray-400 mb-1">Spielbrett-Foto laden</label>
+      <label class="flex items-center justify-center w-full h-10 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded cursor-pointer transition-colors">
+        <span>📁 Bild hochladen</span>
+        <input type="file" accept="image/*" class="hidden" (change)="onImageUpload($event)">
+      </label>
+      @if (boardState().boardImageBase64) {
+        <p class="text-xs text-green-400 mt-1">✓ Bild geladen</p>
+      }
+    </div>
+
+    <hr class="border-gray-600">
+
+    <!-- Raster-Einstellungen -->
+    <div class="flex flex-col gap-3">
+      <h3 class="text-xs text-gray-400 uppercase tracking-wider">Raster-Einstellungen</h3>
+
+      <label class="flex flex-col gap-1 text-sm">
+        Zellgröße: {{ boardState().gridCellSizePx }}px
+        <input
+          type="range" min="20" max="150" step="1"
+          [value]="boardState().gridCellSizePx"
+          (input)="onGridSettingChange('gridCellSizePx', +$any($event.target).value)"
+          class="accent-yellow-400"
+        >
+      </label>
+
+      <label class="flex flex-col gap-1 text-sm">
+        Versatz X: {{ boardState().gridOffsetX }}px
+        <input
+          type="range" min="-100" max="100" step="1"
+          [value]="boardState().gridOffsetX"
+          (input)="onGridSettingChange('gridOffsetX', +$any($event.target).value)"
+          class="accent-yellow-400"
+        >
+      </label>
+
+      <label class="flex flex-col gap-1 text-sm">
+        Versatz Y: {{ boardState().gridOffsetY }}px
+        <input
+          type="range" min="-100" max="100" step="1"
+          [value]="boardState().gridOffsetY"
+          (input)="onGridSettingChange('gridOffsetY', +$any($event.target).value)"
+          class="accent-yellow-400"
+        >
+      </label>
+
+      <label class="flex flex-col gap-1 text-sm">
+        Deckkraft: {{ (boardState().gridOpacity * 100).toFixed(0) }}%
+        <input
+          type="range" min="0" max="1" step="0.05"
+          [value]="boardState().gridOpacity"
+          (input)="onGridSettingChange('gridOpacity', +$any($event.target).value)"
+          class="accent-yellow-400"
+        >
+      </label>
+    </div>
+
+    <hr class="border-gray-600">
+
+    <!-- Charakter-Legende -->
+    <div>
+      <h3 class="text-xs text-gray-400 uppercase tracking-wider mb-2">Charaktere ({{ positions().length }})</h3>
+      @for (pos of positions(); track pos.characterId) {
+        @if (getCharacter(pos.characterId); as char) {
+          <div class="flex items-center gap-2 text-xs py-1">
+            <img [src]="char.image" [alt]="char.name" class="w-6 h-6 rounded-full object-cover">
+            <span class="truncate">{{ char.name }}</span>
+            <span class="text-gray-500 ml-auto">[{{ pos.col }},{{ pos.row }}]</span>
+          </div>
+        }
+      }
+      @if (positions().length === 0) {
+        <p class="text-xs text-gray-500">Keine Charaktere im Character Tracker angelegt.</p>
+      }
+    </div>
+  </aside>
+
+  <!-- Hauptbereich: Spielbrett -->
+  <div class="relative flex-1 overflow-hidden bg-gray-950">
+
+    @if (!boardState().boardImageBase64) {
+      <!-- Placeholder wenn kein Bild geladen -->
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="text-center text-gray-600">
+          <div class="text-6xl mb-4">🗺️</div>
+          <p class="text-xl font-semibold">Kein Spielbrett geladen</p>
+          <p class="text-sm mt-2">Lade ein Foto des Spielbretts über die Seitenleiste</p>
+        </div>
+      </div>
+    } @else {
+      <!-- Spielbrett-Foto -->
+      <img
+        [src]="boardState().boardImageBase64"
+        alt="Spielbrett"
+        class="absolute inset-0 w-full h-full object-contain select-none"
+      >
+    }
+
+    <!-- CSS-Raster Overlay (immer sichtbar wenn Deckkraft > 0) -->
+    @if (boardState().gridOpacity > 0) {
+      <div class="absolute inset-0 pointer-events-none" [ngStyle]="gridStyle()"></div>
+    }
+
+    <!-- Charakter-Token -->
+    @for (pos of positions(); track pos.characterId) {
+      <app-dungeon-token
+        [position]="pos"
+        [character]="getCharacter(pos.characterId)"
+        [cellSize]="boardState().gridCellSizePx"
+        [offsetX]="boardState().gridOffsetX"
+        [offsetY]="boardState().gridOffsetY"
+        (tokenMoved)="onTokenMoved($event)"
+        (tokenDoubleClicked)="onTokenDoubleClick($event)"
+      />
+    }
+  </div>
+</div>
