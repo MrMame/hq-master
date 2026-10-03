@@ -42,3 +42,46 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+
+
+
+
+# --- Angular & Build Outputs ---
+# Temporärer Cache von Angular (wichtig, da dieser sehr groß wird)
+/.angular/
+# Die fertigen Build-Dateien (Produktions-Output)
+/dist/
+
+# --- Dependency Managers ---
+# Die installierten Pakete (wird über npm i installiert, darf nie ins Git)
+/node_modules/
+
+# --- IDEs and Editors ---
+# Lokale Einstellungen von Editoren (VS Code, WebStorm etc.)
+/.vscode/
+/.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# --- Testing & Code Quality ---
+# Vitest Coverage-Berichte (falls du Code Coverage misst)
+/coverage/
+# Logs bei Fehlern
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Environment & Local Settings ---
+# Lokale Umgebungsvariablen (Geheimnisse, API-Schlüssel)
+.env
+.env.local
+.env.*.local
+
+# --- OS Files ---
+# Systemdateien von macOS und Windows
+.DS_Store
+Thumbs.db
