@@ -1,15 +1,12 @@
 # Funktionale Anforderungen (Product Requirements)
 
 ## 0. HQ-Master WebApp Übersicht
-- **Ziel**: Die SPA soll zur Unterstrützung für den Dungeon Master eines Dungeon-And-Dragons ähnlichem selbst gebauten Spiel dienen, um ihn während einer Spielesession mit einem Tablet zu unterstützen damit er auf Spielrelevante Dinge zugreifen kann. Der DM soll durch sie z.b. bei IngameZeit, Charakter Zuständen , InGame-Ereignissen, Charactere und Probenwürfe  unterstützt werden. 
-    -Er muss den Überblcik über die Vergangene Zeit ingame behalten und braucht informaionen darüber, welche effekte in der aktuellen Spielzeit schaden verursachen. Z.b brauch er auch die information, ob die Brennzeit einer Heldenfackel vorbei ist und diese im Dunkel stehen. 
-    - Ausserdem muss er den Überblick über die Position der Gegner auf dem realen Spielbrett virtuell behalten, damit er nachvollziehen kann, an welcher Stelle sich die Monster im aktuellen Zug im Fog-Of-War der Spieler befinden.    
+- **Ziel**: Die App soll zur Unterstrützung für den Dungeon Master eines Dungeon-And-Dragons ähnlichem selbst gebauten Spiels dienen. Das programm soll ihn während einer Spielesession mit einem Tablet zu unterstützen stehen. Die Spieler selbst spielen auf einem real existerenden Spielbrett. Der Dungeon Master übernimmt das einhalten der Spielregeln und das Managment des gesamten Spielablaufs. Der DM soll durch die App übersicht über die Spielrelevanten Dinge behalten, z.b. IngameZeit verlauf, Charakter/Monster Zustände, InGame-Ereignissen, Probenwürfen, etc.
+
+    - Er muss den Überblick über die Vergangene Zeit ingame behalten und braucht informaionen darüber, welche effekte in der aktuellen Spielzeit schaden verursachen. Z.b brauch er auch die information, ob die Brennzeit einer Heldenfackel vorbei ist und diese im Dunkel stehen. 
+    - Er muss Überblick über die Position und zustände der Spieler und der Gegner haben. Auch wenn die Spieler nur einen kleinen Teil der aktuellen Session auf dem realen Spielbrett sehen, muss der Dungeon Master mithilfe dieser App den gesamten Spielsession Zustand nachvollziehen können.
     - Alle Features greifen auf die gleiche SpieleSession Daten zu. D.h. wenn im TimeTracker eine neue Runde registriert wird, wirkt sich das auf alle anderen Features aus, wie z.b. das automatische berechnen von Gift schaden für diese Runde.
-    - Ale Features beziehen sich auf den zustand der aktuellen Spielesession. Die Spielesession soll auch erhalten bleiben, wenn der Browser das Fenster schliesst und danach öffnet.
-    - Das Managment der Spielesession soll über das GameSession Feature gesteuert werden können.
-- **Funktionen:**
-    - Im Charakter Tracker werden neuen Charactere/Monster erstellt und erlauben dem DungeonMaster (DM) das tracken der einzelnen Statuswerte. Die Verschiedenen Charaktere können über kleine verschiebbare Boxen auf dem Bildschirm positioniert werden, um den DM beim auseinanderhalten der Verschiedenen Charakteren anhand deren positionierung auf die positionen des Spielbretts zu übertragen.
-    - Im DungeonTracker kann der DM die genaue Spielposition der einzelnen erzeugten Charactere auf einem Bild des aktuelle Spielplans bestimmen. Alle im Charakter Tracker erstellen Charactere sind ebenfalls auf dem Dungeon Tracker als kleine Symbole zu finden. Die CharacterSymbole können auf einem Raster, das über dem Spielplan Bild liegt verschoben und positioniert werden. Ein Doppelklcik auf eines der kleinen Charactersymbole springt in die Detailansicht des Charakters. 
+    - Alle Features beziehen sich auf den zustand der aktuellen Spielesession. Die Spielesession soll auch erhalten bleiben, wenn der Browser das Fenster schliesst und danach öffnet.
 
 
 
