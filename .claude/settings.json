@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "model": "claude-sonnet-4-6",
   "permissions": {
     "allow": [
@@ -20,17 +21,13 @@
     "deny": [
       "Read(./.env*)",
       "Read(./secrets/**)",
+      "Read(./docs/**)",
+      "Read(./node_modules/**)",
+      "Read(./dist/**)",
+      "Read(./build/**)",
       "Bash(npm install *)",
       "Bash(git push *)",
       "Bash(rm -rf *)"
-    ]
-  },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write(./src/**/*.ts)",
-        "command": "ng lint --fix"
-      }
     ]
   }
 }

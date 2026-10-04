@@ -1,5 +1,10 @@
 # hq-master (Angular 21 + Tailwind v4 + Vitest)
 
+## App Definitions
+- **Before making any major code changes or refactoring, you MUST read and follow the requirements specified in `REQUIREMENTS.md` at the project root.**
+- Always ensure that your implementation aligns with the current goals and scope defined in that file.
+
+
 ## Build, Test & Lint Commands
 - Start dev server: `npm start` (or `ng serve`)
 - Build production: `npm run build`
