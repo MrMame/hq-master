@@ -1,5 +1,5 @@
-import { Component, inject , signal} from '@angular/core';
-import { DragDropModule, CdkDragEnd } from '@angular/cdk/drag-drop';
+import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { DragDropModule, CdkDragEnd, Point } from '@angular/cdk/drag-drop';
 import { CharacterCard} from '../character-card/character-card';
 import { MovableItem } from '../../models/MovableItem';
 import { MovableCharacterItem } from '../../models/MovableCharacterItem';
@@ -10,8 +10,7 @@ import { MonsterCharacterCreatorService } from '../../services/character-creator
 import { HeroCharacterCreatorService } from '../../services/character-creators/hero-character-creator-service';
 import { CombatCalculatorService } from '../../services/combat-calculator'
 
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { DamageTypes } from '../../models/DamageTypes';
 import { DamageTakenDialog } from '../damage-taken-dialog/damage-taken-dialog';
@@ -26,16 +25,16 @@ import { AddCharacterDialog } from '../add-character-dialog/add-character-dialog
 export class CharacterTrackerPage {
 
   // Enum DamageTypes importieren und in der HTML-Komponente verfügbar machen
-  DamageTypes = DamageTypes;
-  charactersDbService = inject(CharactersDbService);
-  monsterCharacterCreatorService = inject(MonsterCharacterCreatorService);
-  heroCharacterCreatorService = inject(HeroCharacterCreatorService);
-  combatCalculatorService = inject(CombatCalculatorService);
-  dialog = inject(MatDialog); // Service injizieren
+  DamageTypes: typeof DamageTypes = DamageTypes;
+  charactersDbService: CharactersDbService = inject(CharactersDbService);
+  monsterCharacterCreatorService: MonsterCharacterCreatorService = inject(MonsterCharacterCreatorService);
+  heroCharacterCreatorService: HeroCharacterCreatorService = inject(HeroCharacterCreatorService);
+  combatCalculatorService: CombatCalculatorService = inject(CombatCalculatorService);
+  dialog: MatDialog = inject(MatDialog);
 
-  private newCharacterCardPosition = { x: 50, y: 50 }; // Startposition für neue Monsterkarten
+  private newCharacterCardPosition: { x: number; y: number } = { x: 50, y: 50 };
 
-  movableCharacterItems = signal<MovableCharacterItem[]>([]);
+  movableCharacterItems: WritableSignal<MovableCharacterItem[]> = signal<MovableCharacterItem[]>([]);
 
 
   constructor() {
@@ -43,19 +42,19 @@ export class CharacterTrackerPage {
   }
 
 
-  loadMonstersFromDb() {
+  loadMonstersFromDb(): void {
     const charactersFromDb: CharacterInfo[] = this.charactersDbService.readCharacters() || this.monsterCharacterCreatorService.getInitMonsterCharacters();
-    const items = charactersFromDb.map((character, index) => {
+    const items: MovableCharacterItem[] = charactersFromDb.map((character, index) => {
       return new MovableCharacterItem(index + 1, 50 + index * 100, 50 + index * 100, character);
     });
     // 3. Signal-Wert setzen
     this.movableCharacterItems.set(items);
   }
-  addMonster() {
-    const newId = this.movableCharacterItems().length + 1;
-    const newMonster = this.monsterCharacterCreatorService.CreateNewRandomMonster();
+  addMonster():void {
+    const newId: number = this.movableCharacterItems().length + 1;
+    const newMonster: CharacterInfo = this.monsterCharacterCreatorService.CreateNewRandomMonster();
     this.charactersDbService.writeCharacter(newMonster);
-    const newItem = new MovableCharacterItem(
+    const newItem: MovableCharacterItem = new MovableCharacterItem(
       newId,
       this.newCharacterCardPosition.x,
       this.newCharacterCardPosition.y,
@@ -64,11 +63,11 @@ export class CharacterTrackerPage {
     // 4. Signal updaten (erstellt neues Array-Inhalt)
     this.movableCharacterItems.update(items => [...items, newItem]);
   }
-  addHero() {
-    const newId = this.movableCharacterItems().length + 1;
-    const newCharacter = this.heroCharacterCreatorService.CreateNewRandomHero();
+  addHero():void {
+    const newId: number = this.movableCharacterItems().length + 1;
+    const newCharacter: CharacterInfo = this.heroCharacterCreatorService.CreateNewRandomHero();
     this.charactersDbService.writeCharacter(newCharacter);
-    const newItem = new MovableCharacterItem(
+    const newItem: MovableCharacterItem = new MovableCharacterItem(
       newId,
       this.newCharacterCardPosition.x,
       this.newCharacterCardPosition.y,
@@ -76,12 +75,12 @@ export class CharacterTrackerPage {
     );
     this.movableCharacterItems.update(items => [...items, newItem]);
   }
-  addCharacter(){
-    const dialogRef = this.dialog.open(AddCharacterDialog, { width: '80vw', maxWidth: '80vw' ,height: '80vh', maxHeight: '80vh'});
+  addCharacter():void{
+    const dialogRef: MatDialogRef<AddCharacterDialog> = this.dialog.open(AddCharacterDialog, { width: '80vw', maxWidth: '80vw' ,height: '80vh', maxHeight: '80vh'});
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined && result !== false) {
-        const newId = this.movableCharacterItems().length + 1;
-        const newItem = new MovableCharacterItem(
+        const newId: number = this.movableCharacterItems().length + 1;
+        const newItem: MovableCharacterItem = new MovableCharacterItem(
           newId,
           this.newCharacterCardPosition.x,
           this.newCharacterCardPosition.y,
@@ -92,7 +91,7 @@ export class CharacterTrackerPage {
     });
   }
 
-  showMovableCharacterItemOnTop(item: MovableCharacterItem) {
+  showMovableCharacterItemOnTop(item: MovableCharacterItem) :void{
     // Über das Signal mappen
     this.movableCharacterItems.update(items => {
       items.forEach(i => i.showTop = false);
@@ -102,9 +101,9 @@ export class CharacterTrackerPage {
   }
 
   // Diese Funktion wird aufgerufen, wenn der Drag beendet wird
-  onDragEnded(event: CdkDragEnd, item: MovableItem) {
+  onDragEnded(event: CdkDragEnd, item: MovableItem): void {
     // Holen der neuen Distanz relativ zur Startposition
-    const offset = event.source.getFreeDragPosition();
+    const offset: Point = event.source.getFreeDragPosition();
     // Aktualisieren der finalen Position im Datenmodell
     item.x += offset.x;
     item.y += offset.y;
@@ -113,7 +112,7 @@ export class CharacterTrackerPage {
   }
 
 
-  removeMovableCharacteritem(item: MovableCharacterItem) {
+  removeMovableCharacteritem(item: MovableCharacterItem): void {
     // Remove Characterinfo From Database
     this.charactersDbService.removeCharacter(item.characterInfo);
     // Remove Movable Card
@@ -124,7 +123,7 @@ export class CharacterTrackerPage {
 
 
 openDamageTakenDialog(damageType: DamageTypes, movableCharacterItem: MovableCharacterItem): void {
-  const dialogRef = this.dialog.open(DamageTakenDialog, { 
+  const dialogRef: MatDialogRef<DamageTakenDialog> = this.dialog.open(DamageTakenDialog, {
     width: '80vw', maxWidth: '80vw', height: '80vh', maxHeight: '80vh'
   });
 
@@ -159,7 +158,7 @@ openDamageTakenDialog(damageType: DamageTypes, movableCharacterItem: MovableChar
 
 
 // Diese Methode in die Klasse CharacterTrackerPage einfügen:
-updateCharacterInList(itemId: number, updatedInfo: CharacterInfo|undefined) {
+updateCharacterInList(itemId: number, updatedInfo: CharacterInfo|undefined):void {
    // Wenn das Event fehlerhaft oder leer ist, brechen wir ab
   if (!updatedInfo) return; 
   this.movableCharacterItems.update(items => {

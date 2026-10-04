@@ -102,18 +102,18 @@ import { MonsterCharacterCreatorService } from '../../services/character-creator
 })
 export class AddCharacterDialog {
 
-  monstersService = inject(MonsterCharacterCreatorService);
+  monstersService: MonsterCharacterCreatorService = inject(MonsterCharacterCreatorService);
 
-  private dialogRef = inject(MatDialogRef<AddCharacterDialog>);
+  private dialogRef: MatDialogRef<AddCharacterDialog> = inject(MatDialogRef<AddCharacterDialog>);
 
 // Generiert das Array von 1 bis 100
-  protected readonly damageOptions = Array.from({ length: 100 }, (_, i) => i + 1);
+  protected readonly damageOptions: number[] = Array.from({ length: 100 }, (_, i) => i + 1);
 
   onNoClick(): void {
     this.dialogRef.close(false);
   }
   onOkClick(): void {
-    let newMonster : CharacterInfo = this.monstersService.CreateNewRandomMonster();
+    const newMonster : CharacterInfo = this.monstersService.CreateNewRandomMonster();
     this.dialogRef.close(newMonster);
   }
 

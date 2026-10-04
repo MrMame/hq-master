@@ -1,4 +1,4 @@
-import { Component, model, inject, OnDestroy } from '@angular/core';
+import { Component, model, inject, OnDestroy, ModelSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { debounceTime, skip, Subscription } from 'rxjs';
@@ -57,9 +57,9 @@ import { CharactersDbService } from '../../../../core/services/persistent/charac
   `
 })
 export class CharacterCard implements OnDestroy {
-  private charactersDbService = inject(CharactersDbService);
+  private charactersDbService: CharactersDbService = inject(CharactersDbService);
 
-  public characterInfo = model<CharacterInfo>();
+  public characterInfo: ModelSignal<CharacterInfo | undefined> = model<CharacterInfo>();
 
   private readonly subscription: Subscription;
 
@@ -78,7 +78,7 @@ export class CharacterCard implements OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  updateField(key: keyof CharacterInfo, value: number) {
+  updateField(key: keyof CharacterInfo, value: number):void {
     this.characterInfo.update(current => {
       if (!current) return current;
       return { ...current, [key]: value };

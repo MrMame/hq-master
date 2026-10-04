@@ -18,7 +18,7 @@ export class MovableCharacterItem implements MovableItem {
     this.showTop = false;
   }
 
-  toggleMinimise() {
+  toggleMinimise():void {
     this.isMinimised = !this.isMinimised;
   }
 }

@@ -10,7 +10,7 @@ describe('AddCharacterDialog', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AddCharacterDialog],
-      providers: [{ provide: MatDialogRef, useValue: { close: () => {} } }],
+      providers: [{ provide: MatDialogRef, useValue: { close: ():void => {return;} } }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AddCharacterDialog);

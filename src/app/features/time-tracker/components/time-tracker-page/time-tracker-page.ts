@@ -11,11 +11,11 @@ export class TimeTrackerPage {
 
   gameTimeService:GametimeService = inject(GametimeService);
 
-  addTime1Hour() {
+  addTime1Hour():void {
     this.gameTimeService.addTime(1);
   }
 
-  addTime8Hour() {
+  addTime8Hour():void {
     this.gameTimeService.addTime(8);
   }
 }

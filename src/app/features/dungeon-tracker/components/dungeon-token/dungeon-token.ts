@@ -1,5 +1,5 @@
-import { Component, computed, input, output } from '@angular/core';
-import { CdkDrag, CdkDragEnd } from '@angular/cdk/drag-drop';
+import { Component, computed, input, output, InputSignal, OutputEmitterRef, Signal } from '@angular/core';
+import { CdkDrag, CdkDragEnd, Point } from '@angular/cdk/drag-drop';
 import { CharacterInfo } from '../../../character-tracker/models/CharacterInfo';
 import { DungeonPosition } from '../../models/DungeonPosition';
 
@@ -34,37 +34,37 @@ import { DungeonPosition } from '../../models/DungeonPosition';
   `
 })
 export class DungeonToken {
-  position = input.required<DungeonPosition>();
-  character = input<CharacterInfo | undefined>(undefined);
-  cellSize = input.required<number>();
-  offsetX = input<number>(0);
-  offsetY = input<number>(0);
+  position: InputSignal<DungeonPosition> = input.required<DungeonPosition>();
+  character: InputSignal<CharacterInfo | undefined> = input<CharacterInfo | undefined>(undefined);
+  cellSize: InputSignal<number> = input.required<number>();
+  offsetX: InputSignal<number> = input<number>(0);
+  offsetY: InputSignal<number> = input<number>(0);
 
-  tokenMoved = output<{ characterId: string; col: number; row: number }>();
-  tokenDoubleClicked = output<string>();
+  tokenMoved: OutputEmitterRef<{ characterId: string; col: number; row: number }> = output<{ characterId: string; col: number; row: number }>();
+  tokenDoubleClicked: OutputEmitterRef<string> = output<string>();
 
-  tokenLeft = computed(() => this.offsetX() + this.position().col * this.cellSize() + 2);
-  tokenTop = computed(() => this.offsetY() + this.position().row * this.cellSize() + 2);
+  tokenLeft: Signal<number> = computed(() => this.offsetX() + this.position().col * this.cellSize() + 2);
+  tokenTop: Signal<number> = computed(() => this.offsetY() + this.position().row * this.cellSize() + 2);
 
-  initials = computed(() => {
-    const name = this.character()?.name ?? '?';
+  initials: Signal<string> = computed(() => {
+    const name: string = this.character()?.name ?? '?';
     return name.slice(0, 2).toUpperCase();
   });
 
-  tokenBorderClass = computed(() => {
-    const name = this.character()?.name ?? '';
+  tokenBorderClass: Signal<string> = computed(() => {
+    const name: string = this.character()?.name ?? '';
     // Heroes haben goldene Umrandung, Monster rote
-    const isHero = name.toLowerCase().startsWith('hero');
+    const isHero: boolean = name.toLowerCase().startsWith('hero');
     return isHero ? 'border-yellow-400 shadow-yellow-400/50 shadow-md' : 'border-red-500 shadow-red-500/50 shadow-md';
   });
 
   onDragEnd(event: CdkDragEnd): void {
-    const dragOffset = event.source.getFreeDragPosition();
-    const newPixelX = this.tokenLeft() + dragOffset.x;
-    const newPixelY = this.tokenTop() + dragOffset.y;
+    const dragOffset: Point = event.source.getFreeDragPosition();
+    const newPixelX: number = this.tokenLeft() + dragOffset.x;
+    const newPixelY: number = this.tokenTop() + dragOffset.y;
 
-    const col = Math.max(0, Math.round((newPixelX - this.offsetX()) / this.cellSize()));
-    const row = Math.max(0, Math.round((newPixelY - this.offsetY()) / this.cellSize()));
+    const col: number = Math.max(0, Math.round((newPixelX - this.offsetX()) / this.cellSize()));
+    const row: number = Math.max(0, Math.round((newPixelY - this.offsetY()) / this.cellSize()));
 
     event.source.reset();
 

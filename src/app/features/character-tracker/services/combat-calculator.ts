@@ -32,7 +32,7 @@ export class CombatCalculatorService {
     if (item.characterInfo.armor >= damage) {
       item.characterInfo.armor -= damage;
     } else {
-      const remainingDamage = damage - item.characterInfo.armor;
+      const remainingDamage: number = damage - item.characterInfo.armor;
       item.characterInfo.armor = 0;
       item.characterInfo.health = Math.max(0, item.characterInfo.health - remainingDamage);
     }
@@ -40,8 +40,8 @@ export class CombatCalculatorService {
 
   private calculateCriticalDamage(item: MovableCharacterItem, damage: number): void {
     // Kritischer Schaden geht z.B. direkt auf die Lebenspunkte und ignoriert Rüstung komplett
-    const critMultiplier = this.CRITICAL_DAMAGE_MULTIPLIER;
-    const finalDamage = Math.round(damage * critMultiplier);
+    const critMultiplier: number = this.CRITICAL_DAMAGE_MULTIPLIER;
+    const finalDamage: number = Math.round(damage * critMultiplier);
     item.characterInfo.health = Math.max(0, item.characterInfo.health - finalDamage);
   }
 }

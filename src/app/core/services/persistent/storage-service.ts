@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class StorageService {
 
   readTableFromLocalStorage<T>(tableName: string): T[] | null {
-    const data = localStorage.getItem(tableName);
+    const data: string | null = localStorage.getItem(tableName);
     return data ? (JSON.parse(data) as T[]) : null;
   }
 
@@ -19,7 +19,7 @@ export class StorageService {
   }
 
   readFromLocalStorage<T>(key: string): T | null {
-    const value = localStorage.getItem(key);
+    const value: string | null = localStorage.getItem(key);
     return value ? (JSON.parse(value) as T) : null;
   }
 }

@@ -1,28 +1,28 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
 import { StorageService } from '../../../core/services/persistent/storage-service';
 import { CharacterInfo } from '../../character-tracker/models/CharacterInfo';
 import { DEFAULT_DUNGEON_BOARD_STATE, DungeonBoardState } from '../models/DungeonBoardState';
 import { DungeonPosition } from '../models/DungeonPosition';
 
-const KEY_BOARD = 'dungeon_board';
-const KEY_POSITIONS = 'dungeon_positions';
+const KEY_BOARD: string = 'dungeon_board';
+const KEY_POSITIONS: string = 'dungeon_positions';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DungeonBoardService {
-  private readonly storageService = inject(StorageService);
+  private readonly storageService: StorageService = inject(StorageService);
 
-  private readonly _boardState = signal<DungeonBoardState>(
+  private readonly _boardState: WritableSignal<DungeonBoardState> = signal<DungeonBoardState>(
     this.storageService.readFromLocalStorage<DungeonBoardState>(KEY_BOARD) ?? { ...DEFAULT_DUNGEON_BOARD_STATE }
   );
 
-  private readonly _positions = signal<DungeonPosition[]>(
+  private readonly _positions: WritableSignal<DungeonPosition[]> = signal<DungeonPosition[]>(
     this.storageService.readFromLocalStorage<DungeonPosition[]>(KEY_POSITIONS) ?? []
   );
 
-  readonly boardState = this._boardState.asReadonly();
-  readonly positions = this._positions.asReadonly();
+  readonly boardState: Signal<DungeonBoardState> = this._boardState.asReadonly();
+  readonly positions: Signal<DungeonPosition[]> = this._positions.asReadonly();
 
   setBoardImage(base64: string): void {
     this._boardState.update(s => ({ ...s, boardImageBase64: base64 }));
@@ -36,7 +36,7 @@ export class DungeonBoardService {
 
   updatePosition(characterId: string, col: number, row: number): void {
     this._positions.update(positions => {
-      const existing = positions.findIndex(p => p.characterId === characterId);
+      const existing: number = positions.findIndex(p => p.characterId === characterId);
       if (existing !== -1) {
         return positions.map(p => p.characterId === characterId ? { ...p, col, row } : p);
       }
@@ -47,11 +47,11 @@ export class DungeonBoardService {
 
   initPositionsForCharacters(characters: CharacterInfo[]): void {
     this._positions.update(existing => {
-      const existingIds = new Set(existing.map(p => p.characterId));
-      const characterIds = new Set(characters.map(c => c.id));
+      const existingIds: Set<string> = new Set<string>(existing.map(p => p.characterId));
+      const characterIds: Set<string> = new Set<string>(characters.map(c => c.id));
 
       // Positionen gelöschter Charaktere entfernen
-      const filtered = existing.filter(p => characterIds.has(p.characterId));
+      const filtered: DungeonPosition[] = existing.filter(p => characterIds.has(p.characterId));
 
       // Positionen für neue Charaktere hinzufügen (gestaffelt platzieren)
       const newPositions: DungeonPosition[] = characters

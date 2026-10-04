@@ -16,7 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
   `
 })
 export class ConfirmationDialogComponent {
-  private dialogRef = inject(MatDialogRef<ConfirmationDialogComponent>);
+  private dialogRef: MatDialogRef<ConfirmationDialogComponent> = inject(MatDialogRef<ConfirmationDialogComponent>);
 
   onNoClick(): void {
     this.dialogRef.close(false);

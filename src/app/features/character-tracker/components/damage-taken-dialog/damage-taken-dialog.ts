@@ -50,10 +50,10 @@ import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
   `]
 })
 export class DamageTakenDialog {
-  private dialogRef = inject(MatDialogRef<DamageTakenDialog>);
+  private dialogRef: MatDialogRef<DamageTakenDialog> = inject(MatDialogRef<DamageTakenDialog>);
 
   // Generiert das Array von 1 bis 100
-  protected readonly damageOptions = Array.from({ length: 100 }, (_, i) => i + 1);
+  protected readonly damageOptions: number[] = Array.from({ length: 100 }, (_, i) => i + 1);
 
   onNoClick(): void {
     this.dialogRef.close(false);

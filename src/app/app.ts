@@ -58,5 +58,5 @@ import { GametimeService } from './core/services/gaming/gametime-service';
   styles: ``
 })
 export class App {
-  public gametimeService = inject(GametimeService);
+  public gametimeService: GametimeService = inject(GametimeService);
 }

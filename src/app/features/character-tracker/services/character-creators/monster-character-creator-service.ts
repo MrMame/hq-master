@@ -22,20 +22,20 @@ export class MonsterCharacterCreatorService {
   CreateNewRandomMonster():CharacterInfo {
 
     // Holt alle String-Werte ('Feuer', 'Wasser', etc.) als Array
-    const elemntalTypesArray = Object.values(ElementalTypes);
-    const abilitiesArray = Object.values(CharacterAbilities);
+    const elemntalTypesArray: ElementalTypes[] = Object.values(ElementalTypes);
+    const abilitiesArray: CharacterAbilities[] = Object.values(CharacterAbilities);
 
     const randomId: string = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    const randomName = `Monster ${randomId}`;
-    const randomType = elemntalTypesArray[Math.floor(Math.random() * elemntalTypesArray.length)];
-    const randomHealth = Math.floor(Math.random() * 200) + 50;
-    const randomArmor = Math.floor(Math.random() * 50) + 5;
-    const randomAttack = Math.floor(Math.random() * 50) + 10;
-    const randomDefense = Math.floor(Math.random() * 50) + 5;
-    const randomSpeed = Math.floor(Math.random() * 30) + 5;
-    const randomAbilities = abilitiesArray.slice(0, Math.floor(Math.random() * abilitiesArray.length) + 1);
-    const randomImage = this.images[Math.floor(Math.random() * this.images.length)];
-    const randomDescription = `Dies ist eine zufällige Beschreibung für ${randomName}.`;
+    const randomName: string = `Monster ${randomId}`;
+    const randomType: ElementalTypes = elemntalTypesArray[Math.floor(Math.random() * elemntalTypesArray.length)];
+    const randomHealth: number = Math.floor(Math.random() * 200) + 50;
+    const randomArmor: number = Math.floor(Math.random() * 50) + 5;
+    const randomAttack: number = Math.floor(Math.random() * 50) + 10;
+    const randomDefense: number = Math.floor(Math.random() * 50) + 5;
+    const randomSpeed: number = Math.floor(Math.random() * 30) + 5;
+    const randomAbilities: CharacterAbilities[] = abilitiesArray.slice(0, Math.floor(Math.random() * abilitiesArray.length) + 1);
+    const randomImage: string = this.images[Math.floor(Math.random() * this.images.length)];
+    const randomDescription: string = `Dies ist eine zufällige Beschreibung für ${randomName}.`;
 
     return {
       id: randomId,
