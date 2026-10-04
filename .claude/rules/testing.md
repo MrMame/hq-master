@@ -1,0 +1,3 @@
+- **Unit Tests**: Written in Vitest (`vitest` ^4.0.0) using `jsdom`. Ensure all new logic has test coverage.
+- **Code Style**: Code formatting is enforced via Prettier (`prettier`). Format files before committing.
+- **TypeScript**: Strict mode enabled. No `any` type allowed. Use precise interfaces or types.
