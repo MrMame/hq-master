@@ -5,10 +5,12 @@
     "defaultMode": "plan",
     "allow": [
       "Read(./src/**)",
+      "Read(./public/**)",
       "Read(./package.json)",
       "Read(./angular.json)",
       "Read(./tsconfig*.json)",
       "Write(./src/**)",
+      "Write(./public/**)",
       "Bash(ng serve)",
       "Bash(ng build)",
       "Bash(ng test --*)",
