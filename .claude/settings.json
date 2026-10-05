@@ -9,6 +9,8 @@
       "Read(./package.json)",
       "Read(./angular.json)",
       "Read(./tsconfig*.json)",
+      "Read(./docs/api/**)",
+      "Write(./docs/api/**)",
       "Write(./src/**)",
       "Write(./public/**)",
       "Bash(ng serve)",
@@ -24,7 +26,6 @@
     "deny": [
       "Read(./.env*)",
       "Read(./secrets/**)",
-      "Read(./docs/**)",
       "Read(./node_modules/**)",
       "Read(./dist/**)",
       "Read(./build/**)",

@@ -44,7 +44,7 @@
               <app-playing-card [card]="discardPile()[0]" [faceUp]="true" [backImagePath]="deckBackImagePath()"></app-playing-card>
             </ng-template>
             <ng-template cdkDragPlaceholder>
-              <app-card-stack [cards]="discardPile().slice(1)" [faceUp]="true" [backImagePath]="deckBackImagePath()" emptyLabel="Ablagestapel leer"></app-card-stack>
+              <app-card-stack [cards]="discardPile().slice(1)" [faceUp]="false" [backImagePath]="deckBackImagePath()" emptyLabel="Ablagestapel leer"></app-card-stack>
             </ng-template>
           </div>
         } @else {

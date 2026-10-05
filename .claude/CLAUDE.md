@@ -15,6 +15,7 @@
 - Generate a new service: `ng g s services/<name>`
 - Generate a new component: `ng g c components/<name>`
 - Generate a new module: `ng g m modules/<name>`
+- Create Comments to clearify public functions for a better understanding for human readers
 
 ## Architecture
 - Core architecture rules are modularized. See `.claude/rules/architecture.md`.
@@ -22,3 +23,5 @@
 ## Testing & Quality Guidelines
 - Core testing rules are modularized. See `.claude/rules/testing.md`.
 
+## Documentationen
+- Selbst erzeugte dokumentationenunter docs/api/ speichern. Verwende ab da die gleiche verzeichnisstruktur, wie die datei die du beschreibst im src ordner zu finden ist. Der name der doku-datei soll den namen der zu beschreibenden datei beinhaltet
