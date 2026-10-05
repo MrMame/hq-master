@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deck name="Ereignisse" backImage="ereignisse-back.svg">
+  <card id="e1" name="Heftiger Sturm" image="ereignisse-sturm.svg">
+    <description>Ein Sturm bricht los. Alle Randfeldkacheln sind für diese Runde unpassierbar. Lichtquellen erlöschen im Freien.</description>
+  </card>
+  <card id="e2" name="Erdbeben" image="ereignisse-erdbeben.svg">
+    <description>Die Erde bebt! Alle stehenden Charaktere müssen einen Stabilitätswurf ablegen oder fallen zu Boden. Türen können klemmen.</description>
+  </card>
+  <card id="e3" name="Hinterhalt" image="ereignisse-hinterhalt.svg">
+    <description>Eine Gruppe von Räubern greift aus dem Hinterhalt an! 1W6 Räuber erscheinen auf zufälligen Kacheln am Spielfeldrand.</description>
+  </card>
+  <card id="e4" name="Dichter Nebel" image="ereignisse-nebel.svg">
+    <description>Dichter Nebel senkt sich herab. Die Sichtweite aller Charaktere wird auf 2 Kacheln reduziert. Gilt für 3 Runden.</description>
+  </card>
+  <card id="e5" name="Heilquelle" image="ereignisse-heilquelle.svg">
+    <description>Eine verborgene Heilquelle sprudelt hervor! Alle Helden auf anliegenden Kacheln erhalten 2W4 Trefferpunkte zurück.</description>
+  </card>
+  <card id="e6" name="Magischer Impuls" image="ereignisse-impuls.svg">
+    <description>Eine magische Energie entlädt sich. Alle Zauberer erhalten 1 zusätzlichen Zauberslot für diese Runde.</description>
+  </card>
+</deck>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deck name="Schatzkiste" backImage="schaetze-back.svg">
+  <card id="s1" name="Goldtruhe" image="schaetze-goldtruhe.svg">
+    <description>Eine prall gefüllte Truhe! Der Held erhält 50 Goldmünzen und einen zufälligen Trank aus der Tränkeliste.</description>
+  </card>
+  <card id="s2" name="Magisches Schwert" image="schaetze-schwert.svg">
+    <description>Ein verzaubertes Schwert liegt in der Truhe. +2 auf alle Angriffswürfe, leuchtet im Dunkeln mit schwachem blauem Licht.</description>
+  </card>
+  <card id="s3" name="Giftige Schlange" image="schaetze-schlange.svg">
+    <description>Eine Giftige Schlange springt aus der Truhe! Der öffnende Held erleidet 1W6 Gift-Schaden und muss einen Giftwurf ablegen.</description>
+  </card>
+  <card id="s4" name="Troll-Wache" image="schaetze-troll.svg">
+    <description>Ein kleiner Troll bewacht die Truhe und greift sofort an! Der Troll hat 8 TP und Angriff +3. Truheninhalt: 20 Gold.</description>
+  </card>
+  <card id="s5" name="Altes Amulett" image="schaetze-amulett.svg">
+    <description>Ein mystisches Amulett mit einer eingravierter Rune. Gibt dem Träger Schutz vor Furchteffekten (+2 auf Willenskraft-Würfe).</description>
+  </card>
+  <card id="s6" name="Verfluchter Ring" image="schaetze-ring.svg">
+    <description>Ein goldener Ring — doch er ist verflucht! Der Träger verliert 1 Geschwindigkeit, kann den Ring aber nicht selbst ablegen.</description>
+  </card>
+  <card id="s7" name="Verfluchter Ring" image="schaetze-ring.svg">
+    <description>Ein goldener Ring — doch er ist verflucht! Der Träger verliert 1 Geschwindigkeit, kann den Ring aber nicht selbst ablegen.</description>
+  </card>
+  <card id="s8" name="Verfluchter Ring" image="schaetze-ring.svg">
+    <description>Ein goldener Ring — doch er ist verflucht! Der Träger verliert 1 Geschwindigkeit, kann den Ring aber nicht selbst ablegen.</description>
+  </card>
+  <card id="s9" name="Verfluchter Ring" image="schaetze-ring.svg">
+    <description>Ein goldener Ring — doch er ist verflucht! Der Träger verliert 1 Geschwindigkeit, kann den Ring aber nicht selbst ablegen.</description>
+  </card>
+  <card id="s10" name="Verfluchter Ring" image="schaetze-ring.svg">
+    <description>Ein goldener Ring — doch er ist verflucht! Der Träger verliert 1 Geschwindigkeit, kann den Ring aber nicht selbst ablegen.</description>
+  </card>
+  <card id="s11" name="Verfluchter Ring" image="schaetze-ring.svg">
+    <description>Ein goldener Ring — doch er ist verflucht! Der Träger verliert 1 Geschwindigkeit, kann den Ring aber nicht selbst ablegen.</description>
+  </card>
+</deck>

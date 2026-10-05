@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100">
+  <rect width="120" height="100" fill="#1c1917"/>
+  <!-- Rissiger Boden -->
+  <rect x="0" y="55" width="120" height="45" fill="#292524"/>
+  <!-- Risse -->
+  <polyline points="30,55 40,70 25,80 35,100" stroke="#d97706" stroke-width="2" fill="none"/>
+  <polyline points="70,55 60,72 75,82 65,100" stroke="#d97706" stroke-width="2" fill="none"/>
+  <polyline points="100,60 90,75 105,90" stroke="#d97706" stroke-width="1.5" fill="none"/>
+  <!-- Staubwolken -->
+  <ellipse cx="30" cy="50" rx="18" ry="10" fill="#78716c" opacity="0.7"/>
+  <ellipse cx="90" cy="48" rx="14" ry="8" fill="#78716c" opacity="0.6"/>
+  <!-- Felsbrocken -->
+  <polygon points="55,40 68,40 75,55 48,55" fill="#57534e"/>
+  <polygon points="10,30 22,30 28,48 5,48" fill="#57534e"/>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100">
+  <rect width="120" height="100" fill="#0f172a"/>
+  <!-- Schwert Klinge -->
+  <polygon points="60,8 55,75 60,82 65,75" fill="#94a3b8" stroke="#cbd5e1" stroke-width="0.5"/>
+  <!-- Glanz auf Klinge -->
+  <line x1="62" y1="15" x2="57" y2="68" stroke="white" stroke-width="0.8" opacity="0.6"/>
+  <!-- Parierstange -->
+  <rect x="38" y="74" width="44" height="8" rx="3" fill="#f59e0b" stroke="#fbbf24" stroke-width="1"/>
+  <!-- Griff -->
+  <rect x="54" y="82" width="12" height="18" rx="3" fill="#7c3aed" stroke="#a78bfa" stroke-width="1"/>
+  <!-- Griff-Wicklung -->
+  <line x1="54" y1="86" x2="66" y2="86" stroke="#a78bfa" stroke-width="1.5"/>
+  <line x1="54" y1="90" x2="66" y2="90" stroke="#a78bfa" stroke-width="1.5"/>
+  <line x1="54" y1="94" x2="66" y2="94" stroke="#a78bfa" stroke-width="1.5"/>
+  <!-- Pommel -->
+  <circle cx="60" cy="100" r="5" fill="#f59e0b" stroke="#fbbf24" stroke-width="1"/>
+  <!-- Magischer Glanz -->
+  <circle cx="60" cy="40" r="12" fill="none" stroke="#60a5fa" stroke-width="1" opacity="0.5" stroke-dasharray="4 3"/>
+  <circle cx="35" cy="30" r="2" fill="#60a5fa" opacity="0.8"/>
+  <circle cx="85" cy="25" r="2" fill="#60a5fa" opacity="0.8"/>
+  <circle cx="25" cy="60" r="1.5" fill="#60a5fa" opacity="0.6"/>
+</svg>
