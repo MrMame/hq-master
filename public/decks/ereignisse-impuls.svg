@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100">
+  <rect width="120" height="100" fill="#1e1b4b"/>
+  <!-- Magischer Kreisring -->
+  <circle cx="60" cy="50" r="35" fill="none" stroke="#818cf8" stroke-width="2" stroke-dasharray="8 4"/>
+  <circle cx="60" cy="50" r="25" fill="none" stroke="#6366f1" stroke-width="1.5"/>
+  <circle cx="60" cy="50" r="15" fill="#312e81" stroke="#818cf8" stroke-width="1"/>
+  <!-- Strahlen -->
+  <line x1="60" y1="15" x2="60" y2="25" stroke="#a5b4fc" stroke-width="2"/>
+  <line x1="60" y1="75" x2="60" y2="85" stroke="#a5b4fc" stroke-width="2"/>
+  <line x1="25" y1="50" x2="35" y2="50" stroke="#a5b4fc" stroke-width="2"/>
+  <line x1="85" y1="50" x2="95" y2="50" stroke="#a5b4fc" stroke-width="2"/>
+  <line x1="35" y1="25" x2="42" y2="32" stroke="#a5b4fc" stroke-width="1.5"/>
+  <line x1="85" y1="25" x2="78" y2="32" stroke="#a5b4fc" stroke-width="1.5"/>
+  <line x1="35" y1="75" x2="42" y2="68" stroke="#a5b4fc" stroke-width="1.5"/>
+  <line x1="85" y1="75" x2="78" y2="68" stroke="#a5b4fc" stroke-width="1.5"/>
+  <!-- Zentrales Symbol -->
+  <text x="60" y="55" text-anchor="middle" font-size="18" fill="#c7d2fe">✦</text>
+</svg>

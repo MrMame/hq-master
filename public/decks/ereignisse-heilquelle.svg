@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100">
+  <rect width="120" height="100" fill="#134e4a"/>
+  <!-- Stein-Becken -->
+  <ellipse cx="60" cy="70" rx="40" ry="18" fill="#292524"/>
+  <ellipse cx="60" cy="65" rx="36" ry="14" fill="#0e4429"/>
+  <!-- Wasser / Quelle -->
+  <ellipse cx="60" cy="63" rx="30" ry="10" fill="#0ea5e9" opacity="0.8"/>
+  <!-- Wasserstrahlen -->
+  <path d="M60 50 Q55 40 60 30 Q65 40 60 50" fill="#7dd3fc"/>
+  <path d="M60 50 Q48 45 40 35 Q52 42 60 50" fill="#7dd3fc" opacity="0.7"/>
+  <path d="M60 50 Q72 45 80 35 Q68 42 60 50" fill="#7dd3fc" opacity="0.7"/>
+  <!-- Grüne Funken / Heilpartikel -->
+  <circle cx="45" cy="40" r="2" fill="#4ade80"/>
+  <circle cx="75" cy="38" r="2" fill="#4ade80"/>
+  <circle cx="55" cy="25" r="2.5" fill="#4ade80"/>
+  <circle cx="65" cy="28" r="1.5" fill="#4ade80"/>
+  <!-- Heilkreuz -->
+  <rect x="55" y="55" width="10" height="3" rx="1" fill="white" opacity="0.9"/>
+  <rect x="58" y="52" width="4" height="9" rx="1" fill="white" opacity="0.9"/>
+</svg>

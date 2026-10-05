@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100">
+  <rect width="120" height="100" fill="#052e16"/>
+  <!-- Schlangenkörper (S-Kurve) -->
+  <path d="M80 90 Q90 70 70 55 Q50 40 65 20 Q72 10 80 12" fill="none" stroke="#16a34a" stroke-width="10" stroke-linecap="round"/>
+  <!-- Schlangenbauch (heller) -->
+  <path d="M80 90 Q88 72 70 57 Q52 43 66 22 Q72 12 79 13" fill="none" stroke="#4ade80" stroke-width="4" stroke-linecap="round"/>
+  <!-- Kopf -->
+  <ellipse cx="83" cy="11" rx="10" ry="7" fill="#16a34a" stroke="#4ade80" stroke-width="1"/>
+  <!-- Augen -->
+  <circle cx="80" cy="9" r="2" fill="#fef08a"/>
+  <circle cx="87" cy="9" r="2" fill="#fef08a"/>
+  <circle cx="80.5" cy="9" r="1" fill="#1a0000"/>
+  <circle cx="87.5" cy="9" r="1" fill="#1a0000"/>
+  <!-- Zunge -->
+  <path d="M84 15 L80 20 M84 15 L88 20" stroke="#ef4444" stroke-width="1.5" fill="none"/>
+  <!-- Gift-Tropfen -->
+  <circle cx="30" cy="75" r="6" fill="#84cc16" opacity="0.8"/>
+  <path d="M30 69 L26 75 L30 81 L34 75 Z" fill="#a3e635" opacity="0.7"/>
+  <!-- Warnung-Zeichen -->
+  <text x="20" y="45" font-size="18" fill="#ef4444">☠</text>
+</svg>

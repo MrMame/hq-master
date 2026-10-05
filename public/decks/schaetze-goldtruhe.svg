@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100">
+  <rect width="120" height="100" fill="#1c1200"/>
+  <!-- Truhe Körper -->
+  <rect x="20" y="50" width="80" height="45" rx="5" fill="#92400e" stroke="#d97706" stroke-width="2"/>
+  <!-- Truhe Deckel (offen) -->
+  <path d="M20 50 Q20 25 60 25 Q100 25 100 50" fill="#b45309" stroke="#d97706" stroke-width="2"/>
+  <!-- Schloss -->
+  <rect x="50" y="62" width="20" height="14" rx="3" fill="#d97706" stroke="#f59e0b" stroke-width="1"/>
+  <circle cx="60" cy="69" r="4" fill="#fbbf24"/>
+  <!-- Gold-Münzen / Glanz -->
+  <circle cx="45" cy="75" r="5" fill="#fbbf24"/>
+  <circle cx="60" cy="72" r="6" fill="#f59e0b"/>
+  <circle cx="75" cy="75" r="5" fill="#fbbf24"/>
+  <!-- Goldglanz oben -->
+  <ellipse cx="60" cy="38" rx="20" ry="8" fill="#fbbf24" opacity="0.6"/>
+  <!-- Glanzpunkte -->
+  <circle cx="35" cy="32" r="2" fill="#fef3c7"/>
+  <circle cx="85" cy="30" r="2" fill="#fef3c7"/>
+  <circle cx="60" cy="22" r="3" fill="#fef3c7"/>
+</svg>

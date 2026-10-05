@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100">
+  <rect width="120" height="100" fill="#1e1b4b"/>
+  <!-- Kette -->
+  <path d="M25 10 Q60 25 95 10" fill="none" stroke="#d4af37" stroke-width="2" stroke-dasharray="5 3"/>
+  <!-- Anhänger Fassung -->
+  <circle cx="60" cy="55" r="28" fill="#312e81" stroke="#7c3aed" stroke-width="2"/>
+  <circle cx="60" cy="55" r="22" fill="none" stroke="#6366f1" stroke-width="1"/>
+  <!-- Edelstein Zentrum -->
+  <polygon points="60,32 72,47 68,64 52,64 48,47" fill="#7c3aed" stroke="#a78bfa" stroke-width="1.5"/>
+  <!-- Innere Rune -->
+  <path d="M60 38 L64 52 L55 44 L65 44 L56 52 Z" fill="#c4b5fd" stroke="none"/>
+  <!-- Äußere Verzierungen -->
+  <circle cx="60" cy="27" r="3" fill="#d4af37"/>
+  <circle cx="76" cy="38" r="2" fill="#d4af37"/>
+  <circle cx="76" cy="72" r="2" fill="#d4af37"/>
+  <circle cx="44" cy="38" r="2" fill="#d4af37"/>
+  <circle cx="44" cy="72" r="2" fill="#d4af37"/>
+  <circle cx="60" cy="83" r="3" fill="#d4af37"/>
+  <!-- Glanzpunkte -->
+  <circle cx="55" cy="35" r="1.5" fill="white" opacity="0.8"/>
+</svg>
