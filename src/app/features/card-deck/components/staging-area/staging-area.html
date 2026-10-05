@@ -11,7 +11,7 @@
         [class.border-dashed]="!isOccupied(slot)"
       >
         @if (isOccupied(slot)) {
-          <div cdkDrag [cdkDragData]="{ card: slot, slotIndex: i }">
+          <div cdkDrag [cdkDragData]="{ card: slot, slotIndex: i }" (dblclick)="onCardDblClick(slot)">
             <app-playing-card [card]="slot" [faceUp]="true" [backImagePath]="backImagePath()"></app-playing-card>
             <ng-template cdkDragPreview [matchSize]="false">
               <app-playing-card [card]="slot" [faceUp]="true" [backImagePath]="backImagePath()"></app-playing-card>

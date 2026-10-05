@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, InputSignal, Signal } from '@angular/core';
+import { Component, computed, inject, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
 import { CdkDrag, CdkDropList, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Card } from '../../models/card.model';
 import { STAGING_SLOT_COUNT, StagingSlot } from '../../models/card-deck-state.model';
@@ -17,6 +17,8 @@ export class StagingArea {
   backImagePath: InputSignal<string> = input.required<string>();
   drawListId: InputSignal<string> = input.required<string>();
   discardListId: InputSignal<string> = input.required<string>();
+
+  cardDoubleClicked: OutputEmitterRef<Card> = output<Card>();
 
   private readonly service: CardDeckService = inject(CardDeckService);
 
@@ -39,6 +41,10 @@ export class StagingArea {
       const fromSlot: number = parseInt(sourceId.replace('staging-', ''), 10);
       this.service.moveInStaging(fromSlot, slotIndex);
     }
+  }
+
+  onCardDblClick(card: Card): void {
+    this.cardDoubleClicked.emit(card);
   }
 
   isOccupied(slot: StagingSlot): slot is Card {

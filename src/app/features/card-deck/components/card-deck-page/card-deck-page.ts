@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, inject, Signal, ViewChild } from '@angular/core';
+import { Component, computed, ElementRef, inject, Signal, signal, ViewChild, WritableSignal } from '@angular/core';
 import { CdkDrag, CdkDropList, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { CardDeckService } from '../../services/card-deck';
 import { DeckXmlLoaderService } from '../../services/deck-xml-loader';
@@ -8,11 +8,12 @@ import { STAGING_SLOT_COUNT, StagingSlot } from '../../models/card-deck-state.mo
 import { CardStack } from '../card-stack/card-stack';
 import { PlayingCard } from '../playing-card/playing-card';
 import { StagingArea } from '../staging-area/staging-area';
+import { CardFocusView } from '../card-focus-view/card-focus-view';
 
 @Component({
   selector: 'app-card-deck-page',
   standalone: true,
-  imports: [CdkDrag, CdkDropList, CardStack, PlayingCard, StagingArea],
+  imports: [CdkDrag, CdkDropList, CardStack, PlayingCard, StagingArea, CardFocusView],
   templateUrl: './card-deck-page.html',
   styleUrl: './card-deck-page.scss',
 })
@@ -26,35 +27,51 @@ export class CardDeckPage {
   readonly discardPile: Signal<Card[]> = this.service.discardPile;
   readonly stagingSlots: Signal<StagingSlot[]> = this.service.stagingSlots;
 
-  readonly deckBackImagePath: Signal<string> = computed(
-    () => this.service.currentDeck()?.backImagePath ?? ''
-  );
-
+  readonly deckBackImagePath: Signal<string> = computed(() => this.service.currentDeck()?.backImagePath ?? '');
   readonly totalCards: Signal<number> = computed(() =>
-    this.drawPile().length +
-    this.discardPile().length +
-    this.stagingSlots().filter((s) => s !== null).length
+    this.drawPile().length + this.discardPile().length +
+    this.stagingSlots().filter((s: StagingSlot) => s !== null).length
   );
+  readonly stagingIds: string[] = Array.from({ length: STAGING_SLOT_COUNT }, (_: unknown, i: number) => `staging-${i}`);
 
-  readonly stagingIds: string[] = Array.from(
-    { length: STAGING_SLOT_COUNT },
-    (_: unknown, i: number) => `staging-${i}`
-  );
+  readonly focusedCard: WritableSignal<Card | null> = signal<Card | null>(null);
+  private focusSource: 'draw' | 'discard' | 'staging' = 'discard';
+  private drawClickTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     if (this.service.currentDeck() === null) {
       this.loader.loadFromUrl('/decks/ereignisse.xml')
-        .then((config) => { this.service.loadDeck(config); })
+        .then((config: DeckConfig) => { this.service.loadDeck(config); })
         .catch((err: Error) => { console.warn('Auto-load failed:', err.message); });
     }
   }
 
   onDrawPileClick(): void {
-    this.service.drawCard();
+    if (this.drawClickTimer !== null) clearTimeout(this.drawClickTimer);
+    this.drawClickTimer = setTimeout(() => {
+      this.drawClickTimer = null;
+      this.service.drawCard();
+    }, 240);
+  }
+
+  onDrawPileDblClick(): void {
+    if (this.drawClickTimer !== null) { clearTimeout(this.drawClickTimer); this.drawClickTimer = null; }
+    const card: Card | undefined = this.drawPile()[0];
+    if (card) this.openFocus(card, 'draw');
   }
 
   onEmptyDrawPileClick(): void {
     this.service.reshuffleDiscardToDraw();
+  }
+
+  openFocus(card: Card, source: 'draw' | 'discard' | 'staging'): void {
+    this.focusSource = source;
+    this.focusedCard.set(card);
+  }
+
+  closeFocus(): void {
+    if (this.focusSource === 'draw') this.service.drawCard();
+    this.focusedCard.set(null);
   }
 
   onDroppedToDiscard(event: CdkDragDrop<unknown>): void {

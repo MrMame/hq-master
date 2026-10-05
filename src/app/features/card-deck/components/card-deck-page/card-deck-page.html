@@ -2,24 +2,11 @@
 
   <!-- Toolbar -->
   <div class="flex flex-wrap gap-2">
-    <button
-      class="px-3 py-1.5 text-xs bg-gray-700 hover:bg-yellow-500 hover:text-gray-900 rounded border border-gray-600 transition-colors"
-      (click)="shuffleDrawPile()"
-    >Restlichen Nachziehstapel mischen</button>
-    <button
-      class="px-3 py-1.5 text-xs bg-gray-700 hover:bg-yellow-500 hover:text-gray-900 rounded border border-gray-600 transition-colors"
-      (click)="shuffleDiscardPile()"
-    >Restlichen Ablagestapel mischen</button>
-    <button
-      class="px-3 py-1.5 text-xs bg-gray-700 hover:bg-yellow-500 hover:text-gray-900 rounded border border-gray-600 transition-colors"
-      (click)="combineAndShuffle()"
-    >Ablagestapel in Nachziehstapel mischen</button>
-    <button
-      class="px-3 py-1.5 text-xs bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-semibold rounded transition-colors"
-      (click)="triggerLoadDeck()"
-    >Deck Laden</button>
+    <button class="px-3 py-1.5 text-xs bg-gray-700 hover:bg-yellow-500 hover:text-gray-900 rounded border border-gray-600 transition-colors" (click)="shuffleDrawPile()">Restlichen Nachziehstapel mischen</button>
+    <button class="px-3 py-1.5 text-xs bg-gray-700 hover:bg-yellow-500 hover:text-gray-900 rounded border border-gray-600 transition-colors" (click)="shuffleDiscardPile()">Restlichen Ablagestapel mischen</button>
+    <button class="px-3 py-1.5 text-xs bg-gray-700 hover:bg-yellow-500 hover:text-gray-900 rounded border border-gray-600 transition-colors" (click)="combineAndShuffle()">Ablagestapel in Nachziehstapel mischen</button>
+    <button class="px-3 py-1.5 text-xs bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-semibold rounded transition-colors" (click)="triggerLoadDeck()">Deck Laden</button>
     <input #fileInput type="file" accept=".xml" class="hidden" (change)="onFileLoaded($event)">
-
     @if (service.currentDeck()) {
       <span class="px-3 py-1.5 text-xs text-yellow-400 border border-yellow-700/50 rounded flex items-center">
         {{ service.currentDeck()!.name }} — {{ totalCards() }} Karten
@@ -32,25 +19,13 @@
 
     <!-- Nachziehstapel -->
     <div class="flex flex-col items-center gap-2">
-      <div
-        cdkDropList
-        id="draw-pile-list"
-        [cdkDropListConnectedTo]="stagingIds"
-        (cdkDropListDropped)="onDroppedToDraw($event)"
-      >
+      <div cdkDropList id="draw-pile-list" [cdkDropListConnectedTo]="stagingIds" (cdkDropListDropped)="onDroppedToDraw($event)">
         @if (drawPile().length > 0) {
-          <div (click)="onDrawPileClick()" class="cursor-pointer">
-            <app-card-stack
-              [cards]="drawPile()"
-              [faceUp]="false"
-              [backImagePath]="deckBackImagePath()"
-            ></app-card-stack>
+          <div (click)="onDrawPileClick()" (dblclick)="onDrawPileDblClick()" class="cursor-pointer select-none">
+            <app-card-stack [cards]="drawPile()" [faceUp]="false" [backImagePath]="deckBackImagePath()"></app-card-stack>
           </div>
         } @else {
-          <div
-            class="w-[120px] h-[168px] rounded-xl border-2 border-dashed border-gray-600 flex flex-col items-center justify-center text-gray-500 text-xs text-center p-3 cursor-pointer hover:border-yellow-600/50 transition-colors gap-1"
-            (click)="onEmptyDrawPileClick()"
-          >
+          <div class="w-[120px] h-[168px] rounded-xl border-2 border-dashed border-gray-600 flex flex-col items-center justify-center text-gray-500 text-xs text-center p-3 cursor-pointer hover:border-yellow-600/50 transition-colors gap-1" (click)="onEmptyDrawPileClick()">
             <span>Nachziehstapel leer</span>
             <span class="text-[10px] text-gray-600">Klicken zum Mischen</span>
           </div>
@@ -61,14 +36,9 @@
 
     <!-- Ablagestapel -->
     <div class="flex flex-col items-center gap-2">
-      <div
-        cdkDropList
-        id="discard-pile-list"
-        [cdkDropListConnectedTo]="stagingIds"
-        (cdkDropListDropped)="onDroppedToDiscard($event)"
-      >
+      <div cdkDropList id="discard-pile-list" [cdkDropListConnectedTo]="stagingIds" (cdkDropListDropped)="onDroppedToDiscard($event)">
         @if (discardPile().length > 0) {
-          <div cdkDrag [cdkDragData]="discardPile()[0]">
+          <div cdkDrag [cdkDragData]="discardPile()[0]" (dblclick)="openFocus(discardPile()[0], 'discard')">
             <app-card-stack [cards]="discardPile()" [faceUp]="true" [backImagePath]="deckBackImagePath()"></app-card-stack>
             <ng-template cdkDragPreview [matchSize]="false">
               <app-playing-card [card]="discardPile()[0]" [faceUp]="true" [backImagePath]="deckBackImagePath()"></app-playing-card>
@@ -92,6 +62,15 @@
       [backImagePath]="deckBackImagePath()"
       drawListId="draw-pile-list"
       discardListId="discard-pile-list"
+      (cardDoubleClicked)="openFocus($event, 'staging')"
     ></app-staging-area>
   </div>
 </div>
+
+@if (focusedCard(); as card) {
+  <app-card-focus-view
+    [card]="card"
+    [backImagePath]="deckBackImagePath()"
+    (closed)="closeFocus()"
+  ></app-card-focus-view>
+}

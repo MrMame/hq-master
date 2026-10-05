@@ -6,8 +6,8 @@ import { Card } from '../../models/card.model';
   standalone: true,
   template: `
     @if (faceUp()) {
-      <div class="w-[120px] h-[168px] rounded-xl border-2 border-gray-500 overflow-hidden flex flex-col shadow-lg bg-gray-100 select-none">
-        <div class="h-[100px] bg-gray-200 flex items-center justify-center overflow-hidden shrink-0">
+      <div class="w-[120px] h-[168px] p-1 rounded-xl border-2 border-gray-500 overflow-hidden flex flex-col shadow-lg bg-gray-100 select-none">
+        <div class="h-[60px] bg-gray-200 flex items-center justify-center overflow-hidden shrink-0">
           <img
             [src]="'/decks/' + card().imagePath"
             [alt]="card().name"
@@ -15,7 +15,7 @@ import { Card } from '../../models/card.model';
             onerror="this.style.display='none'"
           >
         </div>
-        <div class="flex-1 p-1.5 bg-gray-100 overflow-hidden">
+        <div class="flex-1 p-1.5 bg-gray-200 overflow-hidden">
           <div class="text-xs font-bold text-gray-800 truncate mb-0.5">{{ card().name }}</div>
           <div class="text-[9px] text-gray-600 leading-tight line-clamp-4">{{ card().description }}</div>
         </div>
