@@ -37,19 +37,34 @@
     <!-- Ablagestapel -->
     <div class="flex flex-col items-center gap-2">
       <div cdkDropList id="discard-pile-list" [cdkDropListConnectedTo]="stagingIds" (cdkDropListDropped)="onDroppedToDiscard($event)">
-        @if (discardPile().length > 0) {
-          <div cdkDrag [cdkDragData]="discardPile()[0]" (dblclick)="openFocus(discardPile()[0], 'discard')">
-            <app-card-stack [cards]="discardPile()" [faceUp]="true" [backImagePath]="deckBackImagePath()"></app-card-stack>
-            <ng-template cdkDragPreview [matchSize]="false">
-              <app-playing-card [card]="discardPile()[0]" [faceUp]="true" [backImagePath]="deckBackImagePath()"></app-playing-card>
+        <!-- @if (discardPile().length > 0) { -->
+          <!-- <div cdkDrag [cdkDragData]="discardPile()[0]" (dblclick)="openFocus(discardPile()[0], 'discard')"> -->
+            <app-card-stack cdkDrag
+                            [cards]="discardPile()" 
+                            [faceUp]="true" 
+                            [backImagePath]="deckBackImagePath()">
+            </app-card-stack>
+            <!-- <ng-template cdkDragPreview [matchSize]="false">
+              <app-playing-card [card]="discardPile()[0]" 
+                                [faceUp]="true" 
+                                [backImagePath]="deckBackImagePath()">
+              </app-playing-card>
             </ng-template>
             <ng-template cdkDragPlaceholder>
-              <app-card-stack [cards]="discardPile().slice(1)" [faceUp]="false" [backImagePath]="deckBackImagePath()" emptyLabel="Ablagestapel leer"></app-card-stack>
-            </ng-template>
-          </div>
-        } @else {
-          <app-card-stack [cards]="[]" [faceUp]="true" [backImagePath]="deckBackImagePath()" emptyLabel="Keine abgelegten Karten"></app-card-stack>
-        }
+              <app-card-stack [cards]="discardPile().slice(1)" 
+                              [faceUp]="false" 
+                              [backImagePath]="deckBackImagePath()" 
+                              emptyLabel="Ablagestapel leer">
+              </app-card-stack>
+            </ng-template> -->
+          <!-- </div> -->
+        <!-- } @else {
+          <app-card-stack [cards]="[]" 
+                          [faceUp]="true" 
+                          [backImagePath]="deckBackImagePath()" 
+                          emptyLabel="Keine abgelegten Karten">
+          </app-card-stack>
+        } -->
       </div>
       <span class="text-xs text-gray-400">Ablagestapel ({{ discardPile().length }})</span>
     </div>

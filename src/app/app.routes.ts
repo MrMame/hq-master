@@ -18,5 +18,9 @@ export const routes: Routes = [
     path: 'carddeck',
     loadComponent: () => import('./features/card-deck/components/card-deck-page/card-deck-page').then(m => m.CardDeckPage)
   },
+  {
+    path: 'drag-test',
+    loadComponent: () => import('./features/drag-test/components/drag-test-page/drag-test-page').then(m => m.DragTestPage)
+  },
   { path: '**', redirectTo: 'charactertracker' },
 ];

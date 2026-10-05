@@ -1,0 +1,162 @@
+<!--
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║  CDK Drag & Drop — Grundlagen-Demo                                   ║
+  ║                                                                      ║
+  ║  Kernkonzepte:                                                       ║
+  ║  1. cdkDrag        → macht ein HTML-Element ziehbar                  ║
+  ║  2. cdkDropList    → definiert eine Zone, auf der Elemente abgelegt  ║
+  ║                       werden können                                  ║
+  ║  3. [cdkDropListConnectedTo] → verknüpft zwei Listen miteinander,    ║
+  ║                       damit Elemente zwischen ihnen transferiert     ║
+  ║                       werden können                                  ║
+  ║  4. (cdkDropListDropped) → Event, das beim Ablegen ausgelöst wird    ║
+  ║  5. cdkDragPlaceholder → HTML, das am URSPRUNGSORT erscheint,        ║
+  ║                       während gezogen wird                          ║
+  ║  6. cdkDragPreview → HTML, das dem CURSOR FOLGT während des Drags    ║
+  ╚══════════════════════════════════════════════════════════════════════╝
+-->
+<div class="min-h-screen bg-gray-100 p-10 flex flex-col gap-10">
+
+  <h1 class="text-2xl font-bold text-gray-800">CDK Drag & Drop — Demo</h1>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!--  QUELL-ZONE: Hier liegt das rote Viereck am Anfang             -->
+  <!--  cdkDropList macht diesen Container zu einer offiziellen        -->
+  <!--  Drag-Zone — nur zwischen cdkDropLists können Elemente          -->
+  <!--  verschoben werden.                                             -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="flex gap-20 items-start">
+
+    <div class="flex flex-col gap-2">
+      <span class="text-sm font-semibold text-gray-600">Quell-Zone (cdkDropList)</span>
+
+      <!--
+        cdkDropList  → Diese Zone ist eine gültige Drag-Quelle/Ablagefläche.
+        id           → Eindeutige ID, damit andere Zonen diese referenzieren können.
+        [cdkDropListConnectedTo] → Array von IDs der Zonen, ZU denen gezogen werden darf.
+        (cdkDropListDropped)     → Callback-Funktion, wenn hier etwas abgelegt wird.
+      -->
+      <div
+        cdkDropList
+        id="source-zone"
+        [cdkDropListConnectedTo]="['bucket-zone']"
+        (cdkDropListDropped)="onDrop($event)"
+        class="w-40 h-40 border-2 border-dashed border-gray-400 bg-white rounded flex items-center justify-center"
+      >
+
+        <!--
+          Das rote Viereck erscheint nur, wenn es noch NICHT in den Eimer geworfen wurde.
+          @if steuert die Sichtbarkeit anhand des "dropped"-Signals.
+        -->
+        @if (!dropped()) {
+
+          <!--
+            cdkDrag  → Diese Direktive macht das Element ziehbar.
+            Beim Ziehen passieren automatisch 3 Dinge:
+              a) Das Original wird UNSICHTBAR (opacity: 0), bleibt aber im DOM.
+              b) Ein PREVIEW (Klon) folgt dem Cursor.
+              c) Ein PLACEHOLDER erscheint an der Ursprungsposition.
+          -->
+          <div
+            cdkDrag
+            class="w-20 h-20 bg-red-500 rounded cursor-grab active:cursor-grabbing"
+          >
+
+            <!--
+              cdkDragPlaceholder  → Dieses Template ersetzt das unsichtbare Original
+              am Ursprungsort, SOLANGE gezogen wird.
+              Ohne dieses Template erscheint dort ein leerer, transparenter Bereich.
+              Hier zeigen wir einen gestrichelten Rahmen als visuellen Hinweis.
+            -->
+            <ng-template cdkDragPlaceholder>
+              <div class="w-20 h-20 border-2 border-dashed border-red-300 rounded bg-red-50 opacity-60">
+              </div>
+            </ng-template>
+
+            <!--
+              cdkDragPreview  → Dieses Template definiert, was dem CURSOR FOLGT
+              während des Drags. Ohne es wird ein 1:1-Klon des Originals verwendet.
+              [matchSize]="false"  → Das Preview muss NICHT dieselbe Größe haben.
+              Hier: ein leicht transparentes Viereck mit Schatten.
+            -->
+            <ng-template cdkDragPreview [matchSize]="false">
+              <div class="w-20 h-20 bg-red-500 rounded shadow-2xl opacity-80 rotate-6">
+              </div>
+            </ng-template>
+
+          </div>
+          <!-- Ende cdkDrag -->
+
+        } @else {
+
+          <!-- Erfolgsmeldung nach erfolgreichem Drop -->
+          <span class="text-xs text-gray-400 text-center">Das Viereck ist im Eimer!</span>
+
+        }
+
+      </div>
+      <!-- Ende Quell-Zone cdkDropList -->
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!--  ZIEL-ZONE: Der schwarze "Eimer" — hier kann abgelegt werden   -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="flex flex-col gap-2">
+      <span class="text-sm font-semibold text-gray-600">Ziel-Zone (cdkDropList)</span>
+
+      <!--
+        Zweite cdkDropList als Ziel.
+        id="bucket-zone"  → wird oben in [cdkDropListConnectedTo] referenziert.
+        (cdkDropListDropped) → Callback wird aufgerufen, wenn hier etwas landet.
+        Das CDK prüft automatisch, ob Quell- und Zielzone verbunden sind —
+        nur dann ist ein Drop erlaubt.
+      -->
+      <div
+        cdkDropList
+        id="bucket-zone"
+        [cdkDropListConnectedTo]="['source-zone']"
+        (cdkDropListDropped)="onDrop($event)"
+        [class.bg-gray-700]="!dropped()"
+        [class.bg-green-700]="dropped()"
+        class="w-32 h-32 rounded-b-3xl rounded-t-lg flex items-center justify-center transition-colors duration-300"
+      >
+
+        <!-- Eimer-Icon + Status-Text -->
+        @if (!dropped()) {
+          <span class="text-white text-3xl">🗑️</span>
+        } @else {
+          <span class="text-white text-3xl">✅</span>
+        }
+
+      </div>
+      <!-- Ende Ziel-Zone cdkDropList -->
+    </div>
+
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!--  Erklärungsbox: Zusammenfassung der Konzepte                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="bg-white border border-gray-200 rounded p-6 max-w-xl text-sm text-gray-700 flex flex-col gap-2">
+    <strong class="text-base text-gray-900">Was passiert im Hintergrund?</strong>
+    <p><code class="bg-gray-100 px-1 rounded">cdkDrag</code> — markiert ein Element als ziehbar. Ohne <code class="bg-gray-100 px-1 rounded">cdkDropList</code> kann es frei im Browser bewegt werden.</p>
+    <p><code class="bg-gray-100 px-1 rounded">cdkDropList</code> — definiert eine Zone. Elemente können nur zwischen verbundenen Zonen transferiert werden.</p>
+    <p><code class="bg-gray-100 px-1 rounded">[cdkDropListConnectedTo]</code> — Array von Zonen-IDs, zwischen denen Transfers erlaubt sind.</p>
+    <p><code class="bg-gray-100 px-1 rounded">cdkDragPlaceholder</code> — das HTML am Ursprungsort während des Drags (ersetzt das unsichtbare Original).</p>
+    <p><code class="bg-gray-100 px-1 rounded">cdkDragPreview</code> — das HTML, das dem Cursor folgt.</p>
+    <p><code class="bg-gray-100 px-1 rounded">(cdkDropListDropped)</code> — das Event enthält: welches Element, von wo, nach wo.</p>
+  </div>
+
+  <!-- Reset-Button -->
+  @if (dropped()) {
+    <button
+      (click)="reset()"
+      class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-400 w-fit"
+    >
+      Reset
+    </button>
+  }
+
+</div>

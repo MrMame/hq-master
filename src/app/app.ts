@@ -47,6 +47,11 @@ import { GametimeService } from './core/services/gaming/gametime-service';
                class="text-sm text-gray-600 hover:text-gray-900">
                Kartendeck
             </a>
+            <a routerLink="/drag-test"
+               routerLinkActive="text-blue-600 font-bold"
+               class="text-sm text-gray-600 hover:text-gray-900">
+               Drag-Test
+            </a>
 
           </nav>
 
