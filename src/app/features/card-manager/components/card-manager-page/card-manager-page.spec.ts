@@ -2,11 +2,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CardManagerPage } from './card-manager-page';
 
-describe('CardManagerPage', () => {
+describe('CardManagerPage', (): void => {
   let component: CardManagerPage;
   let fixture: ComponentFixture<CardManagerPage>;
 
-  beforeEach(async () => {
+  beforeEach(async (): Promise<void> => {
     await TestBed.configureTestingModule({
       imports: [CardManagerPage],
     }).compileComponents();
@@ -16,7 +16,7 @@ describe('CardManagerPage', () => {
     await fixture.whenStable();
   });
 
-  it('should create', () => {
+  it('should create', (): void => {
     expect(component).toBeTruthy();
   });
 });

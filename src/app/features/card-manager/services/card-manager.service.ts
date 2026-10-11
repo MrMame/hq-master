@@ -1,25 +1,25 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { StorageService } from '../../../core/services/persistent/storage-service';
 import { DeckXmlLoaderService } from './deck-xml-loader.service';
 import { Card } from '../models/card.model';
 import { DeckConfig } from '../models/deck-config.model';
 import { DeckState } from '../models/deck-state.model';
 
-const KEY_DECK_STATE = 'card_manager_deck_state';
+const KEY_DECK_STATE: string = 'card_manager_deck_state';
 
 @Injectable({ providedIn: 'root' })
 export class CardManagerService {
-  private readonly storage = inject(StorageService);
-  private readonly xmlLoader = inject(DeckXmlLoaderService);
+  private readonly storage: StorageService = inject(StorageService);
+  private readonly xmlLoader: DeckXmlLoaderService = inject(DeckXmlLoaderService);
 
-  private readonly _state = signal<DeckState | null>(
+  private readonly _state: WritableSignal<DeckState | null> = signal<DeckState | null>(
     this.storage.readFromLocalStorage<DeckState>(KEY_DECK_STATE),
   );
 
-  readonly state = this._state.asReadonly();
+  readonly state: Signal<DeckState | null> = this._state.asReadonly();
 
   async loadDeck(url: string): Promise<void> {
-    const config = await this.xmlLoader.loadFromUrl(url);
+    const config: DeckConfig = await this.xmlLoader.loadFromUrl(url);
     const newState: DeckState = {
       config,
       drawPile: this.fisherYates([...config.cards]),
@@ -30,20 +30,20 @@ export class CardManagerService {
   }
 
   shuffle(): void {
-    const s = this._state();
+    const s: DeckState | null = this._state();
     if (!s) return;
     this.setState({ ...s, drawPile: this.fisherYates([...s.drawPile]) });
   }
 
   draw(): void {
-    const s = this._state();
+    const s: DeckState | null = this._state();
     if (!s || s.drawPile.length === 0) return;
     const [activeCard, ...drawPile] = s.drawPile;
     this.setState({ ...s, drawPile, activeCard });
   }
 
   discard(): void {
-    const s = this._state();
+    const s: DeckState | null = this._state();
     if (!s || !s.activeCard) return;
     this.setState({
       ...s,
@@ -53,9 +53,9 @@ export class CardManagerService {
   }
 
   reset(): void {
-    const s = this._state();
+    const s: DeckState | null = this._state();
     if (!s) return;
-    const all = collectAll(s);
+    const all: Card[] = collectAll(s);
     this.setState({ ...s, drawPile: this.fisherYates(all), discardPile: [], activeCard: null });
   }
 
@@ -75,8 +75,8 @@ export class CardManagerService {
   }
 
   private fisherYates<T>(arr: T[]): T[] {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+    for (let i: number = arr.length - 1; i > 0; i--) {
+      const j: number = Math.floor(Math.random() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr;
@@ -84,6 +84,6 @@ export class CardManagerService {
 }
 
 function collectAll(s: DeckState): Card[] {
-  const active = s.activeCard ? [s.activeCard] : [];
+  const active: Card[] = s.activeCard ? [s.activeCard] : [];
   return [...s.drawPile, ...s.discardPile, ...active];
 }
