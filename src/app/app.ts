@@ -22,6 +22,16 @@ import { GametimeService } from './core/services/gaming/gametime-service';
 
           <!-- Navigations-Links nebeneinander (flex) mit Abstand dazwischen (space-x-4) -->
           <nav class="flex items-center space-x-4">
+            <a routerLink="/cardmanager"
+              routerLinkActive="text-blue-600 font-bold"
+              class="text-sm text-gray-600 hover:text-gray-900">
+              Card Manager
+            </a>
+            <a routerLink="/cardmanagertest"
+              routerLinkActive="text-blue-600 font-bold"
+              class="text-sm text-gray-600 hover:text-gray-900">
+              Card Manager Test
+            </a>
             <a routerLink="/charactertracker"
                routerLinkActive="text-blue-600 font-bold"
                [routerLinkActiveOptions]="{exact: true}"
@@ -37,11 +47,6 @@ import { GametimeService } from './core/services/gaming/gametime-service';
                routerLinkActive="text-blue-600 font-bold"
                class="text-sm text-gray-600 hover:text-gray-900">
                Dungeon Tracker
-            </a>
-            <a routerLink="/cardmanager"
-               routerLinkActive="text-blue-600 font-bold"
-               class="text-sm text-gray-600 hover:text-gray-900">
-               Card Manager
             </a>
 
           </nav>

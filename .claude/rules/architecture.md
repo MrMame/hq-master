@@ -37,6 +37,11 @@ features/
     models/
     services/
 
+  card-manager-test/   → Experimentier-Spielwiese für den Card Manager (noch leer)
+    components/        → CardManagerTestPage
+    models/
+    services/
+
 shared/
   components/          → Feature-unabhängige UI (z. B. ConfirmationDialog)
 ```
