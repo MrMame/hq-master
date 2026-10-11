@@ -14,5 +14,9 @@ export const routes: Routes = [
     path: 'dungeontracker',
     loadComponent: () => import('./features/dungeon-tracker/components/dungeon-tracker-page/dungeon-tracker-page').then(m => m.DungeonTrackerPage)
   },
+  {
+    path: 'cardmanager',
+    loadComponent: () => import('./features/card-manager/components/card-manager-page/card-manager-page').then(m => m.CardManagerPage)
+  },
   { path: '**', redirectTo: 'charactertracker' },
 ];

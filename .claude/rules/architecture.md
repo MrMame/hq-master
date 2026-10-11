@@ -32,6 +32,11 @@ features/
   time-tracker/        → In-Game-Zeiterfassung
     components/        → TimeTrackerPage
 
+  card-manager/        → Kartenverwaltung (noch leer)
+    components/        → CardManagerPage
+    models/
+    services/
+
 shared/
   components/          → Feature-unabhängige UI (z. B. ConfirmationDialog)
 ```
