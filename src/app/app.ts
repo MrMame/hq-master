@@ -18,11 +18,7 @@ import { GametimeService } from './core/services/gaming/gametime-service';
           <!-- Logo: Text fett (font-bold) und groß (text-lg) -->
           <div class="font-bold text-lg text-yellow-800">
             HQ-Master
-          </div>
-          <div class="font-bold text-lg text-yellow-800">
-            Ingame Time: {{ gametimeService.gameTimeAsString() }}
-          </div>
-          
+          </div>          
 
           <!-- Navigations-Links nebeneinander (flex) mit Abstand dazwischen (space-x-4) -->
           <nav class="flex items-center space-x-4">
