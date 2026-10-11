@@ -27,11 +27,6 @@ import { GametimeService } from './core/services/gaming/gametime-service';
               class="text-sm text-gray-600 hover:text-gray-900">
               Card Manager
             </a>
-            <a routerLink="/cardmanagertest"
-              routerLinkActive="text-blue-600 font-bold"
-              class="text-sm text-gray-600 hover:text-gray-900">
-              Card Manager Test
-            </a>
             <a routerLink="/charactertracker"
                routerLinkActive="text-blue-600 font-bold"
                [routerLinkActiveOptions]="{exact: true}"

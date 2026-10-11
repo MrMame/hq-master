@@ -18,9 +18,5 @@ export const routes: Routes = [
     path: 'cardmanager',
     loadComponent: () => import('./features/card-manager/components/card-manager-page/card-manager-page').then(m => m.CardManagerPage)
   },
-  {
-    path: 'cardmanagertest',
-    loadComponent: () => import('./features/card-manager-test/components/card-manager-test-page/card-manager-test-page').then(m => m.CardManagerTestPage)
-  },
   { path: '**', redirectTo: 'charactertracker' },
 ];
