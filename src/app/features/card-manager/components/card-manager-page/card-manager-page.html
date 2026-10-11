@@ -1,17 +1,30 @@
-<p>Card Manager</p>
 <div class="cardManagerPageContainer">
+  @if (state()) {
+    <p>Deck: {{ state()!.config.name }}</p>
+
     <div class="pilesContainer">
-        <div class="pileZone drawPile">
-            <div class="noCardsPlaceholder">
-                <p>No Cards</p>
-            </div>
+      <div class="pileZone drawPile">
+        <h3>Nachziehstapel ({{ state()!.drawPile.length }})</h3>
+        @if (state()!.drawPile.length === 0) {
+          <div class="noCardsPlaceholder"><p>No Cards</p></div>
+        }
+      </div>
+
+      @if (state()!.activeCard) {
+        <div class="pileZone activeCard">
+          <h3>Aktive Karte</h3>
+          <p>{{ state()!.activeCard!.name }}</p>
         </div>
-        <div class="pileZone discardPile">
-            <div class="noCardsPlaceholder">
-                <p>No Cards</p>
-            </div>
-        </div>
+      }
+
+      <div class="pileZone discardPile">
+        <h3>Ablagestapel ({{ state()!.discardPile.length }})</h3>
+        @if (state()!.discardPile.length === 0) {
+          <div class="noCardsPlaceholder"><p>No Cards</p></div>
+        }
+      </div>
     </div>
+  } @else {
+    <p>Kein Deck geladen.</p>
+  }
 </div>
-
-
