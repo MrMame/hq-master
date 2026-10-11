@@ -1,10 +1,11 @@
 import { Component, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { CardManagerService } from '../../services/card-manager.service';
 import { DeckState } from '../../models/deck-state.model';
+import { CardDisplay } from '../card-display/card-display';
 
 @Component({
   selector: 'app-card-manager-page',
-  imports: [],
+  imports: [CardDisplay],
   templateUrl: './card-manager-page.html',
   styleUrl: './card-manager-page.scss',
 })

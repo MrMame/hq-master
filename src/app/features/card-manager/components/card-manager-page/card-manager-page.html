@@ -5,11 +5,12 @@
     <div class="pilesContainer">
       <div class="pileZone drawPile">
         <h3>Nachziehstapel ({{ state()!.drawPile.length }})</h3>
-        @if (state()!.drawPile.length === 0) {
-          <div class="noCardsPlaceholder"><p>No Cards</p></div>
-        }@else{
-          <img class="drawPileTop" src="{{ state()!.drawPile[0]?.imagePath }}" alt="Top Card">
-        }
+          @for (card of state()!.drawPile; track card.id) {
+            <app-card-display class="cardInPile"
+              [card]="card"
+              [backImagePath]="state()!.config.backImagePath"
+            />
+          }
       </div>
 
     <div class="pileZone activeCard">

@@ -1,0 +1,18 @@
+<div class="card-display">
+  @if (showFront()) {
+    <div class="card-face card-front">
+      <img class="card-image" [src]="card().imagePath" [alt]="card().name">
+      <div class="card-info">
+        <span class="card-name">{{ card().name }}</span>
+        @let combat = asCombat(card());
+        @if (combat) {
+          <span class="card-stats">ATK {{ combat.attack }} / DEF {{ combat.defense }}</span>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="card-face card-back">
+      <img class="card-image" [src]="backImagePath()" alt="Kartenrückseite">
+    </div>
+  }
+</div>
