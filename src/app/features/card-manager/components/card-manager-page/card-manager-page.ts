@@ -33,4 +33,14 @@ export class CardManagerPage {
       this._isLoading.set(false);
     }
   }
+
+  onDrawPileCardClick(cardId: string): void {
+    this.cardManagerService.makeCardActive(cardId);
+  }
+  onActiveCardClick(): void {
+    this.cardManagerService.discardActiveCard();
+  }
+  onDrawPileZoneClick(): void {
+    this.cardManagerService.reset();
+  }
 }

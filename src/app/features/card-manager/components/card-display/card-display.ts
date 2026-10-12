@@ -1,4 +1,4 @@
-import { Component, computed, input, InputSignal, Signal } from '@angular/core';
+import { Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
 import { Card, CombatCard } from '../../models/card.model';
 
 export type CardSide = 'front' | 'back';
@@ -13,6 +13,7 @@ export class CardDisplay {
   card: InputSignal<Card> = input.required<Card>();
   backImagePath: InputSignal<string> = input.required<string>();
   side: InputSignal<CardSide> = input<CardSide>('front');
+  cardClick: OutputEmitterRef<string> = output<string>();
 
   showFront: Signal<boolean> = computed(() => this.side() === 'front');
 

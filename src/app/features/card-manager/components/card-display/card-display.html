@@ -1,4 +1,4 @@
-<div class="card-display">
+<div class="card-display" (click)="cardClick.emit(card().id)">
   @if (showFront()) {
     <div class="card-face card-front">
       <img class="card-image" [src]="card().imagePath" [alt]="card().name">

@@ -42,7 +42,7 @@ export class CardManagerService {
     this.setState({ ...s, drawPile, activeCard });
   }
 
-  discard(): void {
+  discardActiveCard(): void {
     const s: DeckState | null = this._state();
     if (!s || !s.activeCard) return;
     this.setState({
@@ -67,6 +67,17 @@ export class CardManagerService {
       activeCard: null,
     };
     this.setState(newState);
+  }
+
+  makeCardActive(cardId: string): void {
+    const s: DeckState | null = this._state();
+    if (!s) return;
+    const all: Card[] = collectAll(s);
+    const card: Card | undefined = all.find((c: Card) => c.id === cardId);
+    if (!card) return;
+    const drawPile: Card[] = s.drawPile.filter((c: Card) => c.id !== cardId);
+    const discardPile: Card[] = s.discardPile.filter((c: Card) => c.id !== cardId);
+    this.setState({ ...s, drawPile, discardPile, activeCard: card });
   }
 
   private setState(s: DeckState): void {
