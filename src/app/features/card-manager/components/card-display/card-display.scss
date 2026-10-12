@@ -1,22 +1,26 @@
 .card-display {
   display: inline-block;
+  
+  width: 100%;
+  height: 100%;
 }
 
 .card-face {
-  width: 160px;
-  height: 224px;
+  width: 100%;
+  height: 100%;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
+  align-items: center;
   background: #1e1e2e;
 }
 
 .card-image {
-  width: 100%;
+  width: 33%;
   flex: 1;
-  object-fit: cover;
+  object-fit: scale-down;
 }
 
 .card-info {

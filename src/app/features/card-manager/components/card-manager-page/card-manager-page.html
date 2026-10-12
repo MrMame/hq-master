@@ -11,7 +11,7 @@
     <!--- PILES ============================== -->
     <div class="pilesContainer">
       <!--- DrawPile ========= -->
-      <div class="pileZone drawPile">
+      <div class="pile drawPile">
         <h3 (click)="onDrawPileZoneClick()">Nachziehstapel ({{ state()!.drawPile.length }})</h3>
           @for (card of state()!.drawPile; track card.id) {
             <app-card-display class="cardInPile"
@@ -23,7 +23,7 @@
       </div>
 
     <!--- ActiveCard ========= -->
-    <div class="pileZone activeCard">
+    <div class="pile activeCardPile">
       <span>Aktive Karte</span>
         @if (state()!.activeCard) {
           <app-card-display class="cardInHand"
@@ -34,7 +34,7 @@
         }
     </div>
     <!--- DiscardPile ========= -->
-      <div class="pileZone discardPile">
+      <div class="pile discardPile">
 
         <h3>Ablagestapel ({{ state()!.discardPile.length }})</h3>
           @for (card of state()!.discardPile; track card.id) {
