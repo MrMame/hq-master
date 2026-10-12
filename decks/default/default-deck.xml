@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deck
+  id="default-deck"
+  name="Beispieldeck"
+  backImage="decks/default/card-back.svg"
+  type="basic"
+>
+
+  <card id="card-001" name="Feuerdrache" image="decks/default/card-fire-dragon.svg" type="combat">
+    <description>Ein uralter Drache, dessen Atem ganze Wälder in Asche verwandelt. Nur wenige haben seinen Blick überlebt.</description>
+    <attack>8</attack>
+    <defense>5</defense>
+  </card>
+
+  <card id="card-002" name="Wassergeist" image="decks/default/card-water-sprite.svg" type="combat">
+    <description>Ein mystisches Wesen aus den Tiefen des Ozeans. Formt Wasser zu tödlichen Projektilen.</description>
+    <attack>4</attack>
+    <defense>7</defense>
+  </card>
+
+  <card id="card-003" name="Erdgolem" image="decks/default/card-earth-golem.svg" type="combat">
+    <description>Eine lebendige Steingestalt, erschaffen aus uraltem Granit. Fast unzerstörbar, aber langsam.</description>
+    <attack>6</attack>
+    <defense>9</defense>
+  </card>
+
+  <card id="card-004" name="Windbogenschütze" image="decks/default/card-wind-archer.svg" type="combat">
+    <description>Ein blitzschneller Elfenbogenschütze, dessen Pfeile von Winden geführt werden. Kaum zu treffen.</description>
+    <attack>7</attack>
+    <defense>3</defense>
+  </card>
+
+  <card id="card-005" name="Schattenassassine" image="decks/default/card-shadow-assassin.svg" type="combat">
+    <description>Meisterin der Dunkelheit und des Verborgenen. Tödlich aus dem Hinterhalt, fragil im offenen Kampf.</description>
+    <attack>9</attack>
+    <defense>2</defense>
+  </card>
+
+  <card id="card-006" name="Heiliger Paladin" image="decks/default/card-holy-paladin.svg" type="combat">
+    <description>Ein Ritter des Lichts, gesegnet mit göttlichem Schutz. Sein Schild reflektiert Zauberkraft.</description>
+    <attack>5</attack>
+    <defense>8</defense>
+  </card>
+
+  <card id="card-007" name="Donnerkristall" image="decks/default/card-thunder-crystal.svg" type="combat">
+    <description>Ein Kristall voller entfesselter Blitzenergie. Unglaubliche Angriffskraft, kein Schutz.</description>
+    <attack>10</attack>
+    <defense>1</defense>
+  </card>
+
+  <card id="card-008" name="Altes Schriftstück" image="decks/default/card-ancient-scroll.svg" type="basic">
+    <description>Ein vergessenes Zauberbuch voller Geheimnisse. Wer es liest, gewinnt verlorenes Wissen vergangener Zeitalter.</description>
+  </card>
+
+  <card id="card-009" name="Heiltrank" image="decks/default/card-healing-potion.svg" type="basic">
+    <description>Ein goldenes Elixier aus seltenen Kräutern destilliert. Schließt alle Wunden und erneuert die Lebenskraft.</description>
+  </card>
+
+  <card id="card-010" name="Magischer Schild" image="decks/default/card-magic-shield.svg" type="basic">
+    <description>Ein verzauberter Schild, der Magie absorbiert und in Schutzenergie umwandelt. Ideal gegen Zauberangriffe.</description>
+  </card>
+
+</deck>
