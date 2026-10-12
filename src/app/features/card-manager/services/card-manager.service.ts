@@ -31,6 +31,7 @@ export class CardManagerService {
       drawPile: this.fisherYates([...config.cards]),
       discardPile: [],
       activeCard: null,
+      bank: [],
     };
     this.setState(newState);
   }
@@ -71,6 +72,7 @@ export class CardManagerService {
       drawPile: this.fisherYates([...config.cards]),
       discardPile: [],
       activeCard: null,
+      bank: [],
     };
     this.setState(newState);
   }
@@ -94,6 +96,13 @@ export class CardManagerService {
     if (!s || !s.activeCard) return;
     const drawPile: Card[] = this.fisherYates([...s.drawPile, s.activeCard]);
     this.setState({ ...s, drawPile, activeCard: null });
+  }
+
+  public dropActiveCardIntoBank(): void {
+    const s: DeckState | null = this._state();
+    if (!s || !s.activeCard) return;
+    const bank: Card[] = [...s.bank, s.activeCard];
+    this.setState({ ...s, bank, activeCard: null });
   }
 
   // PRIVATES =====================================================================

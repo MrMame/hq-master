@@ -7,8 +7,10 @@
       <button (click)="onShuffleClick()">Nachziehstapel<br>Mischen</button>
       <button (click)="onResetClick()">Zurücksetzen</button>
     </div>
+
+    <!--- PILES ============================== -->
     <div class="pilesContainer">
-      <!--- Draw Pile ============================== -->
+      <!--- DrawPile ========= -->
       <div class="pileZone drawPile">
         <h3 (click)="onDrawPileZoneClick()">Nachziehstapel ({{ state()!.drawPile.length }})</h3>
           @for (card of state()!.drawPile; track card.id) {
@@ -20,7 +22,7 @@
           }
       </div>
 
-    <!--- Active Card ============================== -->
+    <!--- ActiveCard ========= -->
     <div class="pileZone activeCard">
       <span>Aktive Karte</span>
         @if (state()!.activeCard) {
@@ -31,7 +33,7 @@
             />
         }
     </div>
-    <!--- DISCARD Pile ============================== -->
+    <!--- DiscardPile ========= -->
       <div class="pileZone discardPile">
 
         <h3>Ablagestapel ({{ state()!.discardPile.length }})</h3>
@@ -42,9 +44,21 @@
               (click)="onDiscardPileCardClick(card.id)"
             />
           }
+      </div>
+    </div>
 
+    <!-- BANK BEREICH ======================================== -->
 
-
+    <div class="bankContainer"  
+    (click)="onBankContainerClick()">
+      <div class="bankCardsContainer" >
+        @for (card of state()!.bank; track card.id) {
+          <app-card-display class="cardInBank"
+            [card]="card"
+            [backImagePath]="state()!.config.backImagePath"
+            (click)="onBankCardClick(card.id)"
+          />
+        }
       </div>
     </div>
   } @else {

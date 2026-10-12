@@ -63,4 +63,14 @@ export class CardManagerPage {
   onResetClick(): void {
     this.cardManagerService.reset();
   }
+  onBankCardClick(cardId: string): void {
+    if(this.cardManagerService.state()!.activeCard===null) {
+      this.cardManagerService.makeCardActive(cardId);
+    }
+  }
+  onBankContainerClick(): void {
+    if(this.cardManagerService.state()!.activeCard!==null) {
+      this.cardManagerService.dropActiveCardIntoBank();
+    }
+  }
 }
