@@ -35,12 +35,32 @@ export class CardManagerPage {
   }
 
   onDrawPileCardClick(cardId: string): void {
-    this.cardManagerService.makeCardActive(cardId);
+    if(this.cardManagerService.state()!.activeCard===null) {
+      this.cardManagerService.makeCardActive(cardId);
+    } else {
+      this.cardManagerService.shuffleActiveCardIntoDrawPile();
+    }
+  }
+  onDiscardPileCardClick(cardId: string): void {
+    if(this.cardManagerService.state()!.activeCard===null) {
+      this.cardManagerService.makeCardActive(cardId);
+    }
   }
   onActiveCardClick(): void {
     this.cardManagerService.discardActiveCard();
   }
   onDrawPileZoneClick(): void {
+    this.cardManagerService.reset();
+  }
+  onLoadDeckClick(): void {
+    // const url: string = prompt('Deck URL eingeben:') ?? '/decks/default/default-deck.xml';
+    const url: string = '/decks/default/default-deck.xml';
+    this.onLoadDeck(url);
+  }
+  onShuffleClick(): void {
+    this.cardManagerService.shuffle();
+  }
+  onResetClick(): void {
     this.cardManagerService.reset();
   }
 }

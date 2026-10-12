@@ -2,6 +2,11 @@
   @if (state()) {
     <p>Deck: {{ state()!.config.name }}</p>
 
+    <div class="menueContainer">
+      <button (click)="onLoadDeckClick()">Deck Laden</button>
+      <button (click)="onShuffleClick()">Nachziehstapel<br>Mischen</button>
+      <button (click)="onResetClick()">Zurücksetzen</button>
+    </div>
     <div class="pilesContainer">
       <!--- Draw Pile ============================== -->
       <div class="pileZone drawPile">
@@ -17,13 +22,12 @@
 
     <!--- Active Card ============================== -->
     <div class="pileZone activeCard">
+      <span>Aktive Karte</span>
         @if (state()!.activeCard) {
-            <h3>Aktive Karte</h3>
-            <p>{{ state()!.activeCard!.name }}</p>
-          <app-card-display class="cardInPile"
+          <app-card-display class="cardInHand"
               [card]="state()!.activeCard!"
               [backImagePath]="state()!.config.backImagePath"
-              (click.stop)="onActiveCardClick()"
+              (click)="onActiveCardClick()"
             />
         }
     </div>
@@ -35,6 +39,7 @@
             <app-card-display class="cardInPile"
               [card]="card"
               [backImagePath]="state()!.config.backImagePath"
+              (click)="onDiscardPileCardClick(card.id)"
             />
           }
 

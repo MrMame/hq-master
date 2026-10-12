@@ -30,10 +30,12 @@
     justify-content: center;
     align-items: center;
     padding:10px;
-    background-color: yellow;
 }
 .drawPile{
    background-color:blue;
+}
+.activeCard{
+   background-color:rgb(255, 251, 0);
 }
 .discardPile{
    background-color:green;
@@ -48,4 +50,21 @@
 
 .cardInPile{
     position: absolute;
+}
+.cardInHand{
+    position: absolute;
+    top: 50%;
+}
+
+
+
+// Menue Container
+.menueContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 90vw;
+    height: 10vh;
+    background-color: orange;
 }
