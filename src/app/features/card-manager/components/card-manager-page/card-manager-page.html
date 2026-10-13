@@ -17,7 +17,7 @@
             <app-card-display class="cardInPile"
               [card]="card"
               [backImagePath]="state()!.config.backImagePath"
-              (click)="onDrawPileCardClick(card.id)"
+              (click)="$event.stopPropagation();onDrawPileCardClick(card.id)"
             />
           }
       </div>
@@ -34,14 +34,16 @@
         }
     </div>
     <!--- DiscardPile ========= -->
-      <div class="pile discardPile">
+      <div class="pile discardPile"
+           (click)="$event.stopPropagation();onDiscardPileClick()"
+      >
 
         <h3>Ablagestapel ({{ state()!.discardPile.length }})</h3>
           @for (card of state()!.discardPile; track card.id) {
             <app-card-display class="cardInPile"
               [card]="card"
               [backImagePath]="state()!.config.backImagePath"
-              (click)="onDiscardPileCardClick(card.id)"
+              (click)="$event.stopPropagation();onDiscardPileCardClick(card.id)"
             />
           }
       </div>
@@ -56,7 +58,7 @@
           <app-card-display class="cardInBank"
             [card]="card"
             [backImagePath]="state()!.config.backImagePath"
-            (click)="onBankCardClick(card.id)"
+            (click)="$event.stopPropagation();onBankCardClick(card.id)"
           />
         }
       </div>

@@ -34,6 +34,12 @@ export class CardManagerPage {
     }
   }
 
+
+  onDiscardPileClick(): void {
+    if(this.cardManagerService.state()!.activeCard!==null) {
+      this.cardManagerService.discardActiveCard();
+    }
+  }
   onDrawPileCardClick(cardId: string): void {
     if(this.cardManagerService.state()!.activeCard===null) {
       this.cardManagerService.makeCardActive(cardId);
@@ -44,6 +50,8 @@ export class CardManagerPage {
   onDiscardPileCardClick(cardId: string): void {
     if(this.cardManagerService.state()!.activeCard===null) {
       this.cardManagerService.makeCardActive(cardId);
+    }else{
+      this.cardManagerService.discardActiveCard();
     }
   }
   onActiveCardClick(): void {

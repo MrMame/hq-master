@@ -63,7 +63,7 @@ export class CardManagerService {
     const s: DeckState | null = this._state();
     if (!s) return;
     const all: Card[] = collectAll(s);
-    this.setState({ ...s, drawPile: this.fisherYates(all), discardPile: [], activeCard: null });
+    this.setState({ ...s, drawPile: this.fisherYates(all), discardPile: [], activeCard: null , bank: [] });
   }
 
   loadDeckConfig(config: DeckConfig): void {
@@ -88,7 +88,8 @@ export class CardManagerService {
     if (!card) return;
     const drawPile: Card[] = s.drawPile.filter((c: Card) => c.id !== cardId);
     const discardPile: Card[] = s.discardPile.filter((c: Card) => c.id !== cardId);
-    this.setState({ ...s, drawPile, discardPile, activeCard: card });
+    const bank: Card[] = s.bank.filter((c: Card) => c.id !== cardId);
+    this.setState({ ...s, drawPile: drawPile, discardPile:discardPile,  activeCard: card, bank:bank });
   }
 
   public shuffleActiveCardIntoDrawPile(): void {
@@ -127,5 +128,5 @@ export class CardManagerService {
 
 function collectAll(s: DeckState): Card[] {
   const active: Card[] = s.activeCard ? [s.activeCard] : [];
-  return [...s.drawPile, ...s.discardPile, ...active];
+  return [...s.drawPile, ...s.discardPile, ...active, ...s.bank];
 }
