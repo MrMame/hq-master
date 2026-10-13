@@ -11,7 +11,7 @@ import { GametimeService } from './core/services/gaming/gametime-service';
     <div class="min-h-screen bg-black text-gray-900 flex flex-col font-sans">
 
       <!-- 1. Globale Navigationsleiste -->
-      <header class="h-[3em] bg-yellow-500 ">
+      <header class="bg-yellow-500 ">
         <!-- Begrenzte Breite (max-w-4xl), zentriert (mx-auto), Innenabstand (p-4) -->
         <div class="flex items-center justify-between p-2">
 
