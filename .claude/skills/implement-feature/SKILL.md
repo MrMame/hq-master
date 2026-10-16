@@ -51,8 +51,6 @@ Gemäß `.claude/rules/feature-requests.md`:
 ## 6. Abschlussbericht und Commit
 
 - [ ] Chat Ausgabe : was geändert wurde (mit Dateilinks), Test-/Build-Ergebnis, was bewusst offen blieb.
-- [ ] Committext vorbereiten  
-- [ ] 'ai-implementations.log' Eintrag vorbereiten.
-- [ ] Benutzer den Committext und 'ai-implementations.log' Eintrag zeigen und fragen, ob der commit durchgeführt und der 'ai-implementations.log' Eintrag hinzugefügt werden soll.
-
-
+- [ ] Committext vorbereiten
+- [ ] 'ai-implementations-log.md' Eintrag vorbereiten.
+- [ ] Benutzer den Committext und 'ai-implementations-log.md' Eintrag zeigen und fragen, ob der commit durchgeführt und der 'ai-implementations-log.md' Eintrag hinzugefügt werden soll.
