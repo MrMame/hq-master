@@ -44,6 +44,16 @@
             "statusMessage": "Prettier formatiert…"
           }
         ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/log-activity.mjs\"",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "PreToolUse": [
@@ -68,6 +78,22 @@
             "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/stop-run-tests.mjs\"",
             "timeout": 300,
             "statusMessage": "Unit-Tests laufen…"
+          },
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/log-activity.mjs\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/log-activity.mjs\"",
+            "timeout": 5
           }
         ]
       }
