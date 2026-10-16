@@ -13,6 +13,8 @@ export class GametimeService {
   private readonly storageService: StorageService = inject(StorageService);
   private readonly _gameTime: WritableSignal<Date> = signal<Date>(this.loadGameTime());
 
+  // REACTIVE INTERFACES ===============================================================================
+
   /**
    * Aktuelle Spielzeit als reaktive Quelle für andere Services (`effect()` / `computed()`).
    * Jede Änderung liefert eine neue `Date`-Instanz. Das gelieferte `Date` darf nicht
@@ -30,6 +32,8 @@ export class GametimeService {
     const days: string = d.getDate().toString().padStart(2, '0');
     return `${hours}:${minutes}:${seconds} ${years}-${months}-${days}`;
   });
+
+  // PUBLICS ===============================================================================
 
   public setGameTime(gameTime: GameTime): void {
     const { year, month, day, hours = 0, minutes = 0, seconds = 0 }: GameTime = gameTime;
@@ -50,6 +54,8 @@ export class GametimeService {
       d.setSeconds(d.getSeconds() + seconds);
     });
   }
+
+  // PRIVATES ===============================================================================
 
   private updateAndPersist(mutate: (copy: Date) => void): void {
     const updated: Date = new Date(this._gameTime());
