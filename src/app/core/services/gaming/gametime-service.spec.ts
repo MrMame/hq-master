@@ -1,4 +1,6 @@
+import { computed, effect, Signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Mock } from 'vitest';
 
 import { GametimeService } from './gametime-service';
 import { GameTimeSpan } from './game-time-span';
@@ -80,6 +82,48 @@ describe('GametimeService', () => {
     service = TestBed.inject(GametimeService);
     service.addTime({ minutes: 4, seconds: 70 });
     expect(service.gameTimeAsString()).toBe('00:00:10 2381-01-02');
+  });
+
+  it('should expose the default and the stored game time as Date signal', () => {
+    service = TestBed.inject(GametimeService);
+    expect(service.gameTime()).toEqual(new Date(2381, 0, 1, 23, 55, 0));
+    TestBed.resetTestingModule();
+    storeTime(new Date(2390, 4, 6, 7, 8, 9));
+    service = TestBed.inject(GametimeService);
+    expect(service.gameTime()).toEqual(new Date(2390, 4, 6, 7, 8, 9));
+  });
+
+  it('should emit a new Date instance on addTime and setGameTime', () => {
+    service = TestBed.inject(GametimeService);
+    const initial: Date = service.gameTime();
+    service.addTime({ minutes: 10 });
+    const afterAdd: Date = service.gameTime();
+    expect(afterAdd).not.toBe(initial);
+    expect(afterAdd).toEqual(new Date(2381, 0, 2, 0, 5, 0));
+    expect(initial).toEqual(new Date(2381, 0, 1, 23, 55, 0));
+    service.setGameTime({ year: 2390, month: 5, day: 6, hours: 7 });
+    expect(service.gameTime()).not.toBe(afterAdd);
+    expect(service.gameTime()).toEqual(new Date(2390, 4, 6, 7, 0, 0));
+  });
+
+  it('should recompute a consumer computed() after a time change', () => {
+    service = TestBed.inject(GametimeService);
+    const hour: Signal<number> = computed(() => service.gameTime().getHours());
+    expect(hour()).toBe(23);
+    service.addTime({ hours: 2 });
+    expect(hour()).toBe(1);
+  });
+
+  it('should trigger a consumer effect() on every time change', () => {
+    service = TestBed.inject(GametimeService);
+    const onTick: Mock<(time: Date) => void> = vi.fn();
+    TestBed.runInInjectionContext(() => effect(() => onTick(service.gameTime())));
+    TestBed.tick();
+    expect(onTick).toHaveBeenCalledTimes(1);
+    service.addTime({ seconds: 10 });
+    TestBed.tick();
+    expect(onTick).toHaveBeenCalledTimes(2);
+    expect(onTick).toHaveBeenLastCalledWith(new Date(2381, 0, 1, 23, 55, 10));
   });
 
   it('should keep the game time across a service restart', () => {

@@ -13,8 +13,15 @@ export class GametimeService {
   private readonly storageService: StorageService = inject(StorageService);
   private readonly _gameTime: WritableSignal<Date> = signal<Date>(this.loadGameTime());
 
+  /**
+   * Aktuelle Spielzeit als reaktive Quelle für andere Services (`effect()` / `computed()`).
+   * Jede Änderung liefert eine neue `Date`-Instanz. Das gelieferte `Date` darf nicht
+   * verändert werden – Änderungen nur über `setGameTime()` / `addTime()`.
+   */
+  readonly gameTime: Signal<Date> = this._gameTime.asReadonly();
+
   readonly gameTimeAsString: Signal<string> = computed(() => {
-    const d: Date = this._gameTime();
+    const d: Date = this.gameTime();
     const hours: string = d.getHours().toString().padStart(2, '0');
     const minutes: string = d.getMinutes().toString().padStart(2, '0');
     const seconds: string = d.getSeconds().toString().padStart(2, '0');

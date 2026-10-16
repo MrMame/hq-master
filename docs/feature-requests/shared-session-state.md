@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-15  
 **Priorität:** Hoch  
-**Status:** Teilweise umgesetzt (Anforderung 1 done am 2026-10-16 12:29, Anforderung 2 done am 2026-10-16 15:10, Anforderung 6 done am 2026-10-16 15:34)  
+**Status:** Teilweise umgesetzt (Anforderung 1 done am 2026-10-16 12:29, Anforderung 2 done am 2026-10-16 15:10, Anforderung 3 done am 2026-10-16 18:00, Anforderung 6 done am 2026-10-16 15:34)  
 **Bezug REQUIREMENTS.md:** Abschnitt 0 (App-weite Anforderungen), Abschnitt 4 (GameSession)
 
 ---
@@ -49,7 +49,7 @@ Einen reaktiven, persistenten **Session State Layer** einführen, auf den alle F
 
 ---
 
-### 3. `GametimeService` — Feature-übergreifend nutzbar machen
+### 3. `GametimeService` — Feature-übergreifend nutzbar machen ✅ done (2026-10-16 18:00)
 
 - Vorbereitung für REQUIREMENTS.md §2: Wenn die Spielzeit sich ändert, sollen andere Services reagieren können (z.B. Schaden-Tick für vergiftete Charaktere).
 - `GametimeService` soll ein `Signal<Date>` als öffentliche API exponieren, auf das andere Services via `effect()` oder `computed()` reagieren können.
