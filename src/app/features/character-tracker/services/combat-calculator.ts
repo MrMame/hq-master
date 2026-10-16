@@ -3,11 +3,10 @@ import { MovableCharacterItem } from './../models/MovableCharacterItem';
 import { DamageTypes } from './../models/DamageTypes';
 
 @Injectable({
-  providedIn: 'root' // Oder im Providers-Array des Features, falls es nur dort leben soll
+  providedIn: 'root', // Oder im Providers-Array des Features, falls es nur dort leben soll
 })
 export class CombatCalculatorService {
-
-  private readonly CRITICAL_DAMAGE_MULTIPLIER : number = 1.0;
+  private readonly CRITICAL_DAMAGE_MULTIPLIER: number = 1.0;
 
   /**
    * Berechnet den Schaden und wendet ihn direkt auf das Charakter-Objekt an

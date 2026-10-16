@@ -1,4 +1,4 @@
 export enum DamageTypes {
-  Normal = "Normal",
-  Critical = "Critical",
+  Normal = 'Normal',
+  Critical = 'Critical',
 }

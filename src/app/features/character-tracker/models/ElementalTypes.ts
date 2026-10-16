@@ -1,8 +1,6 @@
-export enum ElementalTypes
-{
+export enum ElementalTypes {
   FEUER = 'Feuer',
   WASSER = 'Wasser',
   ERDE = 'Erde',
-  LUFT = 'Luft'
+  LUFT = 'Luft',
 }
-

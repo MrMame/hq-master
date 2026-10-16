@@ -10,18 +10,15 @@ const KEY_DECK_STATE: string = 'card_manager_deck_state';
 @Injectable({ providedIn: 'root' })
 export class CardManagerService {
   // PRIVATE INJECTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  private readonly storageService     : StorageService        = inject(StorageService);
-  private readonly deckLoaderService  : DeckXmlLoaderService  = inject(DeckXmlLoaderService);
+  private readonly storageService: StorageService = inject(StorageService);
+  private readonly deckLoaderService: DeckXmlLoaderService = inject(DeckXmlLoaderService);
   // PRIVATE SIGNALS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   private readonly _state: WritableSignal<DeckState | null> = signal<DeckState | null>(
     this.storageService.readFromLocalStorage<DeckState>(KEY_DECK_STATE),
   );
 
-
-
   // PUBLIC SIGNALS =====================================================================
   public readonly state: Signal<DeckState | null> = this._state.asReadonly();
-
 
   // PUBLIC METHODS =====================================================================
   async loadDeck(url: string): Promise<void> {
@@ -54,7 +51,7 @@ export class CardManagerService {
     if (!s || !s.activeCard) return;
     this.setState({
       ...s,
-      discardPile: [...s.discardPile,s.activeCard],
+      discardPile: [...s.discardPile, s.activeCard],
       activeCard: null,
     });
   }
@@ -63,7 +60,13 @@ export class CardManagerService {
     const s: DeckState | null = this._state();
     if (!s) return;
     const all: Card[] = collectAll(s);
-    this.setState({ ...s, drawPile: this.fisherYates(all), discardPile: [], activeCard: null , bank: [] });
+    this.setState({
+      ...s,
+      drawPile: this.fisherYates(all),
+      discardPile: [],
+      activeCard: null,
+      bank: [],
+    });
   }
 
   loadDeckConfig(config: DeckConfig): void {
@@ -89,7 +92,13 @@ export class CardManagerService {
     const drawPile: Card[] = s.drawPile.filter((c: Card) => c.id !== cardId);
     const discardPile: Card[] = s.discardPile.filter((c: Card) => c.id !== cardId);
     const bank: Card[] = s.bank.filter((c: Card) => c.id !== cardId);
-    this.setState({ ...s, drawPile: drawPile, discardPile:discardPile,  activeCard: card, bank:bank });
+    this.setState({
+      ...s,
+      drawPile: drawPile,
+      discardPile: discardPile,
+      activeCard: card,
+      bank: bank,
+    });
   }
 
   public shuffleActiveCardIntoDrawPile(): void {
@@ -108,8 +117,7 @@ export class CardManagerService {
 
   // PRIVATES =====================================================================
 
-
-  // Set State muss am Ende immer gesetzt werden, damit das _State Objekt komplett erneuert wird. 
+  // Set State muss am Ende immer gesetzt werden, damit das _State Objekt komplett erneuert wird.
   // Nur dadurch bekommt das Angular Signal-System mit, dass sich der Wert geändert hat.
   private setState(s: DeckState): void {
     this._state.set(s);

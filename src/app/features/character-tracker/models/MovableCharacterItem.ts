@@ -1,5 +1,5 @@
-import { CharacterInfo } from "./CharacterInfo";
-import { MovableItem } from "./MovableItem";
+import { CharacterInfo } from './CharacterInfo';
+import { MovableItem } from './MovableItem';
 
 export class MovableCharacterItem implements MovableItem {
   id: number;
@@ -18,7 +18,7 @@ export class MovableCharacterItem implements MovableItem {
     this.showTop = false;
   }
 
-  toggleMinimise():void {
+  toggleMinimise(): void {
     this.isMinimised = !this.isMinimised;
   }
 }

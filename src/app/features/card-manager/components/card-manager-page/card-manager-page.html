@@ -1,11 +1,10 @@
 <div class="cardManagerPageContainer">
   @if (state()) {
-    
     <p>Deck: {{ state()!.config.name }}</p>
 
     <div class="menueContainer">
       <button (click)="onLoadDeckClick()">Deck Laden</button>
-      <button (click)="onShuffleClick()">Nachziehstapel<br>Mischen</button>
+      <button (click)="onShuffleClick()">Nachziehstapel<br />Mischen</button>
       <button (click)="onResetClick()">Zurücksetzen</button>
     </div>
 
@@ -14,52 +13,52 @@
       <!--- DrawPile ========= -->
       <div class="pile drawPile">
         <h3 (click)="onDrawPileZoneClick()">Nachziehstapel ({{ state()!.drawPile.length }})</h3>
-          @for (card of state()!.drawPile; track card.id) {
-            <app-card-display class="cardInPile"
-              [card]="card"
-              [backImagePath]="state()!.config.backImagePath"
-              (click)="$event.stopPropagation();onDrawPileCardClick(card.id)"
-            />
-          }
+        @for (card of state()!.drawPile; track card.id) {
+          <app-card-display
+            class="cardInPile"
+            [card]="card"
+            [backImagePath]="state()!.config.backImagePath"
+            (click)="$event.stopPropagation(); onDrawPileCardClick(card.id)"
+          />
+        }
       </div>
 
-    <!--- ActiveCard ========= -->
-    <div class="pile activeCardPile">
-      <span>Aktive Karte</span>
+      <!--- ActiveCard ========= -->
+      <div class="pile activeCardPile">
+        <span>Aktive Karte</span>
         @if (state()!.activeCard) {
-          <app-card-display class="cardInHand"
-              [card]="state()!.activeCard!"
-              [backImagePath]="state()!.config.backImagePath"
-              (click)="onActiveCardClick()"
-            />
+          <app-card-display
+            class="cardInHand"
+            [card]="state()!.activeCard!"
+            [backImagePath]="state()!.config.backImagePath"
+            (click)="onActiveCardClick()"
+          />
         }
-    </div>
-    <!--- DiscardPile ========= -->
-      <div class="pile discardPile"
-           (click)="$event.stopPropagation();onDiscardPileClick()"
-      >
-
+      </div>
+      <!--- DiscardPile ========= -->
+      <div class="pile discardPile" (click)="$event.stopPropagation(); onDiscardPileClick()">
         <h3>Ablagestapel ({{ state()!.discardPile.length }})</h3>
-          @for (card of state()!.discardPile; track card.id) {
-            <app-card-display class="cardInPile"
-              [card]="card"
-              [backImagePath]="state()!.config.backImagePath"
-              (click)="$event.stopPropagation();onDiscardPileCardClick(card.id)"
-            />
-          }
+        @for (card of state()!.discardPile; track card.id) {
+          <app-card-display
+            class="cardInPile"
+            [card]="card"
+            [backImagePath]="state()!.config.backImagePath"
+            (click)="$event.stopPropagation(); onDiscardPileCardClick(card.id)"
+          />
+        }
       </div>
     </div>
 
     <!-- BANK BEREICH ======================================== -->
 
-    <div class="bankContainer"  
-    (click)="onBankContainerClick()">
-      <div class="bankCardsContainer" >
+    <div class="bankContainer" (click)="onBankContainerClick()">
+      <div class="bankCardsContainer">
         @for (card of state()!.bank; track card.id) {
-          <app-card-display class="cardInBank"
+          <app-card-display
+            class="cardInBank"
             [card]="card"
             [backImagePath]="state()!.config.backImagePath"
-            (click)="$event.stopPropagation();onBankCardClick(card.id)"
+            (click)="$event.stopPropagation(); onBankCardClick(card.id)"
           />
         }
       </div>
@@ -68,14 +67,23 @@
     <div class="flex flex-col items-center gap-4 p-8">
       <p class="text-gray-400">Kein Deck geladen.</p>
       <div class="flex gap-2">
-        <input #urlInput type="text"
-               placeholder="decks/default/default-deck.xml"
-               value="decks/default/default-deck.xml"
-               class="border rounded px-3 py-2 bg-gray-800 text-white border-gray-600">
-        <button (click)="onLoadDeck(urlInput.value)"
-                [disabled]="isLoading()"
-                class="bg-blue-500 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded">
-          @if (isLoading()) { Lade... } @else { Deck laden }
+        <input
+          #urlInput
+          type="text"
+          placeholder="decks/default/default-deck.xml"
+          value="decks/default/default-deck.xml"
+          class="border rounded px-3 py-2 bg-gray-800 text-white border-gray-600"
+        />
+        <button
+          (click)="onLoadDeck(urlInput.value)"
+          [disabled]="isLoading()"
+          class="bg-blue-500 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded"
+        >
+          @if (isLoading()) {
+            Lade...
+          } @else {
+            Deck laden
+          }
         </button>
       </div>
       @if (loadError()) {

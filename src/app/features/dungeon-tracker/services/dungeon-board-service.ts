@@ -14,31 +14,33 @@ export class DungeonBoardService {
   private readonly storageService: StorageService = inject(StorageService);
 
   private readonly _boardState: WritableSignal<DungeonBoardState> = signal<DungeonBoardState>(
-    this.storageService.readFromLocalStorage<DungeonBoardState>(KEY_BOARD) ?? { ...DEFAULT_DUNGEON_BOARD_STATE }
+    this.storageService.readFromLocalStorage<DungeonBoardState>(KEY_BOARD) ?? {
+      ...DEFAULT_DUNGEON_BOARD_STATE,
+    },
   );
 
   private readonly _positions: WritableSignal<DungeonPosition[]> = signal<DungeonPosition[]>(
-    this.storageService.readFromLocalStorage<DungeonPosition[]>(KEY_POSITIONS) ?? []
+    this.storageService.readFromLocalStorage<DungeonPosition[]>(KEY_POSITIONS) ?? [],
   );
 
   readonly boardState: Signal<DungeonBoardState> = this._boardState.asReadonly();
   readonly positions: Signal<DungeonPosition[]> = this._positions.asReadonly();
 
   setBoardImage(base64: string): void {
-    this._boardState.update(s => ({ ...s, boardImageBase64: base64 }));
+    this._boardState.update((s) => ({ ...s, boardImageBase64: base64 }));
     this.persistBoard();
   }
 
   updateGridSettings(partial: Partial<DungeonBoardState>): void {
-    this._boardState.update(s => ({ ...s, ...partial }));
+    this._boardState.update((s) => ({ ...s, ...partial }));
     this.persistBoard();
   }
 
   updatePosition(characterId: string, col: number, row: number): void {
-    this._positions.update(positions => {
-      const existing: number = positions.findIndex(p => p.characterId === characterId);
+    this._positions.update((positions) => {
+      const existing: number = positions.findIndex((p) => p.characterId === characterId);
       if (existing !== -1) {
-        return positions.map(p => p.characterId === characterId ? { ...p, col, row } : p);
+        return positions.map((p) => (p.characterId === characterId ? { ...p, col, row } : p));
       }
       return [...positions, { characterId, col, row }];
     });
@@ -46,16 +48,16 @@ export class DungeonBoardService {
   }
 
   initPositionsForCharacters(characters: CharacterInfo[]): void {
-    this._positions.update(existing => {
-      const existingIds: Set<string> = new Set<string>(existing.map(p => p.characterId));
-      const characterIds: Set<string> = new Set<string>(characters.map(c => c.id));
+    this._positions.update((existing) => {
+      const existingIds: Set<string> = new Set<string>(existing.map((p) => p.characterId));
+      const characterIds: Set<string> = new Set<string>(characters.map((c) => c.id));
 
       // Positionen gelöschter Charaktere entfernen
-      const filtered: DungeonPosition[] = existing.filter(p => characterIds.has(p.characterId));
+      const filtered: DungeonPosition[] = existing.filter((p) => characterIds.has(p.characterId));
 
       // Positionen für neue Charaktere hinzufügen (gestaffelt platzieren)
       const newPositions: DungeonPosition[] = characters
-        .filter(c => !existingIds.has(c.id))
+        .filter((c) => !existingIds.has(c.id))
         .map((c, index) => ({
           characterId: c.id,
           col: index % 5,

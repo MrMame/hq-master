@@ -34,23 +34,22 @@ export class CardManagerPage {
     }
   }
 
-
   onDiscardPileClick(): void {
-    if(this.cardManagerService.state()!.activeCard!==null) {
+    if (this.cardManagerService.state()!.activeCard !== null) {
       this.cardManagerService.discardActiveCard();
     }
   }
   onDrawPileCardClick(cardId: string): void {
-    if(this.cardManagerService.state()!.activeCard===null) {
+    if (this.cardManagerService.state()!.activeCard === null) {
       this.cardManagerService.makeCardActive(cardId);
     } else {
       this.cardManagerService.shuffleActiveCardIntoDrawPile();
     }
   }
   onDiscardPileCardClick(cardId: string): void {
-    if(this.cardManagerService.state()!.activeCard===null) {
+    if (this.cardManagerService.state()!.activeCard === null) {
       this.cardManagerService.makeCardActive(cardId);
-    }else{
+    } else {
       this.cardManagerService.discardActiveCard();
     }
   }
@@ -72,12 +71,12 @@ export class CardManagerPage {
     this.cardManagerService.reset();
   }
   onBankCardClick(cardId: string): void {
-    if(this.cardManagerService.state()!.activeCard===null) {
+    if (this.cardManagerService.state()!.activeCard === null) {
       this.cardManagerService.makeCardActive(cardId);
     }
   }
   onBankContainerClick(): void {
-    if(this.cardManagerService.state()!.activeCard!==null) {
+    if (this.cardManagerService.state()!.activeCard !== null) {
       this.cardManagerService.dropActiveCardIntoBank();
     }
   }

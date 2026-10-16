@@ -4,7 +4,6 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class StorageService {
-
   readTableFromLocalStorage<T>(tableName: string): T[] | null {
     const data: string | null = localStorage.getItem(tableName);
     return data ? (JSON.parse(data) as T[]) : null;
