@@ -37,14 +37,14 @@ describe('CharactersDbService', () => {
   it('should initialise the signal from localStorage', () => {
     localStorage.setItem('characters', JSON.stringify([createCharacter('a')]));
     service = TestBed.inject(CharactersDbService);
-    expect(service.characters().map(c => c.id)).toEqual(['a']);
+    expect(service.characters().map((c) => c.id)).toEqual(['a']);
   });
 
   it('should add a new character to signal and localStorage', () => {
     service = TestBed.inject(CharactersDbService);
     service.writeCharacter(createCharacter('a'));
-    expect(service.characters().map(c => c.id)).toEqual(['a']);
-    expect(readStored().map(c => c.id)).toEqual(['a']);
+    expect(service.characters().map((c) => c.id)).toEqual(['a']);
+    expect(readStored().map((c) => c.id)).toEqual(['a']);
   });
 
   it('should replace an existing character by id', () => {
@@ -61,8 +61,8 @@ describe('CharactersDbService', () => {
     service.writeCharacter(createCharacter('a'));
     service.writeCharacter(createCharacter('b'));
     service.removeCharacter(createCharacter('a'));
-    expect(service.characters().map(c => c.id)).toEqual(['b']);
-    expect(readStored().map(c => c.id)).toEqual(['b']);
+    expect(service.characters().map((c) => c.id)).toEqual(['b']);
+    expect(readStored().map((c) => c.id)).toEqual(['b']);
   });
 
   it('should emit a new array reference on every mutation', () => {

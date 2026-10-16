@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-15  
 **Priorität:** Hoch  
-**Status:** Teilweise umgesetzt (Anforderung 1 erledigt am 2026-10-16)  
+**Status:** Teilweise umgesetzt (Anforderung 1 done am 2026-10-16 12:29)  
 **Bezug REQUIREMENTS.md:** Abschnitt 0 (App-weite Anforderungen), Abschnitt 4 (GameSession)
 
 ---
@@ -11,9 +11,10 @@
 
 Die aktuelle Architektur widerspricht der zentralen Anforderung aus REQUIREMENTS.md §0:
 
-> *„Alle Features greifen auf die gleiche SpieleSession Daten zu."*
+> _„Alle Features greifen auf die gleiche SpieleSession Daten zu."_
 
 Aktueller Stand:
+
 - Jedes Feature speichert Daten in **isolierten localStorage-Keys** ohne reaktive Verbindung zu anderen Features.
 - `DungeonTrackerPage` liest Characters **einmalig** im Constructor — Änderungen im Character-Tracker sind erst nach Navigation sichtbar.
 - `GametimeService` wird von **keinem anderen Feature** konsumiert, obwohl REQUIREMENTS.md §0 explizit fordert, dass Zeitänderungen alle Features beeinflussen (z.B. Giftschaden pro Runde).
@@ -29,7 +30,7 @@ Einen reaktiven, persistenten **Session State Layer** einführen, auf den alle F
 
 ## Anforderungen
 
-### 1. `CharactersDbService` — reaktiv machen ✅ Durchgeführt (2026-10-16)
+### 1. `CharactersDbService` — reaktiv machen ✅ done (2026-10-16 12:29)
 
 - Ein `WritableSignal<CharacterInfo[]>` hinzufügen, das beim Service-Init aus localStorage befüllt wird.
 - Alle Schreib-Operationen (`writeCharacter`, `removeCharacter`) aktualisieren sowohl das Signal als auch localStorage.
@@ -97,12 +98,12 @@ Dieses Muster auf `CharactersDbService` und `GametimeService` ausrollen.
 
 ## Betroffene Dateien
 
-| Datei | Änderung |
-|---|---|
-| `src/app/core/services/persistent/characters-database-service.ts` | Signal hinzufügen, alle Mutationen darüber routen |
-| `src/app/core/services/gaming/gametime-service.ts` | localStorage-Persistenz + öffentliches Signal |
-| `src/app/features/dungeon-tracker/components/dungeon-tracker-page/dungeon-tracker-page.ts` | Reaktiv auf Characters-Signal binden statt einmaligem Read |
-| `src/app/features/character-tracker/components/character-tracker-page/character-tracker-page.ts` | `addCharacter()` persistiert Dialog-Ergebnis (§5) |
+| Datei                                                                                            | Änderung                                                   |
+| ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| `src/app/core/services/persistent/characters-database-service.ts`                                | Signal hinzufügen, alle Mutationen darüber routen          |
+| `src/app/core/services/gaming/gametime-service.ts`                                               | localStorage-Persistenz + öffentliches Signal              |
+| `src/app/features/dungeon-tracker/components/dungeon-tracker-page/dungeon-tracker-page.ts`       | Reaktiv auf Characters-Signal binden statt einmaligem Read |
+| `src/app/features/character-tracker/components/character-tracker-page/character-tracker-page.ts` | `addCharacter()` persistiert Dialog-Ergebnis (§5)          |
 
 ---
 

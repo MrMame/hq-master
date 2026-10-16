@@ -6,7 +6,6 @@ import { StorageService } from './storage-service';
   providedIn: 'root',
 })
 export class CharactersDbService {
-
   private readonly TABLENAME_CHARACTERS: string = 'characters';
   private storageService: StorageService = inject(StorageService);
 
@@ -15,7 +14,7 @@ export class CharactersDbService {
   );
   readonly characters: Signal<CharacterInfo[]> = this._characters.asReadonly();
 
-  readCharacters(): CharacterInfo[]|null {
+  readCharacters(): CharacterInfo[] | null {
     return this.storageService.readTableFromLocalStorage(this.TABLENAME_CHARACTERS);
   }
   writeCharacters(characterInfos: CharacterInfo[]): void {
@@ -24,16 +23,15 @@ export class CharactersDbService {
   }
   writeCharacter(characterInfo: CharacterInfo): void {
     const characters: CharacterInfo[] = this._characters();
-    const exists: boolean = characters.some(c => c.id === characterInfo.id);
+    const exists: boolean = characters.some((c) => c.id === characterInfo.id);
     this.writeCharacters(
       exists
-        ? characters.map(c => (c.id === characterInfo.id ? characterInfo : c))
+        ? characters.map((c) => (c.id === characterInfo.id ? characterInfo : c))
         : [...characters, characterInfo],
     );
   }
 
   removeCharacter(characterInfo: CharacterInfo): void {
-    this.writeCharacters(this._characters().filter(c => c.id !== characterInfo.id));
+    this.writeCharacters(this._characters().filter((c) => c.id !== characterInfo.id));
   }
-
 }
