@@ -22,3 +22,6 @@
 ## Testing & Quality Guidelines
 - Core testing rules are modularized. See `.claude/rules/testing.md`.
 
+## Feature Requests & Offene Arbeiten
+- Ablageort und Verhalten beim Abfragen offener Aufgaben: See `.claude/rules/feature-requests.md`.
+
