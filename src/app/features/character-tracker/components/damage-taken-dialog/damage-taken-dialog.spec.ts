@@ -10,7 +10,7 @@ describe('DamageTakenDialog', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [DamageTakenDialog],
-      providers: [{ provide: MatDialogRef, useValue: { close: jasmine.createSpy('close') } }],
+      providers: [{ provide: MatDialogRef, useValue: { close: vi.fn() } }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DamageTakenDialog);

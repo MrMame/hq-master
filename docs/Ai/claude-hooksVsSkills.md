@@ -2,12 +2,12 @@ Kurz gesagt: Garantiert ausgeführt wird nur, was der Harness selbst ausführt, 
 
 ## Die Mechanismen im Vergleich
 
-| Mechanismus | Wer führt aus | Garantiert? | Geeignet für |
-|---|---|---|---|
-| `CLAUDE.md` / `.claude/rules/` | ich | nein | Architektur, Stil, Konventionen |
-| Skill (z. B. `/implement-feature`) | ich, mit festem Ablauf | nein, aber zuverlässiger als verstreute Regeln | Ablauf: REQUIREMENTS lesen → planen → umsetzen → FR markieren |
-| **Hook** in `.claude/settings.json` | der Harness | **ja** | Prettier, Tests, Build, Commit-Checks |
-| Git-Hook (husky / `pre-commit`) | Git | ja, auch für Commits ohne mich | Format- und Lint-Prüfung beim Commit |
+| Mechanismus                         | Wer führt aus          | Garantiert?                                    | Geeignet für                                                  |
+| ----------------------------------- | ---------------------- | ---------------------------------------------- | ------------------------------------------------------------- |
+| `CLAUDE.md` / `.claude/rules/`      | ich                    | nein                                           | Architektur, Stil, Konventionen                               |
+| Skill (z. B. `/implement-feature`)  | ich, mit festem Ablauf | nein, aber zuverlässiger als verstreute Regeln | Ablauf: REQUIREMENTS lesen → planen → umsetzen → FR markieren |
+| **Hook** in `.claude/settings.json` | der Harness            | **ja**                                         | Prettier, Tests, Build, Commit-Checks                         |
+| Git-Hook (husky / `pre-commit`)     | Git                    | ja, auch für Commits ohne mich                 | Format- und Lint-Prüfung beim Commit                          |
 
 ## Empfehlung: Skill und Hooks kombinieren
 
@@ -18,15 +18,27 @@ Kurz gesagt: Garantiert ausgeführt wird nur, was der Harness selbst ausführt, 
 ```json
 {
   "hooks": {
-    "PostToolUse": [{
-      "matcher": "Edit|Write",
-      "hooks": [{ "type": "command",
-        "command": "node -e \"const f=JSON.parse(require('fs').readFileSync(0)).tool_input.file_path; if(/\\.(ts|html|scss|json|md)$/.test(f)) require('child_process').execSync('npx prettier --write \\\"'+f+'\\\"')\"" }]
-    }],
-    "Stop": [{
-      "hooks": [{ "type": "command",
-        "command": "git diff --quiet HEAD -- src || (npm run test >&2 || exit 2)" }]
-    }]
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const f=JSON.parse(require('fs').readFileSync(0)).tool_input.file_path; if(/\\.(ts|html|scss|json|md)$/.test(f)) require('child_process').execSync('npx prettier --write \\\"'+f+'\\\"')\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git diff --quiet HEAD -- src || (npm run test >&2 || exit 2)"
+          }
+        ]
+      }
+    ]
   }
 }
 ```

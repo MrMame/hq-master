@@ -26,7 +26,7 @@ describe('DungeonTrackerPage', () => {
   let charactersDb: CharactersDbService;
   let boardService: DungeonBoardService;
 
-  const positionIds = (): string[] => boardService.positions().map(p => p.characterId);
+  const positionIds = (): string[] => boardService.positions().map((p) => p.characterId);
 
   beforeEach(async () => {
     localStorage.clear();
