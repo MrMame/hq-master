@@ -17,7 +17,6 @@ Aktueller Stand:
 - `DungeonTrackerPage` liest Characters **einmalig** im Constructor — Änderungen im Character-Tracker sind erst nach Navigation sichtbar.
 - `GametimeService` wird von **keinem anderen Feature** konsumiert, obwohl REQUIREMENTS.md §0 explizit fordert, dass Zeitänderungen alle Features beeinflussen (z.B. Giftschaden pro Runde).
 - `GametimeService` hat **keine Persistenz** — die Spielzeit resettet bei jedem Page-Reload.
-- `provideHttpClient()` fehlt in `app.config.ts` → Card-Manager-Feature crasht beim Deck-Laden.
 
 ---
 
@@ -57,16 +56,7 @@ Einen reaktiven, persistenten **Session State Layer** einführen, auf den alle F
 
 ---
 
-### 4. `provideHttpClient()` in `app.config.ts` eintragen
-
-- In `src/app/app.config.ts` den Aufruf `provideHttpClient()` ergänzen.
-- Betrifft: `DeckXmlLoaderService` (Card-Manager-Feature).
-
-**Erwartetes Verhalten:** "Deck laden"-Button funktioniert ohne `NullInjectorError`.
-
----
-
-### 5. (Optional, längerfristig) GameSession Feature (`/gamesession`) — REQUIREMENTS.md §4
+### 4. (Optional, längerfristig) GameSession Feature (`/gamesession`) — REQUIREMENTS.md §4
 
 - Neues Feature zum Starten/Beenden einer Spielesession.
 - Start einer neuen Session: Ingame-Startzeit wählen, alle Feature-States zurücksetzen.
@@ -100,7 +90,6 @@ Dieses Muster auf `CharactersDbService` und `GametimeService` ausrollen.
 |---|---|
 | `src/app/core/services/persistent/characters-database-service.ts` | Signal hinzufügen, alle Mutationen darüber routen |
 | `src/app/core/services/gaming/gametime-service.ts` | localStorage-Persistenz + öffentliches Signal |
-| `src/app/app.config.ts` | `provideHttpClient()` eintragen |
 | `src/app/features/dungeon-tracker/components/dungeon-tracker-page/dungeon-tracker-page.ts` | Reaktiv auf Characters-Signal binden statt einmaligem Read |
 
 ---
@@ -109,6 +98,5 @@ Dieses Muster auf `CharactersDbService` und `GametimeService` ausrollen.
 
 - [ ] Charakter hinzufügen/entfernen im Character-Tracker → sofort im Dungeon-Tracker sichtbar (ohne Navigation)
 - [ ] Spielzeit überlebt Browser-Reload
-- [ ] Deck laden im Card-Manager funktioniert ohne Fehler
 - [ ] Alle bestehenden Vitest-Tests laufen durch (`npm run test`)
 - [ ] TypeScript strict-mode: kein `any`, Build fehlerfrei (`npm run build`)
