@@ -24,7 +24,7 @@ try {
       case 'NotebookEdit':
         return rel(args.file_path ?? args.notebook_path);
       case 'Bash':
-        return `${cut(args.command)}${args.description ? `   (${oneLine(args.description)})` : ''}`;
+        return `${args.description ? `(${oneLine(args.description)}) ` : ''}${cut(args.command)}`;
       case 'Grep':
         return `"${args.pattern}"${args.path ? ` in ${rel(args.path)}` : ''}`;
       case 'Glob':
