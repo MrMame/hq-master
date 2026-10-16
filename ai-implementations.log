@@ -1,0 +1,15 @@
+# Projekt-Status & KI-Logbuch
+
+## 🎯 Aktuelles Ziel / Nächster Schritt
+- [ ] Implementierung der Benutzer-Authentifizierung (OAuth2 mit GitHub)
+
+## 🛠️ Letzte Änderungen (Chronologisch)
+
+### (YYYY-MM-DD HH:MM) - Feature X hinzugefügt
+* **Was wurde gemacht:** Datenbank-Schema für Benutzer erweitert und Migration `002_add_users` ausgeführt.
+* **Dateien geändert:** `models.py`, `db.ubuntu.sql`
+* **Wichtige Entscheidung:** Wir nutzen UUIDs statt fortlaufender IDs für die User-IDs (Vorschlag von Claude wegen Datensicherheit).
+
+### (YYYY-MM-DD HH:MM) - Projekt-Setup
+* **Was wurde gemacht:** Basis-Express-Server aufgesetzt und Routing-Struktur definiert.
+* **Status:** Läuft lokal auf Port 3000.

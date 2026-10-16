@@ -48,6 +48,11 @@ Gemäß `.claude/rules/feature-requests.md`:
 - [ ] Erfüllte Akzeptanzkriterien auf `[x]` setzen.
 - [ ] Neu entdeckte offene Punkte als eigenen nummerierten Abschnitt ergänzen (nur nach Rückfrage).
 
-## 6. Abschlussbericht
+## 6. Abschlussbericht und Commit
 
-Kurz: was geändert wurde (mit Dateilinks), Test-/Build-Ergebnis, was bewusst offen blieb. Nicht committen oder pushen, außer der Nutzer verlangt es.
+- [ ] Chat Ausgabe : was geändert wurde (mit Dateilinks), Test-/Build-Ergebnis, was bewusst offen blieb.
+- [ ] Committext vorbereiten  
+- [ ] 'ai-implementations.log' Eintrag vorbereiten.
+- [ ] Benutzer den Committext und 'ai-implementations.log' Eintrag zeigen und fragen, ob der commit durchgeführt und der 'ai-implementations.log' Eintrag hinzugefügt werden soll.
+
+
