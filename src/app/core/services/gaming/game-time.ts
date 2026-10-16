@@ -12,3 +12,15 @@ export interface GameTime {
   minutes?: number;
   seconds?: number;
 }
+
+/** Vollständiger `GameTime` (inkl. Datum) aus einem `Date`, z. B. beim Laden eines Spielstands. */
+export function gameTimeFromDate(date: Date): GameTime {
+  return {
+    year: date.getFullYear(),
+    month: date.getMonth() + 1,
+    day: date.getDate(),
+    hours: date.getHours(),
+    minutes: date.getMinutes(),
+    seconds: date.getSeconds(),
+  };
+}

@@ -30,5 +30,12 @@ export const routes: Routes = [
         (m) => m.CardManagerPage,
       ),
   },
+  {
+    path: 'gamesession',
+    loadComponent: () =>
+      import('./features/game-session/components/game-session-page/game-session-page').then(
+        (m) => m.GameSessionPage,
+      ),
+  },
   { path: '**', redirectTo: 'charactertracker' },
 ];

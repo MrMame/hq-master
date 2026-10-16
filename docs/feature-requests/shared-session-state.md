@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-15  
 **Priorität:** Hoch  
-**Status:** Teilweise umgesetzt (Anforderung 1 done am 2026-10-16 12:29, Anforderung 2 done am 2026-10-16 15:10, Anforderung 3 done am 2026-10-16 18:00, Anforderung 6 done am 2026-10-16 15:34)  
+**Status:** Teilweise umgesetzt (Anforderung 1 done am 2026-10-16 12:29, Anforderung 2 done am 2026-10-16 15:10, Anforderung 3 done am 2026-10-16 18:00, Anforderung 4 done am 2026-10-16 18:37, Anforderung 6 done am 2026-10-16 15:34)  
 **Bezug REQUIREMENTS.md:** Abschnitt 0 (App-weite Anforderungen), Abschnitt 4 (GameSession)
 
 ---
@@ -58,12 +58,14 @@ Einen reaktiven, persistenten **Session State Layer** einführen, auf den alle F
 
 ---
 
-### 4. (Optional, längerfristig) GameSession Feature (`/gamesession`) — REQUIREMENTS.md §4
+### 4. (Optional, längerfristig) GameSession Feature (`/gamesession`) — REQUIREMENTS.md §4 ✅ done (2026-10-16 18:37)
 
 - Neues Feature zum Starten/Beenden einer Spielesession.
 - Start einer neuen Session: Ingame-Startzeit wählen, alle Feature-States zurücksetzen.
 - Session speichern/laden: alle relevanten Zustände in einer XML-Datei bündeln (Characters, DungeonBoard, CardManager-State, Spielzeit).
 - Setzt voraus, dass Punkte 1–3 umgesetzt sind (gemeinsamer State-Layer).
+
+**Umsetzung:** `GameSessionService` (Session-Meta `game_session_meta`, `snapshot`-Signal, `startSession`/`endSession`/`restoreSnapshot`), `SessionXmlService` (strukturiertes XML `<gameSession version="1">`), `SessionFileService` (Download/Upload), Seite `GameSessionPage`. „Beenden“ setzt nur `active=false`; die Daten bleiben erhalten.
 
 ---
 
@@ -99,6 +101,16 @@ Einen reaktiven, persistenten **Session State Layer** einführen, auf den alle F
 
 - **Problem (vorbestehend):** `src/app/app.ts` injiziert `GametimeService` als `public gametimeService`, nutzt ihn aber weder in Klasse noch Template.
 - Injection entfernen oder bewusst nutzen (z. B. Spielzeit-Anzeige in der Navigation).
+
+---
+
+### 9. `DungeonBoardService` / `CardManagerService` — Persistenz-Muster und Init-Tests
+
+- **Problem (vorbestehend, entdeckt bei §4):** `DungeonBoardService` aktualisiert Signal und Storage in getrennten Schritten (`_x.update(...)` + `persistBoard()`/`persistPositions()`) statt über eine gemeinsame private `persist()`-Methode (Architekturregel 4). Die Initialisierung liest direkt im Feld-Initializer statt über eine private `load()`-Methode.
+- Für `DungeonBoardService` und `CardManagerService` fehlen Tests der Initialisierung aus dem Storage inkl. Default-Fallback sowie der übrigen Mutationen (Architekturregel 8). Seit §4 sind nur `restore`/`reset` bzw. `restoreState` getestet.
+- Mutationen auf ein `persist(value)`-Muster umstellen und fehlende Tests ergänzen.
+
+**Erwartetes Verhalten:** Beide Services folgen dem Referenzmuster aus `.claude/rules/architecture.md`; Init und alle Mutationen sind getestet.
 
 ---
 

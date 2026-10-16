@@ -1,0 +1,76 @@
+<div class="game-session-page flex flex-col gap-6 p-4 max-w-xl">
+  <section class="flex flex-col gap-1" data-testid="session-status">
+    <h2 class="text-lg font-bold">Aktuelle Session</h2>
+    <span data-testid="session-state">
+      Status: {{ meta().active ? 'Aktiv' : 'Inaktiv' }}
+      @if (meta().name) {
+        – {{ meta().name }}
+      }
+    </span>
+    @if (meta().startedAt) {
+      <span class="text-sm text-gray-600">Gestartet: {{ meta().startedAt }}</span>
+    }
+    <span>Spielzeit: {{ gametimeService.gameTimeAsString() }}</span>
+  </section>
+
+  <section class="flex flex-col gap-2">
+    <h2 class="text-lg font-bold">Neue Session starten</h2>
+    <label class="flex flex-col">
+      Name
+      <input class="border p-1" type="text" [(ngModel)]="sessionName" data-testid="session-name" />
+    </label>
+    <label class="flex flex-col">
+      Ingame-Startzeit
+      <input
+        class="border p-1"
+        type="datetime-local"
+        [(ngModel)]="startTime"
+        data-testid="session-start-time"
+      />
+    </label>
+    <div class="flex gap-2">
+      <button
+        class="bg-green-500 hover:bg-green-600"
+        data-testid="start-session"
+        (click)="startSession()"
+      >
+        Session starten
+      </button>
+      <button
+        class="bg-gray-500 hover:bg-gray-600"
+        data-testid="end-session"
+        [disabled]="!meta().active"
+        (click)="endSession()"
+      >
+        Session beenden
+      </button>
+    </div>
+  </section>
+
+  <section class="flex flex-col gap-2">
+    <h2 class="text-lg font-bold">Spielstand</h2>
+    <div class="flex gap-2">
+      <button
+        class="bg-blue-500 hover:bg-blue-600"
+        data-testid="save-session"
+        (click)="saveSession()"
+      >
+        Als XML speichern
+      </button>
+      <label class="bg-blue-500 hover:bg-blue-600 cursor-pointer">
+        XML laden
+        <input
+          type="file"
+          accept=".xml,application/xml,text/xml"
+          class="hidden"
+          data-testid="load-session"
+          (change)="loadSession($event)"
+        />
+      </label>
+    </div>
+  </section>
+
+  @if (errorMessage()) {
+    <p class="text-red-600" data-testid="session-error">{{ errorMessage() }}</p>
+  }
+</div>

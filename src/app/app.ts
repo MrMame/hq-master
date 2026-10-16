@@ -19,6 +19,13 @@ import { GametimeService } from './core/services/gaming/gametime-service';
           <!-- Navigations-Links nebeneinander (flex) mit Abstand dazwischen (space-x-4) -->
           <nav class="flex items-center space-x-4">
             <a
+              routerLink="/gamesession"
+              routerLinkActive="text-blue-600 font-bold"
+              class="text-sm text-gray-600 hover:text-gray-900"
+            >
+              Game Session
+            </a>
+            <a
               routerLink="/cardmanager"
               routerLinkActive="text-blue-600 font-bold"
               class="text-sm text-gray-600 hover:text-gray-900"

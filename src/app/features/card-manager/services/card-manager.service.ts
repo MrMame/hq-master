@@ -115,11 +115,16 @@ export class CardManagerService {
     this.setState({ ...s, bank, activeCard: null });
   }
 
+  /** Ersetzt den Deck-Zustand vollständig (`null` = kein Deck), z. B. beim Laden einer Session. */
+  public restoreState(state: DeckState | null): void {
+    this.setState(state);
+  }
+
   // PRIVATES =====================================================================
 
   // Set State muss am Ende immer gesetzt werden, damit das _State Objekt komplett erneuert wird.
   // Nur dadurch bekommt das Angular Signal-System mit, dass sich der Wert geändert hat.
-  private setState(s: DeckState): void {
+  private setState(s: DeckState | null): void {
     this._state.set(s);
     this.storageService.writeToLocalStorage(KEY_DECK_STATE, s);
   }

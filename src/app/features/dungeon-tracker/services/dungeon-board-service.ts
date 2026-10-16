@@ -69,6 +69,18 @@ export class DungeonBoardService {
     this.persistPositions();
   }
 
+  /** Ersetzt Board und Positionen vollständig, z. B. beim Laden eines Spielstands. */
+  restore(board: DungeonBoardState, positions: DungeonPosition[]): void {
+    this._boardState.set({ ...board });
+    this._positions.set([...positions]);
+    this.persistBoard();
+    this.persistPositions();
+  }
+
+  reset(): void {
+    this.restore(DEFAULT_DUNGEON_BOARD_STATE, []);
+  }
+
   private persistBoard(): void {
     this.storageService.writeToLocalStorage(KEY_BOARD, this._boardState());
   }

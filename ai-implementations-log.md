@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-16 18:37) - GameSession-Feature: Starten/Beenden, Speichern/Laden als XML (shared-session-state #4)
+
+- **Was wurde gemacht:** Neue Seite `/gamesession`. Starten setzt alle Feature-States zurück (Charaktere, Dungeon-Board inkl. Positionen, Kartendeck) und setzt die gewählte Ingame-Startzeit; Beenden markiert die Session nur als inaktiv. Der gesamte Session-Zustand kann als strukturierte XML-Datei gespeichert und wieder geladen werden.
+- **Dateien geändert:** `src/app/features/game-session/**` (neu), `dungeon-board-service.ts` (+spec), `card-manager.service.ts` (+spec), `core/services/gaming/game-time.ts` (+spec), `app.routes.ts`, `app.ts`, `docs/feature-requests/shared-session-state.md`
+- **Wichtige Entscheidung:** Der `GameSessionService` ändert fremde Zustände nur über die öffentlichen Methoden der jeweils verantwortlichen Services (Architekturregel 7). Der Gesamtzustand ist ein `computed`-Signal `snapshot` statt einer Lesemethode. Das XML ist versioniert (`version="1"`), nach Bereichen in reine Serializer-Funktionen aufgeteilt und wird beim Laden validiert.
+
 ### (2026-10-16 18:00) - Spielzeit als reaktives Date-Signal (shared-session-state #3)
 
 - **Was wurde gemacht:** GametimeService exponiert die Spielzeit als öffentliches `gameTime: Signal<Date>` (via `asReadonly()`), damit andere Services per `effect()`/`computed()` auf Zeitänderungen reagieren können (Vorbereitung Schaden-Tick, REQUIREMENTS §2). `gameTimeAsString` leitet sich vom neuen Signal ab.
