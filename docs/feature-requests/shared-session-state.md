@@ -2,6 +2,7 @@
 
 **Datum:** 2026-10-15  
 **Priorität:** Hoch  
+**Status:** Teilweise umgesetzt (Anforderung 1 erledigt am 2026-10-16)  
 **Bezug REQUIREMENTS.md:** Abschnitt 0 (App-weite Anforderungen), Abschnitt 4 (GameSession)
 
 ---
@@ -28,7 +29,7 @@ Einen reaktiven, persistenten **Session State Layer** einführen, auf den alle F
 
 ## Anforderungen
 
-### 1. `CharactersDbService` — reaktiv machen
+### 1. `CharactersDbService` — reaktiv machen ✅ Durchgeführt (2026-10-16)
 
 - Ein `WritableSignal<CharacterInfo[]>` hinzufügen, das beim Service-Init aus localStorage befüllt wird.
 - Alle Schreib-Operationen (`writeCharacter`, `removeCharacter`) aktualisieren sowohl das Signal als auch localStorage.
@@ -65,6 +66,16 @@ Einen reaktiven, persistenten **Session State Layer** einführen, auf den alle F
 
 ---
 
+### 5. `CharacterTrackerPage.addCharacter()` — Dialog-Charaktere persistieren
+
+- **Problem (vorbestehend):** `addCharacter()` (Dialog) schreibt den neuen Charakter nicht in die DB → er erscheint daher nicht im Dungeon-Tracker. Zusätzlich wird die `id` als fortlaufende Zahl (`newId`) gesetzt statt wie bei Hero/Monster über den jeweiligen Creator-Service.
+- Ergebnis des Dialogs über `CharactersDbService.writeCharacter()` speichern.
+- Eindeutige `id` vergeben (konsistent zu Hero/Monster).
+
+**Erwartetes Verhalten:** Charakter per Dialog anlegen → sofort im Dungeon-Tracker sichtbar.
+
+---
+
 ## Technische Umsetzungshinweise
 
 ### Empfohlenes Muster (bereits in `CardManagerService` etabliert):
@@ -91,12 +102,13 @@ Dieses Muster auf `CharactersDbService` und `GametimeService` ausrollen.
 | `src/app/core/services/persistent/characters-database-service.ts` | Signal hinzufügen, alle Mutationen darüber routen |
 | `src/app/core/services/gaming/gametime-service.ts` | localStorage-Persistenz + öffentliches Signal |
 | `src/app/features/dungeon-tracker/components/dungeon-tracker-page/dungeon-tracker-page.ts` | Reaktiv auf Characters-Signal binden statt einmaligem Read |
+| `src/app/features/character-tracker/components/character-tracker-page/character-tracker-page.ts` | `addCharacter()` persistiert Dialog-Ergebnis (§5) |
 
 ---
 
 ## Akzeptanzkriterien
 
-- [ ] Charakter hinzufügen/entfernen im Character-Tracker → sofort im Dungeon-Tracker sichtbar (ohne Navigation)
+- [x] Charakter hinzufügen/entfernen im Character-Tracker → sofort im Dungeon-Tracker sichtbar (ohne Navigation)
 - [ ] Spielzeit überlebt Browser-Reload
 - [ ] Alle bestehenden Vitest-Tests laufen durch (`npm run test`)
 - [ ] TypeScript strict-mode: kein `any`, Build fehlerfrei (`npm run build`)
