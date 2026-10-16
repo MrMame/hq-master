@@ -1,5 +1,6 @@
 // PreToolUse (Bash: git commit): blockiert den Commit, wenn gestagte Dateien
-// nicht Prettier-formatiert sind oder der Build fehlschlägt (Exit-Code 2).
+// nicht Prettier-formatiert sind, Lint-Fehler bestehen oder der Build
+// fehlschlägt (Exit-Code 2).
 import { readFileSync } from 'node:fs';
 import { execSync, spawnSync } from 'node:child_process';
 import * as prettier from 'prettier';
@@ -22,8 +23,12 @@ if (unformatted.length > 0) {
   process.exit(2);
 }
 
-const build = spawnSync('npm run build', { shell: true, encoding: 'utf8' });
-if (build.status !== 0) {
-  console.error(`Commit blockiert – npm run build schlägt fehl:\n${build.stdout}\n${build.stderr}`);
-  process.exit(2);
+for (const script of ['lint', 'build']) {
+  const run = spawnSync(`npm run ${script}`, { shell: true, encoding: 'utf8' });
+  if (run.status !== 0) {
+    console.error(
+      `Commit blockiert – npm run ${script} schlägt fehl:\n${run.stdout}\n${run.stderr}`,
+    );
+    process.exit(2);
+  }
 }

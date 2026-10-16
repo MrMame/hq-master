@@ -6,7 +6,7 @@ import { CharactersDbService } from '../../../../core/services/persistent/charac
 import { DungeonBoardService } from '../../services/dungeon-board-service';
 import { CharacterInfo } from '../../../character-tracker/models/CharacterInfo';
 
-const createCharacter = (id: string): CharacterInfo => ({
+const createCharacter: (id: string) => CharacterInfo = (id: string): CharacterInfo => ({
   id,
   name: `Char ${id}`,
   type: 'hero',
@@ -26,7 +26,8 @@ describe('DungeonTrackerPage', () => {
   let charactersDb: CharactersDbService;
   let boardService: DungeonBoardService;
 
-  const positionIds = (): string[] => boardService.positions().map((p) => p.characterId);
+  const positionIds: () => string[] = (): string[] =>
+    boardService.positions().map((p) => p.characterId);
 
   beforeEach(async () => {
     localStorage.clear();

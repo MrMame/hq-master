@@ -55,7 +55,7 @@
             "if": "Bash(git commit *)",
             "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-commit-check.mjs\"",
             "timeout": 300,
-            "statusMessage": "Prettier-Check + Build vor Commit…"
+            "statusMessage": "Prettier-Check, Lint + Build vor Commit…"
           }
         ]
       }

@@ -3,7 +3,10 @@ import { TestBed } from '@angular/core/testing';
 import { CharactersDbService } from './characters-database-service';
 import { CharacterInfo } from '../../../features/character-tracker/models/CharacterInfo';
 
-const createCharacter = (id: string, name: string = `Char ${id}`): CharacterInfo => ({
+const createCharacter: (id: string, name?: string) => CharacterInfo = (
+  id: string,
+  name: string = `Char ${id}`,
+): CharacterInfo => ({
   id,
   name,
   type: 'hero',
@@ -17,7 +20,7 @@ const createCharacter = (id: string, name: string = `Char ${id}`): CharacterInfo
   description: '',
 });
 
-const readStored = (): CharacterInfo[] =>
+const readStored: () => CharacterInfo[] = (): CharacterInfo[] =>
   JSON.parse(localStorage.getItem('characters') ?? '[]') as CharacterInfo[];
 
 describe('CharactersDbService', () => {
