@@ -1,10 +1,17 @@
-import { computed, Injectable, signal, Signal, WritableSignal } from '@angular/core';
+import { computed, inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
+import { StorageService } from '../persistent/storage-service';
+import { GameTime } from './game-time';
+import { GameTimeSpan } from './game-time-span';
+
+const KEY_GAME_TIME: string = 'game_time';
+const DEFAULT_GAME_TIME: Date = new Date(2381, 0, 1, 23, 55, 0);
 
 @Injectable({
   providedIn: 'root',
 })
 export class GametimeService {
-  private readonly _gameTime: WritableSignal<Date> = signal<Date>(new Date(2381, 0, 1, 23, 55, 0));
+  private readonly storageService: StorageService = inject(StorageService);
+  private readonly _gameTime: WritableSignal<Date> = signal<Date>(this.loadGameTime());
 
   readonly gameTimeAsString: Signal<string> = computed(() => {
     const d: Date = this._gameTime();
@@ -17,36 +24,36 @@ export class GametimeService {
     return `${hours}:${minutes}:${seconds} ${years}-${months}-${days}`;
   });
 
-  public setGameTime(hours: number, minutes: number, seconds: number): void {
-    this._gameTime.update(d => {
-      const updated: Date = new Date(d);
-      updated.setHours(hours, minutes, seconds);
-      return updated;
+  public setGameTime(gameTime: GameTime): void {
+    const { year, month, day, hours = 0, minutes = 0, seconds = 0 }: GameTime = gameTime;
+    this.updateAndPersist((d) => {
+      d.setFullYear(
+        year ?? d.getFullYear(),
+        month !== undefined ? month - 1 : d.getMonth(),
+        day ?? d.getDate(),
+      );
+      d.setHours(hours, minutes, seconds);
     });
   }
 
-  public addHours(hours: number): void {
-    this._gameTime.update(d => {
-      const updated: Date = new Date(d);
-      updated.setHours(updated.getHours() + hours);
-      return updated;
+  public addTime({ hours = 0, minutes = 0, seconds = 0 }: GameTimeSpan): void {
+    this.updateAndPersist((d) => {
+      d.setHours(d.getHours() + hours);
+      d.setMinutes(d.getMinutes() + minutes);
+      d.setSeconds(d.getSeconds() + seconds);
     });
   }
 
-  public addMinutes(minutes: number): void {
-    this._gameTime.update(d => {
-      const updated: Date = new Date(d);
-      updated.setMinutes(updated.getMinutes() + minutes);
-      return updated;
-    });
+  private updateAndPersist(mutate: (copy: Date) => void): void {
+    const updated: Date = new Date(this._gameTime());
+    mutate(updated);
+    this._gameTime.set(updated);
+    this.storageService.writeToLocalStorage<string>(KEY_GAME_TIME, updated.toISOString());
   }
 
-  public addTime(hours: number, minutes: number = 0): void {
-    this._gameTime.update(d => {
-      const updated: Date = new Date(d);
-      updated.setHours(updated.getHours() + hours);
-      updated.setMinutes(updated.getMinutes() + minutes);
-      return updated;
-    });
+  private loadGameTime(): Date {
+    const stored: string | null = this.storageService.readFromLocalStorage<string>(KEY_GAME_TIME);
+    const parsed: Date = stored ? new Date(stored) : new Date(NaN);
+    return isNaN(parsed.getTime()) ? new Date(DEFAULT_GAME_TIME) : parsed;
   }
 }

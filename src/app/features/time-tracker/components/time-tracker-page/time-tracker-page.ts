@@ -1,4 +1,4 @@
-import { Component,inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { GametimeService } from '../../../../core/services/gaming/gametime-service';
 
 @Component({
@@ -8,14 +8,19 @@ import { GametimeService } from '../../../../core/services/gaming/gametime-servi
   styleUrl: './time-tracker-page.scss',
 })
 export class TimeTrackerPage {
+  gameTimeService: GametimeService = inject(GametimeService);
 
-  gameTimeService:GametimeService = inject(GametimeService);
+  readonly secondSteps: readonly number[] = [1, 5, 10];
 
-  addTime1Hour():void {
-    this.gameTimeService.addTime(1);
+  addSeconds(seconds: number): void {
+    this.gameTimeService.addTime({ seconds });
   }
 
-  addTime8Hour():void {
-    this.gameTimeService.addTime(8);
+  addTime1Hour(): void {
+    this.gameTimeService.addTime({ hours: 1 });
+  }
+
+  addTime8Hour(): void {
+    this.gameTimeService.addTime({ hours: 8 });
   }
 }

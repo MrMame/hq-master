@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-15  
 **Priorität:** Hoch  
-**Status:** Teilweise umgesetzt (Anforderung 1 done am 2026-10-16 12:29)  
+**Status:** Teilweise umgesetzt (Anforderung 1 done am 2026-10-16 12:29, Anforderung 2 done am 2026-10-16 15:10, Anforderung 6 done am 2026-10-16 15:34)  
 **Bezug REQUIREMENTS.md:** Abschnitt 0 (App-weite Anforderungen), Abschnitt 4 (GameSession)
 
 ---
@@ -40,7 +40,7 @@ Einen reaktiven, persistenten **Session State Layer** einführen, auf den alle F
 
 ---
 
-### 2. `GametimeService` — persistieren
+### 2. `GametimeService` — persistieren ✅ done (2026-10-16 15:10)
 
 - Spielzeit beim Start aus localStorage lesen (Key: `'game_time'`).
 - Bei jeder Änderung (`addHours`, `addMinutes`, `setGameTime`) sofort in localStorage schreiben.
@@ -77,6 +77,31 @@ Einen reaktiven, persistenten **Session State Layer** einführen, auf den alle F
 
 ---
 
+### 6. `GametimeService.setGameTime()` — Datum mit setzen ✅ done (2026-10-16 15:34)
+
+- **Problem (vorbestehend):** `setGameTime(hours, minutes, seconds)` ändert nur die Uhrzeit, nie das Datum.
+- Für §4 (Ingame-Startzeit beim Session-Start wählen) muss ein vollständiges Datum gesetzt werden können.
+
+**Erwartetes Verhalten:** Startzeit inkl. Datum (z. B. 2390-05-06 07:00) setzbar und persistiert.
+
+---
+
+### 7. `StorageService` — robust gegen fehlerhaftes JSON
+
+- **Problem (vorbestehend):** `readFromLocalStorage` / `readTableFromLocalStorage` werfen bei ungültigem JSON eine Exception. Da die Services beim Init lesen, kann ein kaputter Eintrag die App am Start hindern.
+- Parse-Fehler abfangen und `null` zurückgeben (optional: Warnung loggen).
+
+**Erwartetes Verhalten:** Manipulierter localStorage-Eintrag → Service startet mit Default-Werten.
+
+---
+
+### 8. `App` — ungenutzte `GametimeService`-Injection entfernen
+
+- **Problem (vorbestehend):** `src/app/app.ts` injiziert `GametimeService` als `public gametimeService`, nutzt ihn aber weder in Klasse noch Template.
+- Injection entfernen oder bewusst nutzen (z. B. Spielzeit-Anzeige in der Navigation).
+
+---
+
 ## Technische Umsetzungshinweise
 
 ### Empfohlenes Muster (bereits in `CardManagerService` etabliert):
@@ -110,6 +135,6 @@ Dieses Muster auf `CharactersDbService` und `GametimeService` ausrollen.
 ## Akzeptanzkriterien
 
 - [x] Charakter hinzufügen/entfernen im Character-Tracker → sofort im Dungeon-Tracker sichtbar (ohne Navigation)
-- [ ] Spielzeit überlebt Browser-Reload
-- [ ] Alle bestehenden Vitest-Tests laufen durch (`npm run test`)
-- [ ] TypeScript strict-mode: kein `any`, Build fehlerfrei (`npm run build`)
+- [x] Spielzeit überlebt Browser-Reload
+- [x] Alle bestehenden Vitest-Tests laufen durch (`npm run test`)
+- [x] TypeScript strict-mode: kein `any`, Build fehlerfrei (`npm run build`)
