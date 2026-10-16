@@ -85,3 +85,7 @@ yarn-error.log*
 # Systemdateien von macOS und Windows
 .DS_Store
 Thumbs.db
+
+# --- Claude Code ---
+# Lokales Aktivitätslog der Claude-Hooks
+.claude/logs/

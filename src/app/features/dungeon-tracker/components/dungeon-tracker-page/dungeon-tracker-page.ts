@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, Signal, WritableSignal } from '@angular/core';
+import { Component, computed, effect, inject, Signal } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { Router } from '@angular/router';
 import { CharactersDbService } from '../../../../core/services/persistent/characters-database-service';
@@ -23,15 +23,17 @@ export class DungeonTrackerPage {
   readonly boardState: Signal<DungeonBoardState> = this.dungeonBoardService.boardState;
   readonly positions: Signal<DungeonPosition[]> = this.dungeonBoardService.positions;
 
-  readonly characters: WritableSignal<CharacterInfo[]> = signal<CharacterInfo[]>([]);
+  readonly characters: Signal<CharacterInfo[]> = this.charactersDbService.characters;
 
   constructor() {
-    const chars: CharacterInfo[] = this.charactersDbService.readCharacters() ?? [];
-    this.characters.set(chars);
-    this.dungeonBoardService.initPositionsForCharacters(chars);
+    effect(() => this.dungeonBoardService.initPositionsForCharacters(this.characters()));
   }
 
-  readonly gridStyle: Signal<{ 'background-image': string; 'background-position': string; 'background-size': string }> = computed(() => {
+  readonly gridStyle: Signal<{
+    'background-image': string;
+    'background-position': string;
+    'background-size': string;
+  }> = computed(() => {
     const { gridCellSizePx, gridOffsetX, gridOffsetY, gridOpacity } = this.boardState();
     const c: string = `rgba(255,255,255,${gridOpacity})`;
     const size: number = gridCellSizePx;
@@ -46,7 +48,7 @@ export class DungeonTrackerPage {
   });
 
   getCharacter(characterId: string): CharacterInfo | undefined {
-    return this.characters().find(c => c.id === characterId);
+    return this.characters().find((c) => c.id === characterId);
   }
 
   onImageUpload(event: Event): void {
@@ -55,13 +57,16 @@ export class DungeonTrackerPage {
     if (!file) return;
 
     const reader: FileReader = new FileReader();
-    reader.onload = ():void => {
+    reader.onload = (): void => {
       this.dungeonBoardService.setBoardImage(reader.result as string);
     };
     reader.readAsDataURL(file);
   }
 
-  onGridSettingChange(key: 'gridCellSizePx' | 'gridOffsetX' | 'gridOffsetY' | 'gridOpacity', value: number): void {
+  onGridSettingChange(
+    key: 'gridCellSizePx' | 'gridOffsetX' | 'gridOffsetY' | 'gridOpacity',
+    value: number,
+  ): void {
     this.dungeonBoardService.updateGridSettings({ [key]: value });
   }
 
