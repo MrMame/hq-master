@@ -24,6 +24,14 @@ Arbeite die Schritte **in dieser Reihenfolge** ab. Keinen Schritt überspringen;
 - [ ] Regeln prüfen: `.claude/rules/architecture.md`, `clean-code.md`, `testing.md`, `feature-requests.md`.
 - [ ] Alle betroffenen Dateien und ihre Aufrufer lesen (`Grep` nach den Klassen-/Methodennamen).
 
+## 1b. Ist-Zustand prüfen (vor dem Plan)
+
+- [ ] Für jeden Punkt im Umfang prüfen, ob das gewünschte Verhalten bereits implementiert ist bzw. ob die beschriebene Beobachtung (fehlende Funktion, Fehler) im aktuellen Code noch vorhanden ist (Code lesen, `Grep`, ggf. vorhandene Tests ausführen oder das Verhalten nachstellen).
+- [ ] Ergebnis je Punkt kurz festhalten: **fehlt noch** / **bereits umgesetzt** / **nur teilweise umgesetzt** / **nicht prüfbar**, jeweils mit Beleg (Datei:Zeile, Testausgabe).
+- [ ] Ist der Punkt **bereits umgesetzt** oder nur teilweise: diesen Punkt **nicht** umsetzen. Den Nutzer informieren und fragen, ob der Punkt als `✅ done (bereits erfüllt, YYYY-MM-DD HH:MM)` markiert, angepasst oder verworfen werden soll.
+- [ ] Ist der Zustand **nicht prüfbar** (z. B. nur manuell in der UI nachstellbar): das offen sagen und vor dem Plan nachfragen.
+- [ ] Nur Punkte mit Ergebnis „fehlt noch“ gehen in den Plan (Schritt 2).
+
 ## 2. Plan
 
 - [ ] Einen Plan für alle Punkte im Umfang (Reihenfolge, betroffene Dateien, Testfälle, Verifikation) erstellen und vom Nutzer freigeben lassen. Danach ohne weitere Rückfragen umsetzen, außer bei Fehlern oder unerwarteten Problemen.
