@@ -46,6 +46,25 @@ describe('CharacterCard', () => {
     expect(orc.health).toBe(42);
   });
 
+  it.each<[number, keyof CharacterInfo]>([
+    [0, 'health'],
+    [1, 'defense'],
+    [2, 'speed'],
+    [3, 'attack'],
+  ])('should emit a numeric change when input %i (%s) is edited', (index, key) => {
+    const emitted: CharacterInfo[] = [];
+    component.characterChange.subscribe((c) => emitted.push(c));
+    const field: HTMLInputElement = (fixture.nativeElement as HTMLElement).querySelectorAll(
+      'input[type="number"]',
+    )[index] as HTMLInputElement;
+
+    field.value = '17';
+    field.dispatchEvent(new Event('input'));
+
+    expect(emitted).toEqual([{ ...orc, [key]: 17 }]);
+    expect(orc[key]).not.toBe(17);
+  });
+
   it('should not write to the database itself', async () => {
     const writeSpy: ReturnType<typeof vi.spyOn> = vi.spyOn(
       TestBed.inject(CharactersDbService),

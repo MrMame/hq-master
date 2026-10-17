@@ -43,6 +43,21 @@ describe('TimeTrackerPage', () => {
     expect(readLabel()).toBe(expected);
   });
 
+  it.each([
+    ['+1 Hour', 'Spielzeit: 00:55:00 2381-01-02'],
+    ['+8 Hours', 'Spielzeit: 07:55:00 2381-01-02'],
+  ])('should add time via the "%s" button', async (text: string, expected: string) => {
+    const element: HTMLElement = fixture.nativeElement as HTMLElement;
+    const button: HTMLButtonElement | undefined = Array.from(
+      element.querySelectorAll('button'),
+    ).find((b) => b.textContent?.trim() === text);
+
+    button!.click();
+    await fixture.whenStable();
+
+    expect(readLabel()).toBe(expected);
+  });
+
   const readLabel: () => string = (): string => {
     fixture.detectChanges();
     const element: HTMLElement = fixture.nativeElement as HTMLElement;

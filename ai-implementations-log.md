@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-17 22:02) - Refactoring: Interaktions- und Fehlerfall-Tests für Komponenten (component-interaction-tests #1–#6)
+
+- **Was wurde gemacht:** Lücken aus dem Coverage-Report geschlossen: Handler der DungeonTrackerPage, Feld-Eingaben der CharacterCard, Layout-Events der CharacterTrackerPage, Fehlerfall ungültige Startzeit der GameSessionPage und +1/+8-Stunden-Buttons der TimeTrackerPage. Die CardManagerPage-Klick-Spec löst Klicks jetzt im DOM aus statt Handler direkt aufzurufen.
+- **Dateien geändert:** `dungeon-tracker-page-interactions.spec.ts` (neu), `character-tracker-page-layout.spec.ts` (neu), `character-card.spec.ts`, `card-manager-page-clicks.spec.ts`, `game-session-page.spec.ts`, `time-tracker-page.spec.ts`, `docs/refactoring-requests/component-interaction-tests.md` (→ done/)
+- **Wichtige Entscheidung:** Kein Produktivcode geändert; Interaktionen werden über Template bzw. Outputs der Kindkomponenten ausgelöst. Die Coverage-Lücke `character-tracker-page.html` Z. 31–32 ist ein Zuordnungsartefakt, per Mutationsprobe als abgesichert belegt. Lint, Build und Tests (257/257) grün; Coverage Lines 95,5 % → 98,3 %.
+
 ### (2026-10-17 21:37) - Feature: Testing überarbeitet (testing-overhaul #1–#5)
 
 - **Was wurde gemacht:** Feature Request auf den Ist-Stand aktualisiert (#1 war bereits erfüllt). Neue Specs für `DeckXmlLoaderService` (Parsing inkl. Fallbacks/Fehler, HTTP via `HttpTestingController`) und `CardDisplay`. Platzhalter-Specs ausgebaut: Hero-/Monster-Creator (Grenzwerte per `vi.spyOn(Math, 'random')`), `ConfirmationDialog` (`close(false|true)`), `CardManagerPage` (Laden, Ladezustand, Fehler, alle Klick-Verzweigungen), `App` (Navigation, Router-Outlet). Test-Konventionen in `testing.md` dokumentiert.

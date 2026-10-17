@@ -20,6 +20,7 @@ describe('GameSessionPage', () => {
   beforeEach(async () => {
     localStorage.clear();
     dialogResult.value = true;
+    dialogMock.open.mockClear();
     await TestBed.configureTestingModule({
       imports: [GameSessionPage],
       providers: [{ provide: MatDialog, useValue: dialogMock }],
@@ -57,6 +58,43 @@ describe('GameSessionPage', () => {
     const start: ReturnType<typeof vi.spyOn> = vi.spyOn(service, 'startSession');
     await component.startSession();
     expect(start).not.toHaveBeenCalled();
+  });
+
+  const setStartTime: (value: string) => void = (value: string): void => {
+    const input: HTMLInputElement = (fixture.nativeElement as HTMLElement).querySelector(
+      '[data-testid="session-start-time"]',
+    ) as HTMLInputElement;
+    input.value = value;
+    input.dispatchEvent(new Event('input'));
+  };
+
+  const clickStart: () => Promise<void> = async (): Promise<void> => {
+    (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('[data-testid="start-session"]')!
+      .click();
+    await fixture.whenStable();
+  };
+
+  it('should show an error and not start a session without a valid start time', async () => {
+    const start: ReturnType<typeof vi.spyOn> = vi.spyOn(service, 'startSession');
+    setStartTime('');
+
+    await clickStart();
+
+    expect(readText('session-error')).toBe('Bitte eine gültige Ingame-Startzeit angeben.');
+    expect(dialogMock.open).not.toHaveBeenCalled();
+    expect(start).not.toHaveBeenCalled();
+  });
+
+  it('should clear the error after a successful start', async () => {
+    setStartTime('');
+    await clickStart();
+    setStartTime('2390-05-06T08:30');
+
+    await clickStart();
+
+    expect(readText('session-error')).toBe('');
+    expect(readText('session-state')).toContain('Aktiv');
   });
 
   it('should end the session', async () => {
