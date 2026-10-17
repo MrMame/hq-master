@@ -3,7 +3,7 @@
 **Datum:** 2026-10-17  
 **Priorität:** Mittel  
 **Status:** offen  
-**Bezug:** `.claude/rules/testing.md`, `docs/refactoring-requests/git-hooks-quality-gate.md` (CI-Ersatz und Coverage-Schwellen – dort, nicht hier), `docs/refactoring-requests/done/component-interaction-tests.md`
+**Bezug:** `.claude/rules/testing.md`, `docs/refactoring-requests/done/git-hooks-quality-gate.md` (CI-Ersatz und Coverage-Schwellen – dort, nicht hier), `docs/refactoring-requests/done/component-interaction-tests.md`
 
 ---
 

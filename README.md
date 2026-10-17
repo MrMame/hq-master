@@ -2,6 +2,19 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.20.
 
+## Setup & Git-Hooks
+
+```bash
+npm install
+```
+
+`npm install` aktiviert über das `prepare`-Script automatisch die Git-Hooks (husky):
+
+- `pre-commit`: Prettier-Check der gestagten Dateien und `npm run lint`
+- `pre-push`: Unit-Tests mit Coverage-Schwellen (`vitest.config.ts`) und `npm run build`
+
+Details: `.claude/rules/testing.md`.
+
 ## Development server
 
 To start a local development server, run:

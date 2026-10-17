@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-17 23:05) - Refactoring: Qualitäts-Gate über Git-Hooks (git-hooks-quality-gate #1–#6)
+
+- **Was wurde gemacht:** husky eingerichtet (`prepare`), `pre-commit` prüft gestagten Inhalt per Prettier und führt Lint aus (~4 s), `pre-push` führt Tests mit Coverage und Build aus. Coverage-Schwellen (95/90/85/95) in `vitest.config.ts`, eingebunden über `runnerConfig`, da der Unit-Test-Builder keine eigene Schwellen-Option hat. Timeout-/Prozessbaum-Logik als gemeinsames Modul für pre-push und Claude-Stop-Hook. PreToolUse-Commit-Check aus `.claude/settings.json` entfernt.
+- **Dateien geändert:** `package.json`, `package-lock.json`, `.husky/pre-commit`, `.husky/pre-push` (neu), `scripts/git-hooks/pre-commit.mjs` (aus `.claude/hooks/pre-commit-check.mjs`), `scripts/git-hooks/pre-push.mjs`, `scripts/git-hooks/run-with-timeout.mjs` (neu), `vitest.config.ts` (neu), `angular.json`, `.claude/settings.json`, `.claude/hooks/stop-run-tests.mjs`, `.claude/rules/testing.md`, `.claude/skills/implement-feature/SKILL.md`, `.claude/skills/implement-refactor/SKILL.md`, `README.md`, `docs/refactoring-requests/test-strategy-improvements.md`, `docs/refactoring-requests/git-hooks-quality-gate.md` (→ done/)
+- **Wichtige Entscheidung:** Build aus pre-commit in pre-push verschoben, damit Commits schnell bleiben. Schwellen-Wirkung per Probe (Lines 100 → Abbruch) belegt. Hook-Scripts ohne Vitest-Specs (außerhalb von `ng test`), stattdessen per Direktaufruf mit Positiv- und Negativfall verifiziert. Lint, Build und Tests grün; Coverage unverändert 98,3 % Lines.
+
 ### (2026-10-17 22:02) - Refactoring: Interaktions- und Fehlerfall-Tests für Komponenten (component-interaction-tests #1–#6)
 
 - **Was wurde gemacht:** Lücken aus dem Coverage-Report geschlossen: Handler der DungeonTrackerPage, Feld-Eingaben der CharacterCard, Layout-Events der CharacterTrackerPage, Fehlerfall ungültige Startzeit der GameSessionPage und +1/+8-Stunden-Buttons der TimeTrackerPage. Die CardManagerPage-Klick-Spec löst Klicks jetzt im DOM aus statt Handler direkt aufzurufen.
