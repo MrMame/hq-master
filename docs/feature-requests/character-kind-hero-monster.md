@@ -38,7 +38,7 @@ Die Ursache liegt im Datenmodell: `CharacterInfo` hat kein Feld für die Charakt
 
 - Im Storage (`characters`) und in alten XML-Spielständen fehlt `kind`.
 - `CharactersDbService` bekommt einen `StorageCodec`, der fehlendes `kind` ergänzt; der XML-Mapper liest fehlendes `kind` ebenso.
-- **Offen (vor Umsetzung klären):** Welcher Default — `'monster'`, oder die bisherige Namensheuristik einmalig als Migration?
+- **Entschieden (2026-10-17):** Fehlt `kind`, wird der Charakter als `'monster'` geladen. Keine Migration über die Namensheuristik; Helden aus Altbeständen muss der DM bei Bedarf selbst umstellen.
 - XML: `kind` wird geschrieben; ob die Formatversion steigt, bei der Umsetzung entscheiden (ältere Dateien müssen weiter ladbar sein).
 
 **Erwartetes Verhalten:** Alte Spielstände und Storage-Daten laden ohne Fehler, jeder Charakter hat danach ein `kind`.
@@ -80,7 +80,7 @@ Die Ursache liegt im Datenmodell: `CharacterInfo` hat kein Feld für die Charakt
 ## Akzeptanzkriterien
 
 - [ ] `CharacterInfo.kind` existiert und wird von beiden Creators gesetzt
-- [ ] Storage- und XML-Altbestände ohne `kind` laden fehlerfrei mit dem vereinbarten Default
+- [ ] Storage- und XML-Altbestände ohne `kind` laden fehlerfrei mit Default `'monster'`
 - [ ] Rahmenfarbe im Dungeon-Tracker hängt nur von `kind` ab, nicht vom Namen
 - [ ] Testfälle aus Punkt 4 vorhanden
 - [ ] Alle Vitest-Tests laufen durch (`npm run test`), Build fehlerfrei (`npm run build`)
