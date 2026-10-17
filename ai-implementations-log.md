@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-17 21:37) - Feature: Testing überarbeitet (testing-overhaul #1–#5)
+
+- **Was wurde gemacht:** Feature Request auf den Ist-Stand aktualisiert (#1 war bereits erfüllt). Neue Specs für `DeckXmlLoaderService` (Parsing inkl. Fallbacks/Fehler, HTTP via `HttpTestingController`) und `CardDisplay`. Platzhalter-Specs ausgebaut: Hero-/Monster-Creator (Grenzwerte per `vi.spyOn(Math, 'random')`), `ConfirmationDialog` (`close(false|true)`), `CardManagerPage` (Laden, Ladezustand, Fehler, alle Klick-Verzweigungen), `App` (Navigation, Router-Outlet). Test-Konventionen in `testing.md` dokumentiert.
+- **Dateien geändert:** `deck-xml-loader.service.spec.ts` (neu), `card-display.spec.ts` (neu), `card-manager-page.spec.ts`, `card-manager-page-clicks.spec.ts` (neu), `card-manager/testing/card-manager-page.fixtures.ts` (neu), `hero-character-creator.service.spec.ts`, `monster-character-creator.service.spec.ts`, `confirmation-dialog.spec.ts`, `app.spec.ts`, `.claude/rules/testing.md`, `.claude/rules/architecture.md`, `docs/feature-requests/testing-overhaul.md` (→ done/)
+- **Wichtige Entscheidung:** #5 (Coverage-Schwelle, Tests im Pre-Commit) auf Wunsch verworfen. CardManagerPage-Spec wegen des 150-Zeilen-Limits nach Aspekt aufgeteilt; das gemeinsame Mock-Setup liegt in `card-manager/testing/` und importiert `vi` explizit, weil der App-Build `testing/`-Dateien mitkompiliert. Lint, Build und Tests (238/238) grün; keine Änderungen am Produktivcode.
+
 ### (2026-10-17 21:19) - Refactoring: DungeonToken mit Pflicht-Charakter und einheitlichem Rahmen (dungeon-token-required-character #1–#3)
 
 - **Was wurde gemacht:** `DungeonToken.character` ist Pflicht-Input; Optional-Chaining und Non-Null-Assertions in Template und `initials` entfallen. `tokenBorderClass` (Held/Monster per Namensanfang „hero“) ist entfernt, alle Tokens tragen fest den goldenen Rahmen. Neue Spec deckt Pixelposition, Initialen/Bild, Rahmen, Drag-Ende (gerundet, nie negativ, `reset()`) und Doppelklick ab.

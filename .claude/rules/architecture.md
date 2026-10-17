@@ -48,6 +48,7 @@ features/
     components/        → CardManagerPage, CardDisplay
     models/            → card.model.ts, deck-config.model.ts, deck-state.model.ts
     services/          → card-manager.service.ts, deck-xml-loader.service.ts
+    testing/           → card-manager-page.fixtures.ts (gemockter Service, nur für Specs)
 
   game-session/        → Session starten/beenden, Speichern/Laden als XML
     components/        → GameSessionPage
