@@ -4,14 +4,6 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class StorageService {
-  readTableFromLocalStorage<T>(tableName: string): T[] | null {
-    return this.parse<T[]>(tableName);
-  }
-
-  writeTableToLocalStorage<T>(tableName: string, data: T[]): void {
-    localStorage.setItem(tableName, JSON.stringify(data));
-  }
-
   writeToLocalStorage<T>(key: string, value: T): void {
     localStorage.setItem(key, JSON.stringify(value));
   }

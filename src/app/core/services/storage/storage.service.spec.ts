@@ -24,14 +24,8 @@ describe('StorageService', () => {
     expect(service.readFromLocalStorage<{ a: number }>('value')).toEqual({ a: 1 });
   });
 
-  it('should read back a written table', () => {
-    service.writeTableToLocalStorage<number>('table', [1, 2]);
-    expect(service.readTableFromLocalStorage<number>('table')).toEqual([1, 2]);
-  });
-
   it('should return null for missing keys', () => {
     expect(service.readFromLocalStorage<string>('missing')).toBeNull();
-    expect(service.readTableFromLocalStorage<string>('missing')).toBeNull();
   });
 
   it('should return null and warn on invalid JSON', () => {
@@ -41,7 +35,6 @@ describe('StorageService', () => {
     localStorage.setItem('broken', '{not json');
 
     expect(service.readFromLocalStorage<string>('broken')).toBeNull();
-    expect(service.readTableFromLocalStorage<string>('broken')).toBeNull();
-    expect(warnSpy).toHaveBeenCalledTimes(2);
+    expect(warnSpy).toHaveBeenCalledTimes(1);
   });
 });

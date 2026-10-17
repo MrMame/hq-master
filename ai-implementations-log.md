@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-17 17:18) - Refactoring: Ungenutzte Methoden nach session-state-primitive entfernt
+
+- **Was wurde gemacht:** `StorageService.readTableFromLocalStorage()`/`writeTableToLocalStorage()` samt Tests und `MonsterCharacterCreatorService.getInitMonsterCharacters()` entfernt. Seit der Umstellung auf `persistedState` bzw. dem Wegfall des Init-Monster-Fallbacks hatten sie keine Aufrufer mehr.
+- **Dateien geändert:** `storage.service.ts` (+spec), `monster-character-creator.service.ts`
+- **Wichtige Entscheidung:** Auf Wunsch des Nutzers entfernt statt als neuer Punkt erfasst. Der entsprechende Teil von `characters-db-reactive-read-api` (Init-Monster umstellen oder entfernen) ist damit erledigt; die Datei selbst wurde nicht geändert.
+
 ### (2026-10-17 17:11) - Refactoring: Session-State-Muster als expliziter Baustein (session-state-primitive #1–#3)
 
 - **Was wurde gemacht:** Neuer Ordner `core/session-state/` mit `persistedState<T>()` (Signal + Storage gemeinsam, `current()`/`update()` untracked, optionaler `StorageCodec`), `SESSION_KEYS`, `SessionStateSlice<T>` und `SessionSliceData`/`SessionSlices`. Alle Session-Services sind darauf umgestellt; `CharactersDbService`, `GameTimeService`, `DungeonBoardService` und `CardManagerService` implementieren den Slice. `GameSessionService` ruft für jeden Slice nur noch `reset()`/`restore()` auf. Vertragstest `describePersistedState` prüft Regel 8 für jeden Zustandsteil. Architekturregel angepasst.
