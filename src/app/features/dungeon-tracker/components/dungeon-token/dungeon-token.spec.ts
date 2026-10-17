@@ -1,0 +1,101 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CdkDragEnd } from '@angular/cdk/drag-drop';
+
+import { DungeonToken } from './dungeon-token';
+import { DungeonPosition } from '../../models/dungeon-position.model';
+import { CharacterInfo } from '../../../character-tracker/models/character-info.model';
+import { createTestCharacter } from '../../../game-session/testing/session.fixtures';
+
+const position: DungeonPosition = { characterId: 'a', col: 2, row: 3 };
+const GOLD_BORDER: string[] = ['border-yellow-400', 'shadow-yellow-400/50', 'shadow-md'];
+
+const dragEnd: (x: number, y: number, reset: () => void) => CdkDragEnd = (
+  x: number,
+  y: number,
+  reset: () => void,
+): CdkDragEnd =>
+  ({ source: { getFreeDragPosition: () => ({ x, y }), reset } }) as unknown as CdkDragEnd;
+
+describe('DungeonToken', () => {
+  let fixture: ComponentFixture<DungeonToken>;
+  let component: DungeonToken;
+
+  const render: (character: CharacterInfo) => HTMLElement = (
+    character: CharacterInfo,
+  ): HTMLElement => {
+    fixture.componentRef.setInput('character', character);
+    fixture.detectChanges();
+    return (fixture.nativeElement as HTMLElement).querySelector('div') as HTMLElement;
+  };
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({ imports: [DungeonToken] });
+    fixture = TestBed.createComponent(DungeonToken);
+    component = fixture.componentInstance;
+    fixture.componentRef.setInput('position', position);
+    fixture.componentRef.setInput('cellSize', 50);
+    fixture.componentRef.setInput('offsetX', 10);
+    fixture.componentRef.setInput('offsetY', 20);
+  });
+
+  it('should place the token in pixels from field, cell size and offset', () => {
+    const token: HTMLElement = render(createTestCharacter('a'));
+    expect(token.style.left).toBe('112px');
+    expect(token.style.top).toBe('172px');
+  });
+
+  it('should show the initials when the character has no image', () => {
+    const token: HTMLElement = render({ ...createTestCharacter('a'), name: 'goblin', image: '' });
+    expect(token.querySelector('img')).toBeNull();
+    expect(token.textContent?.trim()).toBe('GO');
+  });
+
+  it('should show the image and use the name as title and alt text', () => {
+    const character: CharacterInfo = { ...createTestCharacter('a'), image: 'img/orc.png' };
+    const token: HTMLElement = render(character);
+    const img: HTMLImageElement = token.querySelector('img') as HTMLImageElement;
+    expect(img.getAttribute('src')).toBe('img/orc.png');
+    expect(img.alt).toBe(character.name);
+    expect(token.title).toBe(character.name);
+  });
+
+  it('should give every token the gold border regardless of its name', () => {
+    for (const name of ['Goblin', 'Hero Aragorn']) {
+      const token: HTMLElement = render({ ...createTestCharacter('a'), name });
+      GOLD_BORDER.forEach((cls) => expect(token.classList).toContain(cls));
+      expect(token.classList).not.toContain('border-red-500');
+    }
+  });
+
+  it('should emit the rounded field after dragging and reset the drag offset', () => {
+    render(createTestCharacter('a'));
+    const reset: () => void = vi.fn();
+    const moved: (event: { characterId: string; col: number; row: number }) => void = vi.fn();
+    component.tokenMoved.subscribe(moved);
+
+    component.onDragEnd(dragEnd(70, -30, reset));
+
+    expect(moved).toHaveBeenCalledWith({ characterId: 'a', col: 3, row: 2 });
+    expect(reset).toHaveBeenCalledTimes(1);
+  });
+
+  it('should never emit a negative field', () => {
+    render(createTestCharacter('a'));
+    const moved: (event: { characterId: string; col: number; row: number }) => void = vi.fn();
+    component.tokenMoved.subscribe(moved);
+
+    component.onDragEnd(dragEnd(-500, -500, vi.fn()));
+
+    expect(moved).toHaveBeenCalledWith({ characterId: 'a', col: 0, row: 0 });
+  });
+
+  it('should emit the character id on double click', () => {
+    const token: HTMLElement = render(createTestCharacter('a'));
+    const clicked: (id: string) => void = vi.fn();
+    component.tokenDoubleClicked.subscribe(clicked);
+
+    token.dispatchEvent(new MouseEvent('dblclick'));
+
+    expect(clicked).toHaveBeenCalledWith('a');
+  });
+});

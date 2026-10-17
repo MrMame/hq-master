@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-17  
 **Priorität:** Niedrig  
-**Status:** Offen  
+**Status:** done (2026-10-17 21:19)  
 **Bezug:** `.claude/rules/testing.md` (präzise Typen), entdeckt bei `dungeon-board-reactive-character-sync` #6; #3 aus dem verworfenen `docs/feature-requests/done/character-kind-hero-monster.md`
 
 ---
@@ -22,7 +22,7 @@ Seit `dungeon-board-reactive-character-sync` #6 rendert die `DungeonTrackerPage`
 
 ## Anforderungen
 
-### 1. `character` auf `input.required<CharacterInfo>()` umstellen
+### 1. `character` auf `input.required<CharacterInfo>()` umstellen ✅ done (2026-10-17 21:19)
 
 - Input-Typ auf `InputSignal<CharacterInfo>` ändern.
 - Optional-Chaining und Non-Null-Assertions (`?.`, `!`, `?? '?'`, `?? ''`) in Template und `computed()`s entfernen.
@@ -32,14 +32,14 @@ Seit `dungeon-board-reactive-character-sync` #6 rendert die `DungeonTrackerPage`
 
 ---
 
-### 2. Spec für `DungeonToken` anlegen
+### 2. Spec für `DungeonToken` anlegen ✅ done (2026-10-17 21:19)
 
 - **Fund:** Für `dungeon-token.ts` existiert keine `.spec.ts`.
 - Testfälle: Position in Pixeln (`tokenLeft`/`tokenTop` inkl. Offset), Initialen bei fehlendem Bild, Bild bei vorhandenem `image`, `tokenMoved` nach Drag-Ende mit gerundetem Feld (nicht negativ), `tokenDoubleClicked` mit `characterId`, einheitlicher Rahmen (Punkt 3).
 
 ---
 
-### 3. Einheitlicher goldener Rahmen statt Held/Monster-Heuristik
+### 3. Einheitlicher goldener Rahmen statt Held/Monster-Heuristik ✅ done (2026-10-17 21:19)
 
 - **Fund:** `tokenBorderClass` rät die Charakterart über den Namen (`name.toLowerCase().startsWith('hero')` → gold, sonst rot). Ein Held „Aragorn“ wird rot dargestellt.
 - **Entscheidung (2026-10-17):** Die App unterscheidet nicht zwischen Helden und Monstern; alle sind Charaktere.
@@ -61,8 +61,8 @@ Seit `dungeon-board-reactive-character-sync` #6 rendert die `DungeonTrackerPage`
 
 ## Akzeptanzkriterien
 
-- [ ] `character` ist `input.required<CharacterInfo>()`
-- [ ] Keine `?.`/`!`-Zugriffe auf `character()` mehr in `DungeonToken`
-- [ ] `tokenBorderClass` existiert nicht mehr; alle Tokens haben den goldenen Rahmen
-- [ ] `dungeon-token.spec.ts` deckt die Fälle aus Punkt 2 ab
-- [ ] Alle Vitest-Tests laufen durch (`npm run test`), Build fehlerfrei (`npm run build`)
+- [x] `character` ist `input.required<CharacterInfo>()`
+- [x] Keine `?.`/`!`-Zugriffe auf `character()` mehr in `DungeonToken`
+- [x] `tokenBorderClass` existiert nicht mehr; alle Tokens haben den goldenen Rahmen
+- [x] `dungeon-token.spec.ts` deckt die Fälle aus Punkt 2 ab
+- [x] Alle Vitest-Tests laufen durch (`npm run test`), Build fehlerfrei (`npm run build`)

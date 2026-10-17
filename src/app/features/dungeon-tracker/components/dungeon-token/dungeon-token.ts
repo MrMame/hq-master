@@ -23,14 +23,13 @@ import { DungeonPosition } from '../../models/dungeon-position.model';
       (dblclick)="tokenDoubleClicked.emit(position().characterId)"
       [style.left.px]="tokenLeft()"
       [style.top.px]="tokenTop()"
-      [title]="character()?.name ?? ''"
-      class="absolute w-10 h-10 rounded-full border-2 cursor-grab active:cursor-grabbing overflow-hidden select-none z-10"
-      [class]="tokenBorderClass()"
+      [title]="character().name"
+      class="absolute w-10 h-10 rounded-full border-2 border-yellow-400 shadow-yellow-400/50 shadow-md cursor-grab active:cursor-grabbing overflow-hidden select-none z-10"
     >
-      @if (character()?.image) {
+      @if (character().image) {
         <img
-          [src]="character()!.image"
-          [alt]="character()!.name"
+          [src]="character().image"
+          [alt]="character().name"
           class="w-full h-full object-cover pointer-events-none"
         />
       } @else {
@@ -45,7 +44,7 @@ import { DungeonPosition } from '../../models/dungeon-position.model';
 })
 export class DungeonToken {
   position: InputSignal<DungeonPosition> = input.required<DungeonPosition>();
-  character: InputSignal<CharacterInfo | undefined> = input<CharacterInfo | undefined>(undefined);
+  character: InputSignal<CharacterInfo> = input.required<CharacterInfo>();
   cellSize: InputSignal<number> = input.required<number>();
   offsetX: InputSignal<number> = input<number>(0);
   offsetY: InputSignal<number> = input<number>(0);
@@ -64,19 +63,7 @@ export class DungeonToken {
     () => this.offsetY() + this.position().row * this.cellSize() + 2,
   );
 
-  initials: Signal<string> = computed(() => {
-    const name: string = this.character()?.name ?? '?';
-    return name.slice(0, 2).toUpperCase();
-  });
-
-  tokenBorderClass: Signal<string> = computed(() => {
-    const name: string = this.character()?.name ?? '';
-    // Heroes haben goldene Umrandung, Monster rote
-    const isHero: boolean = name.toLowerCase().startsWith('hero');
-    return isHero
-      ? 'border-yellow-400 shadow-yellow-400/50 shadow-md'
-      : 'border-red-500 shadow-red-500/50 shadow-md';
-  });
+  initials: Signal<string> = computed(() => this.character().name.slice(0, 2).toUpperCase());
 
   onDragEnd(event: CdkDragEnd): void {
     const dragOffset: Point = event.source.getFreeDragPosition();

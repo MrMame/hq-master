@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-17 21:19) - Refactoring: DungeonToken mit Pflicht-Charakter und einheitlichem Rahmen (dungeon-token-required-character #1–#3)
+
+- **Was wurde gemacht:** `DungeonToken.character` ist Pflicht-Input; Optional-Chaining und Non-Null-Assertions in Template und `initials` entfallen. `tokenBorderClass` (Held/Monster per Namensanfang „hero“) ist entfernt, alle Tokens tragen fest den goldenen Rahmen. Neue Spec deckt Pixelposition, Initialen/Bild, Rahmen, Drag-Ende (gerundet, nie negativ, `reset()`) und Doppelklick ab.
+- **Dateien geändert:** `dungeon-token.ts`, `dungeon-token.spec.ts` (neu), `docs/refactoring-requests/dungeon-token-required-character.md` (→ done/)
+- **Wichtige Entscheidung:** Keine Unterscheidung zwischen Helden und Monstern (Nutzerentscheidung, `character-kind-hero-monster` rejected); bisher rot umrandete Tokens sind jetzt gold. Creator-Services und Buttons „Add Hero“/„Add Monster“ bleiben unverändert. Lint, Build und Tests (193/193) grün; die manuelle UI-Prüfung ist noch offen.
+
 ### (2026-10-17 20:36) - Feature: DungeonBoard synchronisiert Positionen selbstständig (dungeon-board-reactive-character-sync #1–#7)
 
 - **Was wurde gemacht:** `DungeonBoardService` gleicht seine Positionen per `effect()` auf `CharactersDbService.characters` selbst ab (private `syncPositionsWithCharacters()`, schreibt nur bei hinzugefügten/entfernten Charakteren). Neue Tokens landen über die reine Funktion `placeNewTokens()` auf dem ersten freien Feld. Neues `tokens`-computed (`BoardToken`) verknüpft Position und Charakter und filtert verwaiste Positionen; die Page nutzt nur noch `tokens()`, Effekt und `getCharacter()` entfallen. `app.config.ts` erzeugt den `GameSessionService` per `provideAppInitializer`, damit alle Session-Slices samt Effekten beim App-Start laufen.
