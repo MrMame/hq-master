@@ -48,7 +48,8 @@ Arbeite die Schritte **in dieser Reihenfolge** ab. Keinen Schritt überspringen;
 ## 4. Verifikation
 
 - [ ] `npm run lint` keine Lint errors haben.
-- [ ] `npm run test -- --watch=false` grün.
+- [ ] `npm run test -- --watch=false --coverage` grün.
+- [ ] Coverage-Report für alle neuen und geänderten Dateien mit Logik prüfen (Definition of Done in `testing.md`): Nicht abgedeckte Zeilen/Zweige testen oder begründen.
 - [ ] `npm run build` fehlerfrei.
 - [ ] Bei UI-Änderungen: manuellen Prüfschritt im Bericht nennen.
 
@@ -66,7 +67,7 @@ Gemäß `.claude/rules/feature-requests.md`:
 
 ## 6. Abschlussbericht und Commit
 
-- [ ] Chat Ausgabe : was geändert wurde (mit Dateilinks), Test-/Build-Ergebnis, was bewusst offen blieb.
+- [ ] Chat Ausgabe : was geändert wurde (mit Dateilinks), Test-/Build-Ergebnis, Coverage der geänderten Dateien (inkl. Begründung für ungetestete Stellen), was bewusst offen blieb.
 - [ ] Einen Committext für den gesamten Aufruf vorbereiten (Typ `feat(<scope>): …`, umgesetzte Punkte im Body auflisten).
 - [ ] Einen 'ai-implementations-log.md' Eintrag für den gesamten Aufruf vorbereiten (bei ganzer Datei `#1–#n` in der Überschrift).
 - [ ] Benutzer den Committext und 'ai-implementations-log.md' Eintrag zeigen und fragen, ob der commit durchgeführt und der 'ai-implementations-log.md' Eintrag hinzugefügt werden soll.
