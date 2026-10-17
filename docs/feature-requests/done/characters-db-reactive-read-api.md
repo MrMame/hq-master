@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-16  
 **Priorität:** Mittel  
-**Status:** Teilweise umgesetzt — §2 done (bereits erfüllt, 2026-10-17 18:14)  
+**Status:** done (2026-10-17 21:16) — §1, §2, §5, §6 bereits erfüllt; §3, §4 rejected (Init-Monster-Fallback in `session-state-primitive` auf Wunsch entfernt)  
 **Bezug:** `.claude/rules/architecture.md` → „Session-State-Services: reaktive Schnittstelle“, Punkt 2 (und Punkt 6)
 
 ---
@@ -32,7 +32,7 @@ Folgen:
 
 ## Anforderungen
 
-### 1. `readCharacters()` privatisieren
+### 1. `readCharacters()` privatisieren ✅ done (bereits erfüllt, 2026-10-17 21:16)
 
 - `readCharacters()` → `private loadCharacters(): CharacterInfo[]`, nur zur Signal-Initialisierung verwendet.
 - Keine öffentliche Methode des Service liefert mehr einen Snapshot; Lesen ausschließlich über `characters: Signal<CharacterInfo[]>`.
@@ -53,7 +53,7 @@ Folgen:
 
 ---
 
-### 3. Init-Monster im Service seeden und persistieren
+### 3. Init-Monster im Service seeden und persistieren ❌ rejected (2026-10-17 21:16) — Init-Monster-Fallback entfällt (session-state-primitive)
 
 - **Fund:** Ist der Storage leer, erzeugt die Page Init-Monster (`getInitMonsterCharacters()`), **persistiert sie aber nicht**. Sie existieren nur in der lokalen Kopie der Page und fehlen daher im Dungeon-Tracker, bis irgendein Charakter geschrieben wird.
 - Seed-Logik aus der Page in `CharactersDbService` verlagern.
@@ -63,7 +63,7 @@ Folgen:
 
 ---
 
-### 4. Unterscheidung „nie gespeichert“ vs. „bewusst leer“ erhalten
+### 4. Unterscheidung „nie gespeichert“ vs. „bewusst leer“ erhalten ❌ rejected (2026-10-17 21:16) — Init-Monster-Fallback entfällt (session-state-primitive)
 
 - **Fund:** Die Page unterscheidet aktuell `null` (kein Eintrag) von `[]` (alle gelöscht) nur implizit über `readCharacters() || init` — das funktioniert lediglich, weil `[]` truthy ist. Das Service-Signal initialisiert dagegen mit `?? []` und verliert die Unterscheidung vollständig. Wird die Page auf das Signal umgestellt, ginge das Verhalten verloren.
 - Die private Init-Methode prüft explizit auf `null`:
@@ -75,7 +75,7 @@ Folgen:
 
 ---
 
-### 5. Keine Abhängigkeit `core/` → `features/*/services/`
+### 5. Keine Abhängigkeit `core/` → `features/*/services/` ✅ done (bereits erfüllt, 2026-10-17 21:16)
 
 - **Fund:** Die Init-Monster stammen aus `MonsterCharacterCreatorService` (Feature-Service). Würde `CharactersDbService` diesen direkt injizieren, hinge `core/` von einem Feature-Service ab.
 - Init-Daten bereitstellen über
@@ -87,7 +87,7 @@ Folgen:
 
 ---
 
-### 6. Dialog-Charaktere (`addCharacter()`) — Abstimmung mit `shared-session-state.md` §5
+### 6. Dialog-Charaktere (`addCharacter()`) — Abstimmung mit `shared-session-state.md` §5 ✅ done (bereits erfüllt, 2026-10-17 21:16)
 
 - **Fund:** `addCharacter()` schreibt das Dialog-Ergebnis nur in die lokale Kopie, nicht in die DB, und vergibt eine fortlaufende Zahl als `id` (`newId`) statt einer eindeutigen ID.
 - Umsetzung erfolgt in `shared-session-state.md` §5. Hier nur sicherstellen, dass nach Punkt 2 auch der Dialog-Pfad ausschließlich über `writeCharacter()` läuft.
@@ -111,11 +111,11 @@ Folgen:
 
 ## Akzeptanzkriterien
 
-- [ ] `CharactersDbService` hat keine öffentliche Methode, die `CharacterInfo[]` zurückgibt
-- [ ] `grep readCharacters src/` findet keine Aufrufer außerhalb des Service
+- [x] `CharactersDbService` hat keine öffentliche Methode, die `CharacterInfo[]` zurückgibt
+- [x] `grep readCharacters src/` findet keine Aufrufer außerhalb des Service
 - [x] `CharacterTrackerPage` hat keinen Einmal-Read und keine lokale Kopie der Charakterliste mehr
-- [ ] Leerer Storage → Init-Monster werden persistiert und sind im Dungeon-Tracker sichtbar
-- [ ] Gespeichertes `[]` bleibt nach Reload leer
-- [ ] `core/` importiert nichts aus `features/*/services/`
-- [ ] Dialog-Charaktere werden über `writeCharacter()` persistiert (gemeinsam mit `shared-session-state.md` §5)
-- [ ] Alle Vitest-Tests laufen durch (`npm run test`), Build fehlerfrei (`npm run build`)
+- [ ] ~~Leerer Storage → Init-Monster werden persistiert und sind im Dungeon-Tracker sichtbar~~ (rejected)
+- [x] Gespeichertes `[]` bleibt nach Reload leer (ohne Seeding trivial erfüllt)
+- [x] `core/` importiert nichts aus `features/*/services/`
+- [x] Dialog-Charaktere werden über `writeCharacter()` persistiert (gemeinsam mit `shared-session-state.md` §5)
+- [x] Alle Vitest-Tests laufen durch (`npm run test`), Build fehlerfrei (`npm run build`)
