@@ -7,8 +7,10 @@ import { Card } from '../models/card.model';
 import { DeckConfig } from '../models/deck-config.model';
 import { DeckState } from '../models/deck-state.model';
 import { createDeckState } from '../../game-session/testing/session.fixtures';
+import { describePersistedState } from '../../../core/session-state/testing/describe-persisted-state';
+import { SESSION_KEYS } from '../../../core/session-state/session-keys';
 
-const KEY: string = 'card_manager_deck_state';
+const KEY: string = SESSION_KEYS.deckState;
 
 const readStored: () => DeckState | null = (): DeckState | null =>
   JSON.parse(localStorage.getItem(KEY) ?? 'null') as DeckState | null;
@@ -38,25 +40,19 @@ describe('CardManagerService', () => {
     vi.restoreAllMocks();
   });
 
-  describe('initialization', () => {
-    it('should load the deck state from storage', () => {
-      localStorage.setItem(KEY, JSON.stringify(deck));
-      expect(createService().state()).toEqual(deck);
-    });
-
-    it('should start without deck when storage is empty or invalid', () => {
-      vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-      expect(createService().state()).toBeNull();
-      TestBed.resetTestingModule();
-      localStorage.setItem(KEY, '{kaputt');
-      expect(createService().state()).toBeNull();
-    });
+  describePersistedState('state', {
+    key: SESSION_KEYS.deckState,
+    create: createService,
+    read: (s: CardManagerService) => s.state(),
+    fallback: null,
+    stored: { raw: deck, expected: deck },
+    mutate: (s: CardManagerService) => s.loadDeckConfig(deck.config),
   });
 
   describe('mutations', () => {
     beforeEach(() => {
       service = createService();
-      service.restoreState(deck);
+      service.restore(deck);
     });
 
     it('should load a deck config with all cards on the draw pile', () => {
@@ -81,7 +77,7 @@ describe('CardManagerService', () => {
     });
 
     it('should draw the top card as active card', () => {
-      service.restoreState({ ...deck, activeCard: null });
+      service.restore({ ...deck, activeCard: null });
       service.draw();
       expect(state().activeCard?.id).toBe('b1');
       expect(state().drawPile).toEqual([]);
@@ -117,9 +113,9 @@ describe('CardManagerService', () => {
       expect(readStored()).toEqual(state());
     });
 
-    it('should reset all cards back onto the draw pile', () => {
+    it('should reshuffle all cards back onto the draw pile', () => {
       service.dropActiveCardIntoBank();
-      service.reset();
+      service.reshuffleAll();
       expect(ids(state().drawPile)).toEqual(['b1', 'c1']);
       expect(state().bank).toEqual([]);
       expect(state().activeCard).toBeNull();
@@ -127,21 +123,27 @@ describe('CardManagerService', () => {
     });
 
     it('should ignore deck operations without a deck', () => {
-      service.restoreState(null);
+      service.restore(null);
       service.shuffle();
       service.draw();
       service.discardActiveCard();
-      service.reset();
+      service.reshuffleAll();
       service.makeCardActive('c1');
       expect(service.state()).toBeNull();
       expect(readStored()).toBeNull();
     });
 
-    it('should set and clear the deck state in signal and storage on restoreState', () => {
-      expect(service.state()).toEqual(deck);
+    it('should restore the deck state in signal, sessionState and storage', () => {
+      expect(service.sessionState()).toEqual(deck);
       expect(readStored()).toEqual(deck);
-      service.restoreState(null);
+      service.restore(null);
       expect(service.state()).toBeNull();
+      expect(readStored()).toBeNull();
+    });
+
+    it('should drop the deck on reset (new session)', () => {
+      service.reset();
+      expect(service.sessionState()).toBeNull();
       expect(readStored()).toBeNull();
     });
   });

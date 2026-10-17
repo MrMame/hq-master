@@ -1,4 +1,4 @@
-import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { Component, inject, signal, untracked, WritableSignal } from '@angular/core';
 import { DragDropModule, CdkDragEnd, Point } from '@angular/cdk/drag-drop';
 import { CharacterCard } from '../character-card/character-card';
 import { MovableItem } from '../../models/movable-item.model';
@@ -44,9 +44,7 @@ export class CharacterTrackerPage {
   }
 
   loadMonstersFromDb(): void {
-    const charactersFromDb: CharacterInfo[] =
-      this.charactersDbService.readCharacters() ||
-      this.monsterCharacterCreatorService.getInitMonsterCharacters();
+    const charactersFromDb: CharacterInfo[] = untracked(this.charactersDbService.characters);
     const items: MovableCharacterItem[] = charactersFromDb.map((character, index) => {
       return new MovableCharacterItem(index + 1, 50 + index * 100, 50 + index * 100, character);
     });

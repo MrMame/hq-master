@@ -1,14 +1,27 @@
-import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { computed, inject, Injectable, Signal } from '@angular/core';
 import { GameTimeService } from '../../../core/services/game-time/game-time.service';
-import { GameTime, gameTimeFromDate } from '../../../core/models/game-time.model';
+import { GameTime } from '../../../core/models/game-time.model';
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
-import { StorageService } from '../../../core/services/storage/storage.service';
+import {
+  PersistedState,
+  persistedState,
+  StorageCodec,
+} from '../../../core/session-state/persisted-state';
+import { SESSION_KEYS } from '../../../core/session-state/session-keys';
+import { SessionSliceData, SessionSlices } from '../../../core/session-state/session-slices';
 import { CardManagerService } from '../../card-manager/services/card-manager.service';
 import { DungeonBoardService } from '../../dungeon-tracker/services/dungeon-board.service';
 import { DEFAULT_SESSION_META, SessionMeta } from '../models/session-meta.model';
 import { SessionSnapshot } from '../models/session-snapshot.model';
 
-const KEY_SESSION_META: string = 'game_session_meta';
+/** Ältere oder unvollständige Einträge werden mit den Defaults ergänzt. */
+const SESSION_META_CODEC: StorageCodec<SessionMeta> = {
+  encode: (value: SessionMeta): SessionMeta => value,
+  decode: (stored: unknown): SessionMeta | null =>
+    typeof stored === 'object' && stored !== null
+      ? { ...DEFAULT_SESSION_META, ...(stored as Partial<SessionMeta>) }
+      : null,
+};
 
 export interface SessionStartOptions {
   name: string;
@@ -17,69 +30,68 @@ export interface SessionStartOptions {
 
 /**
  * Steuert den Lebenszyklus der Spielesession (Starten, Beenden, Laden).
- * Fremde Zustände werden ausschließlich über die öffentlichen Methoden
- * der jeweils verantwortlichen Services geändert.
+ * Fremde Zustände werden ausschließlich über den `SessionStateSlice`-Vertrag
+ * der jeweils verantwortlichen Services gelesen und ersetzt.
  */
 @Injectable({
   providedIn: 'root',
 })
 export class GameSessionService {
-  private readonly storageService: StorageService = inject(StorageService);
   private readonly gameTimeService: GameTimeService = inject(GameTimeService);
-  private readonly charactersDbService: CharactersDbService = inject(CharactersDbService);
-  private readonly dungeonBoardService: DungeonBoardService = inject(DungeonBoardService);
-  private readonly cardManagerService: CardManagerService = inject(CardManagerService);
 
-  private readonly _meta: WritableSignal<SessionMeta> = signal<SessionMeta>(this.loadMeta());
+  private readonly slices: SessionSlices = {
+    gameTime: this.gameTimeService,
+    characters: inject(CharactersDbService),
+    dungeon: inject(DungeonBoardService),
+    deck: inject(CardManagerService),
+  };
+
+  // Die Meta gehört dem Orchestrator selbst und ist kein Slice.
+  private readonly _meta: PersistedState<SessionMeta> = persistedState<SessionMeta>(
+    SESSION_KEYS.sessionMeta,
+    () => ({ ...DEFAULT_SESSION_META }),
+    SESSION_META_CODEC,
+  );
 
   // REACTIVE INTERFACES ===============================================================================
 
-  readonly meta: Signal<SessionMeta> = this._meta.asReadonly();
+  readonly meta: Signal<SessionMeta> = this._meta.value;
 
   /** Feature-übergreifender Gesamtzustand, z. B. für das Speichern als XML. */
   readonly snapshot: Signal<SessionSnapshot> = computed(() => ({
-    meta: this._meta(),
-    gameTime: this.gameTimeService.gameTime(),
-    characters: this.charactersDbService.characters(),
-    board: this.dungeonBoardService.boardState(),
-    positions: this.dungeonBoardService.positions(),
-    deck: this.cardManagerService.state(),
+    meta: this.meta(),
+    gameTime: this.slices.gameTime.sessionState(),
+    characters: this.slices.characters.sessionState(),
+    dungeon: this.slices.dungeon.sessionState(),
+    deck: this.slices.deck.sessionState(),
   }));
 
   // PUBLICS ===============================================================================
 
   /** Setzt alle Feature-Zustände zurück und startet eine neue Session zur gewählten Ingame-Zeit. */
   startSession({ name, startTime }: SessionStartOptions): void {
-    this.charactersDbService.writeCharacters([]);
-    this.dungeonBoardService.reset();
-    this.cardManagerService.restoreState(null);
+    this.sliceKeys().forEach((key) => this.slices[key].reset());
     this.gameTimeService.setGameTime(startTime);
-    this.persist({ name, active: true, startedAt: new Date().toISOString() });
+    this._meta.set({ name, active: true, startedAt: new Date().toISOString() });
   }
 
   /** Markiert die Session als beendet; alle Daten bleiben erhalten (z. B. zum Speichern). */
   endSession(): void {
-    this.persist({ ...this._meta(), active: false });
+    this._meta.update((meta) => ({ ...meta, active: false }));
   }
 
   restoreSnapshot(snapshot: SessionSnapshot): void {
-    this.charactersDbService.writeCharacters(snapshot.characters);
-    this.dungeonBoardService.restore(snapshot.board, snapshot.positions);
-    this.cardManagerService.restoreState(snapshot.deck);
-    this.gameTimeService.setGameTime(gameTimeFromDate(snapshot.gameTime));
-    this.persist({ ...snapshot.meta });
+    this.sliceKeys().forEach((key) => this.restoreSlice(key, snapshot));
+    this._meta.set({ ...snapshot.meta });
   }
 
   // PRIVATES ===============================================================================
 
-  private persist(meta: SessionMeta): void {
-    this._meta.set(meta);
-    this.storageService.writeToLocalStorage<SessionMeta>(KEY_SESSION_META, meta);
+  private restoreSlice<K extends keyof SessionSliceData>(key: K, data: SessionSliceData): void {
+    this.slices[key].restore(data[key]);
   }
 
-  private loadMeta(): SessionMeta {
-    const stored: SessionMeta | null =
-      this.storageService.readFromLocalStorage<SessionMeta>(KEY_SESSION_META);
-    return { ...DEFAULT_SESSION_META, ...stored };
+  private sliceKeys(): (keyof SessionSlices)[] {
+    return Object.keys(this.slices) as (keyof SessionSlices)[];
   }
 }

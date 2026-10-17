@@ -16,6 +16,9 @@ Alle Features teilen eine gemeinsame Session-Datenbasis über root-provided Serv
 ```
 core/
   models/         → game-time.model.ts, game-time-span.model.ts
+  session-state/  → persisted-state.ts (persistedState), session-keys.ts (SESSION_KEYS),
+                    session-state-slice.ts (SessionStateSlice), session-slices.ts (SessionSliceData)
+    testing/      → describe-persisted-state.ts (Vertragstest für Regel 8, nur für Specs)
   services/
     game-time/    → GameTimeService: In-Game-Zeitlogik (app-weit)
     storage/      → StorageService (LocalStorage-Abstraktion)
@@ -30,7 +33,7 @@ features/
 
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung
     components/        → DungeonTrackerPage, DungeonToken
-    models/            → dungeon-board-state.model.ts, dungeon-position.model.ts
+    models/            → dungeon-board-state.model.ts, dungeon-position.model.ts, dungeon-session-state.model.ts
     services/          → dungeon-board.service.ts (Signal-State + LocalStorage)
 
   time-tracker/        → In-Game-Zeiterfassung
@@ -96,22 +99,25 @@ Gilt für **jeden** `providedIn: 'root'`-Service, der Session-Daten verantwortet
 ohne Navigation, Reload oder manuelles Neu-Lesen.
 
 1. **Single Source of Truth:** Jeder verantwortete Zustandsteil liegt in genau einem
-   privaten `WritableSignal` (`_name`). Kein zweiter Zustand in Komponenten oder anderen Services.
+   privaten `PersistedState<T>` (`_name = persistedState(SESSION_KEYS.x, …)`). Kein zweiter
+   Zustand in Komponenten oder anderen Services.
 2. **Zentrale Lese-Schnittstelle:** Pro Zustandsteil ein öffentliches, schreibgeschütztes
-   `readonly name: Signal<T> = this._name.asReadonly()`. Abgeleitete Werte als `computed()`.
+   `readonly name: Signal<T> = this._name.value`. Abgeleitete Werte als `computed()`.
    - Öffentliche Lesemethoden, die einen **Snapshot** liefern (`readX(): T`), sind verboten.
      Lesen aus dem Storage ist `private` und nur für die Initialisierung erlaubt.
    - Zeitbasierte/rohe Werte (z. B. `Date` der Spielzeit) werden ebenfalls als `Signal`
      exponiert – nicht nur formatierte Ableitungen –, damit andere Services darauf reagieren können.
-3. **Initialisierung beim Service-Start:** Das Signal wird einmalig aus dem `StorageService`
-   befüllt, mit typisiertem Default-Wert bei fehlenden/ungültigen Daten.
+3. **Initialisierung beim Service-Start:** `persistedState(key, fallback, codec?)` liest den
+   Storage einmalig; bei fehlenden/ungültigen Daten greift `fallback()`. Werte, die nicht
+   1:1 als JSON gespeichert werden (z. B. `Date`), bekommen einen `StorageCodec`.
+   Keine eigenen `load*()`-Methoden, keine lokalen `KEY_*`-Konstanten – Keys stehen nur in `SESSION_KEYS`.
 4. **Mutation nur über Service-Methoden:** Fachliche Methoden (`writeX`, `removeX`, `addTime`, …)
-   sind der einzige Schreibweg. Jede Mutation läuft durch **eine** private Methode
-   (z. B. `persist()` / `updateAndPersist()`), die Signal **und** Storage gemeinsam aktualisiert.
-   Signal-Update und Persistenz dürfen nie auseinanderlaufen.
-5. **Immutable Updates:** Signals werden nur mit neuen Objekten/Arrays gesetzt
-   (`set`/`update` mit Spread/`map`/`filter`, `Date` kopieren). Keine In-Place-Mutation,
-   sonst feuern Abhängige nicht.
+   sind der einzige Schreibweg. Sie schreiben ausschließlich über `set()`/`update()` des
+   `PersistedState`, die Signal **und** Storage gemeinsam aktualisieren. Keine eigenen
+   `persist*()`-Methoden. Den eigenen Zustand in Mutationen über `current()`/`update()` lesen
+   (untracked), damit Aufrufe aus `effect()` keine Endlosschleife auslösen.
+5. **Immutable Updates:** `set`/`update` nur mit neuen Objekten/Arrays
+   (Spread/`map`/`filter`, `Date` kopieren). Keine In-Place-Mutation, sonst feuern Abhängige nicht.
 6. **Konsumenten reagieren, statt zu lesen:**
    - Komponenten binden das Signal direkt im Template oder via `computed()`.
    - Services/Komponenten, die auf Änderungen anderer Verantwortungsbereiche reagieren müssen,
@@ -123,34 +129,42 @@ ohne Navigation, Reload oder manuelles Neu-Lesen.
    abgebildet, nie durch direktes Schreiben in dessen Storage-Key.
 8. **Tests:** Für jeden Session-Service ist zu testen, dass eine Mutation (a) das öffentliche
    Signal aktualisiert und (b) persistiert, sowie dass die Initialisierung aus dem Storage
-   inkl. Default-Fallback funktioniert.
+   inkl. Default-Fallback funktioniert. Dafür je Zustandsteil `describePersistedState(…)`
+   aus `core/session-state/testing/` verwenden.
+9. **Session-Vertrag:** Jeder Service, der zur Spielesession gehört, implementiert
+   `SessionStateSlice<T>` (`sessionState`, `restore(state)`, `reset()`) und hat einen Eintrag in
+   `SessionSliceData`. Der `GameSessionService` liest und ersetzt fremden Zustand nur über
+   diesen Vertrag. Der Slice exponiert seine `PersistedState`s nicht.
 
 **Referenzmuster:**
 
 ```typescript
-const KEY_ITEMS: string = 'items';
-
 @Injectable({ providedIn: 'root' })
-export class ItemsService {
-  private readonly storageService: StorageService = inject(StorageService);
-  private readonly _items: WritableSignal<Item[]> = signal<Item[]>(this.load());
-  readonly items: Signal<Item[]> = this._items.asReadonly();
-  readonly count: Signal<number> = computed(() => this._items().length);
+export class ItemsService implements SessionStateSlice<Item[]> {
+  private readonly _items: PersistedState<Item[]> = persistedState<Item[]>(
+    SESSION_KEYS.items,
+    () => [],
+  );
+  readonly items: Signal<Item[]> = this._items.value;
+  readonly count: Signal<number> = computed(() => this.items().length);
+  readonly sessionState: Signal<Item[]> = this.items;
 
   addItem(item: Item): void {
-    this.persist([...this._items(), item]);
+    this._items.update((items) => [...items, item]);
   }
 
-  private persist(items: Item[]): void {
-    this._items.set(items);
-    this.storageService.writeToLocalStorage<Item[]>(KEY_ITEMS, items);
+  restore(items: Item[]): void {
+    this._items.set([...items]);
   }
 
-  private load(): Item[] {
-    return this.storageService.readFromLocalStorage<Item[]>(KEY_ITEMS) ?? [];
+  reset(): void {
+    this._items.set([]);
   }
 }
 ```
+
+Neuer Session-Zustand: Key in `SESSION_KEYS`, Feld in `SessionSliceData`, Service in die
+Slice-Map des `GameSessionService`; der Compiler meldet dann Snapshot und XML-Mapping.
 
 ### Dependency Injection
 
@@ -177,7 +191,7 @@ export class ItemsService {
 1. Neuen Ordner unter `features/<name>/` anlegen mit `components/`, `models/`, `services/`.
 2. Route in `app.routes.ts` als lazy `loadComponent` registrieren.
 3. App-weite Services (Storage, GameTime) aus `core/` injizieren, nicht duplizieren.
-4. Feature-eigene Persistenz über `StorageService` mit eigenem `KEY_*`-Konstanten-Pattern.
+4. Session-Zustand über `persistedState` mit Key aus `SESSION_KEYS` und als `SessionStateSlice` (siehe oben).
 
 ## Anti-Patterns to Avoid
 
@@ -185,6 +199,7 @@ export class ItemsService {
 - DO NOT use constructor-based dependency injection.
 - DO NOT use traditional Lifecycle Hooks (`ngOnInit`, `ngOnChanges`) when Signal-based alternatives (`effect`, computed properties, or template signals) can achieve the same result.
 - DO NOT expose snapshot getters (`readX(): T`) on session services or copy signal values once into local fields — bind to the service's readonly signal instead.
+- DO NOT hold session state in a plain `signal()` with manual `StorageService` reads/writes (`load()`/`persist()`) — use `persistedState(SESSION_KEYS.x, …)`.
 - Avoid mixing legacy RxJS `subscribe` chains with Signals incorrectly; use `toSignal` or `toObservable` from `@angular/core/rxjs-interop` if interop is required.
 
 ## Framework Conventions

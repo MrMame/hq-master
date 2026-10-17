@@ -4,15 +4,14 @@ import { Mock } from 'vitest';
 
 import { GameTimeService } from './game-time.service';
 import { GameTimeSpan } from '../../models/game-time-span.model';
+import { describePersistedState } from '../../session-state/testing/describe-persisted-state';
+import { SESSION_KEYS } from '../../session-state/session-keys';
 
 const KEY: string = 'game_time';
 const DEFAULT_AS_STRING: string = '23:55:00 2381-01-01';
 
 const readStored: () => Date = (): Date =>
   new Date(JSON.parse(localStorage.getItem(KEY) ?? 'null') as string);
-
-const storeTime: (date: Date) => void = (date: Date): void =>
-  localStorage.setItem(KEY, JSON.stringify(date.toISOString()));
 
 describe('GameTimeService', () => {
   let service: GameTimeService;
@@ -22,18 +21,25 @@ describe('GameTimeService', () => {
     TestBed.configureTestingModule({});
   });
 
-  it('should start with the default game time when nothing is stored', () => {
+  describePersistedState('gameTime', {
+    key: SESSION_KEYS.gameTime,
+    create: () => TestBed.inject(GameTimeService),
+    read: (s: GameTimeService) => s.gameTime(),
+    fallback: new Date(2381, 0, 1, 23, 55, 0),
+    stored: {
+      raw: new Date(2390, 4, 6, 7, 8, 9).toISOString(),
+      expected: new Date(2390, 4, 6, 7, 8, 9),
+    },
+    mutate: (s: GameTimeService) => s.addTime({ minutes: 1 }),
+    encode: (value: Date) => value.toISOString(),
+  });
+
+  it('should start with the default game time string when nothing is stored', () => {
     service = TestBed.inject(GameTimeService);
     expect(service.gameTimeAsString()).toBe(DEFAULT_AS_STRING);
   });
 
-  it('should load the stored game time on init', () => {
-    storeTime(new Date(2390, 4, 6, 7, 8, 9));
-    service = TestBed.inject(GameTimeService);
-    expect(service.gameTimeAsString()).toBe('07:08:09 2390-05-06');
-  });
-
-  it('should fall back to the default when the stored value is invalid', () => {
+  it('should fall back to the default when the stored value is not a date', () => {
     localStorage.setItem(KEY, JSON.stringify('not a date'));
     service = TestBed.inject(GameTimeService);
     expect(service.gameTimeAsString()).toBe(DEFAULT_AS_STRING);
@@ -84,15 +90,6 @@ describe('GameTimeService', () => {
     expect(service.gameTimeAsString()).toBe('00:00:10 2381-01-02');
   });
 
-  it('should expose the default and the stored game time as Date signal', () => {
-    service = TestBed.inject(GameTimeService);
-    expect(service.gameTime()).toEqual(new Date(2381, 0, 1, 23, 55, 0));
-    TestBed.resetTestingModule();
-    storeTime(new Date(2390, 4, 6, 7, 8, 9));
-    service = TestBed.inject(GameTimeService);
-    expect(service.gameTime()).toEqual(new Date(2390, 4, 6, 7, 8, 9));
-  });
-
   it('should emit a new Date instance on addTime and setGameTime', () => {
     service = TestBed.inject(GameTimeService);
     const initial: Date = service.gameTime();
@@ -104,6 +101,23 @@ describe('GameTimeService', () => {
     service.setGameTime({ year: 2390, month: 5, day: 6, hours: 7 });
     expect(service.gameTime()).not.toBe(afterAdd);
     expect(service.gameTime()).toEqual(new Date(2390, 4, 6, 7, 0, 0));
+  });
+
+  it('should restore a copy of the given time in signal and storage', () => {
+    service = TestBed.inject(GameTimeService);
+    const restored: Date = new Date(2390, 4, 6, 7, 8, 9);
+    service.restore(restored);
+    expect(service.sessionState()).toEqual(restored);
+    expect(service.sessionState()).not.toBe(restored);
+    expect(readStored()).toEqual(restored);
+  });
+
+  it('should reset to the default game time', () => {
+    service = TestBed.inject(GameTimeService);
+    service.addTime({ hours: 3 });
+    service.reset();
+    expect(service.gameTimeAsString()).toBe(DEFAULT_AS_STRING);
+    expect(readStored()).toEqual(new Date(2381, 0, 1, 23, 55, 0));
   });
 
   it('should recompute a consumer computed() after a time change', () => {

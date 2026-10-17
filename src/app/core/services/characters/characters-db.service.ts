@@ -1,37 +1,37 @@
-import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { Injectable, Signal } from '@angular/core';
 import { CharacterInfo } from '../../../features/character-tracker/models/character-info.model';
-import { StorageService } from '../storage/storage.service';
+import { PersistedState, persistedState } from '../../session-state/persisted-state';
+import { SESSION_KEYS } from '../../session-state/session-keys';
+import { SessionStateSlice } from '../../session-state/session-state-slice';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CharactersDbService {
-  private readonly TABLENAME_CHARACTERS: string = 'characters';
-  private storageService: StorageService = inject(StorageService);
-
-  private readonly _characters: WritableSignal<CharacterInfo[]> = signal<CharacterInfo[]>(
-    this.readCharacters() ?? [],
+export class CharactersDbService implements SessionStateSlice<CharacterInfo[]> {
+  private readonly _characters: PersistedState<CharacterInfo[]> = persistedState<CharacterInfo[]>(
+    SESSION_KEYS.characters,
+    () => [],
   );
-  readonly characters: Signal<CharacterInfo[]> = this._characters.asReadonly();
+  readonly characters: Signal<CharacterInfo[]> = this._characters.value;
+  readonly sessionState: Signal<CharacterInfo[]> = this.characters;
 
-  readCharacters(): CharacterInfo[] | null {
-    return this.storageService.readTableFromLocalStorage(this.TABLENAME_CHARACTERS);
-  }
-  writeCharacters(characterInfos: CharacterInfo[]): void {
-    this._characters.set(characterInfos);
-    this.storageService.writeTableToLocalStorage(this.TABLENAME_CHARACTERS, characterInfos);
-  }
   writeCharacter(characterInfo: CharacterInfo): void {
-    const characters: CharacterInfo[] = this._characters();
-    const exists: boolean = characters.some((c) => c.id === characterInfo.id);
-    this.writeCharacters(
-      exists
+    this._characters.update((characters) =>
+      characters.some((c) => c.id === characterInfo.id)
         ? characters.map((c) => (c.id === characterInfo.id ? characterInfo : c))
         : [...characters, characterInfo],
     );
   }
 
   removeCharacter(characterInfo: CharacterInfo): void {
-    this.writeCharacters(this._characters().filter((c) => c.id !== characterInfo.id));
+    this._characters.update((characters) => characters.filter((c) => c.id !== characterInfo.id));
+  }
+
+  restore(characters: CharacterInfo[]): void {
+    this._characters.set([...characters]);
+  }
+
+  reset(): void {
+    this._characters.set([]);
   }
 }

@@ -7,6 +7,8 @@ import {
 } from '../models/dungeon-board-state.model';
 import { DungeonPosition } from '../models/dungeon-position.model';
 import { createTestCharacter } from '../../game-session/testing/session.fixtures';
+import { describePersistedState } from '../../../core/session-state/testing/describe-persisted-state';
+import { SESSION_KEYS } from '../../../core/session-state/session-keys';
 
 const board: DungeonBoardState = { ...DEFAULT_DUNGEON_BOARD_STATE, gridColumns: 15 };
 const positions: DungeonPosition[] = [{ characterId: 'a', col: 2, row: 3 }];
@@ -29,29 +31,22 @@ describe('DungeonBoardService', () => {
     vi.restoreAllMocks();
   });
 
-  describe('initialization', () => {
-    it('should load board and positions from storage', () => {
-      localStorage.setItem('dungeon_board', JSON.stringify(board));
-      localStorage.setItem('dungeon_positions', JSON.stringify(positions));
-      service = createService();
-      expect(service.boardState()).toEqual(board);
-      expect(service.positions()).toEqual(positions);
-    });
+  describePersistedState('boardState', {
+    key: SESSION_KEYS.dungeonBoard,
+    create: createService,
+    read: (s: DungeonBoardService) => s.boardState(),
+    fallback: DEFAULT_DUNGEON_BOARD_STATE,
+    stored: { raw: board, expected: board },
+    mutate: (s: DungeonBoardService) => s.updateGridSettings({ gridRows: 3 }),
+  });
 
-    it('should fall back to defaults when storage is empty', () => {
-      service = createService();
-      expect(service.boardState()).toEqual(DEFAULT_DUNGEON_BOARD_STATE);
-      expect(service.positions()).toEqual([]);
-    });
-
-    it('should fall back to defaults when stored JSON is invalid', () => {
-      vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-      localStorage.setItem('dungeon_board', '{kaputt');
-      localStorage.setItem('dungeon_positions', '[kaputt');
-      service = createService();
-      expect(service.boardState()).toEqual(DEFAULT_DUNGEON_BOARD_STATE);
-      expect(service.positions()).toEqual([]);
-    });
+  describePersistedState('positions', {
+    key: SESSION_KEYS.dungeonPositions,
+    create: createService,
+    read: (s: DungeonBoardService) => s.positions(),
+    fallback: [],
+    stored: { raw: positions, expected: positions },
+    mutate: (s: DungeonBoardService) => s.updatePosition('a', 1, 1),
   });
 
   describe('mutations', () => {
@@ -100,7 +95,7 @@ describe('DungeonBoardService', () => {
     });
 
     it('should replace board and positions in signals and storage on restore', () => {
-      service.restore(board, positions);
+      service.restore({ board, positions });
       expect(service.boardState()).toEqual(board);
       expect(service.positions()).toEqual(positions);
       expect(readStored<DungeonBoardState>('dungeon_board')).toEqual(board);
@@ -108,13 +103,20 @@ describe('DungeonBoardService', () => {
     });
 
     it('should not share references with the restored input', () => {
-      service.restore(board, positions);
+      service.restore({ board, positions });
       expect(service.boardState()).not.toBe(board);
       expect(service.positions()).not.toBe(positions);
     });
 
+    it('should expose board and positions together as sessionState', () => {
+      service.restore({ board, positions });
+      expect(service.sessionState()).toEqual({ board, positions });
+      service.updatePosition('a', 9, 9);
+      expect(service.sessionState().positions).toEqual([{ characterId: 'a', col: 9, row: 9 }]);
+    });
+
     it('should reset to the default board without positions', () => {
-      service.restore(board, positions);
+      service.restore({ board, positions });
       service.reset();
       expect(service.boardState()).toEqual(DEFAULT_DUNGEON_BOARD_STATE);
       expect(service.positions()).toEqual([]);

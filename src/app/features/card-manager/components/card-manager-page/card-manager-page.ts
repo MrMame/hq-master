@@ -57,7 +57,7 @@ export class CardManagerPage {
     this.cardManagerService.discardActiveCard();
   }
   onDrawPileZoneClick(): void {
-    this.cardManagerService.reset();
+    this.cardManagerService.reshuffleAll();
   }
   onLoadDeckClick(): void {
     // const url: string = prompt('Deck URL eingeben:') ?? '/decks/default/default-deck.xml';
@@ -68,7 +68,7 @@ export class CardManagerPage {
     this.cardManagerService.shuffle();
   }
   onResetClick(): void {
-    this.cardManagerService.reset();
+    this.cardManagerService.reshuffleAll();
   }
   onBankCardClick(cardId: string): void {
     if (this.cardManagerService.state()!.activeCard === null) {

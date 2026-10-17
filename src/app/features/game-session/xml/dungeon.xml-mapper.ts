@@ -2,7 +2,7 @@ import {
   DEFAULT_DUNGEON_BOARD_STATE,
   DungeonBoardState,
 } from '../../dungeon-tracker/models/dungeon-board-state.model';
-import { DungeonPosition } from '../../dungeon-tracker/models/dungeon-position.model';
+import { DungeonSessionState } from '../../dungeon-tracker/models/dungeon-session-state.model';
 import {
   appendElement,
   appendTextElement,
@@ -13,13 +13,8 @@ import {
   setAttributes,
 } from './xml.util';
 
-export interface DungeonXmlData {
-  board: DungeonBoardState;
-  positions: DungeonPosition[];
-}
-
-export function writeDungeonBoard(doc: XMLDocument, data: DungeonXmlData): Element {
-  const { board, positions }: DungeonXmlData = data;
+export function writeDungeonBoard(doc: XMLDocument, data: DungeonSessionState): Element {
+  const { board, positions }: DungeonSessionState = data;
   const el: Element = doc.createElement('dungeonBoard');
   setAttributes(el, {
     gridColumns: board.gridColumns,
@@ -42,7 +37,7 @@ export function writeDungeonBoard(doc: XMLDocument, data: DungeonXmlData): Eleme
   return el;
 }
 
-export function readDungeonBoard(el: Element): DungeonXmlData {
+export function readDungeonBoard(el: Element): DungeonSessionState {
   const d: DungeonBoardState = DEFAULT_DUNGEON_BOARD_STATE;
   const image: Element | null = firstChild(el, 'image');
   return {

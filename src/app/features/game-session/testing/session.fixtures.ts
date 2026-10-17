@@ -59,19 +59,21 @@ export function createSessionSnapshot(): SessionSnapshot {
     meta: { name: 'Gruft', active: true, startedAt: '2026-10-16T10:00:00.000Z' },
     gameTime: new Date(2390, 4, 6, 7, 30, 15),
     characters: [createTestCharacter('a'), createTestCharacter('b')],
-    board: {
-      boardImageBase64: 'data:image/png;base64,iVBORw0KGgo=',
-      gridColumns: 12,
-      gridRows: 8,
-      gridCellSizePx: 55,
-      gridOffsetX: 3,
-      gridOffsetY: -4,
-      gridOpacity: 0.25,
+    dungeon: {
+      board: {
+        boardImageBase64: 'data:image/png;base64,iVBORw0KGgo=',
+        gridColumns: 12,
+        gridRows: 8,
+        gridCellSizePx: 55,
+        gridOffsetX: 3,
+        gridOffsetY: -4,
+        gridOpacity: 0.25,
+      },
+      positions: [
+        { characterId: 'a', col: 1, row: 2 },
+        { characterId: 'b', col: 3, row: 4 },
+      ],
     },
-    positions: [
-      { characterId: 'a', col: 1, row: 2 },
-      { characterId: 'b', col: 3, row: 4 },
-    ],
     deck: createDeckState(),
   };
 }

@@ -1,51 +1,53 @@
-import { inject, Injectable, signal, Signal, untracked, WritableSignal } from '@angular/core';
-import { StorageService } from '../../../core/services/storage/storage.service';
+import { computed, Injectable, Signal } from '@angular/core';
+import { PersistedState, persistedState } from '../../../core/session-state/persisted-state';
+import { SESSION_KEYS } from '../../../core/session-state/session-keys';
+import { SessionStateSlice } from '../../../core/session-state/session-state-slice';
 import { CharacterInfo } from '../../character-tracker/models/character-info.model';
 import {
   DEFAULT_DUNGEON_BOARD_STATE,
   DungeonBoardState,
 } from '../models/dungeon-board-state.model';
 import { DungeonPosition } from '../models/dungeon-position.model';
-
-const KEY_BOARD: string = 'dungeon_board';
-const KEY_POSITIONS: string = 'dungeon_positions';
+import { DungeonSessionState } from '../models/dungeon-session-state.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class DungeonBoardService {
-  private readonly storageService: StorageService = inject(StorageService);
+export class DungeonBoardService implements SessionStateSlice<DungeonSessionState> {
+  // Mutationen lesen über current()/update() untracked: sie werden u. a. aus effect() aufgerufen.
+  private readonly _boardState: PersistedState<DungeonBoardState> =
+    persistedState<DungeonBoardState>(SESSION_KEYS.dungeonBoard, () => ({
+      ...DEFAULT_DUNGEON_BOARD_STATE,
+    }));
+  private readonly _positions: PersistedState<DungeonPosition[]> = persistedState<
+    DungeonPosition[]
+  >(SESSION_KEYS.dungeonPositions, () => []);
 
-  private readonly _boardState: WritableSignal<DungeonBoardState> = signal<DungeonBoardState>(
-    this.loadBoard(),
-  );
-  private readonly _positions: WritableSignal<DungeonPosition[]> = signal<DungeonPosition[]>(
-    this.loadPositions(),
-  );
-
-  readonly boardState: Signal<DungeonBoardState> = this._boardState.asReadonly();
-  readonly positions: Signal<DungeonPosition[]> = this._positions.asReadonly();
+  readonly boardState: Signal<DungeonBoardState> = this._boardState.value;
+  readonly positions: Signal<DungeonPosition[]> = this._positions.value;
+  readonly sessionState: Signal<DungeonSessionState> = computed(() => ({
+    board: this.boardState(),
+    positions: this.positions(),
+  }));
 
   setBoardImage(base64: string): void {
-    this.persistBoard({ ...this.currentBoard(), boardImageBase64: base64 });
+    this._boardState.update((board) => ({ ...board, boardImageBase64: base64 }));
   }
 
   updateGridSettings(partial: Partial<DungeonBoardState>): void {
-    this.persistBoard({ ...this.currentBoard(), ...partial });
+    this._boardState.update((board) => ({ ...board, ...partial }));
   }
 
   updatePosition(characterId: string, col: number, row: number): void {
-    const positions: DungeonPosition[] = this.currentPositions();
-    const exists: boolean = positions.some((p) => p.characterId === characterId);
-    this.persistPositions(
-      exists
+    this._positions.update((positions) =>
+      positions.some((p) => p.characterId === characterId)
         ? positions.map((p) => (p.characterId === characterId ? { ...p, col, row } : p))
         : [...positions, { characterId, col, row }],
     );
   }
 
   initPositionsForCharacters(characters: CharacterInfo[]): void {
-    const existing: DungeonPosition[] = this.currentPositions();
+    const existing: DungeonPosition[] = this._positions.current();
     const existingIds: Set<string> = new Set<string>(existing.map((p) => p.characterId));
     const characterIds: Set<string> = new Set<string>(characters.map((c) => c.id));
 
@@ -61,48 +63,16 @@ export class DungeonBoardService {
         row: Math.floor(index / 5),
       }));
 
-    this.persistPositions([...filtered, ...newPositions]);
+    this._positions.set([...filtered, ...newPositions]);
   }
 
   /** Ersetzt Board und Positionen vollständig, z. B. beim Laden eines Spielstands. */
-  restore(board: DungeonBoardState, positions: DungeonPosition[]): void {
-    this.persistBoard({ ...board });
-    this.persistPositions([...positions]);
+  restore({ board, positions }: DungeonSessionState): void {
+    this._boardState.set({ ...board });
+    this._positions.set([...positions]);
   }
 
   reset(): void {
-    this.restore(DEFAULT_DUNGEON_BOARD_STATE, []);
-  }
-
-  // Lesen ohne Abhängigkeit: Mutationen werden u. a. aus effect() aufgerufen und dürfen
-  // das eigene Signal nicht tracken, sonst löst das Setzen den effect endlos erneut aus.
-  private currentBoard(): DungeonBoardState {
-    return untracked(this._boardState);
-  }
-
-  private currentPositions(): DungeonPosition[] {
-    return untracked(this._positions);
-  }
-
-  private persistBoard(board: DungeonBoardState): void {
-    this._boardState.set(board);
-    this.storageService.writeToLocalStorage<DungeonBoardState>(KEY_BOARD, board);
-  }
-
-  private persistPositions(positions: DungeonPosition[]): void {
-    this._positions.set(positions);
-    this.storageService.writeToLocalStorage<DungeonPosition[]>(KEY_POSITIONS, positions);
-  }
-
-  private loadBoard(): DungeonBoardState {
-    return (
-      this.storageService.readFromLocalStorage<DungeonBoardState>(KEY_BOARD) ?? {
-        ...DEFAULT_DUNGEON_BOARD_STATE,
-      }
-    );
-  }
-
-  private loadPositions(): DungeonPosition[] {
-    return this.storageService.readFromLocalStorage<DungeonPosition[]>(KEY_POSITIONS) ?? [];
+    this.restore({ board: DEFAULT_DUNGEON_BOARD_STATE, positions: [] });
   }
 }

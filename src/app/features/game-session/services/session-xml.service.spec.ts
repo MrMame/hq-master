@@ -21,12 +21,20 @@ describe('SessionXmlService', () => {
     const snapshot: SessionSnapshot = {
       ...createSessionSnapshot(),
       characters: [],
-      positions: [],
       deck: null,
-      board: { ...createSessionSnapshot().board, boardImageBase64: null },
+      dungeon: {
+        board: { ...createSessionSnapshot().dungeon.board, boardImageBase64: null },
+        positions: [],
+      },
       meta: { name: '', active: false, startedAt: null },
     };
     expect(service.parse(service.serialize(snapshot))).toEqual(snapshot);
+  });
+
+  it('should keep board and positions together in one <dungeonBoard> element', () => {
+    const xml: string = service.serialize(createSessionSnapshot());
+    expect(xml).toMatch(/<dungeonBoard gridColumns="12"[^>]*>[\s\S]*<image>/);
+    expect(xml).toContain('<position characterId="a" col="1" row="2"/>');
   });
 
   it('should write a readable, versioned XML document', () => {

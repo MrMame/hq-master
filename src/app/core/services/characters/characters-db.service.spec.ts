@@ -2,6 +2,8 @@ import { TestBed } from '@angular/core/testing';
 
 import { CharactersDbService } from './characters-db.service';
 import { CharacterInfo } from '../../../features/character-tracker/models/character-info.model';
+import { describePersistedState } from '../../session-state/testing/describe-persisted-state';
+import { SESSION_KEYS } from '../../session-state/session-keys';
 
 const createCharacter: (id: string, name?: string) => CharacterInfo = (
   id: string,
@@ -31,24 +33,13 @@ describe('CharactersDbService', () => {
     TestBed.configureTestingModule({});
   });
 
-  it('should be created with an empty signal when nothing is stored', () => {
-    service = TestBed.inject(CharactersDbService);
-    expect(service).toBeTruthy();
-    expect(service.characters()).toEqual([]);
-  });
-
-  it('should initialise the signal from localStorage', () => {
-    localStorage.setItem('characters', JSON.stringify([createCharacter('a')]));
-    service = TestBed.inject(CharactersDbService);
-    expect(service.characters().map((c) => c.id)).toEqual(['a']);
-  });
-
-  it('should start with an empty signal when the stored JSON is invalid', () => {
-    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-    localStorage.setItem('characters', '{not json');
-    service = TestBed.inject(CharactersDbService);
-    expect(service.characters()).toEqual([]);
-    vi.restoreAllMocks();
+  describePersistedState('characters', {
+    key: SESSION_KEYS.characters,
+    create: () => TestBed.inject(CharactersDbService),
+    read: (s: CharactersDbService) => s.characters(),
+    fallback: [],
+    stored: { raw: [createCharacter('a')], expected: [createCharacter('a')] },
+    mutate: (s: CharactersDbService) => s.writeCharacter(createCharacter('b')),
   });
 
   it('should add a new character to signal and localStorage', () => {
@@ -74,6 +65,24 @@ describe('CharactersDbService', () => {
     service.removeCharacter(createCharacter('a'));
     expect(service.characters().map((c) => c.id)).toEqual(['b']);
     expect(readStored().map((c) => c.id)).toEqual(['b']);
+  });
+
+  it('should replace all characters on restore without sharing the input array', () => {
+    service = TestBed.inject(CharactersDbService);
+    service.writeCharacter(createCharacter('x'));
+    const restored: CharacterInfo[] = [createCharacter('a'), createCharacter('b')];
+    service.restore(restored);
+    expect(service.sessionState()).toEqual(restored);
+    expect(service.sessionState()).not.toBe(restored);
+    expect(readStored().map((c) => c.id)).toEqual(['a', 'b']);
+  });
+
+  it('should clear all characters on reset', () => {
+    service = TestBed.inject(CharactersDbService);
+    service.writeCharacter(createCharacter('a'));
+    service.reset();
+    expect(service.sessionState()).toEqual([]);
+    expect(readStored()).toEqual([]);
   });
 
   it('should emit a new array reference on every mutation', () => {

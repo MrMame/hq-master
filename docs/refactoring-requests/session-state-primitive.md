@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-17  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** ✅ done (2026-10-17 17:11)  
 **Bezug:** `.claude/rules/architecture.md` (Session-State-Services, Regeln 1–8), `docs/feature-requests/shared-session-state.md`
 
 ---
@@ -43,7 +43,7 @@ Ein Slice wird mit einem oder mehreren `PersistedState`s **implementiert**, expo
 
 ## Anforderungen
 
-### 1. `persistedState<T>()` und `SESSION_KEYS` einführen
+### 1. `persistedState<T>()` und `SESSION_KEYS` einführen ✅ done (2026-10-17 17:11)
 
 - Neuer Ordner `src/app/core/session-state/`.
 - `session-keys.ts`: zentrale Konstante `SESSION_KEYS` mit allen bestehenden Storage-Keys (Werte unverändert, damit vorhandene localStorage-Daten weiter gelesen werden: `characters`, `game_time`, `dungeon_board`, `dungeon_positions`, `card_manager_deck_state`, `game_session_meta`) und Typ `SessionStateKey`.
@@ -79,7 +79,7 @@ Ein Slice wird mit einem oder mehreren `PersistedState`s **implementiert**, expo
 
 ---
 
-### 2. `SessionStateSlice<T>`-Vertrag einführen
+### 2. `SessionStateSlice<T>`-Vertrag einführen ✅ done (2026-10-17 17:11)
 
 Setzt Anforderung 1 voraus.
 
@@ -115,7 +115,7 @@ Setzt Anforderung 1 voraus.
 
 ---
 
-### 3. Architekturregel anpassen
+### 3. Architekturregel anpassen ✅ done (2026-10-17 17:11)
 
 - `.claude/rules/architecture.md`, Abschnitt „Session-State-Services“: Referenzmuster durch `persistedState` + `SessionStateSlice` ersetzen; Regeln 3–5 verweisen auf den Baustein statt auf manuelle `persist()`/`load()`-Methoden.
 - Verzeichnisstruktur um `core/session-state/` ergänzen.
@@ -140,13 +140,21 @@ Setzt Anforderung 1 voraus.
 
 ---
 
+## Umsetzungsentscheidungen (2026-10-17)
+
+- `CardManagerService.reset()` (alle Karten zurückmischen) heißt jetzt `reshuffleAll()`; `reset()` erfüllt den Slice-Vertrag (kein Deck).
+- `CharacterTrackerPage`: Fallback auf `getInitMonsterCharacters()` entfernt; die Seite zeigt genau die gespeicherten Charaktere.
+- `startSession`: alle Slices `reset()`, danach `GameTimeService.setGameTime(startTime)` (fachliche Methode, da `startTime` ein partielles `GameTime` ist).
+
+---
+
 ## Akzeptanzkriterien
 
-- [ ] Kein Session-Service enthält mehr eigene `load*`/`persist*`-Methoden oder lokale `KEY_*`-Konstanten.
-- [ ] Alle Session-Storage-Keys stehen ausschließlich in `SESSION_KEYS`; Werte unverändert.
-- [ ] Kein Session-Service exponiert eine öffentliche Snapshot-Lesemethode.
-- [ ] Alle vier Feature-Session-Services implementieren `SessionStateSlice<T>`; `GameSessionService` ruft keine service-spezifischen Reset-/Restore-Methoden mehr auf.
-- [ ] Vorhandene localStorage-Daten und bestehende XML-Spielstände werden unverändert geladen.
-- [ ] Alle Dateien ≤ 150 Zeilen.
-- [ ] Alle Vitest-Tests laufen durch (`npm run test`).
-- [ ] TypeScript strict-mode: kein `any`, keine Casts in der Slice-Orchestrierung außer `Object.keys`, Build fehlerfrei (`npm run build`).
+- [x] Kein Session-Service enthält mehr eigene `load*`/`persist*`-Methoden oder lokale `KEY_*`-Konstanten.
+- [x] Alle Session-Storage-Keys stehen ausschließlich in `SESSION_KEYS`; Werte unverändert.
+- [x] Kein Session-Service exponiert eine öffentliche Snapshot-Lesemethode.
+- [x] Alle vier Feature-Session-Services implementieren `SessionStateSlice<T>`; `GameSessionService` ruft keine service-spezifischen Reset-/Restore-Methoden mehr auf.
+- [x] Vorhandene localStorage-Daten und bestehende XML-Spielstände werden unverändert geladen.
+- [x] Alle Dateien ≤ 150 Zeilen. (Ausnahme vorbestehend: `character-tracker-page.ts` 182 Zeilen, erfasst in `character-tracker-page-cleanup` #1.)
+- [x] Alle Vitest-Tests laufen durch (`npm run test`).
+- [x] TypeScript strict-mode: kein `any`, keine Casts in der Slice-Orchestrierung außer `Object.keys`, Build fehlerfrei (`npm run build`).

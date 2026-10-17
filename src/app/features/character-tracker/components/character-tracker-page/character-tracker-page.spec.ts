@@ -49,6 +49,22 @@ describe('CharacterTrackerPage', () => {
     expect(component).toBeTruthy();
   });
 
+  it('shows no cards when no characters are stored', () => {
+    expect(component.movableCharacterItems()).toEqual([]);
+  });
+
+  it('shows one card per stored character', () => {
+    localStorage.setItem('characters', JSON.stringify([dialogCharacter]));
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [CharacterTrackerPage],
+      providers: [{ provide: MatDialog, useValue: { open: dialogOpen } }],
+    });
+    const page: CharacterTrackerPage =
+      TestBed.createComponent(CharacterTrackerPage).componentInstance;
+    expect(page.movableCharacterItems().map((i) => i.characterInfo)).toEqual([dialogCharacter]);
+  });
+
   it('persists the dialog character with its own id and adds a card', () => {
     const cardsBefore: number = component.movableCharacterItems().length;
     const writeSpy: ReturnType<typeof vi.spyOn> = vi.spyOn(charactersDbService, 'writeCharacter');

@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-17 17:11) - Refactoring: Session-State-Muster als expliziter Baustein (session-state-primitive #1–#3)
+
+- **Was wurde gemacht:** Neuer Ordner `core/session-state/` mit `persistedState<T>()` (Signal + Storage gemeinsam, `current()`/`update()` untracked, optionaler `StorageCodec`), `SESSION_KEYS`, `SessionStateSlice<T>` und `SessionSliceData`/`SessionSlices`. Alle Session-Services sind darauf umgestellt; `CharactersDbService`, `GameTimeService`, `DungeonBoardService` und `CardManagerService` implementieren den Slice. `GameSessionService` ruft für jeden Slice nur noch `reset()`/`restore()` auf. Vertragstest `describePersistedState` prüft Regel 8 für jeden Zustandsteil. Architekturregel angepasst.
+- **Dateien geändert:** `core/session-state/*` (neu), `characters-db.service.ts`, `game-time.service.ts`, `dungeon-board.service.ts`, `card-manager.service.ts`, `game-session.service.ts` (jeweils +spec), `dungeon-session-state.model.ts` (neu), `session-snapshot.model.ts`, `session-xml.service.ts` (+spec), `dungeon.xml-mapper.ts`, `session.fixtures.ts`, `card-manager-page.ts`, `character-tracker-page.ts` (+spec), `.claude/rules/architecture.md`, `docs/refactoring-requests/session-state-primitive.md`
+- **Wichtige Entscheidung:** `CardManagerService.reset()` heißt jetzt `reshuffleAll()`, damit `reset()` den Slice-Vertrag erfüllt. Der Init-Monster-Fallback der CharacterTrackerPage ist auf Wunsch entfernt. `startSession` setzt alle Slices zurück und setzt die Startzeit danach über `setGameTime()`, da `startTime` ein partielles `GameTime` ist. Storage-Keys und XML-Format sind unverändert.
+
 ### (2026-10-17 10:31) - Fix: Stop-Hook normalisiert Laufwerksbuchstaben (pre-commit-hook-fixes #4)
 
 - **Was wurde gemacht:** `stop-run-tests.mjs` startet den Testlauf mit einem `cwd`, dessen Laufwerksbuchstabe großgeschrieben ist. Läuft die Sitzung in `f:\…`, fand Vitest sonst seinen Runner nicht und alle 23 Spec-Dateien schlugen fehl.

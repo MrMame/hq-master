@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { MockInstance } from 'vitest';
 
 import { GameSessionService } from './game-session.service';
 import { GameTimeService } from '../../../core/services/game-time/game-time.service';
@@ -7,6 +8,9 @@ import { CardManagerService } from '../../card-manager/services/card-manager.ser
 import { DungeonBoardService } from '../../dungeon-tracker/services/dungeon-board.service';
 import { DEFAULT_DUNGEON_BOARD_STATE } from '../../dungeon-tracker/models/dungeon-board-state.model';
 import { SessionMeta } from '../models/session-meta.model';
+import { describePersistedState } from '../../../core/session-state/testing/describe-persisted-state';
+import { SESSION_KEYS } from '../../../core/session-state/session-keys';
+import { SessionStateSlice } from '../../../core/session-state/session-state-slice';
 import { SessionSnapshot } from '../models/session-snapshot.model';
 import {
   createDeckState,
@@ -26,14 +30,21 @@ describe('GameSessionService', () => {
   const inject: () => GameSessionService = (): GameSessionService =>
     TestBed.inject(GameSessionService);
 
-  it('should start with an inactive default meta when nothing is stored', () => {
-    expect(inject().meta()).toEqual({ name: '', active: false, startedAt: null });
+  describePersistedState('meta', {
+    key: SESSION_KEYS.sessionMeta,
+    create: () => inject(),
+    read: (s: GameSessionService) => s.meta(),
+    fallback: { name: '', active: false, startedAt: null },
+    stored: {
+      raw: { name: 'Gruft', active: true, startedAt: '2026-10-16T10:00:00Z' },
+      expected: { name: 'Gruft', active: true, startedAt: '2026-10-16T10:00:00Z' },
+    },
+    mutate: (s: GameSessionService) => s.startSession({ name: 'Neu', startTime: {} }),
   });
 
-  it('should initialise the meta from localStorage', () => {
-    const stored: SessionMeta = { name: 'Gruft', active: true, startedAt: '2026-10-16T10:00:00Z' };
-    localStorage.setItem('game_session_meta', JSON.stringify(stored));
-    expect(inject().meta()).toEqual(stored);
+  it('should complete an incomplete stored meta with the defaults', () => {
+    localStorage.setItem('game_session_meta', JSON.stringify({ name: 'Alt' }));
+    expect(inject().meta()).toEqual({ name: 'Alt', active: false, startedAt: null });
   });
 
   it('should reset all feature states and set the start time on startSession', () => {
@@ -42,7 +53,7 @@ describe('GameSessionService', () => {
     const cards: CardManagerService = TestBed.inject(CardManagerService);
     characters.writeCharacter(createTestCharacter('a'));
     board.updateGridSettings({ gridColumns: 20 });
-    cards.restoreState(createDeckState());
+    cards.restore(createDeckState());
 
     inject().startSession({
       name: 'Neue Runde',
@@ -86,6 +97,36 @@ describe('GameSessionService', () => {
 
     expect(service.snapshot()).toEqual(snapshot);
     expect(readStoredMeta()).toEqual(snapshot.meta);
+  });
+
+  describe('slice orchestration', () => {
+    const slices: () => SessionStateSlice<unknown>[] = (): SessionStateSlice<unknown>[] => [
+      TestBed.inject(GameTimeService),
+      TestBed.inject(CharactersDbService),
+      TestBed.inject(DungeonBoardService),
+      TestBed.inject(CardManagerService),
+    ];
+
+    it('should reset every slice on startSession', () => {
+      const service: GameSessionService = inject();
+      const spies: MockInstance[] = slices().map((slice) => vi.spyOn(slice, 'reset'));
+      service.startSession({ name: 'Runde', startTime: { year: 2390 } });
+      spies.forEach((spy) => expect(spy).toHaveBeenCalledTimes(1));
+    });
+
+    it('should restore every slice with its part of the snapshot', () => {
+      const service: GameSessionService = inject();
+      const snapshot: SessionSnapshot = createSessionSnapshot();
+      const parts: unknown[] = [
+        snapshot.gameTime,
+        snapshot.characters,
+        snapshot.dungeon,
+        snapshot.deck,
+      ];
+      const spies: MockInstance[] = slices().map((slice) => vi.spyOn(slice, 'restore'));
+      service.restoreSnapshot(snapshot);
+      spies.forEach((spy, i) => expect(spy).toHaveBeenCalledExactlyOnceWith(parts[i]));
+    });
   });
 
   it('should update the snapshot signal when a feature state changes', () => {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SessionSnapshot } from '../models/session-snapshot.model';
 import { readCharacters, writeCharacters } from '../xml/characters.xml-mapper';
 import { readDeck, writeDeck } from '../xml/deck.xml-mapper';
-import { DungeonXmlData, readDungeonBoard, writeDungeonBoard } from '../xml/dungeon.xml-mapper';
+import { readDungeonBoard, writeDungeonBoard } from '../xml/dungeon.xml-mapper';
 import { readGameTime, writeGameTime } from '../xml/game-time.xml-mapper';
 import { readMeta, writeMeta } from '../xml/meta.xml-mapper';
 import { indentXml, requireChild } from '../xml/xml.util';
@@ -24,7 +24,7 @@ export class SessionXmlService {
       writeMeta(doc, snapshot.meta),
       writeGameTime(doc, snapshot.gameTime),
       writeCharacters(doc, snapshot.characters),
-      writeDungeonBoard(doc, { board: snapshot.board, positions: snapshot.positions }),
+      writeDungeonBoard(doc, snapshot.dungeon),
       writeDeck(doc, snapshot.deck),
     );
     indentXml(root);
@@ -34,13 +34,11 @@ export class SessionXmlService {
   /** @throws Error mit verständlicher Meldung, wenn die Datei kein gültiger Spielstand ist. */
   parse(xml: string): SessionSnapshot {
     const root: Element = this.parseRoot(xml);
-    const dungeon: DungeonXmlData = readDungeonBoard(requireChild(root, 'dungeonBoard'));
     return {
       meta: readMeta(requireChild(root, 'meta')),
       gameTime: readGameTime(requireChild(root, 'gameTime')),
       characters: readCharacters(requireChild(root, 'characters')),
-      board: dungeon.board,
-      positions: dungeon.positions,
+      dungeon: readDungeonBoard(requireChild(root, 'dungeonBoard')),
       deck: readDeck(requireChild(root, 'cardDeck')),
     };
   }

@@ -1,64 +1,61 @@
-import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import { StorageService } from '../../../core/services/storage/storage.service';
+import { inject, Injectable, Signal } from '@angular/core';
+import { PersistedState, persistedState } from '../../../core/session-state/persisted-state';
+import { SESSION_KEYS } from '../../../core/session-state/session-keys';
+import { SessionStateSlice } from '../../../core/session-state/session-state-slice';
 import { DeckXmlLoaderService } from './deck-xml-loader.service';
 import { Card } from '../models/card.model';
 import { DeckConfig } from '../models/deck-config.model';
 import { DeckState } from '../models/deck-state.model';
 
-const KEY_DECK_STATE: string = 'card_manager_deck_state';
-
 @Injectable({ providedIn: 'root' })
-export class CardManagerService {
+export class CardManagerService implements SessionStateSlice<DeckState | null> {
   // PRIVATE INJECTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  private readonly storageService: StorageService = inject(StorageService);
   private readonly deckLoaderService: DeckXmlLoaderService = inject(DeckXmlLoaderService);
   // PRIVATE SIGNALS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  private readonly _state: WritableSignal<DeckState | null> = signal<DeckState | null>(this.load());
+  // Jede Mutation setzt ein neues State-Objekt, nur so feuern abhängige Signals.
+  private readonly _state: PersistedState<DeckState | null> = persistedState<DeckState | null>(
+    SESSION_KEYS.deckState,
+    () => null,
+  );
 
   // PUBLIC SIGNALS =====================================================================
-  public readonly state: Signal<DeckState | null> = this._state.asReadonly();
+  public readonly state: Signal<DeckState | null> = this._state.value;
+  public readonly sessionState: Signal<DeckState | null> = this.state;
 
   // PUBLIC METHODS =====================================================================
   async loadDeck(url: string): Promise<void> {
-    const config: DeckConfig = await this.deckLoaderService.loadFromUrl(url);
-    const newState: DeckState = {
-      config,
-      drawPile: this.fisherYates([...config.cards]),
-      discardPile: [],
-      activeCard: null,
-      bank: [],
-    };
-    this.persist(newState);
+    this.loadDeckConfig(await this.deckLoaderService.loadFromUrl(url));
   }
 
   shuffle(): void {
-    const s: DeckState | null = this._state();
+    const s: DeckState | null = this._state.current();
     if (!s) return;
-    this.persist({ ...s, drawPile: this.fisherYates([...s.drawPile]) });
+    this._state.set({ ...s, drawPile: this.fisherYates([...s.drawPile]) });
   }
 
   draw(): void {
-    const s: DeckState | null = this._state();
+    const s: DeckState | null = this._state.current();
     if (!s || s.drawPile.length === 0) return;
     const [activeCard, ...drawPile] = s.drawPile;
-    this.persist({ ...s, drawPile, activeCard });
+    this._state.set({ ...s, drawPile, activeCard });
   }
 
   discardActiveCard(): void {
-    const s: DeckState | null = this._state();
+    const s: DeckState | null = this._state.current();
     if (!s || !s.activeCard) return;
-    this.persist({
+    this._state.set({
       ...s,
       discardPile: [...s.discardPile, s.activeCard],
       activeCard: null,
     });
   }
 
-  reset(): void {
-    const s: DeckState | null = this._state();
+  /** Mischt alle Karten (Stapel, Ablage, aktive Karte, Bank) zurück in den Ziehstapel. */
+  reshuffleAll(): void {
+    const s: DeckState | null = this._state.current();
     if (!s) return;
     const all: Card[] = collectAll(s);
-    this.persist({
+    this._state.set({
       ...s,
       drawPile: this.fisherYates(all),
       discardPile: [],
@@ -75,13 +72,13 @@ export class CardManagerService {
       activeCard: null,
       bank: [],
     };
-    this.persist(newState);
+    this._state.set(newState);
   }
 
   makeCardActive(cardId: string): void {
     // Falls bereits ein Aktive Karte, wirf zuerst ab
     this.discardActiveCard();
-    const s: DeckState | null = this._state();
+    const s: DeckState | null = this._state.current();
     if (!s) return;
 
     const all: Card[] = collectAll(s);
@@ -90,7 +87,7 @@ export class CardManagerService {
     const drawPile: Card[] = s.drawPile.filter((c: Card) => c.id !== cardId);
     const discardPile: Card[] = s.discardPile.filter((c: Card) => c.id !== cardId);
     const bank: Card[] = s.bank.filter((c: Card) => c.id !== cardId);
-    this.persist({
+    this._state.set({
       ...s,
       drawPile: drawPile,
       discardPile: discardPile,
@@ -100,35 +97,30 @@ export class CardManagerService {
   }
 
   public shuffleActiveCardIntoDrawPile(): void {
-    const s: DeckState | null = this._state();
+    const s: DeckState | null = this._state.current();
     if (!s || !s.activeCard) return;
     const drawPile: Card[] = this.fisherYates([...s.drawPile, s.activeCard]);
-    this.persist({ ...s, drawPile, activeCard: null });
+    this._state.set({ ...s, drawPile, activeCard: null });
   }
 
   public dropActiveCardIntoBank(): void {
-    const s: DeckState | null = this._state();
+    const s: DeckState | null = this._state.current();
     if (!s || !s.activeCard) return;
     const bank: Card[] = [...s.bank, s.activeCard];
-    this.persist({ ...s, bank, activeCard: null });
+    this._state.set({ ...s, bank, activeCard: null });
   }
 
   /** Ersetzt den Deck-Zustand vollständig (`null` = kein Deck), z. B. beim Laden einer Session. */
-  public restoreState(state: DeckState | null): void {
-    this.persist(state);
+  public restore(state: DeckState | null): void {
+    this._state.set(state);
+  }
+
+  /** Neue Session: kein Deck geladen. */
+  public reset(): void {
+    this._state.set(null);
   }
 
   // PRIVATES =====================================================================
-
-  // Jede Mutation übergibt ein neues State-Objekt, nur so feuern abhängige Signals.
-  private persist(s: DeckState | null): void {
-    this._state.set(s);
-    this.storageService.writeToLocalStorage<DeckState | null>(KEY_DECK_STATE, s);
-  }
-
-  private load(): DeckState | null {
-    return this.storageService.readFromLocalStorage<DeckState>(KEY_DECK_STATE);
-  }
 
   // Fisher-Yates Shuffle Algorithm
   private fisherYates<T>(arr: T[]): T[] {
