@@ -3,7 +3,7 @@
 **Datum:** 2026-10-16  
 **Priorität:** Mittel  
 **Status:** Offen  
-**Bezug:** Claude-Workflow (`.claude/hooks/pre-commit-check.mjs`, `.claude/settings.json`)
+**Bezug:** Claude-Workflow (`.claude/hooks/pre-commit-check.mjs`, `.claude/hooks/stop-run-tests.mjs`, `.claude/settings.json`)
 
 ---
 
@@ -39,11 +39,25 @@ Beim Squash-Merge von `_dev_shared-session-state` nach `development` (Commit `bd
 
 ---
 
+### 3. Stop-Hook: Testlauf mit eigenem Timeout und Prozessbaum-Kill
+
+- **Beobachtung (2026-10-17, shared-session-state #9):** Ein Testlauf hing wegen einer vermutlich synchronen Endlosschleife in einer Spec (22/23 Dateien, 107/110 Tests fertig, eine Datei lief nie zu Ende). Das Vitest-Testtimeout greift bei synchronen Schleifen nicht. Nach dem Stoppen des Tasks liefen die Node-Prozesse (`npm` → `ng test` → `vitest`) unter Windows über 20 Minuten weiter und mussten per `taskkill /T /F` beendet werden.
+- **Ursache im Hook:** `stop-run-tests.mjs` startet die Tests per `spawnSync(..., { shell: true })` ohne eigenes `timeout`. Bricht Claude Code den Hook nach 300 s ab, wird unter Windows vermutlich nur die Shell beendet; die Kindprozesse bleiben als Waisen bestehen und bremsen oder blockieren spätere Testläufe (nicht verifiziert).
+- Eigenes Timeout im Hook setzen (kleiner als die 300 s aus `settings.json`), z. B. per `spawn` + Timer.
+- Bei Ablauf den **gesamten Prozessbaum** beenden (Windows: `taskkill /PID <pid> /T /F`, sonst Prozessgruppe per `process.kill(-pid)` mit `detached: true`).
+- Bei Timeout Claude mit Exit-Code 2 und klarer Meldung anhalten („Testlauf nach N s abgebrochen – vermutlich Endlosschleife“), inkl. der letzten Ausgabezeilen.
+- Optional: Vor dem Start prüfen, ob bereits ein `ng test`-/`vitest`-Prozess dieses Projekts läuft, und dann warnen statt einen weiteren Lauf zu starten.
+
+**Erwartetes Verhalten:** Hängender Testlauf → Hook bricht nach dem eigenen Timeout ab, meldet den Hänger, und es bleiben keine `node.exe`-Prozesse des Testlaufs zurück.
+
+---
+
 ## Betroffene Dateien
 
 | Datei                                | Änderung                                     |
 | ------------------------------------ | -------------------------------------------- |
 | `.claude/hooks/pre-commit-check.mjs` | Gestagten Inhalt prüfen; Befehl verifizieren |
+| `.claude/hooks/stop-run-tests.mjs`   | Eigenes Timeout, Prozessbaum beenden (§3)    |
 | `.claude/settings.json`              | ggf. `if`-Bedingung anpassen                 |
 | `.prettierrc`                        | ggf. `endOfLine` anpassen                    |
 
@@ -54,3 +68,5 @@ Beim Squash-Merge von `_dev_shared-session-state` nach `development` (Commit `bd
 - [ ] Commit nach Branch-Wechsel mit `core.autocrlf=true` wird nicht fälschlich blockiert
 - [ ] Wirklich unformatierte gestagte Dateien blockieren den Commit weiterhin
 - [ ] Bash-Befehle ohne `git commit` lösen den Hook nicht aus (auch nicht mit Heredoc, `$(…)` oder `&&`-Ketten)
+- [ ] Hängender Testlauf im Stop-Hook wird nach eigenem Timeout abgebrochen und gemeldet
+- [ ] Nach einem abgebrochenen Testlauf laufen keine verwaisten `node.exe`-Prozesse (ng/vitest) mehr
