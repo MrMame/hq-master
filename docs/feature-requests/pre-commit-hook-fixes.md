@@ -28,7 +28,12 @@ Beim Squash-Merge von `_dev_shared-session-state` nach `development` (Commit `bd
 ### 2. Hook nur bei `git commit` auslösen
 
 - **Beobachtung:** Der Hook (`"if": "Bash(git commit *)"`) wurde auch bei zusammengesetzten Bash-Befehlen ausgelöst, die kein `git commit` enthielten (z. B. `cp … && npx prettier … && git diff …`, `git diff --cached | git hash-object --stdin`).
-- Ursache klären (Matching der `if`-Bedingung bei zusammengesetzten Befehlen) und den Hook so einschränken, dass er nur bei echten Commits läuft — z. B. zusätzlich im Skript prüfen, ob der Befehl `git commit` enthält.
+- **Erneut beobachtet (2026-10-17, file-naming-convention):** Der Hook blockierte zwei aufeinanderfolgende Bash-Befehle ohne `git commit`, weil gestagte Dateien (aus vorherigem `git mv`) nicht formatiert waren. Auch der zweite Befehl, der die Dateien per `npx prettier --write` reparieren sollte, wurde blockiert; erst nach manuellem Formatieren per Edit-Tool liefen Bash-Befehle wieder. Betroffene Befehle:
+  - `cat > m5.txt <<EOF … EOF; node rename.mjs m5.txt && … && bash verify.sh` (Heredoc + Skript, das intern `git mv` ausführt)
+  - `git add -A src && npx prettier --write $(git diff --cached --name-only …)`
+- **Folge:** Neben dem Fehlalarm kostet jeder fälschlich ausgelöste Lauf Lint + Build (Minuten) und kann die eigene Reparatur blockieren.
+- Ursache klären (Matching der `if`-Bedingung bei zusammengesetzten Befehlen, Heredocs, `$(…)`) und den Hook so einschränken, dass er nur bei echten Commits läuft.
+- **Vorschlag:** Im Skript `tool_input.command` aus dem Hook-JSON (stdin) lesen und sofort mit Exit-Code 0 beenden, wenn `/\bgit\s+commit\b/` nicht vorkommt. Das wirkt unabhängig davon, wie die `if`-Bedingung matcht.
 
 **Erwartetes Verhalten:** `git diff`, `git status` usw. laufen ohne Prettier-/Lint-/Build-Check.
 
@@ -48,4 +53,4 @@ Beim Squash-Merge von `_dev_shared-session-state` nach `development` (Commit `bd
 
 - [ ] Commit nach Branch-Wechsel mit `core.autocrlf=true` wird nicht fälschlich blockiert
 - [ ] Wirklich unformatierte gestagte Dateien blockieren den Commit weiterhin
-- [ ] Bash-Befehle ohne `git commit` lösen den Hook nicht aus
+- [ ] Bash-Befehle ohne `git commit` lösen den Hook nicht aus (auch nicht mit Heredoc, `$(…)` oder `&&`-Ketten)
