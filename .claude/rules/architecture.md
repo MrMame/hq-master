@@ -69,6 +69,9 @@ Kebab-Case, die Rolle steht als Punkt-Suffix im Dateinamen. Der Dateiname folgt 
 | Test                | `<dateiname>.spec.ts` (gleicher Stamm)   | Vitest-Specs         |
 
 - Keine PascalCase-Dateinamen, keine Models unter `services/`, keine Testdaten neben Produktivcode.
+- Komponentenklassen ohne `Component`-Suffix (`confirmation-dialog.ts` → `ConfirmationDialog`).
+- Service-Klassen = Dateistamm in PascalCase + `Service` (`game-time.service.ts` → `GameTimeService`, nicht `GametimeService`).
+- Reine Funktionen nicht in Komponenten- oder Service-Dateien, sondern in eine eigene `*.util.ts` mit Spec gleichen Stamms.
 
 ## Kern-Architekturregeln
 
