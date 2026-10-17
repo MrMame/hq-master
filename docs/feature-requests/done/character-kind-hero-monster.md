@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-17  
 **Priorität:** Mittel  
-**Status:** Offen  
+**Status:** rejected (2026-10-17) — Die App soll nicht zwischen Helden und Monstern unterscheiden; alle sind Charaktere. Statt eines `kind`-Felds bekommen alle Tokens einen einheitlichen goldenen Rahmen (`docs/refactoring-requests/dungeon-token-required-character.md` #3). Creator-Services und Buttons bleiben vorerst unverändert.  
 **Bezug:** `REQUIREMENTS.md` §1 und §3 (Zustände von Spielern und Gegnern), `.claude/rules/architecture.md` (Session-State-Services, Regel 9), entdeckt bei `dungeon-board-reactive-character-sync`
 
 ---
