@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-16  
 **Priorität:** Mittel  
-**Status:** Teilweise umgesetzt (Anforderung 4 done am 2026-10-17 10:31)  
+**Status:** done (2026-10-17 20:11)  
 **Bezug:** Claude-Workflow (`.claude/hooks/pre-commit-check.mjs`, `.claude/hooks/stop-run-tests.mjs`, `.claude/settings.json`)
 
 ---
@@ -15,7 +15,7 @@ Beim Squash-Merge von `_dev_shared-session-state` nach `development` (Commit `bd
 
 ## Anforderungen
 
-### 1. Gestagten Inhalt statt Working Copy prüfen
+### 1. Gestagten Inhalt statt Working Copy prüfen ✅ done (2026-10-17 20:11)
 
 - **Ursache:** Mit `core.autocrlf=true` checkt Git Dateien beim Branch-Wechsel mit CRLF aus. Der Hook liest die Datei per `readFileSync` aus dem Working Tree; Prettier (`endOfLine: "lf"`) meldet die CRLF-Zeilenenden als Formatfehler. Im Repository sind die Dateien jedoch mit LF gespeichert.
 - Der Hook soll den gestagten Inhalt prüfen (`git show :<datei>`), also genau das, was committet wird.
@@ -25,7 +25,7 @@ Beim Squash-Merge von `_dev_shared-session-state` nach `development` (Commit `bd
 
 ---
 
-### 2. Hook nur bei `git commit` auslösen
+### 2. Hook nur bei `git commit` auslösen ✅ done (2026-10-17 20:11)
 
 - **Beobachtung:** Der Hook (`"if": "Bash(git commit *)"`) wurde auch bei zusammengesetzten Bash-Befehlen ausgelöst, die kein `git commit` enthielten (z. B. `cp … && npx prettier … && git diff …`, `git diff --cached | git hash-object --stdin`).
 - **Erneut beobachtet (2026-10-17, file-naming-convention):** Der Hook blockierte zwei aufeinanderfolgende Bash-Befehle ohne `git commit`, weil gestagte Dateien (aus vorherigem `git mv`) nicht formatiert waren. Auch der zweite Befehl, der die Dateien per `npx prettier --write` reparieren sollte, wurde blockiert; erst nach manuellem Formatieren per Edit-Tool liefen Bash-Befehle wieder. Betroffene Befehle:
@@ -39,7 +39,7 @@ Beim Squash-Merge von `_dev_shared-session-state` nach `development` (Commit `bd
 
 ---
 
-### 3. Stop-Hook: Testlauf mit eigenem Timeout und Prozessbaum-Kill
+### 3. Stop-Hook: Testlauf mit eigenem Timeout und Prozessbaum-Kill ✅ done (2026-10-17 20:11)
 
 - **Beobachtung (2026-10-17, shared-session-state #9):** Ein Testlauf hing wegen einer vermutlich synchronen Endlosschleife in einer Spec (22/23 Dateien, 107/110 Tests fertig, eine Datei lief nie zu Ende). Das Vitest-Testtimeout greift bei synchronen Schleifen nicht. Nach dem Stoppen des Tasks liefen die Node-Prozesse (`npm` → `ng test` → `vitest`) unter Windows über 20 Minuten weiter und mussten per `taskkill /T /F` beendet werden.
 - **Ursache im Hook:** `stop-run-tests.mjs` startet die Tests per `spawnSync(..., { shell: true })` ohne eigenes `timeout`. Bricht Claude Code den Hook nach 300 s ab, wird unter Windows vermutlich nur die Shell beendet; die Kindprozesse bleiben als Waisen bestehen und bremsen oder blockieren spätere Testläufe (nicht verifiziert).
@@ -75,9 +75,9 @@ Beim Squash-Merge von `_dev_shared-session-state` nach `development` (Commit `bd
 
 ## Akzeptanzkriterien
 
-- [ ] Commit nach Branch-Wechsel mit `core.autocrlf=true` wird nicht fälschlich blockiert
-- [ ] Wirklich unformatierte gestagte Dateien blockieren den Commit weiterhin
-- [ ] Bash-Befehle ohne `git commit` lösen den Hook nicht aus (auch nicht mit Heredoc, `$(…)` oder `&&`-Ketten)
-- [ ] Hängender Testlauf im Stop-Hook wird nach eigenem Timeout abgebrochen und gemeldet
-- [ ] Nach einem abgebrochenen Testlauf laufen keine verwaisten `node.exe`-Prozesse (ng/vitest) mehr
+- [x] Commit nach Branch-Wechsel mit `core.autocrlf=true` wird nicht fälschlich blockiert
+- [x] Wirklich unformatierte gestagte Dateien blockieren den Commit weiterhin
+- [x] Bash-Befehle ohne `git commit` lösen den Hook nicht aus (auch nicht mit Heredoc, `$(…)` oder `&&`-Ketten)
+- [x] Hängender Testlauf im Stop-Hook wird nach eigenem Timeout abgebrochen und gemeldet
+- [x] Nach einem abgebrochenen Testlauf laufen keine verwaisten `node.exe`-Prozesse (ng/vitest) mehr
 - [x] Stop-Hook-Testlauf ist auch bei kleinem Laufwerksbuchstaben im Arbeitsverzeichnis grün

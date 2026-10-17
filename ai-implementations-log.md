@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-17 20:11) - Fix: Pre-Commit- und Stop-Hook robuster (pre-commit-hook-fixes #1–#3)
+
+- **Was wurde gemacht:** `pre-commit-check.mjs` prüft den gestagten Inhalt per `git show :<datei>` statt der Working Copy (#1) und endet sofort mit Exit 0, wenn `tool_input.command` kein `git commit` enthält (#2). `stop-run-tests.mjs` startet die Tests per `spawn` mit eigenem Timeout (240 s, per `HQ_STOP_HOOK_TIMEOUT_S` überschreibbar), beendet bei Ablauf den gesamten Prozessbaum (Windows `taskkill /T /F`, sonst Prozessgruppe) und meldet den Hänger mit Exit 2 und den letzten 30 Ausgabezeilen (#3).
+- **Dateien geändert:** `.claude/hooks/pre-commit-check.mjs`, `.claude/hooks/stop-run-tests.mjs`, `docs/feature-requests/pre-commit-hook-fixes.md` (→ done/)
+- **Wichtige Entscheidung:** #1 war durch die `.gitattributes` (`eol=lf`) nur teilweise erfüllt und wurde auf Wunsch trotzdem umgesetzt (deckt CRLF schreibende Editoren und teilweise gestagte Dateien ab). `.prettierrc` und die `if`-Bedingung in `settings.json` sind unverändert; die Prüfung im Skript fängt Fehlauslösungen ab. Die optionale Prüfung auf schon laufende Testprozesse ist auf Wunsch weggelassen. Verifiziert per Skript: Spec mit Endlosschleife nach 60 s abgebrochen, keine verwaisten node-Prozesse; Lint, Build und Tests (172/172) grün.
+
 ### (2026-10-17 18:16) - Feature: CharacterTrackerPage refaktoriert (character-tracker-page-refactoring #1–#8)
 
 - **Was wurde gemacht:** Kartenlayout (Position, Minimierung, oberste Karte) liegt im neuen `CharacterCardLayoutService` als Session-Slice und gleicht sich per `effect()` mit den Charakteren ab. Dialoge laufen über `CharacterDialogsService` mit gemeinsamer Größe und typisiertem Ergebnis. Die Page bindet das `characters`-Signal direkt, alle Anlege-, Schadens- und Änderungspfade schreiben nur über `writeCharacter()`. Schaden wird von der reinen Funktion `applyDamage` in `damage.util.ts` berechnet. Das Template ist auf `MovableCharacterCard` und `CharacterCardMinimised` aufgeteilt. `CharacterCard` gibt Änderungen nur noch per `output()` aus und schreibt nicht mehr selbst (#8).
