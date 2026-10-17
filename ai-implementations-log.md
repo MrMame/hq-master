@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-17 09:31) - Feature: Dialog-Charaktere persistieren (shared-session-state #5)
+
+- **Was wurde gemacht:** `CharacterTrackerPage.addCharacter()` schreibt das Dialog-Ergebnis über `CharactersDbService.writeCharacter()` in die DB, dadurch erscheint der Charakter sofort im Dungeon-Tracker. Die eindeutige String-`id` aus `MonsterCharacterCreatorService` bleibt erhalten. Das Dialog-Ergebnis ist als `CharacterInfo | false` typisiert.
+- **Dateien geändert:** `character-tracker-page.ts` (+spec), `docs/feature-requests/shared-session-state.md`, `docs/refactoring-requests/character-tracker-page-cleanup.md` (neu)
+- **Wichtige Entscheidung:** Die numerische Item-ID der Karte bleibt vorerst (`length + 1`), wie bei Hero/Monster. Dateilänge (184 > 150), Snapshot-Kopie im Constructor und doppelte Item-IDs sind als Refactoring Request character-tracker-page-cleanup #1–#3 erfasst statt im Scope behoben.
+
 ### (2026-10-17 08:58) - Refactoring: Klassen- und Funktionsnamen an Konvention angleichen (file-naming-convention #7)
 
 - **Was wurde gemacht:** `GametimeService` in `GameTimeService` umbenannt (Klassenname folgt jetzt `game-time.service.ts`), Felder einheitlich `gameTimeService`. `ConfirmationDialogComponent` in `ConfirmationDialog` umbenannt (Angular-21-Default ohne Suffix). `parseDateTimeLocal` aus der Komponente in `game-session/utils/date-time-local.util.ts` ausgelagert, Tests mitverschoben.

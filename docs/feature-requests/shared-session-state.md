@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-15  
 **Priorität:** Hoch  
-**Status:** Teilweise umgesetzt (Anforderung 1 done am 2026-10-16 12:29, Anforderung 2 done am 2026-10-16 15:10, Anforderung 3 done am 2026-10-16 18:00, Anforderung 4 done am 2026-10-16 18:37, Anforderung 6 done am 2026-10-16 15:34)  
+**Status:** Teilweise umgesetzt (Anforderung 1 done am 2026-10-16 12:29, Anforderung 2 done am 2026-10-16 15:10, Anforderung 3 done am 2026-10-16 18:00, Anforderung 4 done am 2026-10-16 18:37, Anforderung 5 done am 2026-10-17 09:31, Anforderung 6 done am 2026-10-16 15:34)  
 **Bezug REQUIREMENTS.md:** Abschnitt 0 (App-weite Anforderungen), Abschnitt 4 (GameSession)
 
 ---
@@ -69,7 +69,7 @@ Einen reaktiven, persistenten **Session State Layer** einführen, auf den alle F
 
 ---
 
-### 5. `CharacterTrackerPage.addCharacter()` — Dialog-Charaktere persistieren
+### 5. `CharacterTrackerPage.addCharacter()` — Dialog-Charaktere persistieren ✅ done (2026-10-17 09:31)
 
 - **Problem (vorbestehend):** `addCharacter()` (Dialog) schreibt den neuen Charakter nicht in die DB → er erscheint daher nicht im Dungeon-Tracker. Zusätzlich wird die `id` als fortlaufende Zahl (`newId`) gesetzt statt wie bei Hero/Monster über den jeweiligen Creator-Service.
 - Ergebnis des Dialogs über `CharactersDbService.writeCharacter()` speichern.

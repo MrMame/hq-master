@@ -79,7 +79,11 @@ export class CharacterTrackerPage {
     this.movableCharacterItems.update((items) => [...items, newItem]);
   }
   addCharacter(): void {
-    const dialogRef: MatDialogRef<AddCharacterDialog> = this.dialog.open(AddCharacterDialog, {
+    const dialogRef: MatDialogRef<AddCharacterDialog, CharacterInfo | false> = this.dialog.open<
+      AddCharacterDialog,
+      void,
+      CharacterInfo | false
+    >(AddCharacterDialog, {
       width: '80vw',
       maxWidth: '80vw',
       height: '80vh',
@@ -87,12 +91,13 @@ export class CharacterTrackerPage {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result !== undefined && result !== false) {
+        this.charactersDbService.writeCharacter(result);
         const newId: number = this.movableCharacterItems().length + 1;
         const newItem: MovableCharacterItem = new MovableCharacterItem(
           newId,
           this.newCharacterCardPosition.x,
           this.newCharacterCardPosition.y,
-          { ...result, id: newId },
+          result,
         );
         this.movableCharacterItems.update((items) => [...items, newItem]);
       }
