@@ -3,7 +3,7 @@
 **Datum:** 2026-10-17  
 **Priorität:** Mittel  
 **Status:** ✅ done (2026-10-17 17:11)  
-**Bezug:** `.claude/rules/architecture.md` (Session-State-Services, Regeln 1–8), `docs/feature-requests/shared-session-state.md`
+**Bezug:** `.claude/rules/architecture.md` (Session-State-Services, Regeln 1–8), `docs/feature-requests/done/shared-session-state.md`
 
 ---
 

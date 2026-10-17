@@ -9,10 +9,12 @@
 ## Offene Arbeiten prüfen
 
 - Wenn der Benutzer fragt, ob es offene Aufgaben, offene Feature Requests oder noch ausstehende Arbeiten gibt, MUSS `docs/feature-requests/` durchsucht werden.
-- Alle dort liegenden `.md`-Dateien auflisten und deren Titel und Priorität zusammenfassen.
+- Alle direkt dort liegenden `.md`-Dateien auflisten und deren Titel und Priorität zusammenfassen. Der Unterordner `done/` enthält abgeschlossene Requests und wird dabei nicht berücksichtigt.
 - Zusätzlich `docs/ToDo.md` prüfen, falls vorhanden.
 
-## Markiere fertiggestellte Featurerequests
+## Fertiggestellte Feature Requests
 
-- Fertiggestellte Feature Requests müssen in `docs/feature-requests/` mit einem entsprechenden Status oder Tag versehen werden (z.B. `done` mit dem datum und uhrzeit der Fertigstellung).
-- Alternativ kann ein separates Verzeichnis `docs/feature-requests/done/` verwendet werden, um abgeschlossene Requests zu archivieren.
+- Umgesetzte Punkte und die `**Status:**`-Zeile werden mit `done` inkl. Datum und Uhrzeit der Fertigstellung markiert.
+- Ist ein Request **vollständig** umgesetzt, wird er per `git mv` nach `docs/feature-requests/done/` verschoben. Teilweise umgesetzte Requests bleiben im Hauptordner.
+- Abgeschlossene Requests werden nicht gelöscht; sie dokumentieren die Begründung hinter dem Code. Verworfene Requests erhalten Status `rejected` (mit Begründung) und werden ebenfalls nach `done/` verschoben.
+- Beim Verschieben Verweise mit vollem Pfad in offenen Requests anpassen. Einträge in `ai-implementations-log.md` bleiben unverändert (Historie).

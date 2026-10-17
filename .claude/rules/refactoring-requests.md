@@ -12,12 +12,11 @@ Refactoring Requests beschreiben Umbauten ohne neues fachliches Verhalten (Struk
 ## Offene Arbeiten prüfen
 
 - Wenn der Benutzer nach offenen Aufgaben oder ausstehenden Arbeiten fragt, MUSS zusätzlich zu `docs/feature-requests/` auch `docs/refactoring-requests/` durchsucht werden.
-- Alle dort liegenden `.md`-Dateien auflisten und Titel und Priorität zusammenfassen.
+- Alle direkt dort liegenden `.md`-Dateien auflisten und Titel und Priorität zusammenfassen. Der Unterordner `done/` wird dabei nicht berücksichtigt.
 
-## Markiere fertiggestellte Refactoring Requests
+## Fertiggestellte Refactoring Requests
 
-- Fertiggestellte Refactoring Requests werden mit Status `done` inkl. Datum und Uhrzeit der Fertigstellung versehen.
-- Alternativ in `docs/refactoring-requests/done/` archivieren.
+- Gleiches Vorgehen wie bei Feature Requests (`feature-requests.md`): Markierung mit `done` inkl. Datum und Uhrzeit; vollständig umgesetzte Requests per `git mv` nach `docs/refactoring-requests/done/` verschieben, nicht löschen.
 
 ## Umsetzung
 

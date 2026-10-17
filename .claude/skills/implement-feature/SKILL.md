@@ -20,7 +20,7 @@ Arbeite die Schritte **in dieser Reihenfolge** ab. Keinen Schritt überspringen;
 ## 1. Kontext laden (vor jeder Code-Änderung)
 
 - [ ] `REQUIREMENTS.md` im Projekt-Root lesen. Die Umsetzung muss zu Zielen und Scope dort passen. Widersprüche dem Nutzer melden, bevor du implementierst.
-- [ ] `docs/feature-requests/<slug>.md` vollständig lesen. Nur die Punkte im Umfang des Aufrufs umsetzen (siehe „Umfang eines Aufrufs“).
+- [ ] `docs/feature-requests/<slug>.md` vollständig lesen (liegt sie bereits in `done/`, ist sie abgeschlossen – Nutzer fragen, bevor weitergearbeitet wird). Nur die Punkte im Umfang des Aufrufs umsetzen (siehe „Umfang eines Aufrufs“).
 - [ ] Regeln prüfen: `.claude/rules/architecture.md`, `clean-code.md`, `testing.md`, `feature-requests.md`.
 - [ ] Alle betroffenen Dateien und ihre Aufrufer lesen (`Grep` nach den Klassen-/Methodennamen).
 
@@ -61,6 +61,7 @@ Gemäß `.claude/rules/feature-requests.md`:
 - [ ] Jeden umgesetzten Punkt markieren: `✅ done (YYYY-MM-DD HH:MM)` an der Überschrift.
 - [ ] `**Status:**`-Zeile im Kopf aktualisieren (Teilweise umgesetzt / done mit Datum und Uhrzeit).
 - [ ] Erfüllte Akzeptanzkriterien auf `[x]` setzen.
+- [ ] Ist der Request **vollständig** done: Datei per `git mv docs/feature-requests/<slug>.md docs/feature-requests/done/` archivieren. Verweise mit vollem Pfad in offenen Requests anpassen; `ai-implementations-log.md` bleibt unverändert (Historie).
 - [ ] Neu entdeckte offene Punkte als eigenen nummerierten Abschnitt ergänzen (nur nach Rückfrage).
 
 ## 6. Abschlussbericht und Commit
