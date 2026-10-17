@@ -81,18 +81,22 @@
     <!-- Charakter-Legende -->
     <div>
       <h3 class="text-xs text-gray-400 uppercase tracking-wider mb-2">
-        Charaktere ({{ positions().length }})
+        Charaktere ({{ tokens().length }})
       </h3>
-      @for (pos of positions(); track pos.characterId) {
-        @if (getCharacter(pos.characterId); as char) {
-          <div class="flex items-center gap-2 text-xs py-1">
-            <img [src]="char.image" [alt]="char.name" class="w-6 h-6 rounded-full object-cover" />
-            <span class="truncate">{{ char.name }}</span>
-            <span class="text-gray-500 ml-auto">[{{ pos.col }},{{ pos.row }}]</span>
-          </div>
-        }
+      @for (token of tokens(); track token.position.characterId) {
+        <div class="flex items-center gap-2 text-xs py-1">
+          <img
+            [src]="token.character.image"
+            [alt]="token.character.name"
+            class="w-6 h-6 rounded-full object-cover"
+          />
+          <span class="truncate">{{ token.character.name }}</span>
+          <span class="text-gray-500 ml-auto">
+            [{{ token.position.col }},{{ token.position.row }}]
+          </span>
+        </div>
       }
-      @if (positions().length === 0) {
+      @if (tokens().length === 0) {
         <p class="text-xs text-gray-500">Keine Charaktere im Character Tracker angelegt.</p>
       }
     </div>
@@ -124,10 +128,10 @@
     }
 
     <!-- Charakter-Token -->
-    @for (pos of positions(); track pos.characterId) {
+    @for (token of tokens(); track token.position.characterId) {
       <app-dungeon-token
-        [position]="pos"
-        [character]="getCharacter(pos.characterId)"
+        [position]="token.position"
+        [character]="token.character"
         [cellSize]="boardState().gridCellSizePx"
         [offsetX]="boardState().gridOffsetX"
         [offsetY]="boardState().gridOffsetY"

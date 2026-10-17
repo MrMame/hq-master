@@ -36,8 +36,10 @@ features/
 
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung
     components/        → DungeonTrackerPage, DungeonToken
-    models/            → dungeon-board-state.model.ts, dungeon-position.model.ts, dungeon-session-state.model.ts
-    services/          → dungeon-board.service.ts (Signal-State + LocalStorage)
+    models/            → dungeon-board-state.model.ts, dungeon-position.model.ts, dungeon-session-state.model.ts,
+                         board-token.model.ts
+    services/          → dungeon-board.service.ts (Signal-State + LocalStorage, Charakter-Sync per effect())
+    utils/             → token-placement.util.ts (freies Feld für neue Tokens)
 
   time-tracker/        → In-Game-Zeiterfassung
     components/        → TimeTrackerPage

@@ -6,7 +6,6 @@ import {
   DungeonBoardState,
 } from '../models/dungeon-board-state.model';
 import { DungeonPosition } from '../models/dungeon-position.model';
-import { createTestCharacter } from '../../game-session/testing/session.fixtures';
 import { describePersistedState } from '../../../core/session-state/testing/describe-persisted-state';
 import { SESSION_KEYS } from '../../../core/session-state/session-keys';
 
@@ -81,15 +80,6 @@ describe('DungeonBoardService', () => {
       service.updatePosition('a', 2, 3);
       service.updatePosition('a', 4, 5);
       const expected: DungeonPosition[] = [{ characterId: 'a', col: 4, row: 5 }];
-      expect(service.positions()).toEqual(expected);
-      expect(readStored<DungeonPosition[]>('dungeon_positions')).toEqual(expected);
-    });
-
-    it('should add positions for new and drop positions of removed characters', () => {
-      service.updatePosition('gone', 7, 7);
-      service.updatePosition('a', 2, 3);
-      service.initPositionsForCharacters([createTestCharacter('a'), createTestCharacter('b')]);
-      const expected: DungeonPosition[] = [...positions, { characterId: 'b', col: 0, row: 0 }];
       expect(service.positions()).toEqual(expected);
       expect(readStored<DungeonPosition[]>('dungeon_positions')).toEqual(expected);
     });

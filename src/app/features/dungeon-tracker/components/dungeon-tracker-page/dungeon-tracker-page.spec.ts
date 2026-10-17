@@ -24,10 +24,12 @@ describe('DungeonTrackerPage', () => {
   let component: DungeonTrackerPage;
   let fixture: ComponentFixture<DungeonTrackerPage>;
   let charactersDb: CharactersDbService;
-  let boardService: DungeonBoardService;
 
-  const positionIds: () => string[] = (): string[] =>
-    boardService.positions().map((p) => p.characterId);
+  const tokenIds: () => string[] = (): string[] =>
+    component.tokens().map((t) => t.position.characterId);
+
+  const renderedTokens: () => number = (): number =>
+    (fixture.nativeElement as HTMLElement).querySelectorAll('app-dungeon-token').length;
 
   beforeEach(async () => {
     localStorage.clear();
@@ -37,7 +39,6 @@ describe('DungeonTrackerPage', () => {
     }).compileComponents();
 
     charactersDb = TestBed.inject(CharactersDbService);
-    boardService = TestBed.inject(DungeonBoardService);
     charactersDb.writeCharacter(createCharacter('a'));
 
     fixture = TestBed.createComponent(DungeonTrackerPage);
@@ -45,22 +46,30 @@ describe('DungeonTrackerPage', () => {
     await fixture.whenStable();
   });
 
-  it('should create and place tokens for stored characters', () => {
+  it('should create and show tokens for stored characters', () => {
     expect(component).toBeTruthy();
-    expect(positionIds()).toEqual(['a']);
+    expect(tokenIds()).toEqual(['a']);
+    expect(renderedTokens()).toBe(1);
   });
 
   it('should react immediately when a character is added', async () => {
     charactersDb.writeCharacter(createCharacter('b'));
     await fixture.whenStable();
-    expect(component.getCharacter('b')).toBeDefined();
-    expect(positionIds()).toContain('b');
+    expect(tokenIds()).toEqual(['a', 'b']);
+    expect(renderedTokens()).toBe(2);
   });
 
   it('should react immediately when a character is removed', async () => {
     charactersDb.removeCharacter(createCharacter('a'));
     await fixture.whenStable();
-    expect(component.getCharacter('a')).toBeUndefined();
-    expect(positionIds()).not.toContain('a');
+    expect(tokenIds()).toEqual([]);
+    expect(renderedTokens()).toBe(0);
+  });
+
+  it('should not render a token for a position without character', async () => {
+    TestBed.inject(DungeonBoardService).updatePosition('orphan', 4, 4);
+    await fixture.whenStable();
+    expect(tokenIds()).toEqual(['a']);
+    expect(renderedTokens()).toBe(1);
   });
 });

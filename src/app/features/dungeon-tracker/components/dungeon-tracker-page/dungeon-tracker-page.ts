@@ -1,11 +1,9 @@
-import { Component, computed, effect, inject, Signal, untracked } from '@angular/core';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { Router } from '@angular/router';
-import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
-import { CharacterInfo } from '../../../character-tracker/models/character-info.model';
 import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { DungeonBoardState } from '../../models/dungeon-board-state.model';
-import { DungeonPosition } from '../../models/dungeon-position.model';
+import { BoardToken } from '../../models/board-token.model';
 import { DungeonToken } from '../dungeon-token/dungeon-token';
 
 @Component({
@@ -17,20 +15,10 @@ import { DungeonToken } from '../dungeon-token/dungeon-token';
 })
 export class DungeonTrackerPage {
   private readonly dungeonBoardService: DungeonBoardService = inject(DungeonBoardService);
-  private readonly charactersDbService: CharactersDbService = inject(CharactersDbService);
   private readonly router: Router = inject(Router);
 
   readonly boardState: Signal<DungeonBoardState> = this.dungeonBoardService.boardState;
-  readonly positions: Signal<DungeonPosition[]> = this.dungeonBoardService.positions;
-
-  readonly characters: Signal<CharacterInfo[]> = this.charactersDbService.characters;
-
-  constructor() {
-    effect(() => {
-      const characters: CharacterInfo[] = this.characters();
-      untracked(() => this.dungeonBoardService.initPositionsForCharacters(characters));
-    });
-  }
+  readonly tokens: Signal<BoardToken[]> = this.dungeonBoardService.tokens;
 
   readonly gridStyle: Signal<{
     'background-image': string;
@@ -49,10 +37,6 @@ export class DungeonTrackerPage {
       'background-size': `${size}px ${size}px`,
     };
   });
-
-  getCharacter(characterId: string): CharacterInfo | undefined {
-    return this.characters().find((c) => c.id === characterId);
-  }
 
   onImageUpload(event: Event): void {
     const input: HTMLInputElement = event.target as HTMLInputElement;

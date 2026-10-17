@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-17 20:36) - Feature: DungeonBoard synchronisiert Positionen selbstständig (dungeon-board-reactive-character-sync #1–#7)
+
+- **Was wurde gemacht:** `DungeonBoardService` gleicht seine Positionen per `effect()` auf `CharactersDbService.characters` selbst ab (private `syncPositionsWithCharacters()`, schreibt nur bei hinzugefügten/entfernten Charakteren). Neue Tokens landen über die reine Funktion `placeNewTokens()` auf dem ersten freien Feld. Neues `tokens`-computed (`BoardToken`) verknüpft Position und Charakter und filtert verwaiste Positionen; die Page nutzt nur noch `tokens()`, Effekt und `getCharacter()` entfallen. `app.config.ts` erzeugt den `GameSessionService` per `provideAppInitializer`, damit alle Session-Slices samt Effekten beim App-Start laufen.
+- **Dateien geändert:** `dungeon-board.service.ts` (+spec), `dungeon-board-sync.service.spec.ts` (neu), `board-token.model.ts` (neu), `utils/token-placement.util.ts` (+spec, neu), `dungeon-tracker-page.ts|.html|.spec.ts`, `app.config.ts`, `app.config.spec.ts` (neu), `.claude/rules/architecture.md`, `docs/feature-requests/dungeon-board-reactive-character-sync.md` (→ done/)
+- **Wichtige Entscheidung:** Die Sync-Tests liegen wegen des 150-Zeilen-Limits in einer eigenen Spec `dungeon-board-sync.service.spec.ts` statt im Spec gleichen Stamms. Positionen außerhalb des 5-Spalten-Startbereichs blockieren keine neuen Felder. Lint, Build und Tests (186/186) grün; die manuelle UI-Prüfung ist noch offen.
+
 ### (2026-10-17 20:11) - Fix: Pre-Commit- und Stop-Hook robuster (pre-commit-hook-fixes #1–#3)
 
 - **Was wurde gemacht:** `pre-commit-check.mjs` prüft den gestagten Inhalt per `git show :<datei>` statt der Working Copy (#1) und endet sofort mit Exit 0, wenn `tool_input.command` kein `git commit` enthält (#2). `stop-run-tests.mjs` startet die Tests per `spawn` mit eigenem Timeout (240 s, per `HQ_STOP_HOOK_TIMEOUT_S` überschreibbar), beendet bei Ablauf den gesamten Prozessbaum (Windows `taskkill /T /F`, sonst Prozessgruppe) und meldet den Hänger mit Exit 2 und den letzten 30 Ausgabezeilen (#3).
