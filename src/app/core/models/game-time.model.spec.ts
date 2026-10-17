@@ -1,4 +1,4 @@
-import { gameTimeFromDate } from './game-time';
+import { gameTimeFromDate } from './game-time.model';
 
 describe('gameTimeFromDate', () => {
   it('should convert a date into a complete GameTime with 1-based month', () => {

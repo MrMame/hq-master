@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { SessionSnapshot } from '../models/session-snapshot';
-import { readCharacters, writeCharacters } from './xml/characters-xml';
-import { readDeck, writeDeck } from './xml/deck-xml';
-import { DungeonXmlData, readDungeonBoard, writeDungeonBoard } from './xml/dungeon-xml';
-import { readGameTime, writeGameTime } from './xml/game-time-xml';
-import { readMeta, writeMeta } from './xml/meta-xml';
-import { indentXml, requireChild } from './xml/xml-utils';
+import { SessionSnapshot } from '../models/session-snapshot.model';
+import { readCharacters, writeCharacters } from '../xml/characters.xml-mapper';
+import { readDeck, writeDeck } from '../xml/deck.xml-mapper';
+import { DungeonXmlData, readDungeonBoard, writeDungeonBoard } from '../xml/dungeon.xml-mapper';
+import { readGameTime, writeGameTime } from '../xml/game-time.xml-mapper';
+import { readMeta, writeMeta } from '../xml/meta.xml-mapper';
+import { indentXml, requireChild } from '../xml/xml.util';
 
 const ROOT_ELEMENT: string = 'gameSession';
 const FORMAT_VERSION: string = '1';

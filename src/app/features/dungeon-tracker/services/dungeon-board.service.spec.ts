@@ -1,8 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DungeonBoardService } from './dungeon-board-service';
-import { DEFAULT_DUNGEON_BOARD_STATE, DungeonBoardState } from '../models/DungeonBoardState';
-import { DungeonPosition } from '../models/DungeonPosition';
+import { DungeonBoardService } from './dungeon-board.service';
+import {
+  DEFAULT_DUNGEON_BOARD_STATE,
+  DungeonBoardState,
+} from '../models/dungeon-board-state.model';
+import { DungeonPosition } from '../models/dungeon-position.model';
 
 const board: DungeonBoardState = { ...DEFAULT_DUNGEON_BOARD_STATE, gridColumns: 15 };
 const positions: DungeonPosition[] = [{ characterId: 'a', col: 2, row: 3 }];

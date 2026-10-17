@@ -27,25 +27,26 @@ src/app/features/character-tracker/components/damage-taken-dialog/damage-taken-d
 
 Folgende Klassen mit Logik haben **keinen** Spec:
 
-| Feature | Datei |
-|---|---|
-| card-manager | `services/card-manager.service.ts` |
-| card-manager | `services/deck-xml-loader.service.ts` |
-| card-manager | `components/card-display/card-display.ts` |
-| dungeon-tracker | `services/dungeon-board-service.ts` |
+| Feature         | Datei                                                     |
+| --------------- | --------------------------------------------------------- |
+| card-manager    | `services/card-manager.service.ts`                        |
+| card-manager    | `services/deck-xml-loader.service.ts`                     |
+| card-manager    | `components/card-display/card-display.ts`                 |
+| dungeon-tracker | `services/dungeon-board.service.ts`                       |
 | dungeon-tracker | `components/dungeon-tracker-page/dungeon-tracker-page.ts` |
-| dungeon-tracker | `components/dungeon-token/dungeon-token.ts` |
+| dungeon-tracker | `components/dungeon-token/dungeon-token.ts`               |
 
 Das Feature **dungeon-tracker** ist komplett ungetestet.
 
 ### 3. Vorhandene Specs sind fast nur Platzhalter
 
-Von 14 Spec-Dateien enthalten 13 genau **einen** Test – meist nur den CLI-generierten `should create`. Einzige Ausnahme: `combat-calculator.spec.ts` (7 Tests).
+Von 14 Spec-Dateien enthalten 13 genau **einen** Test – meist nur den CLI-generierten `should create`. Einzige Ausnahme: `combat-calculator.service.spec.ts` (7 Tests).
 
 Betroffen sind u.a. Kernservices mit Persistenz- bzw. Zeitlogik:
-- `core/services/gaming/gametime-service.spec.ts`
-- `core/services/persistent/storage-service.spec.ts`
-- `core/services/persistent/characters-database-service.spec.ts`
+
+- `core/services/game-time/game-time.service.spec.ts`
+- `core/services/storage/storage.service.spec.ts`
+- `core/services/characters/characters-db.service.spec.ts`
 - `character-tracker/services/character-creators/*.spec.ts`
 
 ---

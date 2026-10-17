@@ -1,12 +1,12 @@
 import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import { GametimeService } from '../../../core/services/gaming/gametime-service';
-import { GameTime, gameTimeFromDate } from '../../../core/services/gaming/game-time';
-import { CharactersDbService } from '../../../core/services/persistent/characters-database-service';
-import { StorageService } from '../../../core/services/persistent/storage-service';
+import { GametimeService } from '../../../core/services/game-time/game-time.service';
+import { GameTime, gameTimeFromDate } from '../../../core/models/game-time.model';
+import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
+import { StorageService } from '../../../core/services/storage/storage.service';
 import { CardManagerService } from '../../card-manager/services/card-manager.service';
-import { DungeonBoardService } from '../../dungeon-tracker/services/dungeon-board-service';
-import { DEFAULT_SESSION_META, SessionMeta } from '../models/session-meta';
-import { SessionSnapshot } from '../models/session-snapshot';
+import { DungeonBoardService } from '../../dungeon-tracker/services/dungeon-board.service';
+import { DEFAULT_SESSION_META, SessionMeta } from '../models/session-meta.model';
+import { SessionSnapshot } from '../models/session-snapshot.model';
 
 const KEY_SESSION_META: string = 'game_session_meta';
 

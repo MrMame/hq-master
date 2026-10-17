@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SessionXmlService } from './session-xml';
-import { SessionSnapshot } from '../models/session-snapshot';
-import { createSessionSnapshot } from './session-test-data';
+import { SessionXmlService } from './session-xml.service';
+import { SessionSnapshot } from '../models/session-snapshot.model';
+import { createSessionSnapshot } from '../testing/session.fixtures';
 
 describe('SessionXmlService', () => {
   let service: SessionXmlService;

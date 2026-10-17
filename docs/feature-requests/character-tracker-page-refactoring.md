@@ -118,10 +118,10 @@ Dieser Feature Request baut darauf auf und **setzt `characters-db-reactive-read-
 | `src/app/features/character-tracker/services/character-card-layout-service.ts` (neu)                  | Kartenlayout-State                           |
 | `src/app/features/character-tracker/components/movable-character-card/` (neu)                         | Karten-Wrapper                               |
 | `src/app/features/character-tracker/components/character-card-minimised/` (neu)                       | Minimierte Ansicht                           |
-| `src/app/features/character-tracker/services/combat-calculator.ts`                                    | `applyDamage` als reine Funktion             |
+| `src/app/features/character-tracker/services/combat-calculator.service.ts`                            | `applyDamage` als reine Funktion             |
 | `src/app/features/character-tracker/components/add-character-dialog/add-character-dialog.ts`          | Typisiertes Dialog-Ergebnis                  |
 | `src/app/features/character-tracker/components/damage-taken-dialog/damage-taken-dialog.ts`            | Typisiertes Dialog-Ergebnis                  |
-| `src/app/features/character-tracker/models/MovableCharacterItem.ts`, `MovableItem.ts`                 | Ggf. ersetzen durch `CardLayout`-Typ         |
+| `src/app/features/character-tracker/models/movable-character-item.model.ts`, `movable-item.model.ts`  | Ggf. ersetzen durch `CardLayout`-Typ         |
 
 ---
 

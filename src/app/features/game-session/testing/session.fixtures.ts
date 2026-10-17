@@ -1,7 +1,7 @@
-import { CharacterInfo } from '../../character-tracker/models/CharacterInfo';
+import { CharacterInfo } from '../../character-tracker/models/character-info.model';
 import { DeckState } from '../../card-manager/models/deck-state.model';
 import { Card } from '../../card-manager/models/card.model';
-import { SessionSnapshot } from '../models/session-snapshot';
+import { SessionSnapshot } from '../models/session-snapshot.model';
 
 /** Testdaten für die GameSession-Specs (wird nicht in den App-Code importiert). */
 export function createTestCharacter(id: string): CharacterInfo {

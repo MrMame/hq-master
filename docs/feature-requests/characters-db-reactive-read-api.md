@@ -9,7 +9,7 @@
 
 ## Problem
 
-`CharactersDbService.readCharacters()` ([characters-database-service.ts:17](../../src/app/core/services/persistent/characters-database-service.ts#L17)) ist `public` und liefert einen **einmaligen Snapshot** direkt aus dem `StorageService` — am Signal `characters` vorbei.
+`CharactersDbService.readCharacters()` ([characters-db.service.ts:17](../../src/app/core/services/characters/characters-db.service.ts#L17)) ist `public` und liefert einen **einmaligen Snapshot** direkt aus dem `StorageService` — am Signal `characters` vorbei.
 
 Laut Architekturregel Punkt 2 dürfen Session-Services keine öffentlichen Snapshot-Lesemethoden (`readX(): T`) anbieten; Lesen aus dem Storage ist nur `private` zur Initialisierung erlaubt.
 
@@ -101,10 +101,10 @@ Folgen:
 
 | Datei                                                                                                 | Änderung                                                   |
 | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| `src/app/core/services/persistent/characters-database-service.ts`                                     | `readCharacters()` privat, Seed-Logik + Persistenz         |
-| `src/app/core/services/persistent/characters-database-service.spec.ts`                                | Tests für Init (null → Seed, `[]` → leer), Signal-Updates  |
+| `src/app/core/services/characters/characters-db.service.ts`                                           | `readCharacters()` privat, Seed-Logik + Persistenz         |
+| `src/app/core/services/characters/characters-db.service.spec.ts`                                      | Tests für Init (null → Seed, `[]` → leer), Signal-Updates  |
 | `src/app/features/character-tracker/components/character-tracker-page/character-tracker-page.ts`      | Reaktive Anbindung via `computed()`, Snapshot-Read weg     |
-| `src/app/features/character-tracker/services/character-creators/monster-character-creator-service.ts` | Init-Monster ggf. als Konstante/Factory auslagern          |
+| `src/app/features/character-tracker/services/character-creators/monster-character-creator.service.ts` | Init-Monster ggf. als Konstante/Factory auslagern          |
 | `src/app/app.config.ts`                                                                               | Nur falls `InjectionToken`-Variante (Punkt 5) gewählt wird |
 
 ---

@@ -1,5 +1,5 @@
-import { CharacterInfo } from './CharacterInfo';
-import { MovableItem } from './MovableItem';
+import { CharacterInfo } from './character-info.model';
+import { MovableItem } from './movable-item.model';
 
 export class MovableCharacterItem implements MovableItem {
   id: number;

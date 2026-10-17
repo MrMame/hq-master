@@ -15,37 +15,59 @@ Alle Features teilen eine gemeinsame Session-Datenbasis über root-provided Serv
 
 ```
 core/
+  models/         → game-time.model.ts, game-time-span.model.ts
   services/
-    gaming/       → GameTimeService: In-Game-Zeitlogik (app-weit)
-    persistent/   → StorageService (LocalStorage-Abstraktion), CharactersDbService
+    game-time/    → GametimeService: In-Game-Zeitlogik (app-weit)
+    storage/      → StorageService (LocalStorage-Abstraktion)
+    characters/   → CharactersDbService
 
 features/
   character-tracker/   → Charakterverwaltung & Kampf
     components/        → CharacterTrackerPage, CharacterCard, Dialoge
-    models/            → CharacterInfo, DamageTypes, Abilities, …
-    services/          → HeroCreator, MonsterCreator, CombatCalculator
+    models/            → character-info.model.ts, damage-types.model.ts, …
+    services/          → combat-calculator.service.ts
+      character-creators/ → hero-/monster-character-creator.service.ts
 
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung
     components/        → DungeonTrackerPage, DungeonToken
-    models/            → DungeonBoardState, DungeonPosition
-    services/          → DungeonBoardService (Signal-State + LocalStorage)
+    models/            → dungeon-board-state.model.ts, dungeon-position.model.ts
+    services/          → dungeon-board.service.ts (Signal-State + LocalStorage)
 
   time-tracker/        → In-Game-Zeiterfassung
     components/        → TimeTrackerPage
 
-  card-manager/        → Kartenverwaltung (noch leer)
-    components/        → CardManagerPage
-    models/
-    services/
+  card-manager/        → Kartenverwaltung (Deck aus XML + SVG)
+    components/        → CardManagerPage, CardDisplay
+    models/            → card.model.ts, deck-config.model.ts, deck-state.model.ts
+    services/          → card-manager.service.ts, deck-xml-loader.service.ts
 
-  card-manager-test/   → Experimentier-Spielwiese für den Card Manager (noch leer)
-    components/        → CardManagerTestPage
-    models/
-    services/
+  game-session/        → Session starten/beenden, Speichern/Laden als XML
+    components/        → GameSessionPage
+    models/            → session-meta.model.ts, session-snapshot.model.ts
+    services/          → game-session.service.ts, session-xml.service.ts, session-file.service.ts
+    xml/               → *.xml-mapper.ts (writeX/readX), xml.util.ts
+    testing/           → session.fixtures.ts (nur für Specs)
 
 shared/
   components/          → Feature-unabhängige UI (z. B. ConfirmationDialog)
 ```
+
+## Dateinamen
+
+Kebab-Case, die Rolle steht als Punkt-Suffix im Dateinamen. Der Dateiname folgt dem Klassen-/Typnamen ohne Rollenwort.
+`ng g s` erzeugt dank `angular.json` automatisch `*.service.ts`.
+
+| Rolle               | Muster                                   | Inhalt               |
+| ------------------- | ---------------------------------------- | -------------------- |
+| Component           | `character-card.ts` (Angular-21-Default) | `CharacterCard`      |
+| Service             | `game-session.service.ts`                | `GameSessionService` |
+| Model / Interface   | `session-meta.model.ts`                  | `SessionMeta`        |
+| Reine Hilfsfunktion | `xml.util.ts`                            | Funktionen           |
+| XML-Mapper          | `meta.xml-mapper.ts`                     | `writeX` / `readX`   |
+| Testdaten           | `<feature>/testing/<name>.fixtures.ts`   | Fabrikfunktionen     |
+| Test                | `<dateiname>.spec.ts` (gleicher Stamm)   | Vitest-Specs         |
+
+- Keine PascalCase-Dateinamen, keine Models unter `services/`, keine Testdaten neben Produktivcode.
 
 ## Kern-Architekturregeln
 

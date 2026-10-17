@@ -2,14 +2,14 @@ import { Component, inject, Signal, signal, WritableSignal } from '@angular/core
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
-import { GametimeService } from '../../../../core/services/gaming/gametime-service';
-import { GameTime } from '../../../../core/services/gaming/game-time';
+import { GametimeService } from '../../../../core/services/game-time/game-time.service';
+import { GameTime } from '../../../../core/models/game-time.model';
 import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog';
-import { SessionMeta } from '../../models/session-meta';
-import { SessionSnapshot } from '../../models/session-snapshot';
-import { GameSessionService } from '../../services/game-session';
-import { SessionFileService } from '../../services/session-file';
-import { SessionXmlService } from '../../services/session-xml';
+import { SessionMeta } from '../../models/session-meta.model';
+import { SessionSnapshot } from '../../models/session-snapshot.model';
+import { GameSessionService } from '../../services/game-session.service';
+import { SessionFileService } from '../../services/session-file.service';
+import { SessionXmlService } from '../../services/session-xml.service';
 
 const DEFAULT_START_TIME: string = '2390-05-06T07:00';
 const DATE_TIME_LOCAL_PATTERN: RegExp = /^(\d{4,})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/;

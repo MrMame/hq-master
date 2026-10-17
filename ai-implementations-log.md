@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-17 08:44) - Refactoring: Einheitliche Dateinamen-Konvention (file-naming-convention #1–#6)
+
+- **Was wurde gemacht:** Alle Dateien unter `src/app/` folgen jetzt der Konvention Kebab-Case + Rollen-Suffix (`*.service.ts`, `*.model.ts`, `*.xml-mapper.ts`, `*.util.ts`, `*.fixtures.ts`). Models aus `core/services/gaming/` nach `core/models/` verschoben, XML-Funktionen aus `game-session/services/xml/` nach `game-session/xml/`, Testdaten nach `game-session/testing/`. `ng g s` erzeugt per `angular.json` automatisch `*.service.ts`.
+- **Dateien geändert:** 40 Dateien per `git mv` umbenannt (core, character-tracker, dungeon-tracker, game-session) samt Imports, `angular.json`, `.claude/rules/architecture.md`, offene Feature Requests, `docs/refactoring-requests/file-naming-convention.md`
+- **Wichtige Entscheidung:** Reines Umbenennen ohne Klassen- oder Logikänderungen; Imports per Skript aus alten/neuen Pfaden neu berechnet. Abweichende Klassennamen (`GametimeService`, `ConfirmationDialogComponent`) und `parseDateTimeLocal` als eigener Punkt #7 erfasst. Log-Historie bleibt mit alten Pfaden unverändert.
+
 ### (2026-10-16 18:37) - GameSession-Feature: Starten/Beenden, Speichern/Laden als XML (shared-session-state #4)
 
 - **Was wurde gemacht:** Neue Seite `/gamesession`. Starten setzt alle Feature-States zurück (Charaktere, Dungeon-Board inkl. Positionen, Kartendeck) und setzt die gewählte Ingame-Startzeit; Beenden markiert die Session nur als inaktiv. Der gesamte Session-Zustand kann als strukturierte XML-Datei gespeichert und wieder geladen werden.

@@ -1,6 +1,6 @@
 import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import { CharacterInfo } from '../../../features/character-tracker/models/CharacterInfo';
-import { StorageService } from './storage-service';
+import { CharacterInfo } from '../../../features/character-tracker/models/character-info.model';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable({
   providedIn: 'root',

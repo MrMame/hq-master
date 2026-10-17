@@ -1,11 +1,11 @@
 import { Component, computed, effect, inject, Signal } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { Router } from '@angular/router';
-import { CharactersDbService } from '../../../../core/services/persistent/characters-database-service';
-import { CharacterInfo } from '../../../character-tracker/models/CharacterInfo';
-import { DungeonBoardService } from '../../services/dungeon-board-service';
-import { DungeonBoardState } from '../../models/DungeonBoardState';
-import { DungeonPosition } from '../../models/DungeonPosition';
+import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
+import { CharacterInfo } from '../../../character-tracker/models/character-info.model';
+import { DungeonBoardService } from '../../services/dungeon-board.service';
+import { DungeonBoardState } from '../../models/dungeon-board-state.model';
+import { DungeonPosition } from '../../models/dungeon-position.model';
 import { DungeonToken } from '../dungeon-token/dungeon-token';
 
 @Component({

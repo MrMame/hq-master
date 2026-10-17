@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
-import { StorageService } from '../persistent/storage-service';
-import { GameTime } from './game-time';
-import { GameTimeSpan } from './game-time-span';
+import { StorageService } from '../storage/storage.service';
+import { GameTime } from '../../models/game-time.model';
+import { GameTimeSpan } from '../../models/game-time-span.model';
 
 const KEY_GAME_TIME: string = 'game_time';
 const DEFAULT_GAME_TIME: Date = new Date(2381, 0, 1, 23, 55, 0);

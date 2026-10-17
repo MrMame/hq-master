@@ -1,18 +1,18 @@
 import { Component, inject, signal, WritableSignal } from '@angular/core';
 import { DragDropModule, CdkDragEnd, Point } from '@angular/cdk/drag-drop';
 import { CharacterCard } from '../character-card/character-card';
-import { MovableItem } from '../../models/MovableItem';
-import { MovableCharacterItem } from '../../models/MovableCharacterItem';
-import { CharacterInfo } from '../../models/CharacterInfo';
+import { MovableItem } from '../../models/movable-item.model';
+import { MovableCharacterItem } from '../../models/movable-character-item.model';
+import { CharacterInfo } from '../../models/character-info.model';
 
-import { CharactersDbService } from '../../../../core/services/persistent/characters-database-service';
-import { MonsterCharacterCreatorService } from '../../services/character-creators/monster-character-creator-service';
-import { HeroCharacterCreatorService } from '../../services/character-creators/hero-character-creator-service';
-import { CombatCalculatorService } from '../../services/combat-calculator';
+import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
+import { MonsterCharacterCreatorService } from '../../services/character-creators/monster-character-creator.service';
+import { HeroCharacterCreatorService } from '../../services/character-creators/hero-character-creator.service';
+import { CombatCalculatorService } from '../../services/combat-calculator.service';
 
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-import { DamageTypes } from '../../models/DamageTypes';
+import { DamageTypes } from '../../models/damage-types.model';
 import { DamageTakenDialog } from '../damage-taken-dialog/damage-taken-dialog';
 import { AddCharacterDialog } from '../add-character-dialog/add-character-dialog';
 

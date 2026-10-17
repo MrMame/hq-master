@@ -8,8 +8,8 @@ import {
   Signal,
 } from '@angular/core';
 import { CdkDrag, CdkDragEnd, Point } from '@angular/cdk/drag-drop';
-import { CharacterInfo } from '../../../character-tracker/models/CharacterInfo';
-import { DungeonPosition } from '../../models/DungeonPosition';
+import { CharacterInfo } from '../../../character-tracker/models/character-info.model';
+import { DungeonPosition } from '../../models/dungeon-position.model';
 
 @Component({
   selector: 'app-dungeon-token',

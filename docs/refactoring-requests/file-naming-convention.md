@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-17  
 **Priorität:** Mittel  
-**Status:** Offen  
+**Status:** Teilweise umgesetzt (Anforderungen 1–6 done am 2026-10-17 08:44, Anforderung 7 offen)  
 **Bezug:** `.claude/rules/architecture.md` (Verzeichnisstruktur), `.claude/rules/clean-code.md` (sprechende Namen)
 
 ---
@@ -45,7 +45,7 @@ Kebab-Case, die Rolle steht als Punkt-Suffix im Dateinamen. Der Dateiname folgt 
 
 ## Anforderungen
 
-### 1. Konvention festschreiben und absichern
+### 1. Konvention festschreiben und absichern ✅ done (2026-10-17 08:44)
 
 - `angular.json`: `"@schematics/angular:service": { "type": "service" }`, damit `ng g s` automatisch `*.service.ts` erzeugt.
 - `.claude/rules/architecture.md`: Abschnitt „Dateinamen“ mit der Tabelle oben ergänzen; Verzeichnisstruktur an die neuen Pfade anpassen.
@@ -54,7 +54,7 @@ Kebab-Case, die Rolle steht als Punkt-Suffix im Dateinamen. Der Dateiname folgt 
 
 ---
 
-### 2. `core/` umbenennen
+### 2. `core/` umbenennen ✅ done (2026-10-17 08:44)
 
 ```
 core/services/gaming/gametime-service.ts         → core/services/game-time/game-time.service.ts
@@ -69,7 +69,7 @@ Zugehörige `*.spec.ts` mitbewegen (`game-time.spec.ts` → `game-time.model.spe
 
 ---
 
-### 3. `character-tracker` umbenennen
+### 3. `character-tracker` umbenennen ✅ done (2026-10-17 08:44)
 
 - Alle PascalCase-Models in `models/` → `kebab-case.model.ts` (z. B. `CharacterInfo.ts` → `character-info.model.ts`, `DamageTypes.ts` → `damage-types.model.ts`).
 - `services/combat-calculator.ts` → `combat-calculator.service.ts`
@@ -77,14 +77,14 @@ Zugehörige `*.spec.ts` mitbewegen (`game-time.spec.ts` → `game-time.model.spe
 
 ---
 
-### 4. `dungeon-tracker` umbenennen
+### 4. `dungeon-tracker` umbenennen ✅ done (2026-10-17 08:44)
 
 - `models/DungeonBoardState.ts` → `dungeon-board-state.model.ts`, `DungeonPosition.ts` → `dungeon-position.model.ts`
 - `services/dungeon-board-service.ts` → `dungeon-board.service.ts`
 
 ---
 
-### 5. `game-session` umbenennen
+### 5. `game-session` umbenennen ✅ done (2026-10-17 08:44)
 
 ```
 services/game-session.ts       → services/game-session.service.ts
@@ -99,10 +99,22 @@ models/session-snapshot.ts     → models/session-snapshot.model.ts
 
 ---
 
-### 6. Restliche Dateien und Dokumentation
+### 6. Restliche Dateien und Dokumentation ✅ done (2026-10-17 08:44)
 
 - `card-manager` prüfen (folgt bereits weitgehend der Konvention).
 - Pfadangaben in **offenen** Feature-/Refactoring-Requests und in `docs/api/` aktualisieren. Einträge in `ai-implementations-log.md` bleiben unverändert (Historie).
+
+---
+
+### 7. Klassen- und Funktionsnamen an die Konvention angleichen
+
+Bei der Umsetzung von #1–#6 gefunden (2026-10-17), bewusst nicht im reinen Datei-Umbenennen enthalten:
+
+- `GametimeService` (in `game-time.service.ts`) → `GameTimeService`, damit der Klassenname dem Dateinamen folgt. Alle Aufrufer und Dokumentation anpassen.
+- `ConfirmationDialogComponent` → `ConfirmationDialog` (einzige Komponente mit `Component`-Suffix, Angular-21-Default ohne Suffix).
+- `parseDateTimeLocal` aus `game-session-page.ts` in eine eigene `*.util.ts` auslagern (reine Funktion in einer Komponentendatei), inkl. Spec mit gleichem Stamm.
+
+**Erwartetes Verhalten:** Unverändert; Klassen- und Dateinamen sind konsistent.
 
 ---
 
@@ -116,10 +128,10 @@ models/session-snapshot.ts     → models/session-snapshot.model.ts
 
 ## Akzeptanzkriterien
 
-- [ ] Jede Service-Datei endet auf `.service.ts`, jede Model-Datei auf `.model.ts`
-- [ ] Keine PascalCase-Dateinamen mehr unter `src/app/`
-- [ ] Keine Models unter `services/`, keine Testdaten neben Produktivcode
-- [ ] `ng g s` erzeugt `*.service.ts`
-- [ ] `architecture.md` dokumentiert die Konvention und die aktuelle Struktur
-- [ ] Verhalten der App unverändert
-- [ ] `npm run lint`, `npm run test`, `npm run build` fehlerfrei
+- [x] Jede Service-Datei endet auf `.service.ts`, jede Model-Datei auf `.model.ts`
+- [x] Keine PascalCase-Dateinamen mehr unter `src/app/`
+- [x] Keine Models unter `services/`, keine Testdaten neben Produktivcode
+- [x] `ng g s` erzeugt `*.service.ts`
+- [x] `architecture.md` dokumentiert die Konvention und die aktuelle Struktur
+- [x] Verhalten der App unverändert
+- [x] `npm run lint`, `npm run test`, `npm run build` fehlerfrei

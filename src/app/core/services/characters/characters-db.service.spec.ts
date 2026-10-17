@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
-import { CharactersDbService } from './characters-database-service';
-import { CharacterInfo } from '../../../features/character-tracker/models/CharacterInfo';
+import { CharactersDbService } from './characters-db.service';
+import { CharacterInfo } from '../../../features/character-tracker/models/character-info.model';
 
 const createCharacter: (id: string, name?: string) => CharacterInfo = (
   id: string,

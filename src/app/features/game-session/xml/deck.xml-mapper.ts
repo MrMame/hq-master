@@ -1,6 +1,6 @@
-import { BaseCard, Card, CardType } from '../../../card-manager/models/card.model';
-import { DeckConfig } from '../../../card-manager/models/deck-config.model';
-import { DeckState } from '../../../card-manager/models/deck-state.model';
+import { BaseCard, Card, CardType } from '../../card-manager/models/card.model';
+import { DeckConfig } from '../../card-manager/models/deck-config.model';
+import { DeckState } from '../../card-manager/models/deck-state.model';
 import {
   appendElement,
   appendTextElement,
@@ -10,7 +10,7 @@ import {
   readString,
   setAttributes,
   textOf,
-} from './xml-utils';
+} from './xml.util';
 
 /** Ein leeres `<cardDeck/>` steht für "kein Deck geladen". */
 export function writeDeck(doc: XMLDocument, deck: DeckState | null): Element {

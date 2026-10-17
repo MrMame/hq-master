@@ -2,8 +2,8 @@ import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 
-import { CharacterInfo } from '../../models/CharacterInfo';
-import { MonsterCharacterCreatorService } from '../../services/character-creators/monster-character-creator-service';
+import { CharacterInfo } from '../../models/character-info.model';
+import { MonsterCharacterCreatorService } from '../../services/character-creators/monster-character-creator.service';
 
 @Component({
   selector: 'app-add-character-dialog',

@@ -1,14 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 
-import { GameSessionService } from './game-session';
-import { GametimeService } from '../../../core/services/gaming/gametime-service';
-import { CharactersDbService } from '../../../core/services/persistent/characters-database-service';
+import { GameSessionService } from './game-session.service';
+import { GametimeService } from '../../../core/services/game-time/game-time.service';
+import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
 import { CardManagerService } from '../../card-manager/services/card-manager.service';
-import { DungeonBoardService } from '../../dungeon-tracker/services/dungeon-board-service';
-import { DEFAULT_DUNGEON_BOARD_STATE } from '../../dungeon-tracker/models/DungeonBoardState';
-import { SessionMeta } from '../models/session-meta';
-import { SessionSnapshot } from '../models/session-snapshot';
-import { createDeckState, createSessionSnapshot, createTestCharacter } from './session-test-data';
+import { DungeonBoardService } from '../../dungeon-tracker/services/dungeon-board.service';
+import { DEFAULT_DUNGEON_BOARD_STATE } from '../../dungeon-tracker/models/dungeon-board-state.model';
+import { SessionMeta } from '../models/session-meta.model';
+import { SessionSnapshot } from '../models/session-snapshot.model';
+import {
+  createDeckState,
+  createSessionSnapshot,
+  createTestCharacter,
+} from '../testing/session.fixtures';
 
 const readStoredMeta: () => SessionMeta | null = (): SessionMeta | null =>
   JSON.parse(localStorage.getItem('game_session_meta') ?? 'null') as SessionMeta | null;

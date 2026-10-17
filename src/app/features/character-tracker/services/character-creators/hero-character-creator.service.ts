@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { CharacterInfo } from '../../models/CharacterInfo';
-import { ElementalTypes } from '../../models/ElementalTypes';
-import { CharacterAbilities } from '../../models/CharacterAbilities';
+import { CharacterInfo } from '../../models/character-info.model';
+import { ElementalTypes } from '../../models/elemental-types.model';
+import { CharacterAbilities } from '../../models/character-abilities.model';
 
 @Injectable({
   providedIn: 'root',

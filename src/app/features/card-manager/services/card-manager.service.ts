@@ -1,5 +1,5 @@
 import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import { StorageService } from '../../../core/services/persistent/storage-service';
+import { StorageService } from '../../../core/services/storage/storage.service';
 import { DeckXmlLoaderService } from './deck-xml-loader.service';
 import { Card } from '../models/card.model';
 import { DeckConfig } from '../models/deck-config.model';

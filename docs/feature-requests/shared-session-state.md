@@ -137,8 +137,8 @@ Dieses Muster auf `CharactersDbService` und `GametimeService` ausrollen.
 
 | Datei                                                                                            | Änderung                                                   |
 | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
-| `src/app/core/services/persistent/characters-database-service.ts`                                | Signal hinzufügen, alle Mutationen darüber routen          |
-| `src/app/core/services/gaming/gametime-service.ts`                                               | localStorage-Persistenz + öffentliches Signal              |
+| `src/app/core/services/characters/characters-db.service.ts`                                      | Signal hinzufügen, alle Mutationen darüber routen          |
+| `src/app/core/services/game-time/game-time.service.ts`                                           | localStorage-Persistenz + öffentliches Signal              |
 | `src/app/features/dungeon-tracker/components/dungeon-tracker-page/dungeon-tracker-page.ts`       | Reaktiv auf Characters-Signal binden statt einmaligem Read |
 | `src/app/features/character-tracker/components/character-tracker-page/character-tracker-page.ts` | `addCharacter()` persistiert Dialog-Ergebnis (§5)          |
 

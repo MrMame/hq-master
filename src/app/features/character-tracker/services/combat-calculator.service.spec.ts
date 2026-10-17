@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import { CombatCalculatorService } from './combat-calculator';
-import { MovableCharacterItem } from '../models/MovableCharacterItem';
-import { DamageTypes } from '../models/DamageTypes';
-import { CharacterInfo } from '../models/CharacterInfo';
-import { ElementalTypes } from '../models/ElementalTypes';
+import { CombatCalculatorService } from './combat-calculator.service';
+import { MovableCharacterItem } from '../models/movable-character-item.model';
+import { DamageTypes } from '../models/damage-types.model';
+import { CharacterInfo } from '../models/character-info.model';
+import { ElementalTypes } from '../models/elemental-types.model';
 
 function makeItem(health: number, armor: number): MovableCharacterItem {
   const info: CharacterInfo = {

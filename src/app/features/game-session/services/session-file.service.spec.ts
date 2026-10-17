@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SessionFileService } from './session-file';
+import { SessionFileService } from './session-file.service';
 
 describe('SessionFileService', () => {
   let service: SessionFileService;

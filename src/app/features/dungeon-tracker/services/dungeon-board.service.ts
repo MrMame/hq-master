@@ -1,8 +1,11 @@
 import { inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
-import { StorageService } from '../../../core/services/persistent/storage-service';
-import { CharacterInfo } from '../../character-tracker/models/CharacterInfo';
-import { DEFAULT_DUNGEON_BOARD_STATE, DungeonBoardState } from '../models/DungeonBoardState';
-import { DungeonPosition } from '../models/DungeonPosition';
+import { StorageService } from '../../../core/services/storage/storage.service';
+import { CharacterInfo } from '../../character-tracker/models/character-info.model';
+import {
+  DEFAULT_DUNGEON_BOARD_STATE,
+  DungeonBoardState,
+} from '../models/dungeon-board-state.model';
+import { DungeonPosition } from '../models/dungeon-position.model';
 
 const KEY_BOARD: string = 'dungeon_board';
 const KEY_POSITIONS: string = 'dungeon_positions';

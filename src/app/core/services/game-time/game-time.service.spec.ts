@@ -2,8 +2,8 @@ import { computed, effect, Signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Mock } from 'vitest';
 
-import { GametimeService } from './gametime-service';
-import { GameTimeSpan } from './game-time-span';
+import { GametimeService } from './game-time.service';
+import { GameTimeSpan } from '../../models/game-time-span.model';
 
 const KEY: string = 'game_time';
 const DEFAULT_AS_STRING: string = '23:55:00 2381-01-01';

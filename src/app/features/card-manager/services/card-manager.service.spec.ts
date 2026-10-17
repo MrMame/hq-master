@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { CardManagerService } from './card-manager.service';
 import { DeckState } from '../models/deck-state.model';
-import { createDeckState } from '../../game-session/services/session-test-data';
+import { createDeckState } from '../../game-session/testing/session.fixtures';
 
 const readStored: () => DeckState | null = (): DeckState | null =>
   JSON.parse(localStorage.getItem('card_manager_deck_state') ?? 'null') as DeckState | null;

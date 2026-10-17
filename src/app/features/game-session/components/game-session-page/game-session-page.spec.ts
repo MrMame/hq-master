@@ -3,10 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 
 import { GameSessionPage, parseDateTimeLocal } from './game-session-page';
-import { GameSessionService } from '../../services/game-session';
-import { SessionFileService } from '../../services/session-file';
-import { SessionXmlService } from '../../services/session-xml';
-import { createSessionSnapshot } from '../../services/session-test-data';
+import { GameSessionService } from '../../services/game-session.service';
+import { SessionFileService } from '../../services/session-file.service';
+import { SessionXmlService } from '../../services/session-xml.service';
+import { createSessionSnapshot } from '../../testing/session.fixtures';
 
 describe('GameSessionPage', () => {
   let component: GameSessionPage;

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { MovableCharacterItem } from './../models/MovableCharacterItem';
-import { DamageTypes } from './../models/DamageTypes';
+import { MovableCharacterItem } from '../models/movable-character-item.model';
+import { DamageTypes } from '../models/damage-types.model';
 
 @Injectable({
   providedIn: 'root', // Oder im Providers-Array des Features, falls es nur dort leben soll

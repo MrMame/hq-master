@@ -1,4 +1,4 @@
-import { CharacterInfo } from '../../../character-tracker/models/CharacterInfo';
+import { CharacterInfo } from '../../character-tracker/models/character-info.model';
 import {
   appendTextElement,
   childElements,
@@ -7,7 +7,7 @@ import {
   readString,
   setAttributes,
   textOf,
-} from './xml-utils';
+} from './xml.util';
 
 export function writeCharacters(doc: XMLDocument, characters: CharacterInfo[]): Element {
   const root: Element = doc.createElement('characters');

@@ -1,8 +1,8 @@
 import {
   DEFAULT_DUNGEON_BOARD_STATE,
   DungeonBoardState,
-} from '../../../dungeon-tracker/models/DungeonBoardState';
-import { DungeonPosition } from '../../../dungeon-tracker/models/DungeonPosition';
+} from '../../dungeon-tracker/models/dungeon-board-state.model';
+import { DungeonPosition } from '../../dungeon-tracker/models/dungeon-position.model';
 import {
   appendElement,
   appendTextElement,
@@ -11,7 +11,7 @@ import {
   readNumber,
   readString,
   setAttributes,
-} from './xml-utils';
+} from './xml.util';
 
 export interface DungeonXmlData {
   board: DungeonBoardState;

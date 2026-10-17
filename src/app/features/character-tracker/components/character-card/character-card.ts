@@ -2,8 +2,8 @@ import { Component, model, inject, OnDestroy, ModelSignal } from '@angular/core'
 import { FormsModule } from '@angular/forms';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { debounceTime, skip, Subscription } from 'rxjs';
-import { CharacterInfo } from '../../models/CharacterInfo';
-import { CharactersDbService } from '../../../../core/services/persistent/characters-database-service';
+import { CharacterInfo } from '../../models/character-info.model';
+import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
 
 @Component({
   selector: 'app-character-card',
