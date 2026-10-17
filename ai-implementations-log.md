@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-17 10:31) - Fix: Stop-Hook normalisiert Laufwerksbuchstaben (pre-commit-hook-fixes #4)
+
+- **Was wurde gemacht:** `stop-run-tests.mjs` startet den Testlauf mit einem `cwd`, dessen Laufwerksbuchstabe großgeschrieben ist. Läuft die Sitzung in `f:\…`, fand Vitest sonst seinen Runner nicht und alle 23 Spec-Dateien schlugen fehl.
+- **Dateien geändert:** `.claude/hooks/stop-run-tests.mjs`, `docs/feature-requests/pre-commit-hook-fixes.md` (Punkt #4 neu, done)
+- **Wichtige Entscheidung:** Verifiziert aus `f:\`: mit Normalisierung 110/110 grün, ohne 23/23 Dateien rot. Punkt #4 wurde während shared-session-state #9 entdeckt und auf Wunsch direkt aufgenommen und umgesetzt; #1–#3 bleiben offen.
+
 ### (2026-10-17 10:14) - Feature: Persistenz-Muster und Init-Tests für DungeonBoard/CardManager (shared-session-state #9)
 
 - **Was wurde gemacht:** `DungeonBoardService` liest den Startwert über `loadBoard()`/`loadPositions()` und schreibt jede Mutation über `persistBoard()`/`persistPositions()`, die Signal und Storage gemeinsam setzen. `CardManagerService`: `setState` in `persist` umbenannt, `load()` ergänzt. Specs decken Init, Default-Fallback (leer/ungültiges JSON) und alle Mutationen ab.

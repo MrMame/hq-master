@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-16  
 **Priorität:** Mittel  
-**Status:** Offen  
+**Status:** Teilweise umgesetzt (Anforderung 4 done am 2026-10-17 10:31)  
 **Bezug:** Claude-Workflow (`.claude/hooks/pre-commit-check.mjs`, `.claude/hooks/stop-run-tests.mjs`, `.claude/settings.json`)
 
 ---
@@ -52,14 +52,24 @@ Beim Squash-Merge von `_dev_shared-session-state` nach `development` (Commit `bd
 
 ---
 
+### 4. Stop-Hook: Laufwerksbuchstaben normalisieren ✅ done (2026-10-17 10:31)
+
+- **Beobachtung (2026-10-17, shared-session-state #9):** Läuft die Sitzung im Pfad `f:\Projekte - Web\hq-master` (kleiner Laufwerksbuchstabe), schlagen im Stop-Hook alle 23 Spec-Dateien mit „Vitest failed to find the runner“ fehl. Derselbe Lauf aus `F:\…` ist grün (110/110).
+- **Ursache:** Vitest unterscheidet unter Windows `f:` und `F:` und lädt dadurch zwei Modulinstanzen. Der Hook übernimmt das Arbeitsverzeichnis der Sitzung unverändert.
+- `spawnSync` im Hook mit `cwd` aufrufen, dessen Laufwerksbuchstabe großgeschrieben ist.
+
+**Erwartetes Verhalten:** Stop-Hook-Testlauf ist grün, unabhängig von der Schreibweise des Laufwerksbuchstabens.
+
+---
+
 ## Betroffene Dateien
 
-| Datei                                | Änderung                                     |
-| ------------------------------------ | -------------------------------------------- |
-| `.claude/hooks/pre-commit-check.mjs` | Gestagten Inhalt prüfen; Befehl verifizieren |
-| `.claude/hooks/stop-run-tests.mjs`   | Eigenes Timeout, Prozessbaum beenden (§3)    |
-| `.claude/settings.json`              | ggf. `if`-Bedingung anpassen                 |
-| `.prettierrc`                        | ggf. `endOfLine` anpassen                    |
+| Datei                                | Änderung                                                           |
+| ------------------------------------ | ------------------------------------------------------------------ |
+| `.claude/hooks/pre-commit-check.mjs` | Gestagten Inhalt prüfen; Befehl verifizieren                       |
+| `.claude/hooks/stop-run-tests.mjs`   | Eigenes Timeout, Prozessbaum beenden (§3); Laufwerksbuchstabe (§4) |
+| `.claude/settings.json`              | ggf. `if`-Bedingung anpassen                                       |
+| `.prettierrc`                        | ggf. `endOfLine` anpassen                                          |
 
 ---
 
@@ -70,3 +80,4 @@ Beim Squash-Merge von `_dev_shared-session-state` nach `development` (Commit `bd
 - [ ] Bash-Befehle ohne `git commit` lösen den Hook nicht aus (auch nicht mit Heredoc, `$(…)` oder `&&`-Ketten)
 - [ ] Hängender Testlauf im Stop-Hook wird nach eigenem Timeout abgebrochen und gemeldet
 - [ ] Nach einem abgebrochenen Testlauf laufen keine verwaisten `node.exe`-Prozesse (ng/vitest) mehr
+- [x] Stop-Hook-Testlauf ist auch bei kleinem Laufwerksbuchstaben im Arbeitsverzeichnis grün
