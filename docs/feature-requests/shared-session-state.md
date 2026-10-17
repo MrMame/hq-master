@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-15  
 **Priorität:** Hoch  
-**Status:** Teilweise umgesetzt (Anforderung 1 done am 2026-10-16 12:29, Anforderung 2 done am 2026-10-16 15:10, Anforderung 3 done am 2026-10-16 18:00, Anforderung 4 done am 2026-10-16 18:37, Anforderung 5 done am 2026-10-17 09:31, Anforderung 6 done am 2026-10-16 15:34)  
+**Status:** Teilweise umgesetzt (Anforderung 1 done am 2026-10-16 12:29, Anforderung 2 done am 2026-10-16 15:10, Anforderung 3 done am 2026-10-16 18:00, Anforderung 4 done am 2026-10-16 18:37, Anforderung 5 done am 2026-10-17 09:31, Anforderung 6 done am 2026-10-16 15:34, Anforderung 7 done am 2026-10-17 10:03, Anforderung 8 done am 2026-10-17 10:03)  
 **Bezug REQUIREMENTS.md:** Abschnitt 0 (App-weite Anforderungen), Abschnitt 4 (GameSession)
 
 ---
@@ -88,7 +88,7 @@ Einen reaktiven, persistenten **Session State Layer** einführen, auf den alle F
 
 ---
 
-### 7. `StorageService` — robust gegen fehlerhaftes JSON
+### 7. `StorageService` — robust gegen fehlerhaftes JSON ✅ done (2026-10-17 10:03)
 
 - **Problem (vorbestehend):** `readFromLocalStorage` / `readTableFromLocalStorage` werfen bei ungültigem JSON eine Exception. Da die Services beim Init lesen, kann ein kaputter Eintrag die App am Start hindern.
 - Parse-Fehler abfangen und `null` zurückgeben (optional: Warnung loggen).
@@ -97,7 +97,7 @@ Einen reaktiven, persistenten **Session State Layer** einführen, auf den alle F
 
 ---
 
-### 8. `App` — ungenutzte `GameTimeService`-Injection entfernen
+### 8. `App` — ungenutzte `GameTimeService`-Injection entfernen ✅ done (2026-10-17 10:03)
 
 - **Problem (vorbestehend):** `src/app/app.ts` injiziert `GameTimeService` als `public gametimeService`, nutzt ihn aber weder in Klasse noch Template.
 - Injection entfernen oder bewusst nutzen (z. B. Spielzeit-Anzeige in der Navigation).

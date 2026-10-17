@@ -6,11 +6,42 @@ describe('StorageService', () => {
   let service: StorageService;
 
   beforeEach(() => {
+    localStorage.clear();
     TestBed.configureTestingModule({});
     service = TestBed.inject(StorageService);
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('should read back a written value', () => {
+    service.writeToLocalStorage<{ a: number }>('value', { a: 1 });
+    expect(service.readFromLocalStorage<{ a: number }>('value')).toEqual({ a: 1 });
+  });
+
+  it('should read back a written table', () => {
+    service.writeTableToLocalStorage<number>('table', [1, 2]);
+    expect(service.readTableFromLocalStorage<number>('table')).toEqual([1, 2]);
+  });
+
+  it('should return null for missing keys', () => {
+    expect(service.readFromLocalStorage<string>('missing')).toBeNull();
+    expect(service.readTableFromLocalStorage<string>('missing')).toBeNull();
+  });
+
+  it('should return null and warn on invalid JSON', () => {
+    const warnSpy: ReturnType<typeof vi.spyOn> = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+    localStorage.setItem('broken', '{not json');
+
+    expect(service.readFromLocalStorage<string>('broken')).toBeNull();
+    expect(service.readTableFromLocalStorage<string>('broken')).toBeNull();
+    expect(warnSpy).toHaveBeenCalledTimes(2);
   });
 });

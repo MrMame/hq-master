@@ -43,6 +43,14 @@ describe('CharactersDbService', () => {
     expect(service.characters().map((c) => c.id)).toEqual(['a']);
   });
 
+  it('should start with an empty signal when the stored JSON is invalid', () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    localStorage.setItem('characters', '{not json');
+    service = TestBed.inject(CharactersDbService);
+    expect(service.characters()).toEqual([]);
+    vi.restoreAllMocks();
+  });
+
   it('should add a new character to signal and localStorage', () => {
     service = TestBed.inject(CharactersDbService);
     service.writeCharacter(createCharacter('a'));

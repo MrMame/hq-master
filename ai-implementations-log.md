@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-17 10:03) - Feature: StorageService robust gegen ungültiges JSON, ungenutzte Injection entfernt (shared-session-state #7, #8)
+
+- **Was wurde gemacht:** `StorageService` liest über eine private Methode `parse()`, die Parse-Fehler abfängt, eine Warnung loggt und `null` zurückgibt. Ein manipulierter localStorage-Eintrag verhindert so nicht mehr den Start der Services, diese fallen auf ihre Default-Werte zurück. Die ungenutzte `GameTimeService`-Injection in `App` ist entfernt.
+- **Dateien geändert:** `storage.service.ts` (+spec), `characters-db.service.spec.ts`, `app.ts`, `docs/feature-requests/shared-session-state.md`
+- **Wichtige Entscheidung:** Die Umsetzung lag bereits uncommittet im Arbeitsbaum und wurde nach Prüfung übernommen. #8 wurde auf Wunsch in denselben Commit aufgenommen. Ein Eintrag mit gültigem JSON, aber falschem Aufbau, wird weiterhin nicht abgefangen (nicht Teil von #7).
+
 ### (2026-10-17 09:31) - Feature: Dialog-Charaktere persistieren (shared-session-state #5)
 
 - **Was wurde gemacht:** `CharacterTrackerPage.addCharacter()` schreibt das Dialog-Ergebnis über `CharactersDbService.writeCharacter()` in die DB, dadurch erscheint der Charakter sofort im Dungeon-Tracker. Die eindeutige String-`id` aus `MonsterCharacterCreatorService` bleibt erhalten. Das Dialog-Ergebnis ist als `CharacterInfo | false` typisiert.

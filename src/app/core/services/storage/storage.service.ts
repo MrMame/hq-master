@@ -5,8 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class StorageService {
   readTableFromLocalStorage<T>(tableName: string): T[] | null {
-    const data: string | null = localStorage.getItem(tableName);
-    return data ? (JSON.parse(data) as T[]) : null;
+    return this.parse<T[]>(tableName);
   }
 
   writeTableToLocalStorage<T>(tableName: string, data: T[]): void {
@@ -18,7 +17,18 @@ export class StorageService {
   }
 
   readFromLocalStorage<T>(key: string): T | null {
+    return this.parse<T>(key);
+  }
+
+  // Ein manipulierter oder kaputter Eintrag darf den Start der Services nicht verhindern.
+  private parse<T>(key: string): T | null {
     const value: string | null = localStorage.getItem(key);
-    return value ? (JSON.parse(value) as T) : null;
+    if (!value) return null;
+    try {
+      return JSON.parse(value) as T;
+    } catch {
+      console.warn(`StorageService: ungültiges JSON unter "${key}" ignoriert.`);
+      return null;
+    }
   }
 }
