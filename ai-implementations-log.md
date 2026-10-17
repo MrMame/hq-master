@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-17 08:58) - Refactoring: Klassen- und Funktionsnamen an Konvention angleichen (file-naming-convention #7)
+
+- **Was wurde gemacht:** `GametimeService` in `GameTimeService` umbenannt (Klassenname folgt jetzt `game-time.service.ts`), Felder einheitlich `gameTimeService`. `ConfirmationDialogComponent` in `ConfirmationDialog` umbenannt (Angular-21-Default ohne Suffix). `parseDateTimeLocal` aus der Komponente in `game-session/utils/date-time-local.util.ts` ausgelagert, Tests mitverschoben.
+- **Dateien geändert:** `game-time.service.ts` (+spec), `confirmation-dialog.ts` (+spec), `game-session-page.ts|.html|.spec.ts`, `game-session.service.ts` (+spec), `time-tracker-page.ts`, `app.ts`, `utils/date-time-local.util.ts` (+spec, neu), `.claude/rules/architecture.md`, `docs/feature-requests/shared-session-state.md`, `testing-overhaul.md`, `docs/refactoring-requests/file-naming-convention.md`
+- **Wichtige Entscheidung:** Das ungenutzte Feld `gametimeService` in `app.ts` behält seinen Namen, da dessen Entfernung in shared-session-state #8 geregelt wird. Erledigte Abschnitte in Feature Requests behalten den alten Klassennamen (Historie).
+
 ### (2026-10-17 08:44) - Refactoring: Einheitliche Dateinamen-Konvention (file-naming-convention #1–#6)
 
 - **Was wurde gemacht:** Alle Dateien unter `src/app/` folgen jetzt der Konvention Kebab-Case + Rollen-Suffix (`*.service.ts`, `*.model.ts`, `*.xml-mapper.ts`, `*.util.ts`, `*.fixtures.ts`). Models aus `core/services/gaming/` nach `core/models/` verschoben, XML-Funktionen aus `game-session/services/xml/` nach `game-session/xml/`, Testdaten nach `game-session/testing/`. `ng g s` erzeugt per `angular.json` automatisch `*.service.ts`.

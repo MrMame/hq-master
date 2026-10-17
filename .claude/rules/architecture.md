@@ -17,7 +17,7 @@ Alle Features teilen eine gemeinsame Session-Datenbasis über root-provided Serv
 core/
   models/         → game-time.model.ts, game-time-span.model.ts
   services/
-    game-time/    → GametimeService: In-Game-Zeitlogik (app-weit)
+    game-time/    → GameTimeService: In-Game-Zeitlogik (app-weit)
     storage/      → StorageService (LocalStorage-Abstraktion)
     characters/   → CharactersDbService
 
@@ -46,6 +46,7 @@ features/
     models/            → session-meta.model.ts, session-snapshot.model.ts
     services/          → game-session.service.ts, session-xml.service.ts, session-file.service.ts
     xml/               → *.xml-mapper.ts (writeX/readX), xml.util.ts
+    utils/             → date-time-local.util.ts (reine Hilfsfunktionen)
     testing/           → session.fixtures.ts (nur für Specs)
 
 shared/
@@ -86,7 +87,7 @@ Kebab-Case, die Rolle steht als Punkt-Suffix im Dateinamen. Der Dateiname folgt 
 ### Session-State-Services: reaktive Schnittstelle (verbindlich)
 
 Gilt für **jeden** `providedIn: 'root'`-Service, der Session-Daten verantwortet
-(z. B. `CharactersDbService`, `GametimeService`, `DungeonBoardService`, `CardManagerService`).
+(z. B. `CharactersDbService`, `GameTimeService`, `DungeonBoardService`, `CardManagerService`).
 
 **Ziel:** Jede Änderung an einem Session-Zustand ist sofort app-weit sichtbar –
 ohne Navigation, Reload oder manuelles Neu-Lesen.

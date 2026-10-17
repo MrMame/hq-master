@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import { GametimeService } from '../../../core/services/game-time/game-time.service';
+import { GameTimeService } from '../../../core/services/game-time/game-time.service';
 import { GameTime, gameTimeFromDate } from '../../../core/models/game-time.model';
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
 import { StorageService } from '../../../core/services/storage/storage.service';
@@ -25,7 +25,7 @@ export interface SessionStartOptions {
 })
 export class GameSessionService {
   private readonly storageService: StorageService = inject(StorageService);
-  private readonly gametimeService: GametimeService = inject(GametimeService);
+  private readonly gameTimeService: GameTimeService = inject(GameTimeService);
   private readonly charactersDbService: CharactersDbService = inject(CharactersDbService);
   private readonly dungeonBoardService: DungeonBoardService = inject(DungeonBoardService);
   private readonly cardManagerService: CardManagerService = inject(CardManagerService);
@@ -39,7 +39,7 @@ export class GameSessionService {
   /** Feature-übergreifender Gesamtzustand, z. B. für das Speichern als XML. */
   readonly snapshot: Signal<SessionSnapshot> = computed(() => ({
     meta: this._meta(),
-    gameTime: this.gametimeService.gameTime(),
+    gameTime: this.gameTimeService.gameTime(),
     characters: this.charactersDbService.characters(),
     board: this.dungeonBoardService.boardState(),
     positions: this.dungeonBoardService.positions(),
@@ -53,7 +53,7 @@ export class GameSessionService {
     this.charactersDbService.writeCharacters([]);
     this.dungeonBoardService.reset();
     this.cardManagerService.restoreState(null);
-    this.gametimeService.setGameTime(startTime);
+    this.gameTimeService.setGameTime(startTime);
     this.persist({ name, active: true, startedAt: new Date().toISOString() });
   }
 
@@ -66,7 +66,7 @@ export class GameSessionService {
     this.charactersDbService.writeCharacters(snapshot.characters);
     this.dungeonBoardService.restore(snapshot.board, snapshot.positions);
     this.cardManagerService.restoreState(snapshot.deck);
-    this.gametimeService.setGameTime(gameTimeFromDate(snapshot.gameTime));
+    this.gameTimeService.setGameTime(gameTimeFromDate(snapshot.gameTime));
     this.persist({ ...snapshot.meta });
   }
 

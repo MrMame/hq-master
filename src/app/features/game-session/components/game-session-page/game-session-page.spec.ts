@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 
-import { GameSessionPage, parseDateTimeLocal } from './game-session-page';
+import { GameSessionPage } from './game-session-page';
 import { GameSessionService } from '../../services/game-session.service';
 import { SessionFileService } from '../../services/session-file.service';
 import { SessionXmlService } from '../../services/session-xml.service';
@@ -93,22 +93,5 @@ describe('GameSessionPage', () => {
     await component.loadSession({ target: input } as unknown as Event);
 
     expect(readText('session-error')).toContain('Ungültige Session-Datei');
-  });
-});
-
-describe('parseDateTimeLocal', () => {
-  it('should parse a datetime-local value', () => {
-    expect(parseDateTimeLocal('2390-05-06T07:30')).toEqual({
-      year: 2390,
-      month: 5,
-      day: 6,
-      hours: 7,
-      minutes: 30,
-      seconds: 0,
-    });
-  });
-
-  it('should return null for an invalid value', () => {
-    expect(parseDateTimeLocal('')).toBeNull();
   });
 });

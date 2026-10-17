@@ -97,9 +97,9 @@ Einen reaktiven, persistenten **Session State Layer** einführen, auf den alle F
 
 ---
 
-### 8. `App` — ungenutzte `GametimeService`-Injection entfernen
+### 8. `App` — ungenutzte `GameTimeService`-Injection entfernen
 
-- **Problem (vorbestehend):** `src/app/app.ts` injiziert `GametimeService` als `public gametimeService`, nutzt ihn aber weder in Klasse noch Template.
+- **Problem (vorbestehend):** `src/app/app.ts` injiziert `GameTimeService` als `public gametimeService`, nutzt ihn aber weder in Klasse noch Template.
 - Injection entfernen oder bewusst nutzen (z. B. Spielzeit-Anzeige in der Navigation).
 
 ---
@@ -129,7 +129,7 @@ private persist(value: T[]) {
 }
 ```
 
-Dieses Muster auf `CharactersDbService` und `GametimeService` ausrollen.
+Dieses Muster auf `CharactersDbService` und `GameTimeService` ausrollen.
 
 ---
 

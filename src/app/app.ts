@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { GametimeService } from './core/services/game-time/game-time.service';
+import { GameTimeService } from './core/services/game-time/game-time.service';
 
 @Component({
   selector: 'app-root',
@@ -68,5 +68,5 @@ import { GametimeService } from './core/services/game-time/game-time.service';
   styles: ``,
 })
 export class App {
-  public gametimeService: GametimeService = inject(GametimeService);
+  public gametimeService: GameTimeService = inject(GameTimeService);
 }

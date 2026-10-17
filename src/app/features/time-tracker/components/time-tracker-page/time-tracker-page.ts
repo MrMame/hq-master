@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { GametimeService } from '../../../../core/services/game-time/game-time.service';
+import { GameTimeService } from '../../../../core/services/game-time/game-time.service';
 
 @Component({
   selector: 'app-time-tracker-page',
@@ -8,7 +8,7 @@ import { GametimeService } from '../../../../core/services/game-time/game-time.s
   styleUrl: './time-tracker-page.scss',
 })
 export class TimeTrackerPage {
-  gameTimeService: GametimeService = inject(GametimeService);
+  gameTimeService: GameTimeService = inject(GameTimeService);
 
   readonly secondSteps: readonly number[] = [1, 5, 10];
 

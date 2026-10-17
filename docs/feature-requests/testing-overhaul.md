@@ -83,7 +83,7 @@ Für jede Datei aus Problem-Tabelle 2 einen Spec erstellen. Mindestumfang:
 
 - Jede öffentliche Methode der Services erhält mindestens einen Test für den Normalfall und, wo sinnvoll, für Grenz-/Fehlerfälle.
 - `StorageService` / `CharactersDatabaseService`: Lesen, Schreiben, Löschen, leerer bzw. kaputter localStorage-Inhalt.
-- `GametimeService`: `addHours`, `addMinutes`, `setGameTime` inkl. Tageswechsel.
+- `GameTimeService`: `addHours`, `addMinutes`, `setGameTime` inkl. Tageswechsel.
 - Dialog-Komponenten: Button-Klicks rufen `dialogRef.close(...)` mit dem richtigen Wert auf.
 
 ---

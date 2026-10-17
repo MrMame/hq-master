@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { GameSessionService } from './game-session.service';
-import { GametimeService } from '../../../core/services/game-time/game-time.service';
+import { GameTimeService } from '../../../core/services/game-time/game-time.service';
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
 import { CardManagerService } from '../../card-manager/services/card-manager.service';
 import { DungeonBoardService } from '../../dungeon-tracker/services/dungeon-board.service';
@@ -53,7 +53,7 @@ describe('GameSessionService', () => {
     expect(board.boardState()).toEqual(DEFAULT_DUNGEON_BOARD_STATE);
     expect(board.positions()).toEqual([]);
     expect(cards.state()).toBeNull();
-    expect(TestBed.inject(GametimeService).gameTime()).toEqual(new Date(2390, 4, 6, 7, 0, 0));
+    expect(TestBed.inject(GameTimeService).gameTime()).toEqual(new Date(2390, 4, 6, 7, 0, 0));
   });
 
   it('should mark the session active and persist the meta on startSession', () => {

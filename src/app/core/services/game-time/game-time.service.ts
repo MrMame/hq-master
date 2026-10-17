@@ -9,7 +9,7 @@ const DEFAULT_GAME_TIME: Date = new Date(2381, 0, 1, 23, 55, 0);
 @Injectable({
   providedIn: 'root',
 })
-export class GametimeService {
+export class GameTimeService {
   private readonly storageService: StorageService = inject(StorageService);
   private readonly _gameTime: WritableSignal<Date> = signal<Date>(this.loadGameTime());
 

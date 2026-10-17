@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-17  
 **Priorität:** Mittel  
-**Status:** Teilweise umgesetzt (Anforderungen 1–6 done am 2026-10-17 08:44, Anforderung 7 offen)  
+**Status:** ✅ done (2026-10-17 08:58) — Anforderungen 1–6 done am 2026-10-17 08:44, Anforderung 7 done am 2026-10-17 08:58  
 **Bezug:** `.claude/rules/architecture.md` (Verzeichnisstruktur), `.claude/rules/clean-code.md` (sprechende Namen)
 
 ---
@@ -106,7 +106,7 @@ models/session-snapshot.ts     → models/session-snapshot.model.ts
 
 ---
 
-### 7. Klassen- und Funktionsnamen an die Konvention angleichen
+### 7. Klassen- und Funktionsnamen an die Konvention angleichen ✅ done (2026-10-17 08:58)
 
 Bei der Umsetzung von #1–#6 gefunden (2026-10-17), bewusst nicht im reinen Datei-Umbenennen enthalten:
 

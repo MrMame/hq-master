@@ -2,27 +2,17 @@ import { Component, inject, Signal, signal, WritableSignal } from '@angular/core
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
-import { GametimeService } from '../../../../core/services/game-time/game-time.service';
+import { GameTimeService } from '../../../../core/services/game-time/game-time.service';
 import { GameTime } from '../../../../core/models/game-time.model';
-import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog';
+import { ConfirmationDialog } from '../../../../shared/components/confirmation-dialog/confirmation-dialog';
 import { SessionMeta } from '../../models/session-meta.model';
 import { SessionSnapshot } from '../../models/session-snapshot.model';
 import { GameSessionService } from '../../services/game-session.service';
 import { SessionFileService } from '../../services/session-file.service';
 import { SessionXmlService } from '../../services/session-xml.service';
+import { parseDateTimeLocal } from '../../utils/date-time-local.util';
 
 const DEFAULT_START_TIME: string = '2390-05-06T07:00';
-const DATE_TIME_LOCAL_PATTERN: RegExp = /^(\d{4,})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/;
-
-/** Wandelt den Wert eines `<input type="datetime-local">` in eine `GameTime` um. */
-export function parseDateTimeLocal(value: string): GameTime | null {
-  const match: RegExpMatchArray | null = DATE_TIME_LOCAL_PATTERN.exec(value);
-  if (!match) return null;
-  const [year, month, day, hours, minutes, seconds] = match
-    .slice(1)
-    .map((part: string | undefined) => Number(part ?? 0));
-  return { year, month, day, hours, minutes, seconds };
-}
 
 @Component({
   selector: 'app-game-session-page',
@@ -36,7 +26,7 @@ export class GameSessionPage {
   private readonly sessionFileService: SessionFileService = inject(SessionFileService);
   private readonly dialog: MatDialog = inject(MatDialog);
 
-  protected readonly gametimeService: GametimeService = inject(GametimeService);
+  protected readonly gameTimeService: GameTimeService = inject(GameTimeService);
   protected readonly meta: Signal<SessionMeta> = this.gameSessionService.meta;
 
   protected readonly sessionName: WritableSignal<string> = signal<string>('');
@@ -80,11 +70,11 @@ export class GameSessionPage {
   }
 
   private async confirm(): Promise<boolean> {
-    const dialogRef: MatDialogRef<ConfirmationDialogComponent, boolean> = this.dialog.open<
-      ConfirmationDialogComponent,
+    const dialogRef: MatDialogRef<ConfirmationDialog, boolean> = this.dialog.open<
+      ConfirmationDialog,
       unknown,
       boolean
-    >(ConfirmationDialogComponent);
+    >(ConfirmationDialog);
     return (await firstValueFrom(dialogRef.afterClosed())) === true;
   }
 }
