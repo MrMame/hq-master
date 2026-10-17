@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, Signal } from '@angular/core';
+import { Component, computed, effect, inject, Signal, untracked } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { Router } from '@angular/router';
 import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
@@ -26,7 +26,10 @@ export class DungeonTrackerPage {
   readonly characters: Signal<CharacterInfo[]> = this.charactersDbService.characters;
 
   constructor() {
-    effect(() => this.dungeonBoardService.initPositionsForCharacters(this.characters()));
+    effect(() => {
+      const characters: CharacterInfo[] = this.characters();
+      untracked(() => this.dungeonBoardService.initPositionsForCharacters(characters));
+    });
   }
 
   readonly gridStyle: Signal<{

@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-17 10:14) - Feature: Persistenz-Muster und Init-Tests für DungeonBoard/CardManager (shared-session-state #9)
+
+- **Was wurde gemacht:** `DungeonBoardService` liest den Startwert über `loadBoard()`/`loadPositions()` und schreibt jede Mutation über `persistBoard()`/`persistPositions()`, die Signal und Storage gemeinsam setzen. `CardManagerService`: `setState` in `persist` umbenannt, `load()` ergänzt. Specs decken Init, Default-Fallback (leer/ungültiges JSON) und alle Mutationen ab.
+- **Dateien geändert:** `dungeon-board.service.ts` (+spec), `dungeon-tracker-page.ts`, `card-manager.service.ts` (+spec), `docs/feature-requests/shared-session-state.md`
+- **Wichtige Entscheidung:** Der erste Versuch hing wahrscheinlich in einer Endlosschleife des effects: `initPositionsForCharacters` wird aus einem `effect()` aufgerufen; liest es `_positions()` tracked und setzt dann einen neuen Wert, löst sich der effect immer wieder aus. Abgesichert doppelt: Mutationen lesen den eigenen State mit `untracked()`, die Page ruft die Methode in `untracked()` auf. Dass `draw()` eine aktive Karte überschreibt, ist bekannt, aber nicht behoben (UI nutzt `draw()` nicht).
+
 ### (2026-10-17 10:03) - Feature: StorageService robust gegen ungültiges JSON, ungenutzte Injection entfernt (shared-session-state #7, #8)
 
 - **Was wurde gemacht:** `StorageService` liest über eine private Methode `parse()`, die Parse-Fehler abfängt, eine Warnung loggt und `null` zurückgibt. Ein manipulierter localStorage-Eintrag verhindert so nicht mehr den Start der Services, diese fallen auf ihre Default-Werte zurück. Die ungenutzte `GameTimeService`-Injection in `App` ist entfernt.

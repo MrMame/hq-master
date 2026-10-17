@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-15  
 **Priorität:** Hoch  
-**Status:** Teilweise umgesetzt (Anforderung 1 done am 2026-10-16 12:29, Anforderung 2 done am 2026-10-16 15:10, Anforderung 3 done am 2026-10-16 18:00, Anforderung 4 done am 2026-10-16 18:37, Anforderung 5 done am 2026-10-17 09:31, Anforderung 6 done am 2026-10-16 15:34, Anforderung 7 done am 2026-10-17 10:03, Anforderung 8 done am 2026-10-17 10:03)  
+**Status:** done (2026-10-17 10:14) — Anforderung 1 done am 2026-10-16 12:29, Anforderung 2 done am 2026-10-16 15:10, Anforderung 3 done am 2026-10-16 18:00, Anforderung 4 done am 2026-10-16 18:37, Anforderung 5 done am 2026-10-17 09:31, Anforderung 6 done am 2026-10-16 15:34, Anforderung 7 done am 2026-10-17 10:03, Anforderung 8 done am 2026-10-17 10:03, Anforderung 9 done am 2026-10-17 10:14  
 **Bezug REQUIREMENTS.md:** Abschnitt 0 (App-weite Anforderungen), Abschnitt 4 (GameSession)
 
 ---
@@ -104,7 +104,7 @@ Einen reaktiven, persistenten **Session State Layer** einführen, auf den alle F
 
 ---
 
-### 9. `DungeonBoardService` / `CardManagerService` — Persistenz-Muster und Init-Tests
+### 9. `DungeonBoardService` / `CardManagerService` — Persistenz-Muster und Init-Tests ✅ done (2026-10-17 10:14)
 
 - **Problem (vorbestehend, entdeckt bei §4):** `DungeonBoardService` aktualisiert Signal und Storage in getrennten Schritten (`_x.update(...)` + `persistBoard()`/`persistPositions()`) statt über eine gemeinsame private `persist()`-Methode (Architekturregel 4). Die Initialisierung liest direkt im Feld-Initializer statt über eine private `load()`-Methode.
 - Für `DungeonBoardService` und `CardManagerService` fehlen Tests der Initialisierung aus dem Storage inkl. Default-Fallback sowie der übrigen Mutationen (Architekturregel 8). Seit §4 sind nur `restore`/`reset` bzw. `restoreState` getestet.

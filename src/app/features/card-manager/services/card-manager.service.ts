@@ -13,9 +13,7 @@ export class CardManagerService {
   private readonly storageService: StorageService = inject(StorageService);
   private readonly deckLoaderService: DeckXmlLoaderService = inject(DeckXmlLoaderService);
   // PRIVATE SIGNALS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  private readonly _state: WritableSignal<DeckState | null> = signal<DeckState | null>(
-    this.storageService.readFromLocalStorage<DeckState>(KEY_DECK_STATE),
-  );
+  private readonly _state: WritableSignal<DeckState | null> = signal<DeckState | null>(this.load());
 
   // PUBLIC SIGNALS =====================================================================
   public readonly state: Signal<DeckState | null> = this._state.asReadonly();
@@ -30,26 +28,26 @@ export class CardManagerService {
       activeCard: null,
       bank: [],
     };
-    this.setState(newState);
+    this.persist(newState);
   }
 
   shuffle(): void {
     const s: DeckState | null = this._state();
     if (!s) return;
-    this.setState({ ...s, drawPile: this.fisherYates([...s.drawPile]) });
+    this.persist({ ...s, drawPile: this.fisherYates([...s.drawPile]) });
   }
 
   draw(): void {
     const s: DeckState | null = this._state();
     if (!s || s.drawPile.length === 0) return;
     const [activeCard, ...drawPile] = s.drawPile;
-    this.setState({ ...s, drawPile, activeCard });
+    this.persist({ ...s, drawPile, activeCard });
   }
 
   discardActiveCard(): void {
     const s: DeckState | null = this._state();
     if (!s || !s.activeCard) return;
-    this.setState({
+    this.persist({
       ...s,
       discardPile: [...s.discardPile, s.activeCard],
       activeCard: null,
@@ -60,7 +58,7 @@ export class CardManagerService {
     const s: DeckState | null = this._state();
     if (!s) return;
     const all: Card[] = collectAll(s);
-    this.setState({
+    this.persist({
       ...s,
       drawPile: this.fisherYates(all),
       discardPile: [],
@@ -77,7 +75,7 @@ export class CardManagerService {
       activeCard: null,
       bank: [],
     };
-    this.setState(newState);
+    this.persist(newState);
   }
 
   makeCardActive(cardId: string): void {
@@ -92,7 +90,7 @@ export class CardManagerService {
     const drawPile: Card[] = s.drawPile.filter((c: Card) => c.id !== cardId);
     const discardPile: Card[] = s.discardPile.filter((c: Card) => c.id !== cardId);
     const bank: Card[] = s.bank.filter((c: Card) => c.id !== cardId);
-    this.setState({
+    this.persist({
       ...s,
       drawPile: drawPile,
       discardPile: discardPile,
@@ -105,28 +103,31 @@ export class CardManagerService {
     const s: DeckState | null = this._state();
     if (!s || !s.activeCard) return;
     const drawPile: Card[] = this.fisherYates([...s.drawPile, s.activeCard]);
-    this.setState({ ...s, drawPile, activeCard: null });
+    this.persist({ ...s, drawPile, activeCard: null });
   }
 
   public dropActiveCardIntoBank(): void {
     const s: DeckState | null = this._state();
     if (!s || !s.activeCard) return;
     const bank: Card[] = [...s.bank, s.activeCard];
-    this.setState({ ...s, bank, activeCard: null });
+    this.persist({ ...s, bank, activeCard: null });
   }
 
   /** Ersetzt den Deck-Zustand vollständig (`null` = kein Deck), z. B. beim Laden einer Session. */
   public restoreState(state: DeckState | null): void {
-    this.setState(state);
+    this.persist(state);
   }
 
   // PRIVATES =====================================================================
 
-  // Set State muss am Ende immer gesetzt werden, damit das _State Objekt komplett erneuert wird.
-  // Nur dadurch bekommt das Angular Signal-System mit, dass sich der Wert geändert hat.
-  private setState(s: DeckState | null): void {
+  // Jede Mutation übergibt ein neues State-Objekt, nur so feuern abhängige Signals.
+  private persist(s: DeckState | null): void {
     this._state.set(s);
-    this.storageService.writeToLocalStorage(KEY_DECK_STATE, s);
+    this.storageService.writeToLocalStorage<DeckState | null>(KEY_DECK_STATE, s);
+  }
+
+  private load(): DeckState | null {
+    return this.storageService.readFromLocalStorage<DeckState>(KEY_DECK_STATE);
   }
 
   // Fisher-Yates Shuffle Algorithm
