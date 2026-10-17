@@ -17,7 +17,6 @@ describe('DungeonTrackerPage – interactions', () => {
   let host: HTMLElement;
 
   beforeEach(async () => {
-    localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [DungeonTrackerPage],
       providers: [provideRouter([])],
@@ -29,6 +28,8 @@ describe('DungeonTrackerPage – interactions', () => {
     host = fixture.nativeElement as HTMLElement;
     await fixture.whenStable();
   });
+
+  afterEach(() => vi.useRealTimers());
 
   const fileInput: () => HTMLInputElement = (): HTMLInputElement =>
     host.querySelector('input[type="file"]') as HTMLInputElement;
@@ -50,11 +51,12 @@ describe('DungeonTrackerPage – interactions', () => {
     expect(host.querySelector('img[alt="Spielbrett"]')).not.toBeNull();
   });
 
-  it('ignores a file selection without a file', async () => {
+  it('ignores a file selection without a file', () => {
+    vi.useFakeTimers();
     const before: DungeonBoardState = board.boardState();
 
     selectFiles([]);
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    vi.runAllTimers();
 
     expect(board.boardState()).toBe(before);
     expect(host.textContent).toContain('Kein Spielbrett geladen');

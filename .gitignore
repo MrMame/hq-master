@@ -89,3 +89,9 @@ Thumbs.db
 # --- Claude Code ---
 # Lokales Aktivitätslog der Claude-Hooks
 .claude/logs/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

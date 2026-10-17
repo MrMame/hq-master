@@ -32,7 +32,6 @@ describe('DungeonTrackerPage', () => {
     (fixture.nativeElement as HTMLElement).querySelectorAll('app-dungeon-token').length;
 
   beforeEach(async () => {
-    localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [DungeonTrackerPage],
       providers: [provideRouter([])],

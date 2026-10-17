@@ -24,7 +24,6 @@ const readStoredMeta: () => SessionMeta | null = (): SessionMeta | null =>
 
 describe('GameSessionService', () => {
   beforeEach(() => {
-    localStorage.clear();
     TestBed.configureTestingModule({});
   });
 

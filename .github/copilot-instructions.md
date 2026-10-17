@@ -41,6 +41,7 @@ documentation when an API or data model changes.
 - Development server: `npm start`
 - Production build: `npm run build`
 - Unit tests: `npm run test`
+- E2E smoke tests (Playwright): `npm run e2e`
 - Lint: `npm run lint`
 - Watch build: `npm run watch`
 
@@ -55,6 +56,9 @@ documentation when an API or data model changes.
 - Treat `.claude/**` as Claude Code-specific configuration only.
 - Do not read, follow, summarize, or reuse instructions from `.claude/CLAUDE.md`
   or `.claude/rules/**`.
+  **Single exception:** `.claude/rules/testing.md` is the shared source of truth
+  for test conventions (see [testing.instructions.md](./instructions/testing.instructions.md))
+  and must be followed for all test work.
 - Do not interpret `.claude/settings.json` as a Copilot permission, tool, or
   workflow configuration.
 - For Copilot tasks, use only the instructions in `.github/**`, the current

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CdkDragEnd } from '@angular/cdk/drag-drop';
+import { By } from '@angular/platform-browser';
+import { CdkDrag, CdkDragEnd } from '@angular/cdk/drag-drop';
 
 import { DungeonToken } from './dungeon-token';
 import { DungeonPosition } from '../../models/dungeon-position.model';
@@ -9,6 +10,8 @@ import { createTestCharacter } from '../../../game-session/testing/session.fixtu
 const position: DungeonPosition = { characterId: 'a', col: 2, row: 3 };
 const GOLD_BORDER: string[] = ['border-yellow-400', 'shadow-yellow-400/50', 'shadow-md'];
 
+// Ein echter Drag lässt sich in jsdom nicht erzeugen (keine Layout-Maße); das Event-Objekt
+// ist daher ein Stub, ausgelöst wird es aber über die Template-Bindung `(cdkDragEnded)`.
 const dragEnd: (x: number, y: number, reset: () => void) => CdkDragEnd = (
   x: number,
   y: number,
@@ -37,6 +40,9 @@ describe('DungeonToken', () => {
     fixture.componentRef.setInput('offsetX', 10);
     fixture.componentRef.setInput('offsetY', 20);
   });
+
+  const endDrag: (event: CdkDragEnd) => void = (event: CdkDragEnd): void =>
+    fixture.debugElement.query(By.directive(CdkDrag)).triggerEventHandler('cdkDragEnded', event);
 
   it('should place the token in pixels from field, cell size and offset', () => {
     const token: HTMLElement = render(createTestCharacter('a'));
@@ -73,7 +79,7 @@ describe('DungeonToken', () => {
     const moved: (event: { characterId: string; col: number; row: number }) => void = vi.fn();
     component.tokenMoved.subscribe(moved);
 
-    component.onDragEnd(dragEnd(70, -30, reset));
+    endDrag(dragEnd(70, -30, reset));
 
     expect(moved).toHaveBeenCalledWith({ characterId: 'a', col: 3, row: 2 });
     expect(reset).toHaveBeenCalledTimes(1);
@@ -84,7 +90,7 @@ describe('DungeonToken', () => {
     const moved: (event: { characterId: string; col: number; row: number }) => void = vi.fn();
     component.tokenMoved.subscribe(moved);
 
-    component.onDragEnd(dragEnd(-500, -500, vi.fn()));
+    endDrag(dragEnd(-500, -500, vi.fn()));
 
     expect(moved).toHaveBeenCalledWith({ characterId: 'a', col: 0, row: 0 });
   });

@@ -14,7 +14,6 @@ describe('CharacterTrackerPage – layout', () => {
   let cardLayout: CharacterCardLayoutService;
 
   beforeEach(async () => {
-    localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [CharacterTrackerPage],
       providers: [{ provide: MatDialog, useValue: { open: vi.fn() } }],

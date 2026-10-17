@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-18 00:00) - Refactoring: Teststrategie verbessern (test-strategy-improvements #1–#7)
+
+- **Was wurde gemacht:** Echte Wartezeiten durch Fake-Timer ersetzt; neue Specs für `xml.util` und die Deck-/Dungeon-Mapper (Fallbacks für alte bzw. von Hand bearbeitete Dateien); Komponenten-Specs lösen Handler über DOM, Outputs und `MatButtonHarness` aus; Playwright-Smoke-Tests unter `e2e/` (`npm run e2e`, ~8 s inkl. `ng serve`); Testkonventionen nur noch in `.claude/rules/testing.md`; `localStorage` wird global über `src/test-setup.ts` (`setupFiles`) geleert. #7 (Mutation Testing) rejected.
+- **Dateien geändert:** `playwright.config.ts`, `e2e/*` (neu), `src/test-setup.ts`, `src/test-setup.spec.ts` (neu), `angular.json`, `tsconfig.spec.json`, `package.json`, `package-lock.json`, `.gitignore`, `.claude/settings.json`, `.claude/rules/testing.md`, `.claude/rules/architecture.md`, `.github/copilot-instructions.md`, `.github/instructions/testing.instructions.md`, XML-Specs (neu), `character-tracker/testing/`, `game-session/testing/game-session-page.fixtures.ts`, `shared/testing/click-button.ts` (neu), 23 Specs angepasst bzw. geteilt, `docs/refactoring-requests/test-strategy-improvements.md` (→ done/)
+- **Wichtige Entscheidung:** #1 ohne Debounce-Konstante, weil der Debounce seit b3afde7 nicht mehr existiert (Variante A, Nutzerentscheidung). `dungeon-token` über `triggerEventHandler('cdkDragEnded')` statt Direktaufruf. Copilot darf ausnahmsweise `.claude/rules/testing.md` lesen. Fixtures importieren `vi` explizit, weil der App-Build `testing/` mitkompiliert. E2E nicht in Git-Hooks. Kein Produktivcode geändert. Coverage: Functions 89,8 → 95,7 %, Branches 94,0 → 96,1 %; 310 Tests grün.
+
 ### (2026-10-17 23:05) - Refactoring: Qualitäts-Gate über Git-Hooks (git-hooks-quality-gate #1–#6)
 
 - **Was wurde gemacht:** husky eingerichtet (`prepare`), `pre-commit` prüft gestagten Inhalt per Prettier und führt Lint aus (~4 s), `pre-push` führt Tests mit Coverage und Build aus. Coverage-Schwellen (95/90/85/95) in `vitest.config.ts`, eingebunden über `runnerConfig`, da der Unit-Test-Builder keine eigene Schwellen-Option hat. Timeout-/Prozessbaum-Logik als gemeinsames Modul für pre-push und Claude-Stop-Hook. PreToolUse-Commit-Check aus `.claude/settings.json` entfernt.

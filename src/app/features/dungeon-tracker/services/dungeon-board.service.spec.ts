@@ -22,7 +22,6 @@ describe('DungeonBoardService', () => {
     TestBed.inject(DungeonBoardService);
 
   beforeEach(() => {
-    localStorage.clear();
     TestBed.configureTestingModule({});
   });
 

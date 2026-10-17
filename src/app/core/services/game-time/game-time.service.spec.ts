@@ -17,7 +17,6 @@ describe('GameTimeService', () => {
   let service: GameTimeService;
 
   beforeEach(() => {
-    localStorage.clear();
     TestBed.configureTestingModule({});
   });
 

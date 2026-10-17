@@ -7,7 +7,6 @@ describe('TimeTrackerPage', () => {
   let fixture: ComponentFixture<TimeTrackerPage>;
 
   beforeEach(async () => {
-    localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [TimeTrackerPage],
     }).compileComponents();

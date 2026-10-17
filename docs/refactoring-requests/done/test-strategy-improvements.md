@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-17  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** done (2026-10-18 00:00) – #1–#6 umgesetzt, #7 rejected  
 **Bezug:** `.claude/rules/testing.md`, `docs/refactoring-requests/done/git-hooks-quality-gate.md` (CI-Ersatz und Coverage-Schwellen – dort, nicht hier), `docs/refactoring-requests/done/component-interaction-tests.md`
 
 ---
@@ -26,23 +26,24 @@ Produktivcode wird nicht geändert, außer wo eine Testbarkeit es zwingend erfor
 
 ## Anforderungen
 
-### 1. Fake-Timer statt echter Wartezeiten
+### 1. Fake-Timer statt echter Wartezeiten ✅ done (2026-10-18 00:00)
 
 - Betroffen:
   - `character-tracker/components/character-card/character-card.spec.ts:74` (350 ms)
   - `character-tracker/components/character-tracker-page/character-tracker-page.spec.ts:136` (350 ms)
   - `dungeon-tracker/components/dungeon-tracker-page/dungeon-tracker-page-interactions.spec.ts:57` (50 ms)
 - Auf `vi.useFakeTimers()` + `vi.advanceTimersByTime(...)` umstellen; `vi.useRealTimers()` in `afterEach`.
-- Wartezeit nicht als Magic Number duplizieren: Debounce-Dauer aus dem Produktivcode referenzieren (ggf. als exportierte Konstante), damit der Test bei Änderung der Debounce nicht still falsch wird.
-- Grenzfall prüfen: kurz _vor_ Ablauf der Debounce noch kein Aufruf, _nach_ Ablauf genau einer.
+- ~~Wartezeit nicht als Magic Number duplizieren: Debounce-Dauer aus dem Produktivcode referenzieren (ggf. als exportierte Konstante), damit der Test bei Änderung der Debounce nicht still falsch wird.~~
+- ~~Grenzfall prüfen: kurz _vor_ Ablauf der Debounce noch kein Aufruf, _nach_ Ablauf genau einer.~~
+- **Entfallen (Ist-Prüfung 2026-10-18 00:00):** Im Produktivcode gibt es keinen Debounce mehr (`debounceTime(300)` in `character-card.ts` mit `character-tracker-page-refactoring` #8 / b3afde7 entfernt). Die Waits sichern nur noch ab, dass kein verzögerter Schreibzugriff erfolgt. Umgesetzt als `vi.useFakeTimers()` + `vi.runAllTimers()` (alle anstehenden Timer), Erwartung „kein Aufruf“ bzw. „genau einer“ (Variante A, Nutzerentscheidung).
 
-### 2. Fehler- und Fallback-Pfade beim XML-Import testen
+### 2. Fehler- und Fallback-Pfade beim XML-Import testen ✅ done (2026-10-18 00:00)
 
 - Neue Spec `game-session/xml/xml.util.spec.ts`: `readString`, `readNumber` (fehlend, leer, nicht numerisch, `Infinity`), `readBoolean`, `textOf(null)`, `indentXml` (leeres Element, verschachtelt).
 - Je Mapper mit nicht abgedeckten Zweigen (laut Coverage-Report) eine Spec gleichen Stamms, z. B. `characters.xml-mapper.spec.ts`, mit tabellarischen Fällen (`it.each`) für fehlende Attribute, falsche Typen und leere Abschnitte – also Dateien aus älteren Versionen oder von Hand bearbeitete Dateien.
 - Erwartung je Fall explizit: Fallback-Wert oder sprechender Fehler.
 
-### 3. Komponententests über DOM bzw. Component Harnesses
+### 3. Komponententests über DOM bzw. Component Harnesses ✅ done (2026-10-18 00:00)
 
 - Direktaufrufe von Handler-Methoden durch Interaktionen ersetzen (Klick, `input`-Event, Output-Event der Kindkomponente), damit die Template-Bindung mitgeprüft wird. Betroffen (Anzahl Direktaufrufe):
   - `character-tracker-page.spec.ts` (19)
@@ -52,7 +53,7 @@ Produktivcode wird nicht geändert, außer wo eine Testbarkeit es zwingend erfor
 - Direktaufrufe bleiben zulässig, wo ein Event in jsdom nicht sinnvoll erzeugbar ist (z. B. `CdkDragEnd`); im Spec kurz kommentieren.
 - Konvention in `.claude/rules/testing.md` ergänzen: „Komponenten über DOM/Harnesses testen, nicht über öffentliche Handler-Methoden."
 
-### 4. E2E-Smoke-Tests mit Playwright
+### 4. E2E-Smoke-Tests mit Playwright ✅ done (2026-10-18 00:00)
 
 - Playwright als devDependency, Konfiguration startet `ng serve`; Script `npm run e2e`; Tests unter `e2e/` (nicht unter `src/`).
 - Wenige, stabile Szenarien:
@@ -63,17 +64,19 @@ Produktivcode wird nicht geändert, außer wo eine Testbarkeit es zwingend erfor
 - Nicht in den `pre-commit`-Hook; Aufnahme in `pre-push` erst nach Messung der Laufzeit entscheiden.
 - Architektur-Doku (`.claude/rules/architecture.md`) um den Ordner `e2e/` ergänzen.
 
-### 5. Testregeln an einer Stelle pflegen
+### 5. Testregeln an einer Stelle pflegen ✅ done (2026-10-18 00:00)
 
 - `.claude/rules/testing.md` ist die führende Quelle.
 - `.github/instructions/testing.instructions.md` auf einen Verweis plus Copilot-spezifische Hinweise reduzieren, damit die Konventionen nicht auseinanderlaufen.
 
-### 6. localStorage zentral isolieren
+### 6. localStorage zentral isolieren ✅ done (2026-10-18 00:00)
 
 - Globale Test-Setup-Datei (z. B. `src/test-setup.ts`) mit `beforeEach(() => localStorage.clear())`, eingebunden über die Builder-Option `setupFiles` von `@angular/build:unit-test` (vorher prüfen, ob unterstützt).
 - Danach die manuellen `localStorage.clear()` in den Specs entfernen und Regel in `testing.md` entsprechend anpassen.
 
-### 7. (Optional) Mutation Testing evaluieren
+### 7. (Optional) Mutation Testing evaluieren ❌ rejected (2026-10-18 00:00)
+
+- **Begründung:** Auf Wunsch des Nutzers nicht umgesetzt (beim Aufruf von `implement-refactor` ausgenommen und anschließend verworfen). Kein StrykerJS-Probelauf, keine neue Abhängigkeit.
 
 - Einmaliger Probelauf mit StrykerJS (Vitest-Runner) auf `core/` und `features/*/utils/`, um Tests zu finden, die Code ausführen, aber keine relevanten Assertions haben.
 - Ergebnis (Mutation Score, auffällige Specs) im Abschlussbericht festhalten; dauerhafte Einbindung nur bei vertretbarer Laufzeit.
@@ -82,10 +85,10 @@ Produktivcode wird nicht geändert, außer wo eine Testbarkeit es zwingend erfor
 
 ## Akzeptanzkriterien
 
-- Kein Spec wartet mehr auf echte Zeit (`grep "setTimeout(resolve" src` liefert nichts).
-- `xml.util.ts` und alle XML-Mapper erreichen 100 % Branch-Coverage oder nicht abgedeckte Zweige sind begründet.
-- In den genannten Komponenten-Specs werden Handler nur noch über DOM/Harness/Outputs ausgelöst (begründete Ausnahmen kommentiert); Function-Coverage der zugehörigen Templates steigt entsprechend.
-- `npm run e2e` führt die vier Smoke-Szenarien lokal grün aus.
-- Testkonventionen stehen inhaltlich nur noch in `.claude/rules/testing.md`.
-- `localStorage` wird global vor jedem Test geleert; keine Spec hängt mehr von manuellem Aufräumen ab.
-- `npm run test -- --watch=false --coverage` grün, Gesamtabdeckung nicht gesunken.
+- [x] Kein Spec wartet mehr auf echte Zeit (`grep "setTimeout(resolve" src` liefert nichts).
+- [x] `xml.util.ts` und alle XML-Mapper erreichen 100 % Branch-Coverage oder nicht abgedeckte Zweige sind begründet. _(Alle 100 % außer `dungeon.xml-mapper.ts` Z. 45: `image.textContent ?? ''` – `Element.textContent` ist nie `null`, Zweig unerreichbar.)_
+- [x] In den genannten Komponenten-Specs werden Handler nur noch über DOM/Harness/Outputs ausgelöst (begründete Ausnahmen kommentiert); Function-Coverage der zugehörigen Templates steigt entsprechend.
+- [x] `npm run e2e` führt die vier Smoke-Szenarien lokal grün aus.
+- [x] Testkonventionen stehen inhaltlich nur noch in `.claude/rules/testing.md`.
+- [x] `localStorage` wird global vor jedem Test geleert; keine Spec hängt mehr von manuellem Aufräumen ab.
+- [x] `npm run test -- --watch=false --coverage` grün, Gesamtabdeckung nicht gesunken.

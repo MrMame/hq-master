@@ -27,7 +27,6 @@ describe('CharacterCardLayoutService', () => {
   let service: CharacterCardLayoutService;
 
   beforeEach(() => {
-    localStorage.clear();
     TestBed.resetTestingModule();
     service = TestBed.inject(CharacterCardLayoutService);
   });
