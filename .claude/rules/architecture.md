@@ -80,6 +80,10 @@ Kebab-Case, die Rolle steht als Punkt-Suffix im Dateinamen. Der Dateiname folgt 
 - Komponentenklassen ohne `Component`-Suffix (`confirmation-dialog.ts` → `ConfirmationDialog`).
 - Service-Klassen = Dateistamm in PascalCase + `Service` (`game-time.service.ts` → `GameTimeService`, nicht `GametimeService`).
 - Reine Funktionen nicht in Komponenten- oder Service-Dateien, sondern in eine eigene `*.util.ts` mit Spec gleichen Stamms.
+- Ausnahme Dateilimit: Würde eine Spec 150 Zeilen überschreiten, darf sie nach Aspekt aufgeteilt werden:
+  `<stamm>-<aspekt>.<rolle>.spec.ts` neben der Basis-Spec `<stamm>.<rolle>.spec.ts`
+  (z. B. `dungeon-board-sync.service.spec.ts` zu `dungeon-board.service.ts`). Der oberste
+  `describe` nennt Klasse und Aspekt (`'DungeonBoardService – character sync'`).
 
 ## Kern-Architekturregeln
 
