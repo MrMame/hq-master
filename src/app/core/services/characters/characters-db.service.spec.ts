@@ -29,7 +29,6 @@ describe('CharactersDbService', () => {
   let service: CharactersDbService;
 
   beforeEach(() => {
-    localStorage.clear();
     TestBed.configureTestingModule({});
   });
 

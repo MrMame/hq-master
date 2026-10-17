@@ -1,11 +1,13 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 
 import { AddCharacterDialog } from './add-character-dialog';
 
 describe('AddCharacterDialog', () => {
-  let component: AddCharacterDialog;
-  let fixture: ComponentFixture<AddCharacterDialog>;
+  let loader: HarnessLoader;
   const close: ReturnType<typeof vi.fn> = vi.fn();
 
   beforeEach(async () => {
@@ -15,22 +17,31 @@ describe('AddCharacterDialog', () => {
       providers: [{ provide: MatDialogRef, useValue: { close } }],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AddCharacterDialog);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
+    loader = TestbedHarnessEnvironment.loader(TestBed.createComponent(AddCharacterDialog));
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  const clickButton: (text: string) => Promise<void> = async (text: string): Promise<void> =>
+    (await loader.getHarness(MatButtonHarness.with({ text }))).click();
+
+  it('offers four difficulties plus Ok and Abbrechen', async () => {
+    const texts: string[] = await Promise.all(
+      (await loader.getAllHarnesses(MatButtonHarness)).map((b) => b.getText()),
+    );
+    expect(texts).toEqual(['Leicht', 'Mittel', 'Schwer', 'Extrem', 'Ok', 'Abbrechen']);
   });
 
-  it('should close with a new character on ok', () => {
-    component.onOkClick();
-    expect(close).toHaveBeenCalledWith(expect.objectContaining({ id: expect.any(String) }));
-  });
+  it.each<[string]>([['Ok'], ['Leicht'], ['Mittel'], ['Schwer'], ['Extrem']])(
+    'closes with a new character on "%s"',
+    async (text) => {
+      await clickButton(text);
+      expect(close).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ id: expect.any(String) }),
+      );
+    },
+  );
 
-  it('should close without a result on cancel', () => {
-    component.onNoClick();
-    expect(close).toHaveBeenCalledWith();
+  it('closes without a result on "Abbrechen"', async () => {
+    await clickButton('Abbrechen');
+    expect(close).toHaveBeenCalledExactlyOnceWith();
   });
 });

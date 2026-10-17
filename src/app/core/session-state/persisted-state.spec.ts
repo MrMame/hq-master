@@ -26,7 +26,6 @@ const readRaw: () => unknown = (): unknown => JSON.parse(localStorage.getItem(KE
 
 describe('persistedState', () => {
   beforeEach(() => {
-    localStorage.clear();
     TestBed.configureTestingModule({});
   });
 

@@ -49,11 +49,12 @@ Arbeite die Schritte **in dieser Reihenfolge** ab. Keinen Schritt überspringen;
 ## 4. Verifikation
 
 - [ ] `npm run lint` keine Lint errors haben.
-- [ ] `npm run test -- --watch=false` grün.
+- [ ] `npm run test -- --watch=false --coverage` grün.
+- [ ] Coverage-Report für alle neuen und geänderten Dateien mit Logik prüfen (Definition of Done in `testing.md`): Nicht abgedeckte Zeilen/Zweige testen oder begründen.
 - [ ] `npm run build` fehlerfrei.
 - [ ] Bei UI-Änderungen: manuellen Prüfschritt im Bericht nennen.
 
-Prettier-Formatierung, Tests beim Beenden und Build/Prettier vor jedem Commit erzwingen die Hooks in `.claude/settings.json` automatisch.
+Prettier-Formatierung beim Bearbeiten und Tests beim Beenden erzwingen die Claude-Hooks in `.claude/settings.json`. Prettier-Check + Lint vor jedem Commit sowie Tests mit Coverage-Schwellen + Build vor jedem Push erzwingen die Git-Hooks (husky, `scripts/git-hooks/`).
 
 ## 5. Refactoring Request abschließen
 
@@ -67,7 +68,7 @@ Gemäß `.claude/rules/refactoring-requests.md`:
 
 ## 6. Abschlussbericht, Log-Eintrag und Commit
 
-- [ ] Chat Ausgabe : was geändert wurde (mit Dateilinks), Test-/Build-Ergebnis, was bewusst offen blieb.
+- [ ] Chat Ausgabe : was geändert wurde (mit Dateilinks), Test-/Build-Ergebnis, Coverage der geänderten Dateien (inkl. Begründung für ungetestete Stellen), was bewusst offen blieb.
 - [ ] Einen Committext für den gesamten Aufruf vorbereiten (Typ `refactor(<scope>): …`, umgesetzte Punkte im Body auflisten).
 - [ ] `ai-implementations-log.md`-Eintrag vorbereiten. Der Eintrag ist **Pflicht** für jede durchgeführte Umsetzung. Neuester Eintrag oben unter „Letzte Änderungen“, Format wie die bestehenden Einträge:
 

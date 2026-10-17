@@ -33,6 +33,7 @@ features/
                          character-dialogs.service.ts
       character-creators/ → hero-/monster-character-creator.service.ts
     utils/             → damage.util.ts (reine Schadensberechnung)
+    testing/           → character-tracker-page.fixtures.ts (Page-Setup mit Dialog-Mock, nur für Specs)
 
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung
     components/        → DungeonTrackerPage, DungeonToken
@@ -48,6 +49,7 @@ features/
     components/        → CardManagerPage, CardDisplay
     models/            → card.model.ts, deck-config.model.ts, deck-state.model.ts
     services/          → card-manager.service.ts, deck-xml-loader.service.ts
+    testing/           → card-manager-page.fixtures.ts (gemockter Service, nur für Specs)
 
   game-session/        → Session starten/beenden, Speichern/Laden als XML
     components/        → GameSessionPage
@@ -55,11 +57,19 @@ features/
     services/          → game-session.service.ts, session-xml.service.ts, session-file.service.ts
     xml/               → *.xml-mapper.ts (writeX/readX), xml.util.ts
     utils/             → date-time-local.util.ts (reine Hilfsfunktionen)
-    testing/           → session.fixtures.ts (nur für Specs)
+    testing/           → session.fixtures.ts, game-session-page.fixtures.ts (nur für Specs)
 
 shared/
   components/          → Feature-unabhängige UI (z. B. ConfirmationDialog)
+  testing/             → feature-übergreifende DOM-Helfer für Specs (z. B. click-button.ts)
 ```
+
+## E2E-Tests (`e2e/`, Projekt-Root)
+
+Playwright-Smoke-Tests (`npm run e2e`) liegen unter `e2e/` – **nicht** unter `src/`, damit sie weder
+von Vitest noch vom App-Build erfasst werden. `playwright.config.ts` (Root) startet `ng serve` auf Port 4321.
+Nur wenige, stabile Abläufe über echte Browser-Interaktion (Routing, Reload-Persistenz, Drag & Drop,
+Datei-Export/-Import); Logik wird weiterhin in Vitest-Specs getestet.
 
 ## Dateinamen
 
@@ -74,6 +84,7 @@ Kebab-Case, die Rolle steht als Punkt-Suffix im Dateinamen. Der Dateiname folgt 
 | Reine Hilfsfunktion | `xml.util.ts`                            | Funktionen           |
 | XML-Mapper          | `meta.xml-mapper.ts`                     | `writeX` / `readX`   |
 | Testdaten           | `<feature>/testing/<name>.fixtures.ts`   | Fabrikfunktionen     |
+| E2E-Test            | `e2e/<szenario>.spec.ts`                 | Playwright-Tests     |
 | Test                | `<dateiname>.spec.ts` (gleicher Stamm)   | Vitest-Specs         |
 
 - Keine PascalCase-Dateinamen, keine Models unter `services/`, keine Testdaten neben Produktivcode.

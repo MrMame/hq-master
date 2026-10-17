@@ -29,7 +29,6 @@ describe('CardManagerService', () => {
   const state: () => DeckState = (): DeckState => service.state() as DeckState;
 
   beforeEach(() => {
-    localStorage.clear();
     loadFromUrl = vi.fn();
     TestBed.configureTestingModule({
       providers: [{ provide: DeckXmlLoaderService, useValue: { loadFromUrl } }],

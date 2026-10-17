@@ -17,7 +17,6 @@ describe('DungeonBoardService – character sync', () => {
   let characters: CharactersDbService;
 
   beforeEach(() => {
-    localStorage.clear();
     TestBed.configureTestingModule({});
     characters = TestBed.inject(CharactersDbService);
     service = TestBed.inject(DungeonBoardService);

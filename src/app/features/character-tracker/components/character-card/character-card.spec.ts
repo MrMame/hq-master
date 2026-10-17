@@ -23,7 +23,6 @@ describe('CharacterCard', () => {
   let fixture: ComponentFixture<CharacterCard>;
 
   beforeEach(async () => {
-    localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [CharacterCard],
     }).compileComponents();
@@ -34,25 +33,45 @@ describe('CharacterCard', () => {
     await fixture.whenStable();
   });
 
+  afterEach(() => vi.useRealTimers());
+
   it('should show the character', () => {
     expect(fixture.nativeElement.textContent).toContain('Grimmig');
   });
 
-  it('should emit a changed copy without touching the input', () => {
+  it.each<[number, keyof CharacterInfo]>([
+    [0, 'health'],
+    [1, 'defense'],
+    [2, 'speed'],
+    [3, 'attack'],
+  ])('should emit a numeric change when input %i (%s) is edited', (index, key) => {
     const emitted: CharacterInfo[] = [];
     component.characterChange.subscribe((c) => emitted.push(c));
-    component.updateField('health', 30);
-    expect(emitted).toEqual([{ ...orc, health: 30 }]);
-    expect(orc.health).toBe(42);
+    const field: HTMLInputElement = (fixture.nativeElement as HTMLElement).querySelectorAll(
+      'input[type="number"]',
+    )[index] as HTMLInputElement;
+
+    field.value = '17';
+    field.dispatchEvent(new Event('input'));
+
+    expect(emitted).toEqual([{ ...orc, [key]: 17 }]);
+    expect(orc[key]).not.toBe(17);
   });
 
-  it('should not write to the database itself', async () => {
+  it('should not write to the database itself', () => {
+    vi.useFakeTimers();
     const writeSpy: ReturnType<typeof vi.spyOn> = vi.spyOn(
       TestBed.inject(CharactersDbService),
       'writeCharacter',
     );
-    component.updateField('speed', 9);
-    await new Promise((resolve) => setTimeout(resolve, 350));
+    const speedField: HTMLInputElement = (fixture.nativeElement as HTMLElement).querySelectorAll(
+      'input[type="number"]',
+    )[2] as HTMLInputElement;
+    speedField.value = '9';
+    speedField.dispatchEvent(new Event('input'));
+    // Früher per debounceTime verzögert geschrieben; alle anstehenden Timer ablaufen lassen,
+    // damit auch ein verspäteter Schreibzugriff auffallen würde.
+    vi.runAllTimers();
     expect(writeSpy).not.toHaveBeenCalled();
   });
 });

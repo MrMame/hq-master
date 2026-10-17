@@ -11,7 +11,6 @@ const readStoredPositions: () => DungeonPosition[] | null = (): DungeonPosition[
 
 describe('appConfig', () => {
   beforeEach(async () => {
-    localStorage.clear();
     localStorage.setItem('characters', JSON.stringify([createTestCharacter('a')]));
     localStorage.setItem(
       'dungeon_positions',

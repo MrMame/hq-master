@@ -2,6 +2,7 @@
 
 **Datum:** 2026-10-16  
 **Priorität:** Hoch  
+**Status:** done (2026-10-17 21:37) – #1–#4 umgesetzt, #5 rejected  
 **Bezug:** `.claude/rules/testing.md` („Ensure all new logic has test coverage“)
 
 ---
@@ -23,31 +24,30 @@ src/app/features/character-tracker/components/damage-taken-dialog/damage-taken-d
 - Das Projekt nutzt Vitest (`@angular/build:unit-test`, `tsconfig.spec.json` → `types: ["vitest/globals"]`). `jasmine` existiert dort nicht.
 - Weil der Angular-Builder alle Specs gemeinsam kompiliert, blockiert **ein** fehlerhafter Spec die **gesamte** Suite – auch bei `--include` auf einzelne Ordner.
 
+> **Stand 2026-10-17:** Problem 1 ist behoben (32 Spec-Dateien, 193 Tests grün, kein `jasmine` mehr in `src/`). Die Tabellen unten zeigen den aktualisierten Rest.
+
 ### 2. Fehlende Spec-Dateien
 
 Folgende Klassen mit Logik haben **keinen** Spec:
 
-| Feature         | Datei                                                     |
-| --------------- | --------------------------------------------------------- |
-| card-manager    | `services/card-manager.service.ts`                        |
-| card-manager    | `services/deck-xml-loader.service.ts`                     |
-| card-manager    | `components/card-display/card-display.ts`                 |
-| dungeon-tracker | `services/dungeon-board.service.ts`                       |
-| dungeon-tracker | `components/dungeon-tracker-page/dungeon-tracker-page.ts` |
-| dungeon-tracker | `components/dungeon-token/dungeon-token.ts`               |
+| Feature      | Datei                                     |
+| ------------ | ----------------------------------------- |
+| card-manager | `services/deck-xml-loader.service.ts`     |
+| card-manager | `components/card-display/card-display.ts` |
 
-Das Feature **dungeon-tracker** ist komplett ungetestet.
+Bereits nachgezogen (done 2026-10-17 21:27, im Zuge anderer Requests): `card-manager.service.ts`, `dungeon-board.service.ts`, `dungeon-tracker-page.ts`, `dungeon-token.ts`.
 
-### 3. Vorhandene Specs sind fast nur Platzhalter
+### 3. Vorhandene Specs sind teilweise noch Platzhalter
 
-Von 14 Spec-Dateien enthalten 13 genau **einen** Test – meist nur den CLI-generierten `should create`. Einzige Ausnahme: `combat-calculator.service.spec.ts` (7 Tests).
+Folgende Specs prüfen nur `should create` / `should be created`:
 
-Betroffen sind u.a. Kernservices mit Persistenz- bzw. Zeitlogik:
+- `features/character-tracker/services/character-creators/hero-character-creator.service.spec.ts`
+- `features/character-tracker/services/character-creators/monster-character-creator.service.spec.ts`
+- `shared/components/confirmation-dialog/confirmation-dialog.spec.ts`
+- `features/card-manager/components/card-manager-page/card-manager-page.spec.ts`
+- `app.spec.ts`
 
-- `core/services/game-time/game-time.service.spec.ts`
-- `core/services/storage/storage.service.spec.ts`
-- `core/services/characters/characters-db.service.spec.ts`
-- `character-tracker/services/character-creators/*.spec.ts`
+Bereits ausgebaut (done 2026-10-17 21:27): `game-time.service.spec.ts` (13 Tests), `storage.service.spec.ts` (4), `characters-db.service.spec.ts` (6).
 
 ---
 
@@ -59,7 +59,7 @@ Eine **grüne, lauffähige** Test-Suite, die jede Klasse mit Logik abdeckt und R
 
 ## Anforderungen
 
-### 1. Test-Suite wieder lauffähig machen (Sofortmaßnahme)
+### 1. Test-Suite wieder lauffähig machen (Sofortmaßnahme) ✅ done (2026-10-17 21:27)
 
 - `jasmine.createSpy(...)` → `vi.fn()` in `damage-taken-dialog.spec.ts`.
 - Alle Specs auf weitere Jasmine-Reste prüfen (`jasmine.*`, `spyOn` ohne `vi.`, `toHaveBeenCalledOnceWith` o.ä.).
@@ -68,7 +68,7 @@ Eine **grüne, lauffähige** Test-Suite, die jede Klasse mit Logik abdeckt und R
 
 ---
 
-### 2. Fehlende Specs anlegen
+### 2. Fehlende Specs anlegen ✅ done (2026-10-17 21:37)
 
 Für jede Datei aus Problem-Tabelle 2 einen Spec erstellen. Mindestumfang:
 
@@ -79,7 +79,7 @@ Für jede Datei aus Problem-Tabelle 2 einen Spec erstellen. Mindestumfang:
 
 ---
 
-### 3. Vorhandene Platzhalter-Specs ausbauen
+### 3. Vorhandene Platzhalter-Specs ausbauen ✅ done (2026-10-17 21:37)
 
 - Jede öffentliche Methode der Services erhält mindestens einen Test für den Normalfall und, wo sinnvoll, für Grenz-/Fehlerfälle.
 - `StorageService` / `CharactersDatabaseService`: Lesen, Schreiben, Löschen, leerer bzw. kaputter localStorage-Inhalt.
@@ -88,7 +88,7 @@ Für jede Datei aus Problem-Tabelle 2 einen Spec erstellen. Mindestumfang:
 
 ---
 
-### 4. Einheitliche Test-Konventionen festlegen
+### 4. Einheitliche Test-Konventionen festlegen ✅ done (2026-10-17 21:37)
 
 In `.claude/rules/testing.md` ergänzen:
 
@@ -100,7 +100,9 @@ In `.claude/rules/testing.md` ergänzen:
 
 ---
 
-### 5. (Optional) Coverage messen und absichern
+### 5. (Optional) Coverage messen und absichern — rejected (2026-10-17 21:37)
+
+> **Verworfen:** Entscheidung des Nutzers. `@vitest/coverage-v8` ist nicht installiert; Tests laufen bereits automatisch über den Stop-Hook (`.claude/hooks/stop-run-tests.mjs`).
 
 - Coverage-Report aktivieren (`ng test --coverage`).
 - Mindest-Schwelle definieren (Vorschlag: 70 % Lines für `core/` und `features/*/services/`).
@@ -110,11 +112,11 @@ In `.claude/rules/testing.md` ergänzen:
 
 ## Akzeptanzkriterien
 
-- [ ] `npm run test -- --watch=false` läuft fehlerfrei und grün.
-- [ ] Kein Vorkommen von `jasmine` mehr in `src/`.
-- [ ] Jede Service- und Komponentenklasse in `src/app` hat einen Spec.
-- [ ] Kein Spec besteht nur aus `should create`.
-- [ ] Testkonventionen sind in `.claude/rules/testing.md` dokumentiert.
+- [x] `npm run test -- --watch=false` läuft fehlerfrei und grün. (done 2026-10-17 21:27)
+- [x] Kein Vorkommen von `jasmine` mehr in `src/`. (done 2026-10-17 21:27)
+- [x] Jede Service- und Komponentenklasse in `src/app` hat einen Spec. (done 2026-10-17 21:37)
+- [x] Kein Spec besteht nur aus `should create`. (done 2026-10-17 21:37)
+- [x] Testkonventionen sind in `.claude/rules/testing.md` dokumentiert. (done 2026-10-17 21:37)
 
 ---
 
