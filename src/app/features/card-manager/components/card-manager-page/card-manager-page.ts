@@ -34,23 +34,22 @@ export class CardManagerPage {
     }
   }
 
-
   onDiscardPileClick(): void {
-    if(this.cardManagerService.state()!.activeCard!==null) {
+    if (this.cardManagerService.state()!.activeCard !== null) {
       this.cardManagerService.discardActiveCard();
     }
   }
   onDrawPileCardClick(cardId: string): void {
-    if(this.cardManagerService.state()!.activeCard===null) {
+    if (this.cardManagerService.state()!.activeCard === null) {
       this.cardManagerService.makeCardActive(cardId);
     } else {
       this.cardManagerService.shuffleActiveCardIntoDrawPile();
     }
   }
   onDiscardPileCardClick(cardId: string): void {
-    if(this.cardManagerService.state()!.activeCard===null) {
+    if (this.cardManagerService.state()!.activeCard === null) {
       this.cardManagerService.makeCardActive(cardId);
-    }else{
+    } else {
       this.cardManagerService.discardActiveCard();
     }
   }
@@ -58,7 +57,7 @@ export class CardManagerPage {
     this.cardManagerService.discardActiveCard();
   }
   onDrawPileZoneClick(): void {
-    this.cardManagerService.reset();
+    this.cardManagerService.reshuffleAll();
   }
   onLoadDeckClick(): void {
     // const url: string = prompt('Deck URL eingeben:') ?? '/decks/default/default-deck.xml';
@@ -69,15 +68,15 @@ export class CardManagerPage {
     this.cardManagerService.shuffle();
   }
   onResetClick(): void {
-    this.cardManagerService.reset();
+    this.cardManagerService.reshuffleAll();
   }
   onBankCardClick(cardId: string): void {
-    if(this.cardManagerService.state()!.activeCard===null) {
+    if (this.cardManagerService.state()!.activeCard === null) {
       this.cardManagerService.makeCardActive(cardId);
     }
   }
   onBankContainerClick(): void {
-    if(this.cardManagerService.state()!.activeCard!==null) {
+    if (this.cardManagerService.state()!.activeCard !== null) {
       this.cardManagerService.dropActiveCardIntoBank();
     }
   }

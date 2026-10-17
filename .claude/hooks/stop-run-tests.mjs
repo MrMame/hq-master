@@ -8,7 +8,9 @@ const input = JSON.parse(readFileSync(0, 'utf8') || '{}');
 const srcChanged = execSync('git status --porcelain -- src', { encoding: 'utf8' }).trim() !== '';
 if (!srcChanged) process.exit(0);
 
-const tests = spawnSync('npm run test -- --watch=false', { shell: true, encoding: 'utf8' });
+// Vitest findet unter Windows seinen Runner nicht, wenn der Laufwerksbuchstabe klein ist (f:\…).
+const cwd = process.cwd().replace(/^[a-z]:/, (drive) => drive.toUpperCase());
+const tests = spawnSync('npm run test -- --watch=false', { shell: true, encoding: 'utf8', cwd });
 if (tests.status === 0) process.exit(0);
 
 const output = `${tests.stdout}\n${tests.stderr}`.slice(-4000);

@@ -2,9 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { DungeonTrackerPage } from './dungeon-tracker-page';
-import { CharactersDbService } from '../../../../core/services/persistent/characters-database-service';
-import { DungeonBoardService } from '../../services/dungeon-board-service';
-import { CharacterInfo } from '../../../character-tracker/models/CharacterInfo';
+import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
+import { DungeonBoardService } from '../../services/dungeon-board.service';
+import { CharacterInfo } from '../../../character-tracker/models/character-info.model';
 
 const createCharacter: (id: string) => CharacterInfo = (id: string): CharacterInfo => ({
   id,

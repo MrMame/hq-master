@@ -1,7 +1,7 @@
 <div class="card-display" (click)="cardClick.emit(card().id)">
   @if (showFront()) {
     <div class="card-face card-front">
-      <img class="card-image" [src]="card().imagePath" [alt]="card().name">
+      <img class="card-image" [src]="card().imagePath" [alt]="card().name" />
       <div class="card-info">
         <span class="card-name">{{ card().name }}</span>
         @let combat = asCombat(card());
@@ -12,7 +12,7 @@
     </div>
   } @else {
     <div class="card-face card-back">
-      <img class="card-image" [src]="backImagePath()" alt="Kartenrückseite">
+      <img class="card-image" [src]="backImagePath()" alt="Kartenrückseite" />
     </div>
   }
 </div>

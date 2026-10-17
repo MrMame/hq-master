@@ -1,4 +1,12 @@
-import { Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  input,
+  InputSignal,
+  output,
+  OutputEmitterRef,
+  Signal,
+} from '@angular/core';
 import { Card, CombatCard } from '../../models/card.model';
 
 export type CardSide = 'front' | 'back';

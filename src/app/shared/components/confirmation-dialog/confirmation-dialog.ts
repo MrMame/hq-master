@@ -13,10 +13,10 @@ import { MatButtonModule } from '@angular/material/button';
       <button mat-button (click)="onNoClick()">Abbrechen</button>
       <button mat-raised-button color="primary" [mat-dialog-close]="true">Bestätigen</button>
     </mat-dialog-actions>
-  `
+  `,
 })
-export class ConfirmationDialogComponent {
-  private dialogRef: MatDialogRef<ConfirmationDialogComponent> = inject(MatDialogRef<ConfirmationDialogComponent>);
+export class ConfirmationDialog {
+  private dialogRef: MatDialogRef<ConfirmationDialog> = inject(MatDialogRef<ConfirmationDialog>);
 
   onNoClick(): void {
     this.dialogRef.close(false);

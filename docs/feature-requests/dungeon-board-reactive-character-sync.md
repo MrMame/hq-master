@@ -91,7 +91,7 @@ Folgen:
 
 ### 7. Tests für `DungeonBoardService` anlegen
 
-- **Fund:** Für `dungeon-board-service.ts` existiert keine `.spec.ts` (Regel Punkt 8).
+- **Fund:** Für `dungeon-board.service.ts` existiert keine `.spec.ts` (Regel Punkt 8).
 - Testfälle:
   - Init aus Storage inkl. Default-Fallback (`DEFAULT_DUNGEON_BOARD_STATE`, `[]`).
   - Charakter hinzufügen → Position entsteht und wird persistiert.
@@ -107,8 +107,8 @@ Folgen:
 
 | Datei                                                                                           | Änderung                                                          |
 | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `src/app/features/dungeon-tracker/services/dungeon-board-service.ts`                            | Effekt, private Sync-Methode, Change-Check, Platzierung, `tokens` |
-| `src/app/features/dungeon-tracker/services/dungeon-board-service.spec.ts`                       | Neu: Tests (Punkt 7)                                              |
+| `src/app/features/dungeon-tracker/services/dungeon-board.service.ts`                            | Effekt, private Sync-Methode, Change-Check, Platzierung, `tokens` |
+| `src/app/features/dungeon-tracker/services/dungeon-board.service.spec.ts`                       | Neu: Tests (Punkt 7)                                              |
 | `src/app/features/dungeon-tracker/components/dungeon-tracker-page/dungeon-tracker-page.ts`      | Page-Effekt entfernen, ggf. `getCharacter()` entfernen            |
 | `src/app/features/dungeon-tracker/components/dungeon-tracker-page/dungeon-tracker-page.html`    | Ggf. Iteration über `tokens()` (Punkt 6)                          |
 | `src/app/features/dungeon-tracker/components/dungeon-tracker-page/dungeon-tracker-page.spec.ts` | Anpassen an entfernten Page-Effekt                                |
@@ -118,7 +118,7 @@ Folgen:
 
 ## Hinweise
 
-- Dateilimit 150 Zeilen beachten: `dungeon-board-service.ts` hat bereits ~80 Zeilen. Platzierungslogik (Punkt 5) ggf. in eine reine Funktion unter `features/dungeon-tracker/models/` oder einen Helper auslagern — erleichtert zugleich das Testen.
+- Dateilimit 150 Zeilen beachten: `dungeon-board.service.ts` hat bereits ~80 Zeilen. Platzierungslogik (Punkt 5) ggf. in eine reine Funktion unter `features/dungeon-tracker/models/` oder einen Helper auslagern — erleichtert zugleich das Testen.
 - Regel Punkt 7 bleibt gewahrt: `DungeonBoardService` **liest** `characters` und schreibt nur seinen eigenen Key `dungeon_positions`.
 
 ---
@@ -130,5 +130,5 @@ Folgen:
 - [ ] Charakter löschen ohne geöffneten Dungeon-Tracker → Position ist aus `dungeon_positions` entfernt
 - [ ] Unveränderter Charakterbestand löst keinen Storage-Write aus
 - [ ] Neue Tokens werden nie auf ein belegtes Feld gesetzt
-- [ ] `dungeon-board-service.spec.ts` existiert und deckt die Fälle aus Punkt 7 ab
+- [ ] `dungeon-board.service.spec.ts` existiert und deckt die Fälle aus Punkt 7 ab
 - [ ] Alle Vitest-Tests laufen durch (`npm run test`), Build fehlerfrei (`npm run build`)

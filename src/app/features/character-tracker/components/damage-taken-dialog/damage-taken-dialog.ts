@@ -8,16 +8,19 @@ import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
   imports: [MatDialogModule, MatButtonModule],
   template: `
     <h2 mat-dialog-title class="!text-xl !font-bold text-gray-800">Schaden auswählen</h2>
-    
+
     <mat-dialog-content>
       <!-- Grid-Container für die Schadensbuttons -->
-      <div class="grid grid-cols-6 sm:grid-cols-10 gap-1.5 max-h-[55vh] overflow-y-auto p-1 bg-gray-50 rounded-lg border border-gray-100">
+      <div
+        class="grid grid-cols-6 sm:grid-cols-10 gap-1.5 max-h-[55vh] overflow-y-auto p-1 bg-gray-50 rounded-lg border border-gray-100"
+      >
         @for (damageValue of damageOptions; track damageValue) {
-          <button 
-            mat-flat-button 
+          <button
+            mat-flat-button
             [class]="getButtonColorClass(damageValue)"
             class="damage-grid-btn text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95"
-            (click)="confirmDamageTaken(damageValue)">
+            (click)="confirmDamageTaken(damageValue)"
+          >
             {{ damageValue }}
           </button>
         }
@@ -26,28 +29,32 @@ import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 
     <!-- Feste Aktionsleiste für den Abbruch -->
     <mat-dialog-actions align="end" class="border-t pt-2">
-      <button mat-button (click)="onNoClick()" class="!text-gray-500 font-semibold">Abbrechen</button>
+      <button mat-button (click)="onNoClick()" class="!text-gray-500 font-semibold">
+        Abbrechen
+      </button>
     </mat-dialog-actions>
   `,
-  styles: [`
-    /* Das Geheimnis für winzige, quadratische Material-Buttons */
-    .damage-grid-btn {
-      /* Überschreibt die harten Material-Vorgaben vollständig */
-      min-width: 0 !important;
-      min-height: 0 !important;
-      padding: 0 !important;
-      
-      /* Macht den Button perfekt quadratisch */
-      width: 100% !important;
-      aspect-ratio: 1 / 1 !important;
-      
-      /* Sorgt dafür, dass der Text trotz der geringen Größe zentriert bleibt */
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      border-radius: 6px !important;
-    }
-  `]
+  styles: [
+    `
+      /* Das Geheimnis für winzige, quadratische Material-Buttons */
+      .damage-grid-btn {
+        /* Überschreibt die harten Material-Vorgaben vollständig */
+        min-width: 0 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+
+        /* Macht den Button perfekt quadratisch */
+        width: 100% !important;
+        aspect-ratio: 1 / 1 !important;
+
+        /* Sorgt dafür, dass der Text trotz der geringen Größe zentriert bleibt */
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 6px !important;
+      }
+    `,
+  ],
 })
 export class DamageTakenDialog {
   private dialogRef: MatDialogRef<DamageTakenDialog> = inject(MatDialogRef<DamageTakenDialog>);
