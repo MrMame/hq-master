@@ -11,6 +11,7 @@ import { SESSION_KEYS } from '../../../core/session-state/session-keys';
 import { SessionSliceData, SessionSlices } from '../../../core/session-state/session-slices';
 import { CardManagerService } from '../../card-manager/services/card-manager.service';
 import { DungeonBoardService } from '../../dungeon-tracker/services/dungeon-board.service';
+import { CharacterCardLayoutService } from '../../character-tracker/services/character-card-layout.service';
 import { DEFAULT_SESSION_META, SessionMeta } from '../models/session-meta.model';
 import { SessionSnapshot } from '../models/session-snapshot.model';
 
@@ -44,6 +45,7 @@ export class GameSessionService {
     characters: inject(CharactersDbService),
     dungeon: inject(DungeonBoardService),
     deck: inject(CardManagerService),
+    characterCards: inject(CharacterCardLayoutService),
   };
 
   // Die Meta gehört dem Orchestrator selbst und ist kein Slice.
@@ -64,6 +66,7 @@ export class GameSessionService {
     characters: this.slices.characters.sessionState(),
     dungeon: this.slices.dungeon.sessionState(),
     deck: this.slices.deck.sessionState(),
+    characterCards: this.slices.characterCards.sessionState(),
   }));
 
   // PUBLICS ===============================================================================

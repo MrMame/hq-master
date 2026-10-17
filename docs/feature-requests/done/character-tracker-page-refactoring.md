@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-16  
 **Priorität:** Mittel  
-**Status:** Offen  
+**Status:** done (2026-10-17 18:16) — #1–#7 done (2026-10-17 18:11), #8 done (2026-10-17 18:16); UI manuell geprüft (2026-10-17 18:25)  
 **Bezug:** `.claude/rules/clean-code.md` (max. 150 Zeilen, SRP), `.claude/rules/architecture.md` („Session-State-Services“, Punkte 5 und 6), `.claude/rules/testing.md` (kein `any`, Testabdeckung)
 
 ---
@@ -35,7 +35,7 @@ Dieser Feature Request baut darauf auf und **setzt `characters-db-reactive-read-
 
 ## Anforderungen
 
-### 1. Kartenlayout in eigenen Feature-Service auslagern
+### 1. Kartenlayout in eigenen Feature-Service auslagern ✅ done (2026-10-17 18:11)
 
 - **Fund:** Position (`x`/`y`), `showTop` und `isMinimised` werden **in-place** am `MovableCharacterItem` mutiert (`onDragEnded`, `showMovableCharacterItemOnTop`, `toggleMinimise()` im Template). Verstößt gegen Architekturregel Punkt 5 (Immutable Updates).
 - Neuer Service `features/character-tracker/services/character-card-layout-service.ts` (per `ng g s`):
@@ -43,12 +43,13 @@ Dieser Feature Request baut darauf auf und **setzt `characters-db-reactive-read-
   - Methoden: `moveBy(id, offset)`, `bringToFront(id)`, `toggleMinimised(id)`, `layoutFor(id)` als `computed`-fähiger Zugriff
   - Default-Position für neue Karten (aktuell `newCharacterCardPosition` / Index-Staffelung) zentral im Service
 - Entscheiden und dokumentieren, ob das Layout persistiert wird (Session-State gemäß REQUIREMENTS §0) — falls ja, über `StorageService`.
+- **Entscheidung (2026-10-17):** Das Layout wird als Session-Slice persistiert (`persistedState(SESSION_KEYS.characterCardLayout)`, `SessionSliceData.characterCards`, XML-Element `<characterCards>`). Ältere Spielstände ohne dieses Element laden mit leerem Layout.
 
 **Erwartetes Verhalten:** Karte verschieben/nach vorne holen/minimieren → Zustand ändert sich nur über den Service, die Page enthält keine Layoutlogik mehr.
 
 ---
 
-### 2. Dialoge kapseln und typisieren
+### 2. Dialoge kapseln und typisieren ✅ done (2026-10-17 18:11)
 
 - **Fund:** `addCharacter()` und `openDamageTakenDialog()` duplizieren die Dialog-Konfiguration (`80vw`/`80vh`). `afterClosed()` liefert ungetypt `any`, das ohne Typprüfung weiterverwendet wird (`{ ...result, id: newId }`). Verstößt gegen `testing.md` (kein `any`).
 - Dialog-Konfiguration als gemeinsame Konstante.
@@ -59,7 +60,7 @@ Dieser Feature Request baut darauf auf und **setzt `characters-db-reactive-read-
 
 ---
 
-### 3. Anlegen von Charakteren vereinheitlichen
+### 3. Anlegen von Charakteren vereinheitlichen ✅ done (2026-10-17 18:11)
 
 - **Fund:** `addMonster()`, `addHero()` und `addCharacter()` enthalten jeweils denselben Block (`newId` berechnen, `MovableCharacterItem` erzeugen, `update()`).
 - Gemeinsamer privater Pfad: `CharacterInfo` erzeugen → `charactersDbService.writeCharacter()`. Die Karte entsteht reaktiv über das Signal (siehe Abgrenzung).
@@ -69,7 +70,7 @@ Dieser Feature Request baut darauf auf und **setzt `characters-db-reactive-read-
 
 ---
 
-### 4. Schadensberechnung ohne In-Place-Mutation
+### 4. Schadensberechnung ohne In-Place-Mutation ✅ done (2026-10-17 18:11)
 
 - **Fund:** `CombatCalculatorService.applyDamage(item, …)` mutiert `item.characterInfo` direkt; die Page erzeugt danach per Spread eine neue Referenz, damit Signals feuern (inkl. auskommentiertem Alternativcode).
 - `applyDamage` als reine Funktion: `(character: CharacterInfo, type, damage) => CharacterInfo`.
@@ -80,7 +81,7 @@ Dieser Feature Request baut darauf auf und **setzt `characters-db-reactive-read-
 
 ---
 
-### 5. Template in Unterkomponenten aufteilen
+### 5. Template in Unterkomponenten aufteilen ✅ done (2026-10-17 18:11)
 
 - Karten-Wrapper (Drag, Position, Griffleiste) als eigene Komponente, z. B. `movable-character-card` (per `ng g c`).
 - Minimierte Ansicht (Bild, Treffer-Buttons, Health/Armor) als eigene Komponente, z. B. `character-card-minimised`.
@@ -90,7 +91,7 @@ Dieser Feature Request baut darauf auf und **setzt `characters-db-reactive-read-
 
 ---
 
-### 6. Aufräumen
+### 6. Aufräumen ✅ done (2026-10-17 18:11)
 
 - Selector `app-monster-tracker-page` → `app-character-tracker-page`.
 - Spec-Beschreibung `CharacterTrackerExPage` → `CharacterTrackerPage`.
@@ -100,11 +101,20 @@ Dieser Feature Request baut darauf auf und **setzt `characters-db-reactive-read-
 
 ---
 
-### 7. Tests
+### 7. Tests ✅ done (2026-10-17 18:11)
 
 - **Fund:** Die Page hat nur einen `should create`-Test.
 - Tests für: Anlegen (Monster/Held/Dialog → `writeCharacter` aufgerufen), Löschen, Schaden (Dialog-Ergebnis → neuer `CharacterInfo` persistiert, Abbruch → nichts passiert), Layout-Service (verschieben, nach vorne holen, minimieren, immutable Updates), reine `applyDamage`-Funktion.
 - Mocks mit `vi.fn()`.
+
+---
+
+### 8. `CharacterCard` — doppelter DB-Write ✅ done (2026-10-17 18:16)
+
+- **Fund (2026-10-17, bei Umsetzung von #1–#7):** [character-card.ts](../../src/app/features/character-tracker/components/character-card/character-card.ts) schreibt Änderungen selbst (per `toObservable(...).pipe(debounceTime(300))`) über `writeCharacter()` **und** gibt sie per `characterInfoChange` aus, worauf `CharacterTrackerPage.saveCharacter()` erneut schreibt. Jede Eingabe wird dadurch zweimal persistiert. Zusätzlich nutzt die Komponente `ngOnDestroy` + manuelles `subscribe` (Anti-Pattern laut Architekturregel).
+- Genau einen Schreibweg festlegen (bevorzugt: Karte gibt nur aus, die Page schreibt), Subscription/Lifecycle-Hook entfernen.
+
+**Erwartetes Verhalten:** Eine Änderung in der Vollansicht führt zu genau einem `writeCharacter()`-Aufruf.
 
 ---
 
@@ -127,10 +137,10 @@ Dieser Feature Request baut darauf auf und **setzt `characters-db-reactive-read-
 
 ## Akzeptanzkriterien
 
-- [ ] Keine Datei im Feature `character-tracker` hat mehr als 150 Zeilen
-- [ ] `CharacterTrackerPage` enthält keine Layout-, Dialog-Konfigurations- oder Schadenslogik mehr
-- [ ] Keine In-Place-Mutation von `CharacterInfo` oder Karten-Layout
-- [ ] Kein `any` im Dialog-Pfad (typisierte `MatDialogRef<…, Result>`)
-- [ ] Anlegen, Löschen, Schaden und Layout sind mit Vitest-Tests abgedeckt
-- [ ] Verhalten in der UI unverändert (Drag & Drop, Minimieren, nach vorne holen, Schaden, Löschen)
-- [ ] `npm run lint`, `npm run test`, `npm run build` fehlerfrei
+- [x] Keine Datei im Feature `character-tracker` hat mehr als 150 Zeilen
+- [x] `CharacterTrackerPage` enthält keine Layout-, Dialog-Konfigurations- oder Schadenslogik mehr
+- [x] Keine In-Place-Mutation von `CharacterInfo` oder Karten-Layout
+- [x] Kein `any` im Dialog-Pfad (typisierte `MatDialogRef<…, Result>`)
+- [x] Anlegen, Löschen, Schaden und Layout sind mit Vitest-Tests abgedeckt
+- [x] Verhalten in der UI unverändert (Drag & Drop, Minimieren, nach vorne holen, Schaden, Löschen, Werte in der Vollansicht ändern) — manuell geprüft (2026-10-17 18:25)
+- [x] `npm run lint`, `npm run test`, `npm run build` fehlerfrei

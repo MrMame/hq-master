@@ -1,182 +1,56 @@
-import { Component, inject, signal, untracked, WritableSignal } from '@angular/core';
-import { DragDropModule, CdkDragEnd, Point } from '@angular/cdk/drag-drop';
-import { CharacterCard } from '../character-card/character-card';
-import { MovableItem } from '../../models/movable-item.model';
-import { MovableCharacterItem } from '../../models/movable-character-item.model';
+import { Component, inject, Signal } from '@angular/core';
+import { MovableCharacterCard } from '../movable-character-card/movable-character-card';
 import { CharacterInfo } from '../../models/character-info.model';
-
+import { DamageTypes } from '../../models/damage-types.model';
 import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
 import { MonsterCharacterCreatorService } from '../../services/character-creators/monster-character-creator.service';
 import { HeroCharacterCreatorService } from '../../services/character-creators/hero-character-creator.service';
-import { CombatCalculatorService } from '../../services/combat-calculator.service';
-
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-
-import { DamageTypes } from '../../models/damage-types.model';
-import { DamageTakenDialog } from '../damage-taken-dialog/damage-taken-dialog';
-import { AddCharacterDialog } from '../add-character-dialog/add-character-dialog';
+import { CharacterCardLayoutService } from '../../services/character-card-layout.service';
+import { CharacterDialogsService } from '../../services/character-dialogs.service';
+import { applyDamage } from '../../utils/damage.util';
 
 @Component({
-  selector: 'app-monster-tracker-page',
-  imports: [DragDropModule, CharacterCard],
+  selector: 'app-character-tracker-page',
+  imports: [MovableCharacterCard],
   templateUrl: './character-tracker-page.html',
   styleUrl: './character-tracker-page.scss',
 })
 export class CharacterTrackerPage {
-  // Enum DamageTypes importieren und in der HTML-Komponente verfügbar machen
-  DamageTypes: typeof DamageTypes = DamageTypes;
-  charactersDbService: CharactersDbService = inject(CharactersDbService);
-  monsterCharacterCreatorService: MonsterCharacterCreatorService = inject(
+  private readonly charactersDbService: CharactersDbService = inject(CharactersDbService);
+  private readonly monsterCreator: MonsterCharacterCreatorService = inject(
     MonsterCharacterCreatorService,
   );
-  heroCharacterCreatorService: HeroCharacterCreatorService = inject(HeroCharacterCreatorService);
-  combatCalculatorService: CombatCalculatorService = inject(CombatCalculatorService);
-  dialog: MatDialog = inject(MatDialog);
+  private readonly heroCreator: HeroCharacterCreatorService = inject(HeroCharacterCreatorService);
+  private readonly characterDialogs: CharacterDialogsService = inject(CharacterDialogsService);
+  protected readonly cardLayout: CharacterCardLayoutService = inject(CharacterCardLayoutService);
 
-  private newCharacterCardPosition: { x: number; y: number } = { x: 50, y: 50 };
+  readonly characters: Signal<CharacterInfo[]> = this.charactersDbService.characters;
 
-  movableCharacterItems: WritableSignal<MovableCharacterItem[]> = signal<MovableCharacterItem[]>(
-    [],
-  );
-
-  constructor() {
-    this.loadMonstersFromDb();
-  }
-
-  loadMonstersFromDb(): void {
-    const charactersFromDb: CharacterInfo[] = untracked(this.charactersDbService.characters);
-    const items: MovableCharacterItem[] = charactersFromDb.map((character, index) => {
-      return new MovableCharacterItem(index + 1, 50 + index * 100, 50 + index * 100, character);
-    });
-    // 3. Signal-Wert setzen
-    this.movableCharacterItems.set(items);
-  }
   addMonster(): void {
-    const newId: number = this.movableCharacterItems().length + 1;
-    const newMonster: CharacterInfo = this.monsterCharacterCreatorService.CreateNewRandomMonster();
-    this.charactersDbService.writeCharacter(newMonster);
-    const newItem: MovableCharacterItem = new MovableCharacterItem(
-      newId,
-      this.newCharacterCardPosition.x,
-      this.newCharacterCardPosition.y,
-      newMonster,
-    );
-    // 4. Signal updaten (erstellt neues Array-Inhalt)
-    this.movableCharacterItems.update((items) => [...items, newItem]);
+    this.saveCharacter(this.monsterCreator.CreateNewRandomMonster());
   }
+
   addHero(): void {
-    const newId: number = this.movableCharacterItems().length + 1;
-    const newCharacter: CharacterInfo = this.heroCharacterCreatorService.CreateNewRandomHero();
-    this.charactersDbService.writeCharacter(newCharacter);
-    const newItem: MovableCharacterItem = new MovableCharacterItem(
-      newId,
-      this.newCharacterCardPosition.x,
-      this.newCharacterCardPosition.y,
-      newCharacter,
-    );
-    this.movableCharacterItems.update((items) => [...items, newItem]);
+    this.saveCharacter(this.heroCreator.CreateNewRandomHero());
   }
+
   addCharacter(): void {
-    const dialogRef: MatDialogRef<AddCharacterDialog, CharacterInfo | false> = this.dialog.open<
-      AddCharacterDialog,
-      void,
-      CharacterInfo | false
-    >(AddCharacterDialog, {
-      width: '80vw',
-      maxWidth: '80vw',
-      height: '80vh',
-      maxHeight: '80vh',
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result !== undefined && result !== false) {
-        this.charactersDbService.writeCharacter(result);
-        const newId: number = this.movableCharacterItems().length + 1;
-        const newItem: MovableCharacterItem = new MovableCharacterItem(
-          newId,
-          this.newCharacterCardPosition.x,
-          this.newCharacterCardPosition.y,
-          result,
-        );
-        this.movableCharacterItems.update((items) => [...items, newItem]);
-      }
+    this.characterDialogs.openAddCharacter().subscribe((character) => {
+      if (character) this.saveCharacter(character);
     });
   }
 
-  showMovableCharacterItemOnTop(item: MovableCharacterItem): void {
-    // Über das Signal mappen
-    this.movableCharacterItems.update((items) => {
-      items.forEach((i) => (i.showTop = false));
-      item.showTop = true;
-      return [...items]; // Gibt eine neue Array-Referenz zurück
+  removeCharacter(character: CharacterInfo): void {
+    this.charactersDbService.removeCharacter(character);
+  }
+
+  takeDamage(character: CharacterInfo, damageType: DamageTypes): void {
+    this.characterDialogs.openDamageTaken().subscribe((damage) => {
+      if (damage !== undefined) this.saveCharacter(applyDamage(character, damageType, damage));
     });
   }
 
-  // Diese Funktion wird aufgerufen, wenn der Drag beendet wird
-  onDragEnded(event: CdkDragEnd, item: MovableItem): void {
-    // Holen der neuen Distanz relativ zur Startposition
-    const offset: Point = event.source.getFreeDragPosition();
-    // Aktualisieren der finalen Position im Datenmodell
-    item.x += offset.x;
-    item.y += offset.y;
-    // Setzt den internen CDK-Offset zurück, da wir die Position nun via Styles festlegen
-    event.source.reset();
-  }
-
-  removeMovableCharacteritem(item: MovableCharacterItem): void {
-    // Remove Characterinfo From Database
-    this.charactersDbService.removeCharacter(item.characterInfo);
-    // Remove Movable Card
-    this.movableCharacterItems.update((items) => items.filter((i) => i !== item));
-  }
-
-  openDamageTakenDialog(damageType: DamageTypes, movableCharacterItem: MovableCharacterItem): void {
-    const dialogRef: MatDialogRef<DamageTakenDialog> = this.dialog.open(DamageTakenDialog, {
-      width: '80vw',
-      maxWidth: '80vw',
-      height: '80vh',
-      maxHeight: '80vh',
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result !== undefined && result !== false) {
-        // 1. Berechnung durchführen (verändert die Werte im Objekt)
-        this.combatCalculatorService.applyDamage(movableCharacterItem, damageType, result);
-
-        // 2. Das übergeordnete Signal mit neuen Referenzen updaten
-        this.movableCharacterItems.update((items) => {
-          return items.map((item) => {
-            if (item.id === movableCharacterItem.id) {
-              // WICHTIG: Wir weisen characterInfo eine frische Objekt-Kopie zu.
-              // Nur so bemerken das übergeordnete Signal UND die CharacterCard die Änderung!
-              item.characterInfo = { ...item.characterInfo };
-
-              // Optional: Wenn du eine Klasse statt eines Interfaces nutzt,
-              // kannst du das gesamte Item klonen, falls nötig:
-              // return Object.assign(Object.create(Object.getPrototypeOf(item)), item);
-            }
-            return item;
-          });
-        });
-
-        // 3. Den aktualisierten Zustand sofort in die Datenbank schreiben
-        this.charactersDbService.writeCharacter(movableCharacterItem.characterInfo);
-      }
-    });
-  }
-
-  // Diese Methode in die Klasse CharacterTrackerPage einfügen:
-  updateCharacterInList(itemId: number, updatedInfo: CharacterInfo | undefined): void {
-    // Wenn das Event fehlerhaft oder leer ist, brechen wir ab
-    if (!updatedInfo) return;
-    this.movableCharacterItems.update((items) => {
-      return items.map((item) => {
-        if (item.id === itemId) {
-          // Wir weisen die neue Objektreferenz zu
-          item.characterInfo = updatedInfo;
-          this.charactersDbService.writeCharacter(updatedInfo);
-        }
-        return item;
-      });
-    });
+  saveCharacter(character: CharacterInfo): void {
+    this.charactersDbService.writeCharacter(character);
   }
 }

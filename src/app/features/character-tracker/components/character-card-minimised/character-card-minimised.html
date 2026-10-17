@@ -1,0 +1,31 @@
+<div class="minimized-content p-1">
+  <div class="flex flex-row items-center justify-center">
+    <img
+      draggable="false"
+      [src]="character().image"
+      [alt]="character().name"
+      class="h-[48px] w-[48px] mr-4"
+    />
+    <button
+      (click)="damageRequested.emit(DamageTypes.Normal)"
+      class="h-[30px] w-[30px] hover:bg-blue-700 text-white font-bold rounded"
+    >
+      <img draggable="false" src="./img/hit-normal.svg" alt="normal-hit" class="object-contain" />
+    </button>
+    <button
+      (click)="damageRequested.emit(DamageTypes.Critical)"
+      class="ml-4 h-[30px] w-[30px] hover:bg-red-700 text-white font-bold rounded"
+    >
+      <img
+        draggable="false"
+        src="./img/hit-critical.svg"
+        alt="critical-hit"
+        class="object-contain"
+      />
+    </button>
+  </div>
+  <div class="flex flex-row items-center justify-center">
+    <span class="text-green-400 ml-2">{{ character().health }}</span>
+    <span class="text-blue-400 ml-2">{{ character().armor }}</span>
+  </div>
+</div>

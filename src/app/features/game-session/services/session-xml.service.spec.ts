@@ -45,6 +45,19 @@ describe('SessionXmlService', () => {
     expect(xml).toContain('<card id="c1" name="Schwert"');
   });
 
+  it('should write the card layout as <characterCards>', () => {
+    const xml: string = service.serialize(createSessionSnapshot());
+    expect(xml).toContain('<characterCards topCardId="b">');
+    expect(xml).toContain('<card characterId="b" x="320" y="-10" minimised="false"/>');
+  });
+
+  it('should read an empty card layout from older files without <characterCards>', () => {
+    const xml: string = service
+      .serialize(createSessionSnapshot())
+      .replace(/<characterCards[\s\S]*<\/characterCards>/, '');
+    expect(service.parse(xml).characterCards).toEqual({ cards: {}, topCardId: null });
+  });
+
   it('should reject malformed XML', () => {
     expect(() => service.parse('<gameSession')).toThrow(/XML konnte nicht gelesen werden/);
   });

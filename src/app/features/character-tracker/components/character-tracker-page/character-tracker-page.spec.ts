@@ -4,7 +4,11 @@ import { of } from 'rxjs';
 
 import { CharacterTrackerPage } from './character-tracker-page';
 import { CharacterInfo } from '../../models/character-info.model';
+import { DamageTypes } from '../../models/damage-types.model';
 import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
+import { CharacterCardLayoutService } from '../../services/character-card-layout.service';
+import { CharacterCard } from '../character-card/character-card';
+import { By } from '@angular/platform-browser';
 
 const dialogCharacter: CharacterInfo = {
   id: '1700000000000-42',
@@ -24,6 +28,7 @@ describe('CharacterTrackerPage', () => {
   let component: CharacterTrackerPage;
   let fixture: ComponentFixture<CharacterTrackerPage>;
   let charactersDbService: CharactersDbService;
+  let writeSpy: ReturnType<typeof vi.spyOn>;
   const dialogOpen: ReturnType<typeof vi.fn> = vi.fn();
 
   beforeEach(async () => {
@@ -37,56 +42,98 @@ describe('CharacterTrackerPage', () => {
     fixture = TestBed.createComponent(CharacterTrackerPage);
     component = fixture.componentInstance;
     charactersDbService = TestBed.inject(CharactersDbService);
+    writeSpy = vi.spyOn(charactersDbService, 'writeCharacter');
     await fixture.whenStable();
   });
 
-  function closeDialogWith(result: CharacterInfo | false | undefined): void {
+  function closeDialogWith(result: CharacterInfo | number | undefined): void {
     dialogOpen.mockReturnValue({ afterClosed: () => of(result) });
-    component.addCharacter();
   }
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
   it('shows no cards when no characters are stored', () => {
-    expect(component.movableCharacterItems()).toEqual([]);
+    expect(component.characters()).toEqual([]);
+    expect(fixture.nativeElement.querySelector('app-movable-character-card')).toBeNull();
   });
 
-  it('shows one card per stored character', () => {
-    localStorage.setItem('characters', JSON.stringify([dialogCharacter]));
-    TestBed.resetTestingModule();
-    TestBed.configureTestingModule({
-      imports: [CharacterTrackerPage],
-      providers: [{ provide: MatDialog, useValue: { open: dialogOpen } }],
-    });
-    const page: CharacterTrackerPage =
-      TestBed.createComponent(CharacterTrackerPage).componentInstance;
-    expect(page.movableCharacterItems().map((i) => i.characterInfo)).toEqual([dialogCharacter]);
+  it('renders one movable card per stored character', async () => {
+    charactersDbService.writeCharacter(dialogCharacter);
+    await fixture.whenStable();
+    const cards: NodeListOf<Element> = fixture.nativeElement.querySelectorAll(
+      'app-movable-character-card',
+    );
+    expect(cards).toHaveLength(1);
+    expect(cards[0].textContent).toContain('Monster Dialog');
   });
 
-  it('persists the dialog character with its own id and adds a card', () => {
-    const cardsBefore: number = component.movableCharacterItems().length;
-    const writeSpy: ReturnType<typeof vi.spyOn> = vi.spyOn(charactersDbService, 'writeCharacter');
+  it('persists a random monster', () => {
+    component.addMonster();
+    expect(writeSpy).toHaveBeenCalledTimes(1);
+    expect(component.characters()).toHaveLength(1);
+  });
 
+  it('persists a random hero', () => {
+    component.addHero();
+    expect(writeSpy).toHaveBeenCalledTimes(1);
+    expect(component.characters()).toHaveLength(1);
+  });
+
+  it('gives every new character its own id', () => {
+    component.addMonster();
+    component.addMonster();
+    component.removeCharacter(component.characters()[0]);
+    component.addHero();
+    const ids: string[] = component.characters().map((c) => c.id);
+    expect(new Set(ids).size).toBe(2);
+  });
+
+  it('persists the dialog character with its own id', () => {
     closeDialogWith(dialogCharacter);
-
+    component.addCharacter();
     expect(writeSpy).toHaveBeenCalledWith(dialogCharacter);
-    expect(charactersDbService.characters()).toContainEqual(dialogCharacter);
-    const cards: CharacterInfo[] = component.movableCharacterItems().map((i) => i.characterInfo);
-    expect(cards).toHaveLength(cardsBefore + 1);
-    expect(cards[cards.length - 1].id).toBe('1700000000000-42');
+    expect(component.characters()).toEqual([dialogCharacter]);
   });
 
-  const cancelResults: (false | undefined)[] = [false, undefined];
-  it.each(cancelResults)('does nothing when the dialog closes with %s', (result) => {
-    const cardsBefore: number = component.movableCharacterItems().length;
-    const writeSpy: ReturnType<typeof vi.spyOn> = vi.spyOn(charactersDbService, 'writeCharacter');
-
-    closeDialogWith(result);
-
+  it('does nothing when the add dialog is cancelled', () => {
+    closeDialogWith(undefined);
+    component.addCharacter();
     expect(writeSpy).not.toHaveBeenCalled();
-    expect(charactersDbService.characters()).toEqual([]);
-    expect(component.movableCharacterItems()).toHaveLength(cardsBefore);
+    expect(component.characters()).toEqual([]);
+  });
+
+  it('removes a character', () => {
+    const removeSpy: ReturnType<typeof vi.spyOn> = vi.spyOn(charactersDbService, 'removeCharacter');
+    charactersDbService.writeCharacter(dialogCharacter);
+    component.removeCharacter(dialogCharacter);
+    expect(removeSpy).toHaveBeenCalledWith(dialogCharacter);
+    expect(component.characters()).toEqual([]);
+  });
+
+  it('persists a new character object with the damage applied', () => {
+    charactersDbService.writeCharacter(dialogCharacter);
+    writeSpy.mockClear();
+    closeDialogWith(15);
+    component.takeDamage(dialogCharacter, DamageTypes.Normal);
+    expect(writeSpy).toHaveBeenCalledWith({ ...dialogCharacter, armor: 0, health: 95 });
+    expect(component.characters()[0]).not.toBe(dialogCharacter);
+    expect(dialogCharacter.health).toBe(100);
+  });
+
+  it('does nothing when the damage dialog is cancelled', () => {
+    closeDialogWith(undefined);
+    component.takeDamage(dialogCharacter, DamageTypes.Critical);
+    expect(writeSpy).not.toHaveBeenCalled();
+  });
+
+  it('writes a change in the full card view exactly once', async () => {
+    charactersDbService.writeCharacter(dialogCharacter);
+    TestBed.inject(CharacterCardLayoutService).toggleMinimised(dialogCharacter.id);
+    await fixture.whenStable();
+    writeSpy.mockClear();
+    const card: CharacterCard = fixture.debugElement.query(
+      By.directive(CharacterCard),
+    ).componentInstance;
+    card.updateField('health', 1);
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    expect(writeSpy).toHaveBeenCalledExactlyOnceWith({ ...dialogCharacter, health: 1 });
   });
 });

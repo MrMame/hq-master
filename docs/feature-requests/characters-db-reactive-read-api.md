@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-16  
 **Priorität:** Mittel  
-**Status:** Offen  
+**Status:** Teilweise umgesetzt — §2 done (bereits erfüllt, 2026-10-17 18:14)  
 **Bezug:** `.claude/rules/architecture.md` → „Session-State-Services: reaktive Schnittstelle“, Punkt 2 (und Punkt 6)
 
 ---
@@ -41,7 +41,7 @@ Folgen:
 
 ---
 
-### 2. `CharacterTrackerPage` — Einmal-Read und lokale Kopie entfernen
+### 2. `CharacterTrackerPage` — Einmal-Read und lokale Kopie entfernen ✅ done (bereits erfüllt, 2026-10-17 18:14)
 
 - **Fund:** Die Page liest den Bestand **einmalig im Constructor** (`loadMonstersFromDb()`) und kopiert ihn in das lokale `WritableSignal` `movableCharacterItems`. Verstößt gegen Architekturregel Punkt 6.
 - `loadMonstersFromDb()` und den Constructor-Aufruf entfernen.
@@ -113,7 +113,7 @@ Folgen:
 
 - [ ] `CharactersDbService` hat keine öffentliche Methode, die `CharacterInfo[]` zurückgibt
 - [ ] `grep readCharacters src/` findet keine Aufrufer außerhalb des Service
-- [ ] `CharacterTrackerPage` hat keinen Einmal-Read und keine lokale Kopie der Charakterliste mehr
+- [x] `CharacterTrackerPage` hat keinen Einmal-Read und keine lokale Kopie der Charakterliste mehr
 - [ ] Leerer Storage → Init-Monster werden persistiert und sind im Dungeon-Tracker sichtbar
 - [ ] Gespeichertes `[]` bleibt nach Reload leer
 - [ ] `core/` importiert nichts aus `features/*/services/`

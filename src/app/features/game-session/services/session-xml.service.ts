@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { SessionSnapshot } from '../models/session-snapshot.model';
+import { readCardLayouts, writeCardLayouts } from '../xml/card-layout.xml-mapper';
 import { readCharacters, writeCharacters } from '../xml/characters.xml-mapper';
 import { readDeck, writeDeck } from '../xml/deck.xml-mapper';
 import { readDungeonBoard, writeDungeonBoard } from '../xml/dungeon.xml-mapper';
 import { readGameTime, writeGameTime } from '../xml/game-time.xml-mapper';
 import { readMeta, writeMeta } from '../xml/meta.xml-mapper';
-import { indentXml, requireChild } from '../xml/xml.util';
+import { firstChild, indentXml, requireChild } from '../xml/xml.util';
 
 const ROOT_ELEMENT: string = 'gameSession';
 const FORMAT_VERSION: string = '1';
@@ -26,6 +27,7 @@ export class SessionXmlService {
       writeCharacters(doc, snapshot.characters),
       writeDungeonBoard(doc, snapshot.dungeon),
       writeDeck(doc, snapshot.deck),
+      writeCardLayouts(doc, snapshot.characterCards),
     );
     indentXml(root);
     return `${XML_DECLARATION}\n${new XMLSerializer().serializeToString(doc)}\n`;
@@ -40,6 +42,7 @@ export class SessionXmlService {
       characters: readCharacters(requireChild(root, 'characters')),
       dungeon: readDungeonBoard(requireChild(root, 'dungeonBoard')),
       deck: readDeck(requireChild(root, 'cardDeck')),
+      characterCards: readCardLayouts(firstChild(root, 'characterCards')),
     };
   }
 

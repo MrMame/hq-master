@@ -75,5 +75,12 @@ export function createSessionSnapshot(): SessionSnapshot {
       ],
     },
     deck: createDeckState(),
+    characterCards: {
+      cards: {
+        a: { x: 50, y: 50, isMinimised: true },
+        b: { x: 320, y: -10, isMinimised: false },
+      },
+      topCardId: 'b',
+    },
   };
 }

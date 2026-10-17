@@ -1,17 +1,15 @@
-import { Component, model, inject, OnDestroy, ModelSignal } from '@angular/core';
+import { Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { debounceTime, skip, Subscription } from 'rxjs';
 import { CharacterInfo } from '../../models/character-info.model';
-import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
 
+/** Vollansicht eines Charakters; Änderungen werden nur ausgegeben, gespeichert wird beim Aufrufer. */
 @Component({
   selector: 'app-character-card',
   standalone: true,
   imports: [FormsModule],
   template: `
     <div class="bg-yellow-500 shadow-md rounded-lg p-0.5 h-[30vh] overflow-scroll text-xs">
-      @if (characterInfo(); as info) {
+      @if (character(); as info) {
         <div class="flex mb-1">
           <img
             [src]="info.image"
@@ -79,32 +77,11 @@ import { CharactersDbService } from '../../../../core/services/characters/charac
     </div>
   `,
 })
-export class CharacterCard implements OnDestroy {
-  private charactersDbService: CharactersDbService = inject(CharactersDbService);
-
-  public characterInfo: ModelSignal<CharacterInfo | undefined> = model<CharacterInfo>();
-
-  private readonly subscription: Subscription;
-
-  constructor() {
-    // skip(1) verhindert einen Schreibvorgang beim ersten Initialisieren des Signals
-    this.subscription = toObservable(this.characterInfo)
-      .pipe(skip(1), debounceTime(300))
-      .subscribe((info) => {
-        if (info) {
-          this.charactersDbService.writeCharacter(info);
-        }
-      });
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
+export class CharacterCard {
+  readonly character: InputSignal<CharacterInfo> = input.required<CharacterInfo>();
+  readonly characterChange: OutputEmitterRef<CharacterInfo> = output<CharacterInfo>();
 
   updateField(key: keyof CharacterInfo, value: number): void {
-    this.characterInfo.update((current) => {
-      if (!current) return current;
-      return { ...current, [key]: value };
-    });
+    this.characterChange.emit({ ...this.character(), [key]: value });
   }
 }

@@ -26,10 +26,13 @@ core/
 
 features/
   character-tracker/   → Charakterverwaltung & Kampf
-    components/        → CharacterTrackerPage, CharacterCard, Dialoge
-    models/            → character-info.model.ts, damage-types.model.ts, …
-    services/          → combat-calculator.service.ts
+    components/        → CharacterTrackerPage, MovableCharacterCard, CharacterCardMinimised,
+                         CharacterCard, Dialoge
+    models/            → character-info.model.ts, card-layout.model.ts, damage-types.model.ts, …
+    services/          → character-card-layout.service.ts (Kartenlayout, Session-Slice),
+                         character-dialogs.service.ts
       character-creators/ → hero-/monster-character-creator.service.ts
+    utils/             → damage.util.ts (reine Schadensberechnung)
 
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung
     components/        → DungeonTrackerPage, DungeonToken
