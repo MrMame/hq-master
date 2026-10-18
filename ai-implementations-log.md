@@ -2,6 +2,24 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-18 19:47) - Refactoring: Card-Zone in den Seitencontainer einpassen (card-zone-layout #1–#3)
+
+- **Was wurde gemacht:** Die `.card-zone` ragte rechts aus `.cardManagerPageContainer` heraus (16rem Sidebar + 90vw Inhalt > 100vw). Container auf `width: 100%`, `.card-zone` auf `flex: 1; min-width: 0`, Stapel-/Bankbereich auf `width: 100%` umgestellt; doppelte Styles von `.bankCardsContainer` entfernt. Request vollständig umgesetzt und nach `done/` verschoben.
+- **Dateien geändert:** `card-manager-page.css`, `card-manager-page.html` (Sidebar-Titel, Caption und Trennlinie, vom Nutzer), `card-manager-page-clicks.spec.ts`, `docs/refactoring-requests/card-zone-layout.md` (neu → done/)
+- **Wichtige Entscheidung:** Sidebar-Buttons im Spec über ihre Beschriftung (`clickButton`) statt `button:nth-child(n)` angesprochen, da die neuen Sidebar-Elemente die Positionen verschoben haben. `min-width: 0` nötig, da Flex-Items sonst nicht unter ihre Inhaltsbreite schrumpfen. `.cardInBank` (10dvw) bleibt als Kartengröße unverändert. Probe `e2e/probe/card-zone-layout.spec.ts`: vorher 1408px > 1280px, nachher alle Bereiche im Container (1280/1920px). 315 Tests, Lint, Build und e2e grün.
+
+### (2026-10-18 19:40) - Refactoring: Card-Manager-CSS aufräumen (shared-sidebar-styles #7)
+
+- **Was wurde gemacht:** Ungültiges `position: flex` an `.cardInBank` und den veralteten Kommentar `Menue Container` aus `card-manager-page.css` entfernt. Template-Formatierung war bereits durch Prettier in `fe3ffd1` erfüllt. Request vollständig umgesetzt und nach `done/` verschoben.
+- **Dateien geändert:** `card-manager-page.css`, `docs/refactoring-requests/shared-sidebar-styles.md` (→ done/)
+- **Wichtige Entscheidung:** Entfernen statt `display: flex`, da der ungültige Wert wirkungslos war und `display: flex` das Innenlayout der Karte verändert hätte. Probe: Card-Manager mit zwei Bank-Karten pixelgleich. 315 Tests, Lint, Build und e2e grün.
+
+### (2026-10-18 19:38) - Refactoring: Gemeinsame Sidebar-Styles (shared-sidebar-styles #1–#6, #8, #9)
+
+- **Was wurde gemacht:** Sidebar-Regeln aus dem Dungeon-Tracker als `.general-sidebar*` nach `src/styles/components/sidebar.css` verschoben und in `src/styles.css` per `@import … layer(components)` eingebunden; `.upload-button` wurde zu `.general-sidebar__button`. Token `--color-general-sidebar` auf `gray-800` gesetzt. Dungeon-Tracker und Card-Manager nutzen die gemeinsamen Klassen ohne eigene Sidebar-Regeln; die Card-Manager-Buttons nutzen `.general-sidebar__button`. Punkt #7 (Card-Manager aufräumen) neu aufgenommen, offen.
+- **Dateien geändert:** `src/styles/components/sidebar.css` (neu), `src/styles.css`, `src/styles/tokens.css`, `dungeon-tracker-page.html/.css`, `card-manager-page.html/.css`, `card-manager-page-clicks.spec.ts`, `.claude/rules/architecture.md`, `docs/refactoring-requests/shared-sidebar-styles.md`
+- **Wichtige Entscheidung:** Import in `styles.css` statt `tokens.css` (dort nur Tokens). Layer `components` über `base`, damit Komponenten-CSS ohne `!important` überschreiben kann. `align-self: stretch` in `.general-sidebar`, weil der Card-Manager-Container `align-items: flex-start` nutzt. Card-Manager: Wrapper-`<div>` entfernt (Sidebar-`gap` greift), `<br />` durch Leerzeichen ersetzt (Flex-Button). Probe: Dungeon-Sidebar inkl. Upload-Button pixelgleich, berechnete Styles beider Sidebars identisch. 315 Tests, Lint, Build und e2e grün.
+
 ### (2026-10-18 18:43) - Refactoring: Tailwind CSS durch reines CSS ersetzen (tailwind-to-css #1–#10)
 
 - **Was wurde gemacht:** Tailwind v4, PostCSS und SCSS vollständig entfernt. Design-Tokens in `src/styles/tokens.css` (Werte aus der Tailwind-Palette), Reset in `@layer base` in `src/styles.css`, Material-Theme einmalig per `npx sass` als CSS erzeugt. Alle 13 Templates auf semantische Klassen in Komponenten-CSS umgestellt; `DamageTakenDialog` nutzt Modifier-Klassen; Material-Overrides über `--mat-*`-Tokens. Specs und `e2e/dungeon-drag.spec.ts` auf `data-testid`/semantische Klassen umgestellt, Doku angepasst.

@@ -1,66 +1,73 @@
 <div class="cardManagerPageContainer">
   @if (state()) {
-    <p>Deck: {{ state()!.config.name }}</p>
+    <aside class="general-sidebar">
+      <h2 class="general-sidebar__title">Card Manager</h2>
+      <label class="general-sidebar__caption">Deck Aktionen</label>
+      <button class="general-sidebar__button" (click)="onLoadDeckClick()">Deck Laden</button>
+      <button class="general-sidebar__button" (click)="onShuffleClick()">
+        Nachziehstapel Mischen
+      </button>
+      <button class="general-sidebar__button" (click)="onResetClick()">Zurücksetzen</button>
+      <hr class="general-sidebar__divider" />
+    </aside>
 
-    <div class="menueContainer">
-      <button (click)="onLoadDeckClick()">Deck Laden</button>
-      <button (click)="onShuffleClick()">Nachziehstapel<br />Mischen</button>
-      <button (click)="onResetClick()">Zurücksetzen</button>
-    </div>
+    <div class="card-zone">
+      <p>Deck: {{ state()!.config.name }}</p>
 
-    <!--- PILES ============================== -->
-    <div class="pilesContainer">
-      <!--- DrawPile ========= -->
-      <div class="pile drawPile">
-        <h3 (click)="onDrawPileZoneClick()">Nachziehstapel ({{ state()!.drawPile.length }})</h3>
-        @for (card of state()!.drawPile; track card.id) {
-          <app-card-display
-            class="cardInPile"
-            [card]="card"
-            [backImagePath]="state()!.config.backImagePath"
-            (click)="$event.stopPropagation(); onDrawPileCardClick(card.id)"
-          />
-        }
+      <!--- PILES ============================== -->
+      <div class="pilesContainer">
+        <!--- DrawPile ========= -->
+        <div class="pile drawPile">
+          <h3 (click)="onDrawPileZoneClick()">Nachziehstapel ({{ state()!.drawPile.length }})</h3>
+          @for (card of state()!.drawPile; track card.id) {
+            <app-card-display
+              class="cardInPile"
+              [card]="card"
+              [backImagePath]="state()!.config.backImagePath"
+              (click)="$event.stopPropagation(); onDrawPileCardClick(card.id)"
+            />
+          }
+        </div>
+
+        <!--- ActiveCard ========= -->
+        <div class="pile activeCardPile">
+          <span>Aktive Karte</span>
+          @if (state()!.activeCard) {
+            <app-card-display
+              class="cardInHand"
+              [card]="state()!.activeCard!"
+              [backImagePath]="state()!.config.backImagePath"
+              (click)="onActiveCardClick()"
+            />
+          }
+        </div>
+        <!--- DiscardPile ========= -->
+        <div class="pile discardPile" (click)="$event.stopPropagation(); onDiscardPileClick()">
+          <h3>Ablagestapel ({{ state()!.discardPile.length }})</h3>
+          @for (card of state()!.discardPile; track card.id) {
+            <app-card-display
+              class="cardInPile"
+              [card]="card"
+              [backImagePath]="state()!.config.backImagePath"
+              (click)="$event.stopPropagation(); onDiscardPileCardClick(card.id)"
+            />
+          }
+        </div>
       </div>
 
-      <!--- ActiveCard ========= -->
-      <div class="pile activeCardPile">
-        <span>Aktive Karte</span>
-        @if (state()!.activeCard) {
-          <app-card-display
-            class="cardInHand"
-            [card]="state()!.activeCard!"
-            [backImagePath]="state()!.config.backImagePath"
-            (click)="onActiveCardClick()"
-          />
-        }
-      </div>
-      <!--- DiscardPile ========= -->
-      <div class="pile discardPile" (click)="$event.stopPropagation(); onDiscardPileClick()">
-        <h3>Ablagestapel ({{ state()!.discardPile.length }})</h3>
-        @for (card of state()!.discardPile; track card.id) {
-          <app-card-display
-            class="cardInPile"
-            [card]="card"
-            [backImagePath]="state()!.config.backImagePath"
-            (click)="$event.stopPropagation(); onDiscardPileCardClick(card.id)"
-          />
-        }
-      </div>
-    </div>
+      <!-- BANK BEREICH ======================================== -->
 
-    <!-- BANK BEREICH ======================================== -->
-
-    <div class="bankContainer" (click)="onBankContainerClick()">
-      <div class="bankCardsContainer">
-        @for (card of state()!.bank; track card.id) {
-          <app-card-display
-            class="cardInBank"
-            [card]="card"
-            [backImagePath]="state()!.config.backImagePath"
-            (click)="$event.stopPropagation(); onBankCardClick(card.id)"
-          />
-        }
+      <div class="bankContainer" (click)="onBankContainerClick()">
+        <div class="bankCardsContainer">
+          @for (card of state()!.bank; track card.id) {
+            <app-card-display
+              class="cardInBank"
+              [card]="card"
+              [backImagePath]="state()!.config.backImagePath"
+              (click)="$event.stopPropagation(); onBankCardClick(card.id)"
+            />
+          }
+        </div>
       </div>
     </div>
   } @else {

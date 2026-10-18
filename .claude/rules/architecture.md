@@ -203,6 +203,8 @@ Slice-Map des `GameSessionService`; der Compiler meldet dann Snapshot und XML-Ma
 - Template/Styles inline, wenn < 100 Zeilen; sonst separate `.html`/`.css`.
 - Styling: reines CSS mit semantischen Klassen je Komponente; Farben, Abstände und Typografie
   nur über die Tokens aus `src/styles/tokens.css` (`var(--…)`).
+- Feature-übergreifende Bausteine (z. B. `.general-sidebar`) liegen global unter `src/styles/components/`
+  und werden in `src/styles.css` per `@import … layer(components)` eingebunden; `tokens.css` enthält nur Tokens.
 
 ### Dateigrößenlimit
 

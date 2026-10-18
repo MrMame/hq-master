@@ -1,3 +1,4 @@
+import { clickButton } from '../../../../shared/testing/click-button';
 import { DeckState } from '../../models/deck-state.model';
 import { Card } from '../../models/card.model';
 import { createDeckState } from '../../../game-session/testing/session.fixtures';
@@ -55,8 +56,6 @@ describe('CardManagerPage – clicks', () => {
     ['.bankContainer', 'dropActiveCardIntoBank', ACTIVE, []],
     ['.activeCardPile app-card-display', 'discardActiveCard', ACTIVE, []],
     ['.drawPile h3', 'reshuffleAll', ACTIVE, []],
-    ['.menueContainer button:nth-child(2)', 'shuffle', ACTIVE, []],
-    ['.menueContainer button:nth-child(3)', 'reshuffleAll', ACTIVE, []],
   ])('click on %s → %s', async (selector, expected, state, args) => {
     await click(state, selector);
 
@@ -80,8 +79,19 @@ describe('CardManagerPage – clicks', () => {
     expect(harness.service.dropActiveCardIntoBank).not.toHaveBeenCalled();
   });
 
+  it.each<[string, CardManagerAction]>([
+    ['Nachziehstapel Mischen', 'shuffle'],
+    ['Zurücksetzen', 'reshuffleAll'],
+  ])('sidebar button "%s" → %s', async (label, expected) => {
+    await harness.render(ACTIVE);
+    clickButton(harness.host, label);
+
+    expect(harness.service[expected]).toHaveBeenCalledExactlyOnceWith();
+  });
+
   it('the load button loads the default deck', async () => {
-    await click(ACTIVE, '.menueContainer button:nth-child(1)');
+    await harness.render(ACTIVE);
+    clickButton(harness.host, 'Deck Laden');
 
     expect(harness.service.loadDeck).toHaveBeenCalledExactlyOnceWith(
       '/decks/default/default-deck.xml',

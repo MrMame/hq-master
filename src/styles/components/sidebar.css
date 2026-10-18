@@ -1,0 +1,67 @@
+/*
+ * Gemeinsame Seitenleiste der Features (`<aside class="general-sidebar">`).
+ * Eingebunden über `src/styles.css` in die Cascade-Layer `components`: Komponenten-CSS (ohne Layer)
+ * hat Vorrang und kann einzelne Werte bei Bedarf überschreiben.
+ */
+.general-sidebar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  align-self: stretch;
+  gap: var(--space-4);
+  width: var(--space-64);
+  padding: var(--space-4);
+  overflow-y: auto;
+  background-color: var(--color-general-sidebar);
+}
+
+.general-sidebar__title {
+  color: var(--color-yellow-400);
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  font-weight: var(--font-weight-bold);
+}
+
+.general-sidebar__caption {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--color-gray-400);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+}
+
+.general-sidebar__heading {
+  color: var(--color-gray-400);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+.general-sidebar__heading--spaced {
+  margin-bottom: var(--space-2);
+}
+
+.general-sidebar__divider {
+  border-color: var(--color-gray-600);
+}
+
+.general-sidebar__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: var(--space-10);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-yellow-500);
+  color: var(--color-black);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition-property: color, background-color, border-color;
+  transition-duration: var(--transition-duration);
+  transition-timing-function: var(--transition-ease);
+
+  &:hover {
+    background-color: var(--color-yellow-400);
+  }
+}

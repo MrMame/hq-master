@@ -2,7 +2,12 @@
  * Globale Basis-Styles. Das Reset übernimmt die für die App relevanten Teile des früheren
  * Tailwind-Preflight und liegt wie dieser in einer Cascade-Layer, damit Angular-Material-Styles
  * (ohne Layer) weiterhin Vorrang haben.
+ * Gemeinsame Feature-Bausteine (`src/styles/components/`) liegen in der Layer `components` über `base`.
  */
+@layer base, components;
+
+@import './styles/components/sidebar.css' layer(components);
+
 @layer base {
   *,
   ::after,

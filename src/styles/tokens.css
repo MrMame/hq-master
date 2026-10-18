@@ -71,6 +71,9 @@
   --color-card-manager-menu: orange;
   --color-overlay-backdrop: rgba(0, 0, 0, 0.32);
 
+  /* Shared Colors between feature UI components */
+  --color-general-sidebar: var(--color-gray-800);
+
   /* Abstände (Raster 0.25rem) -------------------------------------------- */
   --space-0-5: 0.125rem;
   --space-1: 0.25rem;

@@ -1,12 +1,12 @@
 <div class="dungeon-page">
   <!-- Linke Sidebar: Einstellungen -->
-  <aside class="dungeon-sidebar">
-    <h2 class="dungeon-sidebar__title">Dungeon Tracker</h2>
+  <aside class="general-sidebar">
+    <h2 class="general-sidebar__title">Dungeon Tracker</h2>
 
     <!-- Bild Upload -->
     <div>
-      <label class="dungeon-sidebar__caption">Spielbrett-Foto laden</label>
-      <label class="upload-button">
+      <label class="general-sidebar__caption">Spielbrett-Foto laden</label>
+      <label class="general-sidebar__button">
         <span>📁 Bild hochladen</span>
         <input type="file" accept="image/*" hidden (change)="onImageUpload($event)" />
       </label>
@@ -15,11 +15,11 @@
       }
     </div>
 
-    <hr class="dungeon-sidebar__divider" />
+    <hr class="general-sidebar__divider" />
 
     <!-- Raster-Einstellungen -->
     <div class="grid-settings">
-      <h3 class="dungeon-sidebar__heading">Raster-Einstellungen</h3>
+      <h3 class="general-sidebar__heading">Raster-Einstellungen</h3>
 
       <label class="grid-setting">
         Zellgröße: {{ boardState().gridCellSizePx }}px
@@ -74,11 +74,11 @@
       </label>
     </div>
 
-    <hr class="dungeon-sidebar__divider" />
+    <hr class="general-sidebar__divider" />
 
     <!-- Charakter-Legende -->
     <div>
-      <h3 class="dungeon-sidebar__heading dungeon-sidebar__heading--spaced">
+      <h3 class="general-sidebar__heading general-sidebar__heading--spaced">
         Charaktere ({{ tokens().length }})
       </h3>
       @for (token of tokens(); track token.position.characterId) {
