@@ -1,0 +1,9 @@
+# Persönliche Notizen – nicht formatieren und nicht im pre-commit prüfen
+docs/notes-human/
+
+# Generierte Ausgaben
+dist/
+coverage/
+.angular/
+test-results/
+playwright-report/

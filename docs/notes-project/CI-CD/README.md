@@ -214,7 +214,9 @@ Hintergründe:
   SCSS, YAML.
 - Einsatz an zwei Stellen: **Check** im pre-commit (Kapitel 4), **Auto-Format** nach jeder
   Claude-Dateiänderung (Kapitel 12).
-- Beide Skripte berücksichtigen eine `.prettierignore`, falls vorhanden (derzeit existiert keine).
+- Beide Skripte berücksichtigen `.prettierignore`: ausgenommen sind die persönlichen Notizen
+  (`docs/notes-human/`) und generierte Ausgaben (`dist/`, `coverage/`, `.angular/`,
+  Playwright-Reports). Hinweis: Die Skripte lesen nur `.prettierignore`, nicht `.gitignore`.
 
 Zusammenspiel mit Zeilenenden: `.gitattributes` (`* text=auto eol=lf`) sorgt dafür, dass im
 Repository immer LF steht – passend zum Prettier-Default `endOfLine: lf`. `.editorconfig` setzt
@@ -394,7 +396,6 @@ Script `npm run deploy`
 - **E2E nicht automatisiert:** Playwright läuft weder im pre-push noch beim Deploy.
 - **Lint-Umfang:** `e2e/`, `scripts/` und `.claude/hooks/` werden nicht gelintet
   (der Prettier-Check im pre-commit gilt aber für alle gestagten Dateien).
-- **`.prettierignore`** wird referenziert, existiert aber nicht.
 - **README:** Der Abschnitt „Running end-to-end tests“ nennt noch `ng e2e`; korrekt ist
   `npm run e2e`.
 - **`.gitignore`:** `/.vscode/` am Ende hebt die vorherigen Ausnahmen (`!.vscode/settings.json`

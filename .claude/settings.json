@@ -47,7 +47,7 @@
       "Read(./.env*)",
       "Read(./secrets/**)",
       "Read(./node_modules/**)",
-      "Read(./docs/human-notes/**)",
+      "Read(./docs/notes-human/**)",
       "Read(./dist/**)",
       "Read(./build/**)",
       "Bash(npm install *)",
