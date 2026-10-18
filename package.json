@@ -10,7 +10,7 @@
     "lint": "ng lint",
     "prepare": "husky",
     "deploy": "ng deploy --base-href=\"https://mrmame.github.io/hq-master/\"",
-    "e2e": "playwright test"
+    "e2e": "playwright test --project=chromium"
   },
   "private": true,
   "packageManager": "npm@11.9.0",

@@ -29,8 +29,17 @@ Arbeite die Schritte **in dieser Reihenfolge** ab. Keinen Schritt überspringen;
 - [ ] Für jeden Punkt im Umfang prüfen, ob das gewünschte Verhalten bereits implementiert ist bzw. ob die beschriebene Beobachtung (fehlende Funktion, Fehler) im aktuellen Code noch vorhanden ist (Code lesen, `Grep`, ggf. vorhandene Tests ausführen oder das Verhalten nachstellen).
 - [ ] Ergebnis je Punkt kurz festhalten: **fehlt noch** / **bereits umgesetzt** / **nur teilweise umgesetzt** / **nicht prüfbar**, jeweils mit Beleg (Datei:Zeile, Testausgabe).
 - [ ] Ist der Punkt **bereits umgesetzt** oder nur teilweise: diesen Punkt **nicht** umsetzen. Den Nutzer informieren und fragen, ob der Punkt als `✅ done (bereits erfüllt, YYYY-MM-DD HH:MM)` markiert, angepasst oder verworfen werden soll.
-- [ ] Ist der Zustand **nicht prüfbar** (z. B. nur manuell in der UI nachstellbar): das offen sagen und vor dem Plan nachfragen.
-- [ ] Nur Punkte mit Ergebnis „fehlt noch“ gehen in den Plan (Schritt 2).
+- [ ] Ist das Verhalten nur in der laufenden UI beobachtbar (Rendering, Interaktion, Drag & Drop, Reload/Persistenz, Navigation): mit einer **Playwright-Probe** nachstellen statt nachzufragen (siehe „Playwright-Probe“ unten). Die Probe beschreibt das **Soll-Verhalten**: rot = **fehlt noch**, grün = **bereits umgesetzt**. Testausgabe als Beleg festhalten.
+- [ ] Nur wenn auch Playwright das Verhalten nicht sinnvoll nachstellen kann (z. B. native Datei-/Druckdialoge, rein subjektive Optik, externe Geräte): Ergebnis **nicht prüfbar**, offen begründen und vor dem Plan nachfragen.
+- [ ] Nur Punkte mit Ergebnis „fehlt noch“ gehen in den Plan (Schritt 2). Im Plan angeben, welche Probe in Schritt 4 grün werden muss.
+
+### Playwright-Probe
+
+- Datei: `e2e/probe/<slug>-<punkt>.spec.ts` (gitignored, nicht Teil der Smoke-Suite). Konventionen wie in `testing.md` (Locator über Rolle/Text/`data-testid`, kein `waitForTimeout`).
+- Ausführen: `npx playwright test --project=probe e2e/probe/<datei>` – startet `ng serve` auf Port 4321 automatisch.
+- Für Layout-/Optik-Fragen zusätzlich `await page.screenshot({ path: 'test-results/probe/<name>.png' })` erzeugen und das Bild ansehen.
+- Ausgangsdaten über die UI oder `page.evaluate(() => localStorage.setItem(…))` mit den Keys aus `SESSION_KEYS` setzen, nicht über interne APIs.
+- Lohnt sich das Szenario dauerhaft (zentraler User-Flow, der noch nicht abgedeckt ist), im Plan vorschlagen, es als Smoke-Test nach `e2e/` zu übernehmen.
 
 ## 2. Plan
 
@@ -51,7 +60,10 @@ Arbeite die Schritte **in dieser Reihenfolge** ab. Keinen Schritt überspringen;
 - [ ] `npm run test -- --watch=false --coverage` grün.
 - [ ] Coverage-Report für alle neuen und geänderten Dateien mit Logik prüfen (Definition of Done in `testing.md`): Nicht abgedeckte Zeilen/Zweige testen oder begründen.
 - [ ] `npm run build` fehlerfrei.
-- [ ] Bei UI-Änderungen: manuellen Prüfschritt im Bericht nennen.
+- [ ] Bei UI-Änderungen automatisch im Browser prüfen:
+  - Die Probe(n) aus Schritt 1b (bzw. neu angelegte für das geänderte Verhalten) müssen jetzt **grün** sein: `npx playwright test --project=probe e2e/probe/<datei>`.
+  - Smoke-Suite gegen Regressionen: `npm run e2e` grün.
+  - Ergebnis (Testausgabe, ggf. Screenshot-Befund) in den Abschlussbericht. Einen manuellen Prüfschritt nur für Aspekte nennen, die Playwright nicht abdecken kann – mit Begründung.
 
 Prettier-Formatierung beim Bearbeiten und Tests beim Beenden erzwingen die Claude-Hooks in `.claude/settings.json`. Prettier-Check + Lint vor jedem Commit sowie Tests mit Coverage-Schwellen + Build vor jedem Push erzwingen die Git-Hooks (husky, `scripts/git-hooks/`).
 

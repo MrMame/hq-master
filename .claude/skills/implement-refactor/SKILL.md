@@ -29,8 +29,18 @@ Arbeite die Schritte **in dieser Reihenfolge** ab. Keinen Schritt überspringen;
 - [ ] Für jeden Punkt im Umfang prüfen, ob die beschriebene Beobachtung bzw. der Fehler im aktuellen Code noch vorhanden ist (Code lesen, `Grep`, ggf. vorhandene Tests ausführen oder das Verhalten nachstellen).
 - [ ] Ergebnis je Punkt kurz festhalten: **vorhanden** / **nicht mehr vorhanden** / **nur teilweise vorhanden** / **nicht prüfbar**, jeweils mit Beleg (Datei:Zeile, Testausgabe).
 - [ ] Ist die Beobachtung **nicht mehr vorhanden** oder nur teilweise: diesen Punkt **nicht** umsetzen. Den Nutzer informieren und fragen, ob der Punkt als `✅ done (bereits erfüllt, YYYY-MM-DD HH:MM)` markiert, angepasst oder verworfen werden soll.
-- [ ] Ist die Beobachtung **nicht prüfbar** (z. B. nur manuell in der UI nachstellbar): das offen sagen und vor dem Plan nachfragen.
-- [ ] Nur Punkte mit Ergebnis „vorhanden“ gehen in den Plan (Schritt 2).
+- [ ] Ist die Beobachtung nur in der laufenden UI sichtbar (Rendering, Interaktion, Drag & Drop, Reload/Persistenz, Navigation): mit einer **Playwright-Probe** nachstellen statt nachzufragen (siehe „Playwright-Probe“ unten). Testausgabe als Beleg festhalten.
+- [ ] Nur wenn auch Playwright die Beobachtung nicht sinnvoll nachstellen kann (z. B. native Datei-/Druckdialoge, rein subjektive Optik, externe Geräte): Ergebnis **nicht prüfbar**, offen begründen und vor dem Plan nachfragen.
+- [ ] Berührt der Umbau UI-Code (Komponenten, Templates, Styles, Routing) und decken die Smoke-Tests in `e2e/` das betroffene Verhalten nicht ab: eine **Verhaltens-Baseline** als Probe anlegen, die das heutige Verhalten beschreibt und vor dem Umbau **grün** ist.
+- [ ] Nur Punkte mit Ergebnis „vorhanden“ gehen in den Plan (Schritt 2). Im Plan angeben, welche Proben in Schritt 4 grün bleiben bzw. werden müssen.
+
+### Playwright-Probe
+
+- Datei: `e2e/probe/<slug>-<punkt>.spec.ts` (gitignored, nicht Teil der Smoke-Suite). Konventionen wie in `testing.md` (Locator über Rolle/Text/`data-testid`, kein `waitForTimeout`).
+- Ausführen: `npx playwright test --project=probe e2e/probe/<datei>` – startet `ng serve` auf Port 4321 automatisch.
+- Für Layout-/Optik-Fragen zusätzlich `await page.screenshot({ path: 'test-results/probe/<name>.png' })` vor und nach dem Umbau erzeugen und die Bilder vergleichen.
+- Ausgangsdaten über die UI oder `page.evaluate(() => localStorage.setItem(…))` mit den Keys aus `SESSION_KEYS` setzen, nicht über interne APIs.
+- Lohnt sich das Szenario dauerhaft (zentraler User-Flow, der noch nicht abgedeckt ist), im Plan vorschlagen, es als Smoke-Test nach `e2e/` zu übernehmen.
 
 ## 2. Plan
 
@@ -52,7 +62,10 @@ Arbeite die Schritte **in dieser Reihenfolge** ab. Keinen Schritt überspringen;
 - [ ] `npm run test -- --watch=false --coverage` grün.
 - [ ] Coverage-Report für alle neuen und geänderten Dateien mit Logik prüfen (Definition of Done in `testing.md`): Nicht abgedeckte Zeilen/Zweige testen oder begründen.
 - [ ] `npm run build` fehlerfrei.
-- [ ] Bei UI-Änderungen: manuellen Prüfschritt im Bericht nennen.
+- [ ] Bei Änderungen an UI-Code automatisch im Browser prüfen:
+  - Verhaltens-Baselines aus Schritt 1b müssen weiterhin **grün** sein (Refactoring ändert kein Verhalten); Proben, die eine sichtbare Beobachtung belegen, müssen das behobene Verhalten zeigen: `npx playwright test --project=probe e2e/probe/<datei>`.
+  - Smoke-Suite gegen Regressionen: `npm run e2e` grün.
+  - Ergebnis (Testausgabe, ggf. Screenshot-Vergleich) in den Abschlussbericht. Einen manuellen Prüfschritt nur für Aspekte nennen, die Playwright nicht abdecken kann – mit Begründung.
 
 Prettier-Formatierung beim Bearbeiten und Tests beim Beenden erzwingen die Claude-Hooks in `.claude/settings.json`. Prettier-Check + Lint vor jedem Commit sowie Tests mit Coverage-Schwellen + Build vor jedem Push erzwingen die Git-Hooks (husky, `scripts/git-hooks/`).
 

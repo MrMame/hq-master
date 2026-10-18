@@ -15,6 +15,7 @@
 - **Fehler im Produktivcode beheben:** Deckt ein Test einen Fehler auf, wird der Produktivcode korrigiert – die Assertion wird nicht abgeschwächt.
 - **Kleinster Lauf zuerst:** Erst die betroffene Spec ausführen (`npm run test -- --watch=false --include <pfad>`), danach die ganze Suite, wenn geteiltes Verhalten betroffen ist.
 - **E2E (Playwright):** Wenige stabile Smoke-Szenarien unter `e2e/` (`npm run e2e`, startet `ng serve` auf Port 4321). Locator über Rolle/Text/`data-testid`, nie feste Wartezeiten (`waitForTimeout`). Nicht Teil der Git-Hooks.
+- **Playwright-Proben:** Lokale Ad-hoc-Prüfungen von UI-Verhalten unter `e2e/probe/` (gitignored, Projekt `probe`, nicht in `npm run e2e`): `npx playwright test --project=probe e2e/probe/<datei>`. UI-Verhalten wird damit automatisch geprüft, statt einen manuellen Prüfschritt zu nennen.
 - **Definition of Done:**
   - Neue Komponenten/Services gelten erst als fertig, wenn ihr Spec mehr als `should create` prüft (Rendering der wichtigsten Zustände, User-Interaktion, Normal- und Grenz-/Fehlerfälle).
   - Die Tests laufen mit Coverage (`npm run test -- --watch=false --coverage`). Neue und geänderte Dateien mit Logik werden im Report geprüft: Nicht abgedeckte Zeilen/Zweige werden getestet oder im Abschlussbericht begründet (z. B. reine Typen/Konstanten, nur manuell prüfbare UI).

@@ -2,7 +2,10 @@ import { defineConfig, devices } from '@playwright/test';
 
 const PORT: number = 4321;
 
-/** E2E-Smoke-Tests gegen den Dev-Server (`npm run e2e`). Eigener Port, damit ein laufendes `ng serve` nicht stört. */
+/**
+ * E2E-Smoke-Tests gegen den Dev-Server (`npm run e2e`). Eigener Port, damit ein laufendes `ng serve` nicht stört.
+ * Projekt `probe`: lokale Ad-hoc-Prüfungen unter `e2e/probe/` (gitignored), z. B. aus den Skills implement-feature/-refactor.
+ */
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
@@ -12,7 +15,10 @@ export default defineConfig({
     baseURL: `http://localhost:${PORT}`,
     trace: 'retain-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'chromium', testIgnore: 'probe/**', use: { ...devices['Desktop Chrome'] } },
+    { name: 'probe', testMatch: 'probe/**/*.spec.ts', use: { ...devices['Desktop Chrome'] } },
+  ],
   webServer: {
     command: `npx ng serve --port ${PORT}`,
     url: `http://localhost:${PORT}`,

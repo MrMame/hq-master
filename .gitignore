@@ -95,3 +95,5 @@ Thumbs.db
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+# Lokale Ad-hoc-Proben (Projekt "probe" in playwright.config.ts)
+/e2e/probe/
