@@ -200,7 +200,9 @@ Slice-Map des `GameSessionService`; der Compiler meldet dann Snapshot und XML-Ma
 
 - Standalone-first, kein `NgModule`.
 - Signal-Inputs/Outputs statt `@Input()`/`@Output()`.
-- Template/Styles inline, wenn < 100 Zeilen; sonst separate `.html`/`.scss`.
+- Template/Styles inline, wenn < 100 Zeilen; sonst separate `.html`/`.css`.
+- Styling: reines CSS mit semantischen Klassen je Komponente; Farben, Abstände und Typografie
+  nur über die Tokens aus `src/styles/tokens.css` (`var(--…)`).
 
 ### Dateigrößenlimit
 

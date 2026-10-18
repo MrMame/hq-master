@@ -1,4 +1,4 @@
-# hq-master (Angular 21 + Tailwind v4 + Vitest)
+# hq-master (Angular 21 + CSS + Vitest)
 
 ## App Definitions
 

@@ -55,7 +55,7 @@ describe('CardManagerPage', () => {
       await page.onLoadDeck('decks/x.xml');
       await harness.fixture.whenStable();
 
-      expect(host.querySelector('.text-red-400')?.textContent).toBe('404');
+      expect(host.querySelector('[data-testid="deck-load-error"]')?.textContent).toBe('404');
       expect(page.isLoading()).toBe(false);
     });
 

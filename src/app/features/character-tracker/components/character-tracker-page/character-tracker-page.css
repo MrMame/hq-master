@@ -1,0 +1,24 @@
+.character-tracker-page {
+  height: 100%;
+  background-color: var(--color-yellow-500);
+}
+
+.tracker-button {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-blue-500);
+  color: var(--color-white);
+  font-weight: var(--font-weight-bold);
+
+  &:hover {
+    background-color: var(--color-blue-700);
+  }
+}
+
+/* Der Bereich, in dem sich die Karten bewegen dürfen */
+.boundary-container {
+  position: relative;
+  height: 100%;
+  overflow: scroll;
+  background-color: var(--color-gray-400);
+}

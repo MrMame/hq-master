@@ -5,7 +5,7 @@ const CELL: number = 60;
 
 /** Positionsanzeige `[col,row]` des (einzigen) Charakters in der Legende der Seitenleiste. */
 function legend(page: Page): Locator {
-  return page.locator('aside span.ml-auto');
+  return page.getByTestId('token-position');
 }
 
 /** Spielfeld-Koordinate aus der Legende. */

@@ -2,6 +2,18 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-18 18:43) - Refactoring: Tailwind CSS durch reines CSS ersetzen (tailwind-to-css #1–#10)
+
+- **Was wurde gemacht:** Tailwind v4, PostCSS und SCSS vollständig entfernt. Design-Tokens in `src/styles/tokens.css` (Werte aus der Tailwind-Palette), Reset in `@layer base` in `src/styles.css`, Material-Theme einmalig per `npx sass` als CSS erzeugt. Alle 13 Templates auf semantische Klassen in Komponenten-CSS umgestellt; `DamageTakenDialog` nutzt Modifier-Klassen; Material-Overrides über `--mat-*`-Tokens. Specs und `e2e/dungeon-drag.spec.ts` auf `data-testid`/semantische Klassen umgestellt, Doku angepasst.
+- **Dateien geändert:** `angular.json`, `package.json`, `package-lock.json`, `src/styles.css`, `src/styles/*.css` (neu), `src/app/app.ts` + `app.css`, alle Feature-Komponenten (Templates, `.css` statt `.scss`, `character-card.html` neu), Specs von `damage-taken-dialog`, `dungeon-token`, `card-manager-page`, `e2e/dungeon-drag.spec.ts`, `.claude/CLAUDE.md`, `.claude/rules/architecture.md`, `.github/instructions/angular-templates.instructions.md`, `docs/notes-project/CI-CD/README.md`; gelöscht: `.postcssrc.json`, `src/tailwind.css`, `src/material-theme.scss`, alle `.scss`; `docs/refactoring-requests/tailwind-to-css.md` (→ done/)
+- **Wichtige Entscheidung:** Theme in Farb- und Typografie-Datei geteilt (150-Zeilen-Grenze). Tailwind-Klassen, die Material schon vorher überschrieben hat, per Probe gemessen und nicht übernommen, damit die Optik gleich bleibt (aktiver Nav-Link bleibt grau-fett). `!important` an `.is-on-top` per Probe als unnötig belegt und entfernt. Screenshot-Abgleich mit Toleranz 0: 12/12 pixelgleich nach Ergänzen der Preflight-Regeln für Datumsfelder. 315 Tests, Lint, Build und e2e grün; Coverage 98,7 % Zeilen.
+
+### (2026-10-18 18:24) - Refactoring: Tailwind durch CSS ersetzen – Vorher-Screenshots (tailwind-to-css #10 Teil 1)
+
+- **Was wurde gemacht:** Request nach Abgleich mit dem Code ergänzt (fehlende Farben, Preflight-Rahmen, sm-Breakpoint, scss-Aufteilung, Inline-Styles, weitere betroffene Specs/Doku, Smoke-Test-Locator `span.ml-auto`, Reihenfolge). Playwright-Probe `e2e/probe/tailwind-to-css-10.spec.ts` mit festen localStorage-Daten erzeugt 12 Vorher-Bilder (alle Routen, Add-/Damage-/Confirmation-Dialog, Damage-Dialog bei 600px). Lesezugriff auf `node_modules` in `.claude/settings.json` freigegeben (von deny nach allow).
+- **Dateien geändert:** `docs/refactoring-requests/tailwind-to-css.md`, `.claude/settings.json`; lokal (gitignored): `e2e/probe/tailwind-to-css-10.spec.ts`, `.fixtures.ts`, `-snapshots/`
+- **Wichtige Entscheidung:** Vergleich über `toHaveScreenshot()` mit `maxDiffPixelRatio: 0.01`. Deck nach dem Laden nach id sortiert, da `loadDeckConfig` zufällig mischt. Zwei Läufe ohne Update grün. Kein Produktivcode geändert; Lint, 310 Tests, Build und e2e grün.
+
 ### (2026-10-18 00:00) - Refactoring: Teststrategie verbessern (test-strategy-improvements #1–#7)
 
 - **Was wurde gemacht:** Echte Wartezeiten durch Fake-Timer ersetzt; neue Specs für `xml.util` und die Deck-/Dungeon-Mapper (Fallbacks für alte bzw. von Hand bearbeitete Dateien); Komponenten-Specs lösen Handler über DOM, Outputs und `MatButtonHarness` aus; Playwright-Smoke-Tests unter `e2e/` (`npm run e2e`, ~8 s inkl. `ng serve`); Testkonventionen nur noch in `.claude/rules/testing.md`; `localStorage` wird global über `src/test-setup.ts` (`setupFiles`) geleert. #7 (Mutation Testing) rejected.

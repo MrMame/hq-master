@@ -23,12 +23,7 @@
         [character]="character()"
         (characterChange)="characterChange.emit($event)"
       />
-      <button
-        (click)="removeRequested.emit()"
-        class="h-[30px] w-[30px] bg-blue-500 hover:bg-red-700 text-white font-bold rounded"
-      >
-        DEL
-      </button>
+      <button (click)="removeRequested.emit()" class="delete-button">DEL</button>
     </div>
   }
 </div>

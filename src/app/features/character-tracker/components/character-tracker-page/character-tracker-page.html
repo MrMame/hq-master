@@ -1,26 +1,11 @@
-<div class="character-tracker-page bg-yellow-500 h-full">
+<div class="character-tracker-page">
   <div class="character-tracker-page-menu">
-    <button
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      (click)="addMonster()"
-    >
-      Add Monster
-    </button>
-    <button
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      (click)="addHero()"
-    >
-      Add Hero
-    </button>
-    <button
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      (click)="addCharacter()"
-    >
-      Add Character
-    </button>
+    <button class="tracker-button" (click)="addMonster()">Add Monster</button>
+    <button class="tracker-button" (click)="addHero()">Add Hero</button>
+    <button class="tracker-button" (click)="addCharacter()">Add Character</button>
   </div>
 
-  <div class="boundary-container overflow-scroll bg-gray-400 h-[100%]">
+  <div class="boundary-container">
     @for (character of characters(); track character.id) {
       <app-movable-character-card
         [character]="character"

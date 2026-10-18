@@ -211,7 +211,7 @@ Hintergründe:
 
 - HTML-Dateien werden mit dem Angular-Parser formatiert (Control-Flow-Syntax, Bindings).
 - Prettier formatiert alle Dateitypen, für die es einen Parser kennt – also auch Markdown, JSON,
-  SCSS, YAML.
+  CSS, YAML.
 - Einsatz an zwei Stellen: **Check** im pre-commit (Kapitel 4), **Auto-Format** nach jeder
   Claude-Dateiänderung (Kapitel 12).
 - Beide Skripte berücksichtigen `.prettierignore`: ausgenommen sind die persönlichen Notizen
@@ -297,8 +297,9 @@ npm run test -- --watch=false --include <pfad>
     | anyComponentStyle | 4 kB    | 8 kB   |
 
 - `development`: ohne Optimierung, mit Source Maps (für `ng serve` / `npm run watch`).
-- Styles: `src/material-theme.scss`, `src/tailwind.css` (Tailwind v4 über PostCSS,
-  `.postcssrc.json`). Assets: alles aus `public/`.
+- Styles (reines CSS, kein PostCSS/Sass): `src/styles/material-theme.css` und
+  `material-theme-typography.css` (einmalig erzeugtes Material-Theme), `src/styles/tokens.css`
+  (Design-Tokens), `src/styles.css` (Reset und Basis). Assets: alles aus `public/`.
 - Ausgabe: `dist/hq-master/`.
 
 ---

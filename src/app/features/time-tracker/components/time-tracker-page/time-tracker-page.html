@@ -1,12 +1,12 @@
 <p>time-tracker-page works!</p>
-<div class="time-tracker-page flex flex-col gap-4 items-start">
+<div class="time-tracker-page">
   <label class="game-time-label" data-testid="game-time-label">
     Spielzeit: {{ gameTimeService.gameTimeAsString() }}
   </label>
-  <div class="flex gap-2">
+  <div class="time-steps">
     @for (step of secondSteps; track step) {
       <button
-        class="bg-gray-500 hover:bg-gray-600"
+        class="time-button time-button--seconds"
         [attr.data-testid]="'add-seconds-' + step"
         (click)="addSeconds(step)"
       >
@@ -14,6 +14,6 @@
       </button>
     }
   </div>
-  <button class="bg-blue-500 hover:bg-blue-600" (click)="addTime1Hour()">+1 Hour</button>
-  <button class="bg-green-500 hover:bg-green-600" (click)="addTime8Hour()">+8 Hours</button>
+  <button class="time-button time-button--hour" (click)="addTime1Hour()">+1 Hour</button>
+  <button class="time-button time-button--hours" (click)="addTime8Hour()">+8 Hours</button>
 </div>

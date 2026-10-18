@@ -11,7 +11,7 @@ import { DungeonToken } from '../dungeon-token/dungeon-token';
   standalone: true,
   imports: [DungeonToken, NgStyle],
   templateUrl: './dungeon-tracker-page.html',
-  styleUrl: './dungeon-tracker-page.scss',
+  styleUrls: ['./dungeon-tracker-page.css', './dungeon-board.css'],
 })
 export class DungeonTrackerPage {
   private readonly dungeonBoardService: DungeonBoardService = inject(DungeonBoardService);

@@ -5,7 +5,7 @@ import { GameTimeService } from '../../../../core/services/game-time/game-time.s
   selector: 'app-time-tracker-page',
   imports: [],
   templateUrl: './time-tracker-page.html',
-  styleUrl: './time-tracker-page.scss',
+  styleUrl: './time-tracker-page.css',
 })
 export class TimeTrackerPage {
   gameTimeService: GameTimeService = inject(GameTimeService);

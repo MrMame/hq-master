@@ -1,0 +1,85 @@
+/* Material-Dialogtitel über seine Token-Variablen vergrößern */
+.dialog-title {
+  --mat-dialog-subhead-size: var(--text-xl);
+  --mat-dialog-subhead-line-height: calc(var(--text-xl) * var(--text-xl--line-height));
+  --mat-dialog-subhead-weight: var(--font-weight-bold);
+}
+
+.damage-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--space-1-5);
+  max-height: 55vh;
+  overflow-y: auto;
+  padding: var(--space-1);
+  border: 1px solid var(--color-gray-100);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-gray-50);
+}
+
+@media (min-width: 40rem) {
+  .damage-grid {
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+  }
+}
+
+/* Kleine Material-Buttons, die die Rasterzelle ausfüllen */
+.damage-grid-btn {
+  --mat-button-filled-container-shape: var(--radius-md);
+  --mat-button-filled-horizontal-padding: 0;
+  min-width: 0;
+  width: 100%;
+
+  &:hover {
+    scale: 1.05;
+  }
+
+  &:active {
+    scale: 0.95;
+  }
+}
+
+/* Farbstufen nach Schadenshöhe */
+.damage-btn--light {
+  --mat-button-filled-container-color: var(--color-green-100);
+  --mat-button-filled-label-text-color: var(--color-green-800);
+  &:hover {
+    --mat-button-filled-container-color: var(--color-green-200);
+  }
+}
+
+.damage-btn--moderate {
+  --mat-button-filled-container-color: var(--color-lime-100);
+  --mat-button-filled-label-text-color: var(--color-lime-800);
+  &:hover {
+    --mat-button-filled-container-color: var(--color-lime-200);
+  }
+}
+
+.damage-btn--noticeable {
+  --mat-button-filled-container-color: var(--color-amber-100);
+  --mat-button-filled-label-text-color: var(--color-amber-800);
+  &:hover {
+    --mat-button-filled-container-color: var(--color-amber-200);
+  }
+}
+
+.damage-btn--heavy {
+  --mat-button-filled-container-color: var(--color-orange-200);
+  --mat-button-filled-label-text-color: var(--color-orange-900);
+  &:hover {
+    --mat-button-filled-container-color: var(--color-orange-300);
+  }
+}
+
+.damage-btn--critical {
+  --mat-button-filled-container-color: var(--color-red-600);
+  --mat-button-filled-label-text-color: var(--color-white);
+  &:hover {
+    --mat-button-filled-container-color: var(--color-red-700);
+  }
+}
+
+.dialog-action {
+  --mat-button-text-label-text-color: var(--color-gray-500);
+}

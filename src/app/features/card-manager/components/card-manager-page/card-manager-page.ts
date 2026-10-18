@@ -7,7 +7,7 @@ import { CardDisplay } from '../card-display/card-display';
   selector: 'app-card-manager-page',
   imports: [CardDisplay],
   templateUrl: './card-manager-page.html',
-  styleUrl: './card-manager-page.scss',
+  styleUrl: './card-manager-page.css',
 })
 export class CardManagerPage {
   private readonly cardManagerService: CardManagerService = inject(CardManagerService);

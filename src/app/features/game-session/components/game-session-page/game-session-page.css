@@ -1,0 +1,76 @@
+.game-session-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: var(--container-xl);
+  padding: var(--space-4);
+}
+
+.session-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.session-section--tight {
+  gap: var(--space-1);
+}
+
+.session-heading {
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  font-weight: var(--font-weight-bold);
+}
+
+.session-meta {
+  color: var(--color-gray-600);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+}
+
+.session-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.session-input {
+  padding: var(--space-1);
+  border-width: 1px;
+}
+
+.session-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.session-button--start {
+  background-color: var(--color-green-500);
+
+  &:hover {
+    background-color: var(--color-green-600);
+  }
+}
+
+.session-button--end {
+  background-color: var(--color-gray-500);
+
+  &:hover {
+    background-color: var(--color-gray-600);
+  }
+}
+
+.session-button--file {
+  background-color: var(--color-blue-500);
+
+  &:hover {
+    background-color: var(--color-blue-600);
+  }
+}
+
+label.session-button--file {
+  cursor: pointer;
+}
+
+.session-error {
+  color: var(--color-red-600);
+}

@@ -18,7 +18,7 @@ const DEFAULT_START_TIME: string = '2390-05-06T07:00';
   selector: 'app-game-session-page',
   imports: [FormsModule],
   templateUrl: './game-session-page.html',
-  styleUrl: './game-session-page.scss',
+  styleUrl: './game-session-page.css',
 })
 export class GameSessionPage {
   private readonly gameSessionService: GameSessionService = inject(GameSessionService);

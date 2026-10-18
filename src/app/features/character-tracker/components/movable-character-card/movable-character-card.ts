@@ -11,7 +11,7 @@ import { DamageTypes } from '../../models/damage-types.model';
   selector: 'app-movable-character-card',
   imports: [DragDropModule, CharacterCard, CharacterCardMinimised],
   templateUrl: './movable-character-card.html',
-  styleUrl: './movable-character-card.scss',
+  styleUrl: './movable-character-card.css',
 })
 export class MovableCharacterCard {
   readonly character: InputSignal<CharacterInfo> = input.required<CharacterInfo>();

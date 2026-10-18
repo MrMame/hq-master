@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { HarnessLoader } from '@angular/cdk/testing';
+import { HarnessLoader, TestElement } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -37,14 +37,20 @@ describe('DamageTakenDialog', () => {
   );
 
   it.each<[number, string]>([
-    [10, 'bg-green-100'],
-    [11, 'bg-lime-100'],
-    [50, 'bg-amber-100'],
-    [75, 'bg-orange-200'],
-    [76, 'bg-red-600'],
-  ])('colours damage %i with %s', async (value, colourClass) => {
-    const harness: MatButtonHarness = await button(String(value));
-    expect(await (await harness.host()).hasClass(`!${colourClass}`)).toBe(true);
+    [1, 'damage-btn--light'],
+    [10, 'damage-btn--light'],
+    [11, 'damage-btn--moderate'],
+    [30, 'damage-btn--moderate'],
+    [31, 'damage-btn--noticeable'],
+    [50, 'damage-btn--noticeable'],
+    [51, 'damage-btn--heavy'],
+    [75, 'damage-btn--heavy'],
+    [76, 'damage-btn--critical'],
+    [100, 'damage-btn--critical'],
+  ])('marks damage %i with the severity class %s', async (value, severityClass) => {
+    const host: TestElement = await (await button(String(value))).host();
+    expect(await host.hasClass(severityClass)).toBe(true);
+    expect(await host.hasClass('damage-grid-btn')).toBe(true);
   });
 
   it('closes without a result on "Abbrechen"', async () => {

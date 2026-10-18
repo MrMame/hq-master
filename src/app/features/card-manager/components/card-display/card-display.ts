@@ -15,7 +15,7 @@ export type CardSide = 'front' | 'back';
   selector: 'app-card-display',
   imports: [],
   templateUrl: './card-display.html',
-  styleUrl: './card-display.scss',
+  styleUrl: './card-display.css',
 })
 export class CardDisplay {
   card: InputSignal<Card> = input.required<Card>();

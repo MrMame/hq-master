@@ -1,0 +1,133 @@
+/* Dungeon Token dragging: CDK drag preview stays crisp */
+:host ::ng-deep .cdk-drag-preview {
+  opacity: 0.8;
+}
+
+.dungeon-page {
+  display: flex;
+  height: 90vh;
+  background-color: var(--color-gray-900);
+  color: var(--color-white);
+}
+
+/* Linke Seitenleiste ------------------------------------------------------ */
+.dungeon-sidebar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: var(--space-4);
+  width: var(--space-64);
+  padding: var(--space-4);
+  overflow-y: auto;
+  background-color: var(--color-gray-800);
+}
+
+.dungeon-sidebar__title {
+  color: var(--color-yellow-400);
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  font-weight: var(--font-weight-bold);
+}
+
+.dungeon-sidebar__caption {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--color-gray-400);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+}
+
+.dungeon-sidebar__heading {
+  color: var(--color-gray-400);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+.dungeon-sidebar__heading--spaced {
+  margin-bottom: var(--space-2);
+}
+
+.dungeon-sidebar__divider {
+  border-color: var(--color-gray-600);
+}
+
+.upload-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: var(--space-10);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-yellow-500);
+  color: var(--color-black);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition-property: color, background-color, border-color;
+  transition-duration: var(--transition-duration);
+  transition-timing-function: var(--transition-ease);
+
+  &:hover {
+    background-color: var(--color-yellow-400);
+  }
+}
+
+.upload-status {
+  margin-top: var(--space-1);
+  color: var(--color-green-400);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+}
+
+.grid-settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.grid-setting {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+}
+
+.grid-setting__slider {
+  accent-color: var(--color-yellow-400);
+}
+
+/* Charakter-Legende */
+.legend-entry {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-1);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+}
+
+.legend-entry__avatar {
+  width: var(--space-6);
+  height: var(--space-6);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.legend-entry__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legend-entry__position {
+  margin-left: auto;
+  color: var(--color-gray-500);
+}
+
+.legend-empty {
+  color: var(--color-gray-500);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+}

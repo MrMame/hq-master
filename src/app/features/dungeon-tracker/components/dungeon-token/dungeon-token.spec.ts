@@ -8,7 +8,6 @@ import { CharacterInfo } from '../../../character-tracker/models/character-info.
 import { createTestCharacter } from '../../../game-session/testing/session.fixtures';
 
 const position: DungeonPosition = { characterId: 'a', col: 2, row: 3 };
-const GOLD_BORDER: string[] = ['border-yellow-400', 'shadow-yellow-400/50', 'shadow-md'];
 
 // Ein echter Drag lässt sich in jsdom nicht erzeugen (keine Layout-Maße); das Event-Objekt
 // ist daher ein Stub, ausgelöst wird es aber über die Template-Bindung `(cdkDragEnded)`.
@@ -65,12 +64,13 @@ describe('DungeonToken', () => {
     expect(token.title).toBe(character.name);
   });
 
-  it('should give every token the gold border regardless of its name', () => {
-    for (const name of ['Goblin', 'Hero Aragorn']) {
+  it('should give every token the same gold-bordered style regardless of its name', () => {
+    const classNames: string[] = ['Goblin', 'Hero Aragorn'].map((name) => {
       const token: HTMLElement = render({ ...createTestCharacter('a'), name });
-      GOLD_BORDER.forEach((cls) => expect(token.classList).toContain(cls));
-      expect(token.classList).not.toContain('border-red-500');
-    }
+      expect(token.classList).toContain('dungeon-token');
+      return token.className;
+    });
+    expect(classNames[0]).toBe(classNames[1]);
   });
 
   it('should emit the rounded field after dragging and reset the drag offset', () => {

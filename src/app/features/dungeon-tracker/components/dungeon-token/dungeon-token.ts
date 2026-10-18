@@ -24,23 +24,18 @@ import { DungeonPosition } from '../../models/dungeon-position.model';
       [style.left.px]="tokenLeft()"
       [style.top.px]="tokenTop()"
       [title]="character().name"
-      class="absolute w-10 h-10 rounded-full border-2 border-yellow-400 shadow-yellow-400/50 shadow-md cursor-grab active:cursor-grabbing overflow-hidden select-none z-10"
+      class="dungeon-token"
     >
       @if (character().image) {
-        <img
-          [src]="character().image"
-          [alt]="character().name"
-          class="w-full h-full object-cover pointer-events-none"
-        />
+        <img [src]="character().image" [alt]="character().name" class="dungeon-token__image" />
       } @else {
-        <div
-          class="w-full h-full flex items-center justify-center text-xs font-bold text-white bg-gray-600"
-        >
+        <div class="dungeon-token__initials">
           {{ initials() }}
         </div>
       }
     </div>
   `,
+  styleUrl: './dungeon-token.css',
 })
 export class DungeonToken {
   position: InputSignal<DungeonPosition> = input.required<DungeonPosition>();

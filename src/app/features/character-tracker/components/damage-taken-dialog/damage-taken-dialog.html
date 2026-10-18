@@ -1,1 +1,22 @@
-<p>damage-taken-dialog works!</p>
+<h2 mat-dialog-title class="dialog-title">Schaden auswählen</h2>
+
+<mat-dialog-content>
+  <!-- Grid-Container für die Schadensbuttons -->
+  <div class="damage-grid">
+    @for (damageValue of damageOptions; track damageValue) {
+      <button
+        mat-flat-button
+        [class]="getButtonColorClass(damageValue)"
+        class="damage-grid-btn"
+        (click)="confirmDamageTaken(damageValue)"
+      >
+        {{ damageValue }}
+      </button>
+    }
+  </div>
+</mat-dialog-content>
+
+<!-- Feste Aktionsleiste für den Abbruch -->
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()" class="dialog-action">Abbrechen</button>
+</mat-dialog-actions>

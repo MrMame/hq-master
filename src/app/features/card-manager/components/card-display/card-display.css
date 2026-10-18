@@ -8,13 +8,13 @@
 .card-face {
   width: 100%;
   height: 100%;
-  border-radius: 8px;
+  border-radius: var(--radius-card);
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #1e1e2e;
+  background: var(--color-card-surface);
 }
 
 .card-image {
@@ -33,7 +33,7 @@
 .card-name {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--color-card-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -41,5 +41,5 @@
 
 .card-stats {
   font-size: 0.65rem;
-  color: #94a3b8;
+  color: var(--color-card-muted);
 }

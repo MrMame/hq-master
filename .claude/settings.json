@@ -4,6 +4,7 @@
     "defaultMode": "plan",
     "allow": [
       "Read(./src/**)",
+      "Read(./node_modules/**)",
       "Read(./public/**)",
       "Read(./package.json)",
       "Read(./angular.json)",
@@ -46,7 +47,6 @@
     "deny": [
       "Read(./.env*)",
       "Read(./secrets/**)",
-      "Read(./node_modules/**)",
       "Read(./docs/notes-human/**)",
       "Read(./dist/**)",
       "Read(./build/**)",

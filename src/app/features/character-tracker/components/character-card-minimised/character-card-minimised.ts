@@ -7,7 +7,7 @@ import { DamageTypes } from '../../models/damage-types.model';
   selector: 'app-character-card-minimised',
   imports: [],
   templateUrl: './character-card-minimised.html',
-  styleUrl: './character-card-minimised.scss',
+  styleUrl: './character-card-minimised.css',
 })
 export class CharacterCardMinimised {
   readonly character: InputSignal<CharacterInfo> = input.required<CharacterInfo>();

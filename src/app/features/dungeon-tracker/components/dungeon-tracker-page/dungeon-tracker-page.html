@@ -1,29 +1,27 @@
-<div class="flex h-[90vh] bg-gray-900 text-white">
+<div class="dungeon-page">
   <!-- Linke Sidebar: Einstellungen -->
-  <aside class="w-64 flex-shrink-0 bg-gray-800 p-4 flex flex-col gap-4 overflow-y-auto">
-    <h2 class="text-yellow-400 font-bold text-lg">Dungeon Tracker</h2>
+  <aside class="dungeon-sidebar">
+    <h2 class="dungeon-sidebar__title">Dungeon Tracker</h2>
 
     <!-- Bild Upload -->
     <div>
-      <label class="block text-xs text-gray-400 mb-1">Spielbrett-Foto laden</label>
-      <label
-        class="flex items-center justify-center w-full h-10 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded cursor-pointer transition-colors"
-      >
+      <label class="dungeon-sidebar__caption">Spielbrett-Foto laden</label>
+      <label class="upload-button">
         <span>📁 Bild hochladen</span>
-        <input type="file" accept="image/*" class="hidden" (change)="onImageUpload($event)" />
+        <input type="file" accept="image/*" hidden (change)="onImageUpload($event)" />
       </label>
       @if (boardState().boardImageBase64) {
-        <p class="text-xs text-green-400 mt-1">✓ Bild geladen</p>
+        <p class="upload-status">✓ Bild geladen</p>
       }
     </div>
 
-    <hr class="border-gray-600" />
+    <hr class="dungeon-sidebar__divider" />
 
     <!-- Raster-Einstellungen -->
-    <div class="flex flex-col gap-3">
-      <h3 class="text-xs text-gray-400 uppercase tracking-wider">Raster-Einstellungen</h3>
+    <div class="grid-settings">
+      <h3 class="dungeon-sidebar__heading">Raster-Einstellungen</h3>
 
-      <label class="flex flex-col gap-1 text-sm">
+      <label class="grid-setting">
         Zellgröße: {{ boardState().gridCellSizePx }}px
         <input
           type="range"
@@ -32,11 +30,11 @@
           step="1"
           [value]="boardState().gridCellSizePx"
           (input)="onGridSettingChange('gridCellSizePx', +$any($event.target).value)"
-          class="accent-yellow-400"
+          class="grid-setting__slider"
         />
       </label>
 
-      <label class="flex flex-col gap-1 text-sm">
+      <label class="grid-setting">
         Versatz X: {{ boardState().gridOffsetX }}px
         <input
           type="range"
@@ -45,11 +43,11 @@
           step="1"
           [value]="boardState().gridOffsetX"
           (input)="onGridSettingChange('gridOffsetX', +$any($event.target).value)"
-          class="accent-yellow-400"
+          class="grid-setting__slider"
         />
       </label>
 
-      <label class="flex flex-col gap-1 text-sm">
+      <label class="grid-setting">
         Versatz Y: {{ boardState().gridOffsetY }}px
         <input
           type="range"
@@ -58,11 +56,11 @@
           step="1"
           [value]="boardState().gridOffsetY"
           (input)="onGridSettingChange('gridOffsetY', +$any($event.target).value)"
-          class="accent-yellow-400"
+          class="grid-setting__slider"
         />
       </label>
 
-      <label class="flex flex-col gap-1 text-sm">
+      <label class="grid-setting">
         Deckkraft: {{ (boardState().gridOpacity * 100).toFixed(0) }}%
         <input
           type="range"
@@ -71,60 +69,56 @@
           step="0.05"
           [value]="boardState().gridOpacity"
           (input)="onGridSettingChange('gridOpacity', +$any($event.target).value)"
-          class="accent-yellow-400"
+          class="grid-setting__slider"
         />
       </label>
     </div>
 
-    <hr class="border-gray-600" />
+    <hr class="dungeon-sidebar__divider" />
 
     <!-- Charakter-Legende -->
     <div>
-      <h3 class="text-xs text-gray-400 uppercase tracking-wider mb-2">
+      <h3 class="dungeon-sidebar__heading dungeon-sidebar__heading--spaced">
         Charaktere ({{ tokens().length }})
       </h3>
       @for (token of tokens(); track token.position.characterId) {
-        <div class="flex items-center gap-2 text-xs py-1">
+        <div class="legend-entry">
           <img
             [src]="token.character.image"
             [alt]="token.character.name"
-            class="w-6 h-6 rounded-full object-cover"
+            class="legend-entry__avatar"
           />
-          <span class="truncate">{{ token.character.name }}</span>
-          <span class="text-gray-500 ml-auto">
+          <span class="legend-entry__name">{{ token.character.name }}</span>
+          <span class="legend-entry__position" data-testid="token-position">
             [{{ token.position.col }},{{ token.position.row }}]
           </span>
         </div>
       }
       @if (tokens().length === 0) {
-        <p class="text-xs text-gray-500">Keine Charaktere im Character Tracker angelegt.</p>
+        <p class="legend-empty">Keine Charaktere im Character Tracker angelegt.</p>
       }
     </div>
   </aside>
 
   <!-- Hauptbereich: Spielbrett -->
-  <div class="relative flex-1 overflow-hidden bg-gray-950">
+  <div class="board">
     @if (!boardState().boardImageBase64) {
       <!-- Placeholder wenn kein Bild geladen -->
-      <div class="absolute inset-0 flex items-center justify-center">
-        <div class="text-center text-gray-600">
-          <div class="text-6xl mb-4">🗺️</div>
-          <p class="text-xl font-semibold">Kein Spielbrett geladen</p>
-          <p class="text-sm mt-2">Lade ein Foto des Spielbretts über die Seitenleiste</p>
+      <div class="board__placeholder">
+        <div class="board__placeholder-content">
+          <div class="board__placeholder-icon">🗺️</div>
+          <p class="board__placeholder-title">Kein Spielbrett geladen</p>
+          <p class="board__placeholder-hint">Lade ein Foto des Spielbretts über die Seitenleiste</p>
         </div>
       </div>
     } @else {
       <!-- Spielbrett-Foto -->
-      <img
-        [src]="boardState().boardImageBase64"
-        alt="Spielbrett"
-        class="absolute inset-0 w-full h-full object-contain select-none"
-      />
+      <img [src]="boardState().boardImageBase64" alt="Spielbrett" class="board__image" />
     }
 
     <!-- CSS-Raster Overlay (immer sichtbar wenn Deckkraft > 0) -->
     @if (boardState().gridOpacity > 0) {
-      <div class="absolute inset-0 pointer-events-none" [ngStyle]="gridStyle()"></div>
+      <div class="board__grid" [ngStyle]="gridStyle()"></div>
     }
 
     <!-- Charakter-Token -->

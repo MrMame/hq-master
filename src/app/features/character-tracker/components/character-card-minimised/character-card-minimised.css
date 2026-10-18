@@ -1,0 +1,56 @@
+.minimized-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-center;
+  justify-content: space-around;
+  padding: var(--space-1);
+}
+
+.minimized-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.minimized-portrait {
+  width: 48px;
+  height: 48px;
+  margin-right: var(--space-4);
+}
+
+.hit-button {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  color: var(--color-white);
+  font-weight: var(--font-weight-bold);
+}
+
+.hit-button--normal:hover {
+  background-color: var(--color-blue-700);
+}
+
+.hit-button--critical {
+  margin-left: var(--space-4);
+
+  &:hover {
+    background-color: var(--color-red-700);
+  }
+}
+
+.hit-icon {
+  object-fit: contain;
+}
+
+.stat {
+  margin-left: var(--space-2);
+}
+
+.stat--health {
+  color: var(--color-green-400);
+}
+
+.stat--armor {
+  color: var(--color-blue-400);
+}

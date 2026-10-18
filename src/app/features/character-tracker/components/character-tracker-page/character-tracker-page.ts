@@ -13,7 +13,7 @@ import { applyDamage } from '../../utils/damage.util';
   selector: 'app-character-tracker-page',
   imports: [MovableCharacterCard],
   templateUrl: './character-tracker-page.html',
-  styleUrl: './character-tracker-page.scss',
+  styleUrl: './character-tracker-page.css',
 })
 export class CharacterTrackerPage {
   private readonly charactersDbService: CharactersDbService = inject(CharactersDbService);

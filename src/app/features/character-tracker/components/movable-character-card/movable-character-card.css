@@ -1,0 +1,50 @@
+/* Die verschiebbare Karte, positioniert relativ zum Begrenzungsbereich der Page */
+.draggable-box {
+  position: absolute;
+  width: 200px;
+  min-height: 75px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-box);
+  display: flex;
+  flex-direction: column;
+  cursor: grab;
+}
+
+.draggable-box:active {
+  cursor: grabbing;
+}
+
+.handle {
+  background: var(--color-indigo-material);
+  color: var(--color-white);
+  padding: 5px;
+  font-size: 12px;
+  text-align: center;
+  cursor: move;
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+}
+
+.content {
+  padding: 2px;
+}
+
+.delete-button {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-blue-500);
+  color: var(--color-white);
+  font-weight: var(--font-weight-bold);
+
+  &:hover {
+    background-color: var(--color-red-700);
+  }
+}
+
+/* Zuletzt angeklickte Karte liegt über allen anderen */
+.is-on-top {
+  z-index: 9999;
+}
