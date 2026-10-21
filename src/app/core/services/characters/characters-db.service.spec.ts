@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { CharactersDbService } from './characters-db.service';
-import { CharacterInfo } from '../../../features/character-tracker/models/character-info.model';
+import { CharacterInfo } from '../../models/character-info.model';
 import { describePersistedState } from '../../session-state/testing/describe-persisted-state';
 import { SESSION_KEYS } from '../../session-state/session-keys';
 

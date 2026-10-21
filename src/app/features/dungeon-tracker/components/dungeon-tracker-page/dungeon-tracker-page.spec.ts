@@ -1,10 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
 
 import { DungeonTrackerPage } from './dungeon-tracker-page';
 import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
 import { DungeonBoardService } from '../../services/dungeon-board.service';
-import { CharacterInfo } from '../../../character-tracker/models/character-info.model';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
 
 const createCharacter: (id: string) => CharacterInfo = (id: string): CharacterInfo => ({
   id,
@@ -34,7 +33,6 @@ describe('DungeonTrackerPage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [DungeonTrackerPage],
-      providers: [provideRouter([])],
     }).compileComponents();
 
     charactersDb = TestBed.inject(CharactersDbService);
@@ -63,6 +61,15 @@ describe('DungeonTrackerPage', () => {
     await fixture.whenStable();
     expect(tokenIds()).toEqual([]);
     expect(renderedTokens()).toBe(0);
+  });
+
+  it('should show an edited character immediately in legend and token', async () => {
+    charactersDb.writeCharacter({ ...createCharacter('a'), name: 'Grimgor' });
+    await fixture.whenStable();
+
+    const host: HTMLElement = fixture.nativeElement as HTMLElement;
+    expect(host.querySelector('.legend-entry__name')?.textContent?.trim()).toBe('Grimgor');
+    expect(host.querySelector('.dungeon-token')?.getAttribute('title')).toBe('Grimgor');
   });
 
   it('should not render a token for a position without character', async () => {

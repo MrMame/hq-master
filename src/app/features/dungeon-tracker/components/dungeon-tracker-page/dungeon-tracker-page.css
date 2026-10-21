@@ -36,6 +36,10 @@
 }
 
 /* Charakter-Legende */
+.new-character-button {
+  margin-bottom: var(--space-2);
+}
+
 .legend-entry {
   display: flex;
   align-items: center;

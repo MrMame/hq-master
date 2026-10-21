@@ -1,13 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
 import { By } from '@angular/platform-browser';
 
 import { DungeonTrackerPage } from './dungeon-tracker-page';
 import { DungeonToken } from '../dungeon-token/dungeon-token';
 import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
+import { CharacterEditorService } from '../../../../shared/services/character-editor.service';
 import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { DungeonBoardState } from '../../models/dungeon-board-state.model';
-import { createTestCharacter } from '../../../game-session/testing/session.fixtures';
+import { createTestCharacter } from '../../../../core/testing/character.fixtures';
+import { clickButton } from '../../../../shared/testing/click-button';
 
 type GridSetting = 'gridCellSizePx' | 'gridOffsetX' | 'gridOffsetY' | 'gridOpacity';
 
@@ -15,11 +16,15 @@ describe('DungeonTrackerPage – interactions', () => {
   let fixture: ComponentFixture<DungeonTrackerPage>;
   let board: DungeonBoardService;
   let host: HTMLElement;
+  const openEdit: ReturnType<typeof vi.fn> = vi.fn();
+  const openCreate: ReturnType<typeof vi.fn> = vi.fn();
 
   beforeEach(async () => {
+    openEdit.mockReset();
+    openCreate.mockReset();
     await TestBed.configureTestingModule({
       imports: [DungeonTrackerPage],
-      providers: [provideRouter([])],
+      providers: [{ provide: CharacterEditorService, useValue: { openEdit, openCreate } }],
     }).compileComponents();
 
     TestBed.inject(CharactersDbService).writeCharacter(createTestCharacter('a'));
@@ -86,13 +91,17 @@ describe('DungeonTrackerPage – interactions', () => {
     expect(board.positions()).toContainEqual({ characterId: 'a', col: 3, row: 2 });
   });
 
-  it('navigates to the character tracker on token double click', () => {
-    const navigate: ReturnType<typeof vi.spyOn> = vi
-      .spyOn(TestBed.inject(Router), 'navigate')
-      .mockResolvedValue(true);
-
+  it('opens the character editor for the double-clicked token', () => {
     token().tokenDoubleClicked.emit('a');
 
-    expect(navigate).toHaveBeenCalledExactlyOnceWith(['/charactertracker']);
+    expect(openEdit).toHaveBeenCalledExactlyOnceWith(createTestCharacter('a'));
+    expect(openCreate).not.toHaveBeenCalled();
+  });
+
+  it('opens the character editor for a new character on "Character Neu"', () => {
+    clickButton(host, 'Character Neu');
+
+    expect(openCreate).toHaveBeenCalledExactlyOnceWith();
+    expect(openEdit).not.toHaveBeenCalled();
   });
 });

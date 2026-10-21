@@ -7,6 +7,7 @@
 @layer base, components;
 
 @import './styles/components/sidebar.css' layer(components);
+@import './styles/components/dialog.css' layer(components);
 
 @layer base {
   *,

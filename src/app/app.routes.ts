@@ -1,14 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'charactertracker', pathMatch: 'full' },
-  {
-    path: 'charactertracker',
-    loadComponent: () =>
-      import('./features/character-tracker/components/character-tracker-page/character-tracker-page').then(
-        (m) => m.CharacterTrackerPage,
-      ),
-  },
+  { path: '', redirectTo: 'dungeontracker', pathMatch: 'full' },
   {
     path: 'timetracker',
     loadComponent: () =>
@@ -37,5 +30,5 @@ export const routes: Routes = [
         (m) => m.GameSessionPage,
       ),
   },
-  { path: '**', redirectTo: 'charactertracker' },
+  { path: '**', redirectTo: 'dungeontracker' },
 ];

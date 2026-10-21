@@ -15,7 +15,10 @@ Alle Features teilen eine gemeinsame Session-Datenbasis über root-provided Serv
 
 ```
 core/
-  models/         → game-time.model.ts, game-time-span.model.ts
+  models/         → game-time.model.ts, game-time-span.model.ts,
+                    character-info.model.ts, elemental-types.model.ts,
+                    character-abilities.model.ts, character-images.model.ts (Bildlisten),
+                    damage-types.model.ts (Schadensarten)
   session-state/  → persisted-state.ts (persistedState), session-keys.ts (SESSION_KEYS),
                     session-state-slice.ts (SessionStateSlice), session-slices.ts (SessionSliceData)
     testing/      → describe-persisted-state.ts (Vertragstest für Regel 8, nur für Specs)
@@ -23,19 +26,10 @@ core/
     game-time/    → GameTimeService: In-Game-Zeitlogik (app-weit)
     storage/      → StorageService (LocalStorage-Abstraktion)
     characters/   → CharactersDbService
+  testing/        → character.fixtures.ts (Testdaten für Charaktere, nur für Specs)
 
 features/
-  character-tracker/   → Charakterverwaltung & Kampf
-    components/        → CharacterTrackerPage, MovableCharacterCard, CharacterCardMinimised,
-                         CharacterCard, Dialoge
-    models/            → character-info.model.ts, card-layout.model.ts, damage-types.model.ts, …
-    services/          → character-card-layout.service.ts (Kartenlayout, Session-Slice),
-                         character-dialogs.service.ts
-      character-creators/ → hero-/monster-character-creator.service.ts
-    utils/             → damage.util.ts (reine Schadensberechnung)
-    testing/           → character-tracker-page.fixtures.ts (Page-Setup mit Dialog-Mock, nur für Specs)
-
-  dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung
+  dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung (Startseite)
     components/        → DungeonTrackerPage, DungeonToken
     models/            → dungeon-board-state.model.ts, dungeon-position.model.ts, dungeon-session-state.model.ts,
                          board-token.model.ts
@@ -60,8 +54,15 @@ features/
     testing/           → session.fixtures.ts, game-session-page.fixtures.ts (nur für Specs)
 
 shared/
-  components/          → Feature-unabhängige UI (z. B. ConfirmationDialog)
-  testing/             → feature-übergreifende DOM-Helfer für Specs (z. B. click-button.ts)
+  components/          → Feature-unabhängige UI (z. B. ConfirmationDialog, CharacterEditorDialog,
+                         DamageTakenDialog)
+  models/              → confirmation-dialog-data.model.ts (Texte der Rückfrage)
+  services/            → character-editor.service.ts (öffnet den Charakter-Editor systemweit)
+    character-creators/ → hero-/monster-character-creator.service.ts (Zufallscharaktere)
+  utils/               → new-character.util.ts (Startwerte für neue Charaktere),
+                         damage.util.ts (reine Schadensberechnung)
+  testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
+                         character-editor-dialog.fixtures.ts)
 ```
 
 ## E2E-Tests (`e2e/`, Projekt-Root)
@@ -70,22 +71,24 @@ Playwright-Smoke-Tests (`npm run e2e`) liegen unter `e2e/` – **nicht** unter `
 von Vitest noch vom App-Build erfasst werden. `playwright.config.ts` (Root) startet `ng serve` auf Port 4321.
 Nur wenige, stabile Abläufe über echte Browser-Interaktion (Routing, Reload-Persistenz, Drag & Drop,
 Datei-Export/-Import); Logik wird weiterhin in Vitest-Specs getestet.
+Gemeinsame Schritte (z. B. `createCharacter()` über „Character Neu“) liegen unter `e2e/support/`
+und heißen nicht `*.spec.ts`, damit Playwright sie nicht als Tests ausführt.
 
 ## Dateinamen
 
 Kebab-Case, die Rolle steht als Punkt-Suffix im Dateinamen. Der Dateiname folgt dem Klassen-/Typnamen ohne Rollenwort.
 `ng g s` erzeugt dank `angular.json` automatisch `*.service.ts`.
 
-| Rolle               | Muster                                   | Inhalt               |
-| ------------------- | ---------------------------------------- | -------------------- |
-| Component           | `character-card.ts` (Angular-21-Default) | `CharacterCard`      |
-| Service             | `game-session.service.ts`                | `GameSessionService` |
-| Model / Interface   | `session-meta.model.ts`                  | `SessionMeta`        |
-| Reine Hilfsfunktion | `xml.util.ts`                            | Funktionen           |
-| XML-Mapper          | `meta.xml-mapper.ts`                     | `writeX` / `readX`   |
-| Testdaten           | `<feature>/testing/<name>.fixtures.ts`   | Fabrikfunktionen     |
-| E2E-Test            | `e2e/<szenario>.spec.ts`                 | Playwright-Tests     |
-| Test                | `<dateiname>.spec.ts` (gleicher Stamm)   | Vitest-Specs         |
+| Rolle               | Muster                                                                | Inhalt               |
+| ------------------- | --------------------------------------------------------------------- | -------------------- |
+| Component           | `dungeon-token.ts` (Angular-21-Default)                               | `DungeonToken`       |
+| Service             | `game-session.service.ts`                                             | `GameSessionService` |
+| Model / Interface   | `session-meta.model.ts`                                               | `SessionMeta`        |
+| Reine Hilfsfunktion | `xml.util.ts`                                                         | Funktionen           |
+| XML-Mapper          | `meta.xml-mapper.ts`                                                  | `writeX` / `readX`   |
+| Testdaten           | `<feature>/testing/<name>.fixtures.ts`, Core-Modelle: `core/testing/` | Fabrikfunktionen     |
+| E2E-Test            | `e2e/<szenario>.spec.ts`                                              | Playwright-Tests     |
+| Test                | `<dateiname>.spec.ts` (gleicher Stamm)                                | Vitest-Specs         |
 
 - Keine PascalCase-Dateinamen, keine Models unter `services/`, keine Testdaten neben Produktivcode.
 - Komponentenklassen ohne `Component`-Suffix (`confirmation-dialog.ts` → `ConfirmationDialog`).
@@ -108,6 +111,8 @@ Kebab-Case, die Rolle steht als Punkt-Suffix im Dateinamen. Der Dateiname folgt 
 - State lebt in root-provided Services als **private Signals** (`signal()`).
 - Öffentlicher Zugriff nur via `.asReadonly()`.
 - Features, die gemeinsamen State benötigen, injizieren den Service aus `core/`.
+- **Code unter `shared/` importiert nichts aus `features/`. Modelle, die außer ihrem Feature auch
+  `shared/` oder andere Features nutzen, liegen in `core/models/`.**
 - Persistenz immer über `StorageService` → kein direktes `localStorage` in Features.
 
 ### Session-State-Services: reaktive Schnittstelle (verbindlich)
@@ -203,8 +208,11 @@ Slice-Map des `GameSessionService`; der Compiler meldet dann Snapshot und XML-Ma
 - Template/Styles inline, wenn < 100 Zeilen; sonst separate `.html`/`.css`.
 - Styling: reines CSS mit semantischen Klassen je Komponente; Farben, Abstände und Typografie
   nur über die Tokens aus `src/styles/tokens.css` (`var(--…)`).
-- Feature-übergreifende Bausteine (z. B. `.general-sidebar`) liegen global unter `src/styles/components/`
+- Feature-übergreifende Bausteine (z. B. `.general-sidebar`, `.general-dialog`) liegen global unter `src/styles/components/`
   und werden in `src/styles.css` per `@import … layer(components)` eingebunden; `tokens.css` enthält nur Tokens.
+- Shared-Dialoge nutzen den dunklen Look über `host: { class: 'general-dialog' }` und die Element-Klassen
+  `general-dialog__title`, `__cancel`, `__confirm`. Material setzt den Dialog-Host (ohne Layer) auf
+  `display: contents`; `.general-dialog` hält deshalb `display: block !important`, damit die Fläche eine Box hat.
 
 ### Dateigrößenlimit
 

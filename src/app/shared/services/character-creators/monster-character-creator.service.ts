@@ -1,0 +1,46 @@
+import { Injectable } from '@angular/core';
+import { CharacterInfo } from '../../../core/models/character-info.model';
+import { ElementalTypes } from '../../../core/models/elemental-types.model';
+import { CharacterAbilities } from '../../../core/models/character-abilities.model';
+import { MONSTER_IMAGES } from '../../../core/models/character-images.model';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class MonsterCharacterCreatorService {
+  CreateNewRandomMonster(): CharacterInfo {
+    // Holt alle String-Werte ('Feuer', 'Wasser', etc.) als Array
+    const elemntalTypesArray: ElementalTypes[] = Object.values(ElementalTypes);
+    const abilitiesArray: CharacterAbilities[] = Object.values(CharacterAbilities);
+
+    const randomId: string = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const randomName: string = `Monster ${randomId}`;
+    const randomType: ElementalTypes =
+      elemntalTypesArray[Math.floor(Math.random() * elemntalTypesArray.length)];
+    const randomHealth: number = Math.floor(Math.random() * 200) + 50;
+    const randomArmor: number = Math.floor(Math.random() * 50) + 5;
+    const randomAttack: number = Math.floor(Math.random() * 50) + 10;
+    const randomDefense: number = Math.floor(Math.random() * 50) + 5;
+    const randomSpeed: number = Math.floor(Math.random() * 30) + 5;
+    const randomAbilities: CharacterAbilities[] = abilitiesArray.slice(
+      0,
+      Math.floor(Math.random() * abilitiesArray.length) + 1,
+    );
+    const randomImage: string = MONSTER_IMAGES[Math.floor(Math.random() * MONSTER_IMAGES.length)];
+    const randomDescription: string = `Dies ist eine zufällige Beschreibung für ${randomName}.`;
+
+    return {
+      id: randomId,
+      name: randomName,
+      type: randomType,
+      health: randomHealth,
+      armor: randomArmor,
+      attack: randomAttack,
+      defense: randomDefense,
+      speed: randomSpeed,
+      abilities: randomAbilities,
+      image: randomImage,
+      description: randomDescription,
+    };
+  }
+}

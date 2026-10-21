@@ -1,4 +1,5 @@
 import { Download, expect, Page, test } from '@playwright/test';
+import { createCharacter } from './support/create-character';
 
 /** Werte aus `SESSION_KEYS` (src/app/core/session-state/session-keys.ts). */
 const SESSION_KEYS: string[] = [
@@ -8,7 +9,6 @@ const SESSION_KEYS: string[] = [
   'dungeon_positions',
   'card_manager_deck_state',
   'game_session_meta',
-  'character_card_layout',
 ];
 
 /** Gesamter persistierter Session-Zustand, als JSON geparst. */
@@ -29,9 +29,8 @@ async function confirm(page: Page): Promise<void> {
 }
 
 test('an exported session can be imported again with identical state', async ({ page }) => {
-  await page.goto('/charactertracker');
-  await page.getByRole('button', { name: 'Add Monster' }).click();
-  await page.getByRole('button', { name: 'Add Hero' }).click();
+  await createCharacter(page, 'Ork');
+  await createCharacter(page, 'Elfe');
   await page.goto('/gamesession');
   await page.getByTestId('session-name').fill('E2E Gruft');
   await page.getByTestId('start-session').click();
@@ -45,8 +44,7 @@ test('an exported session can be imported again with identical state', async ({ 
   expect(download.suggestedFilename()).toBe('e2e-gruft.xml');
   const filePath: string = await download.path();
 
-  await page.goto('/charactertracker');
-  await page.getByRole('button', { name: 'Add Monster' }).click();
+  await createCharacter(page, 'Nachzügler');
   await page.goto('/gamesession');
   await page.getByTestId('end-session').click();
   expect(await readSessionState(page)).not.toEqual(exported);

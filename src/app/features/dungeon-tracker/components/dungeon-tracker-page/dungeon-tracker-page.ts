@@ -1,6 +1,7 @@
 import { Component, computed, inject, Signal } from '@angular/core';
 import { NgStyle } from '@angular/common';
-import { Router } from '@angular/router';
+import { CharacterEditorService } from '../../../../shared/services/character-editor.service';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { DungeonBoardState } from '../../models/dungeon-board-state.model';
 import { BoardToken } from '../../models/board-token.model';
@@ -15,7 +16,7 @@ import { DungeonToken } from '../dungeon-token/dungeon-token';
 })
 export class DungeonTrackerPage {
   private readonly dungeonBoardService: DungeonBoardService = inject(DungeonBoardService);
-  private readonly router: Router = inject(Router);
+  private readonly characterEditor: CharacterEditorService = inject(CharacterEditorService);
 
   readonly boardState: Signal<DungeonBoardState> = this.dungeonBoardService.boardState;
   readonly tokens: Signal<BoardToken[]> = this.dungeonBoardService.tokens;
@@ -61,7 +62,13 @@ export class DungeonTrackerPage {
     this.dungeonBoardService.updatePosition(event.characterId, event.col, event.row);
   }
 
-  onTokenDoubleClick(): void {
-    void this.router.navigate(['/charactertracker']);
+  /** Der Editor speichert selbst; Token und Legende folgen über `tokens` sofort. */
+  onTokenDoubleClick(character: CharacterInfo): void {
+    this.characterEditor.openEdit(character);
+  }
+
+  /** Den neuen Charakter setzt der Sync-Effekt des DungeonBoardService aufs erste freie Feld. */
+  onNewCharacterClick(): void {
+    this.characterEditor.openCreate();
   }
 }

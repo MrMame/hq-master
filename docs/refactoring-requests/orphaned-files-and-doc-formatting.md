@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-18  
 **Priorität:** Niedrig  
-**Status:** offen  
+**Status:** offen — #1 rejected (2026-10-21, obsolet), #2 offen  
 **Bezug:** `docs/refactoring-requests/done/test-strategy-improvements.md` (bei der Umsetzung gefunden), `.claude/rules/testing.md` (Git-Hooks)
 
 ---
@@ -22,7 +22,13 @@ Kein fachliches Verhalten ändert sich.
 
 ## Anforderungen
 
-### 1. Verwaiste Dialog-Templates entfernen
+### 1. Verwaiste Dialog-Templates entfernen — rejected (2026-10-21)
+
+> **Obsolet:** `add-character-dialog.html` wurde mit dem Character Tracker gelöscht
+> (`docs/feature-requests/done/character-tracker-removal.md` #4). `damage-taken-dialog.html` ist kein
+> Platzhalter mehr; `DamageTakenDialog` bindet die Datei per `templateUrl` ein, und sie liegt jetzt unter
+> `src/app/shared/components/damage-taken-dialog/`. Die Suche nach weiteren verwaisten `.html`/`.css`-Dateien
+> entfällt mit diesem Punkt.
 
 - Löschen (per `git rm`):
   - `src/app/features/character-tracker/components/add-character-dialog/add-character-dialog.html`
@@ -46,6 +52,6 @@ Kein fachliches Verhalten ändert sich.
 
 ## Akzeptanzkriterien
 
-- [ ] Die beiden Platzhalter-Templates sind entfernt; Build, Lint und Tests bleiben grün.
+- [ ] ~~Die beiden Platzhalter-Templates sind entfernt; Build, Lint und Tests bleiben grün.~~ Entfällt (#1 rejected, 2026-10-21).
 - [ ] `npx prettier --check .github .claude` meldet keine Datei mehr.
 - [ ] Keine inhaltlichen Änderungen an den formatierten Dateien.

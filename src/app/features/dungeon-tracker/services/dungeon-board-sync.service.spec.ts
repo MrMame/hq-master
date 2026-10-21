@@ -6,7 +6,7 @@ import { DungeonPosition } from '../models/dungeon-position.model';
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
 import { StorageService } from '../../../core/services/storage/storage.service';
 import { DEFAULT_DUNGEON_BOARD_STATE } from '../models/dungeon-board-state.model';
-import { createTestCharacter } from '../../game-session/testing/session.fixtures';
+import { createTestCharacter } from '../../../core/testing/character.fixtures';
 
 const readStoredPositions: () => DungeonPosition[] | null = (): DungeonPosition[] | null =>
   JSON.parse(localStorage.getItem('dungeon_positions') ?? 'null') as DungeonPosition[] | null;

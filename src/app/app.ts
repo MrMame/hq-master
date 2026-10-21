@@ -29,14 +29,6 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
               Card Manager
             </a>
             <a
-              routerLink="/charactertracker"
-              routerLinkActive="app-nav__link--active"
-              [routerLinkActiveOptions]="{ exact: true }"
-              class="app-nav__link"
-            >
-              Character Tracker
-            </a>
-            <a
               routerLink="/timetracker"
               routerLinkActive="app-nav__link--active"
               class="app-nav__link"

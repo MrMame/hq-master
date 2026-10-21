@@ -10,8 +10,6 @@
 
   --color-gray-50: oklch(98.5% 0.002 247.839);
   --color-gray-100: oklch(96.7% 0.003 264.542);
-  --color-gray-200: oklch(92.8% 0.006 264.531);
-  --color-gray-300: oklch(87.2% 0.01 258.338);
   --color-gray-400: oklch(70.7% 0.022 261.325);
   --color-gray-500: oklch(55.1% 0.027 264.364);
   --color-gray-600: oklch(44.6% 0.03 256.802);
@@ -21,7 +19,6 @@
   --color-gray-950: oklch(13% 0.028 261.692);
 
   --color-red-400: oklch(70.4% 0.191 22.216);
-  --color-red-500: oklch(63.7% 0.237 25.331);
   --color-red-600: oklch(57.7% 0.245 27.325);
   --color-red-700: oklch(50.5% 0.213 27.518);
 
@@ -35,7 +32,6 @@
 
   --color-yellow-400: oklch(85.2% 0.199 91.936);
   --color-yellow-500: oklch(79.5% 0.184 86.047);
-  --color-yellow-700: oklch(55.4% 0.135 66.442);
   --color-yellow-800: oklch(47.6% 0.114 61.907);
 
   --color-lime-100: oklch(96.7% 0.067 122.328);
@@ -49,17 +45,11 @@
   --color-green-600: oklch(62.7% 0.194 149.214);
   --color-green-800: oklch(44.8% 0.119 151.328);
 
-  --color-blue-400: oklch(70.7% 0.165 254.624);
   --color-blue-500: oklch(62.3% 0.214 259.815);
   --color-blue-600: oklch(54.6% 0.245 262.881);
   --color-blue-700: oklch(48.8% 0.243 264.376);
 
-  --color-pink-500: oklch(65.6% 0.241 354.308);
-  --color-pink-900: oklch(40.8% 0.153 2.432);
-
   /* Farben aus den bisherigen Komponenten-Styles */
-  --color-indigo-material: #3f51b5;
-  --color-border-light: #ccc;
   --color-card-surface: #1e1e2e;
   --color-card-text: #e2e8f0;
   --color-card-muted: #94a3b8;
@@ -75,7 +65,6 @@
   --color-general-sidebar: var(--color-gray-800);
 
   /* Abstände (Raster 0.25rem) -------------------------------------------- */
-  --space-0-5: 0.125rem;
   --space-1: 0.25rem;
   --space-1-5: 0.375rem;
   --space-2: 0.5rem;
@@ -84,7 +73,6 @@
   --space-6: 1.5rem;
   --space-8: 2rem;
   --space-10: 2.5rem;
-  --space-20: 5rem;
   --space-64: 16rem;
   --container-xl: 36rem;
 
@@ -110,10 +98,7 @@
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
   --radius-card: 8px;
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.2);
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.5);
-  --shadow-box: 0 4px 6px rgba(0, 0, 0, 0.1);
   --transition-duration: 150ms;
   --transition-ease: cubic-bezier(0.4, 0, 0.2, 1);
 

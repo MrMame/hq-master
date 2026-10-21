@@ -1,5 +1,5 @@
 import { Injectable, Signal } from '@angular/core';
-import { CharacterInfo } from '../../../features/character-tracker/models/character-info.model';
+import { CharacterInfo } from '../../models/character-info.model';
 import { PersistedState, persistedState } from '../../session-state/persisted-state';
 import { SESSION_KEYS } from '../../session-state/session-keys';
 import { SessionStateSlice } from '../../session-state/session-state-slice';

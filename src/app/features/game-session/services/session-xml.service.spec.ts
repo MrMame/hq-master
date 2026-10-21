@@ -45,17 +45,19 @@ describe('SessionXmlService', () => {
     expect(xml).toContain('<card id="c1" name="Schwert"');
   });
 
-  it('should write the card layout as <characterCards>', () => {
-    const xml: string = service.serialize(createSessionSnapshot());
-    expect(xml).toContain('<characterCards topCardId="b">');
-    expect(xml).toContain('<card characterId="b" x="320" y="-10" minimised="false"/>');
+  it('should no longer write a card layout', () => {
+    expect(service.serialize(createSessionSnapshot())).not.toContain('<characterCards');
   });
 
-  it('should read an empty card layout from older files without <characterCards>', () => {
+  it('should load older files with <characterCards> and ignore the element', () => {
+    const snapshot: SessionSnapshot = createSessionSnapshot();
     const xml: string = service
-      .serialize(createSessionSnapshot())
-      .replace(/<characterCards[\s\S]*<\/characterCards>/, '');
-    expect(service.parse(xml).characterCards).toEqual({ cards: {}, topCardId: null });
+      .serialize(snapshot)
+      .replace(
+        '</gameSession>',
+        '<characterCards topCardId="a"><card characterId="a" x="50" y="50" minimised="true"/></characterCards></gameSession>',
+      );
+    expect(service.parse(xml)).toEqual(snapshot);
   });
 
   it('should reject malformed XML', () => {
