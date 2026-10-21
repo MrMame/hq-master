@@ -18,7 +18,7 @@ export interface CharacterEditorDialogSetup {
   close: Mock;
   /** Gemocktes `MatDialog.open` für die Rückfrage vor dem Entfernen. */
   dialogOpen: Mock;
-  /** Legt fest, ob die Rückfrage mit „Bestätigen“ (`true`) geschlossen wird. */
+  /** Legt fest, ob die Rückfrage bestätigt (`true`) oder abgebrochen (`false`) wird. */
   confirmWith: (confirmed: boolean) => void;
   /** Charaktere der Session (echter `CharactersDbService`). */
   characters: Signal<CharacterInfo[]>;

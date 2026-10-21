@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-21  
 **Priorität:** Mittel  
-**Status:** open — dunkler Look für alle Aufrufer entschieden (2026-10-21)  
+**Status:** done (2026-10-21 19:22) — #1–#5 umgesetzt; dunkler Look für alle Aufrufer entschieden (2026-10-21)  
 **Bezug:** `docs/feature-requests/done/character-editor-remove.md` (Hinweis „Text der Rückfrage“), `docs/refactoring-requests/done/shared-sidebar-styles.md` (Muster `.general-sidebar`), `.claude/rules/architecture.md` → „Komponenten“
 
 ---
@@ -62,7 +62,7 @@ Aufrufer heute:
 
 ## Anforderungen
 
-### 1. Gemeinsamer Dialog-Look `.general-dialog`
+### 1. Gemeinsamer Dialog-Look `.general-dialog` ✅ done (2026-10-21 19:22)
 
 - Neue Datei `src/styles/components/dialog.css`, von Hand angelegt (es gibt keinen CLI-Blueprint für
   globales CSS). Eingebunden in `src/styles.css` direkt nach der Seitenleiste:
@@ -78,6 +78,11 @@ Aufrufer heute:
 
 - Der Kopfkommentar folgt `sidebar.css`. Komponenten-CSS ohne Layer hat Vorrang und darf einzelne
   Werte überschreiben.
+- **Bei der Umsetzung gefunden (2026-10-21):** Material setzt den Dialog-Host über
+  `.mat-mdc-dialog-component-host { display: contents; }`, und zwar ohne Layer. Ein `display: block`
+  im Layer `components` verliert dagegen. Deshalb steht `display: block !important` in
+  `.general-dialog`, mit Kommentar, nach Freigabe durch den Nutzer. Ohne das `!important` weichen in
+  der Pixel-Probe 75 % der Pixel ab, weil die Fläche fehlt.
 - `CharacterEditorDialog`:
   - `host: { class: 'general-dialog' }` im `@Component`-Decorator. Der `:host`-Block in
     `character-editor-dialog.css` entfällt.
@@ -91,7 +96,7 @@ Teil global und stehen weiteren Dialogen zur Verfügung.
 
 ---
 
-### 2. `ConfirmationDialog`: dunkler Look und übergebbare Texte
+### 2. `ConfirmationDialog`: dunkler Look und übergebbare Texte ✅ done (2026-10-21 19:22)
 
 - Neue Datei `src/app/shared/models/confirmation-dialog-data.model.ts`, von Hand angelegt:
 
@@ -129,7 +134,7 @@ Ohne Angaben zeigt sie die bisherigen Texte, mit Angaben die Texte des Aufrufers
 
 ---
 
-### 3. Charakter-Editor: konkrete Rückfrage beim Entfernen
+### 3. Charakter-Editor: konkrete Rückfrage beim Entfernen ✅ done (2026-10-21 19:22)
 
 - `CharacterEditorDialog.confirmRemoval()` öffnet die Rückfrage mit
 
@@ -154,7 +159,7 @@ Hauptbutton heißt „Entfernen“.
 
 ---
 
-### 4. E2E-Tests
+### 4. E2E-Tests ✅ done (2026-10-21 19:22)
 
 `e2e/character-editor.spec.ts` (Szenarien `"Entfernen" on PC/Tablet`):
 
@@ -169,7 +174,7 @@ grün, und `e2e/session-roundtrip.spec.ts` ist unverändert grün.
 
 ---
 
-### 5. Dokumentation
+### 5. Dokumentation ✅ done (2026-10-21 19:22)
 
 `.claude/rules/architecture.md`:
 
@@ -231,13 +236,13 @@ Model.
 
 ## Akzeptanzkriterien
 
-- [ ] Der `ConfirmationDialog` erscheint überall dunkel mit gelbem Titel, weißer Frage, grauem „Abbrechen“ und gelbem Hauptbutton, auch auf der Game-Session-Seite
-- [ ] Editor und Rückfrage nutzen gemeinsam `.general-dialog*` aus `src/styles/components/dialog.css`, ohne doppelte Stile und ohne neue Tokens
-- [ ] Der Charakter-Editor sieht pixelgleich aus wie vorher (Probe mit Toleranz 0)
-- [ ] Ohne Daten zeigt der `ConfirmationDialog` die bisherigen Texte, mit Daten die des Aufrufers, auch teilweise
-- [ ] Die Rückfrage im Editor lautet „Charakter entfernen“ / „‚<gespeicherter Name>‘ wirklich entfernen?“ / „Entfernen“
-- [ ] „Abbrechen“ hat in der Rückfrage beim Öffnen den Fokus
-- [ ] Die Game-Session-Seite ist im Code unverändert, und `e2e/session-roundtrip.spec.ts` ist grün
-- [ ] Jede Datei hat höchstens 150 Zeilen, und die Specs prüfen das Verhalten über Harness und DOM
-- [ ] `.claude/rules/architecture.md` ist aktualisiert
-- [ ] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün
+- [x] Der `ConfirmationDialog` erscheint überall dunkel mit gelbem Titel, weißer Frage, grauem „Abbrechen“ und gelbem Hauptbutton, auch auf der Game-Session-Seite
+- [x] Editor und Rückfrage nutzen gemeinsam `.general-dialog*` aus `src/styles/components/dialog.css`, ohne doppelte Stile und ohne neue Tokens
+- [x] Der Charakter-Editor sieht pixelgleich aus wie vorher (Probe mit Toleranz 0)
+- [x] Ohne Daten zeigt der `ConfirmationDialog` die bisherigen Texte, mit Daten die des Aufrufers, auch teilweise
+- [x] Die Rückfrage im Editor lautet „Charakter entfernen“ / „‚<gespeicherter Name>‘ wirklich entfernen?“ / „Entfernen“
+- [x] „Abbrechen“ hat in der Rückfrage beim Öffnen den Fokus
+- [x] Die Game-Session-Seite ist im Code unverändert, und `e2e/session-roundtrip.spec.ts` ist grün
+- [x] Jede Datei hat höchstens 150 Zeilen, und die Specs prüfen das Verhalten über Harness und DOM
+- [x] `.claude/rules/architecture.md` ist aktualisiert
+- [x] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün

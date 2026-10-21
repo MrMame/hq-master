@@ -1,4 +1,4 @@
-<h2 mat-dialog-title class="character-editor__title">{{ title }}</h2>
+<h2 mat-dialog-title class="general-dialog__title">{{ title }}</h2>
 
 <mat-dialog-content>
   <form #form="ngForm" class="character-editor__form">
@@ -111,10 +111,10 @@
   @if (isEditMode) {
     <button mat-button class="character-editor__remove" (click)="remove()">Entfernen</button>
   }
-  <button mat-button class="character-editor__cancel" (click)="cancel()">Abbrechen</button>
+  <button mat-button class="general-dialog__cancel" (click)="cancel()">Abbrechen</button>
   <button
     mat-flat-button
-    class="character-editor__apply"
+    class="general-dialog__confirm"
     [disabled]="form.invalid || !draft().image"
     (click)="apply()"
   >

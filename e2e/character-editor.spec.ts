@@ -16,7 +16,7 @@ function editor(page: Page): Locator {
 
 /** Rückfrage (`ConfirmationDialog`) vor dem Entfernen. */
 function confirmation(page: Page): Locator {
-  return page.getByRole('dialog', { name: 'Auswahl treffen' });
+  return page.getByRole('dialog', { name: 'Charakter entfernen' });
 }
 
 /** Seitenleiste des Dungeon Trackers mit der Charakter-Legende. */
@@ -32,6 +32,15 @@ async function editNewMonster(page: Page): Promise<void> {
 
   await page.locator('app-dungeon-token > div').dblclick();
   await expect(editor(page).getByRole('heading', { name: 'Charakter bearbeiten' })).toBeVisible();
+}
+
+/** Drückt „Entfernen“; die Rückfrage nennt den Charakter, und „Abbrechen“ hat den Fokus. */
+async function askToRemove(page: Page, press: Press): Promise<void> {
+  const name: string = await editor(page).getByLabel('Name').inputValue();
+  await press(editor(page).getByRole('button', { name: 'Entfernen' }));
+
+  await expect(confirmation(page)).toContainText(`„${name}“ wirklich entfernen?`);
+  await expect(confirmation(page).getByRole('button', { name: 'Abbrechen' })).toBeFocused();
 }
 
 test('a character edited via double click keeps its new name after a reload', async ({ page }) => {
@@ -70,9 +79,8 @@ for (const device of INPUT_DEVICES) {
 
     test('removes the character after confirmation', async ({ page }) => {
       await editNewMonster(page);
-      await device.press(editor(page).getByRole('button', { name: 'Entfernen' }));
-      await expect(confirmation(page)).toBeVisible();
-      await device.press(confirmation(page).getByRole('button', { name: 'Bestätigen' }));
+      await askToRemove(page, device.press);
+      await device.press(confirmation(page).getByRole('button', { name: 'Entfernen' }));
 
       await expect(editor(page)).toBeHidden();
       await expect(page.locator('app-dungeon-token')).toHaveCount(0);
@@ -85,7 +93,7 @@ for (const device of INPUT_DEVICES) {
 
     test('keeps the character when the confirmation is cancelled', async ({ page }) => {
       await editNewMonster(page);
-      await device.press(editor(page).getByRole('button', { name: 'Entfernen' }));
+      await askToRemove(page, device.press);
       await device.press(confirmation(page).getByRole('button', { name: 'Abbrechen' }));
 
       await expect(confirmation(page)).toBeHidden();

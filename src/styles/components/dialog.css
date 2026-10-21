@@ -1,0 +1,40 @@
+/*
+ * Gemeinsamer Dialog-Look der Shared-Dialoge: dunkle Fläche wie die Seitenleiste, gelbe Akzente.
+ * Die Dialog-Komponente setzt `host: { class: 'general-dialog' }`; Titel und Buttons bekommen die
+ * Element-Klassen. Eingebunden über `src/styles.css` in die Cascade-Layer `components`:
+ * Komponenten-CSS (ohne Layer) hat Vorrang und kann einzelne Werte bei Bedarf überschreiben.
+ */
+.general-dialog {
+  --mat-dialog-subhead-color: var(--color-yellow-400);
+  --mat-dialog-supporting-text-color: var(--color-white);
+  /* !important: Material setzt den Host über `.mat-mdc-dialog-component-host` (ohne Layer) auf
+     `display: contents`; ohne eigene Box hätte die Fläche keinen Hintergrund. */
+  display: block !important;
+  background-color: var(--color-gray-800);
+  color: var(--color-white);
+}
+
+/* Material-Dialogtitel über seine Token-Variablen setzen */
+.general-dialog__title {
+  --mat-dialog-subhead-size: var(--text-lg);
+  --mat-dialog-subhead-line-height: calc(var(--text-lg) * var(--text-lg--line-height));
+  --mat-dialog-subhead-weight: var(--font-weight-bold);
+}
+
+.general-dialog__cancel {
+  --mat-button-text-label-text-color: var(--color-gray-400);
+}
+
+/* Gelber Hauptbutton (`mat-flat-button`) wie „Bild hochladen“ in der Seitenleiste */
+.general-dialog__confirm {
+  --mat-button-filled-container-color: var(--color-yellow-500);
+  --mat-button-filled-label-text-color: var(--color-black);
+  --mat-button-filled-label-text-weight: var(--font-weight-semibold);
+  --mat-button-filled-container-shape: var(--radius-sm);
+  --mat-button-filled-disabled-container-color: var(--color-gray-700);
+  --mat-button-filled-disabled-label-text-color: var(--color-gray-500);
+
+  &:hover {
+    --mat-button-filled-container-color: var(--color-yellow-400);
+  }
+}

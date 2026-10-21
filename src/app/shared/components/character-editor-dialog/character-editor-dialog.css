@@ -1,19 +1,4 @@
-/* Charakter-Editor im Look des Dungeon Trackers: dunkle Fläche wie die Seitenleiste, gelbe Akzente */
-:host {
-  --mat-dialog-subhead-color: var(--color-yellow-400);
-  --mat-dialog-supporting-text-color: var(--color-white);
-  display: block;
-  background-color: var(--color-gray-800);
-  color: var(--color-white);
-}
-
-/* Material-Dialogtitel über seine Token-Variablen setzen */
-.character-editor__title {
-  --mat-dialog-subhead-size: var(--text-lg);
-  --mat-dialog-subhead-line-height: calc(var(--text-lg) * var(--text-lg--line-height));
-  --mat-dialog-subhead-weight: var(--font-weight-bold);
-}
-
+/* Fläche, Titel und Aktions-Buttons: gemeinsamer Look `.general-dialog` (src/styles/components/dialog.css) */
 .character-editor__form {
   display: flex;
   flex-direction: column;
@@ -115,22 +100,4 @@
 .character-editor__remove {
   --mat-button-text-label-text-color: var(--color-red-400);
   margin-inline-end: auto;
-}
-
-.character-editor__cancel {
-  --mat-button-text-label-text-color: var(--color-gray-400);
-}
-
-/* Gelber Hauptbutton wie „Bild hochladen“ in der Seitenleiste */
-.character-editor__apply {
-  --mat-button-filled-container-color: var(--color-yellow-500);
-  --mat-button-filled-label-text-color: var(--color-black);
-  --mat-button-filled-label-text-weight: var(--font-weight-semibold);
-  --mat-button-filled-container-shape: var(--radius-sm);
-  --mat-button-filled-disabled-container-color: var(--color-gray-700);
-  --mat-button-filled-disabled-label-text-color: var(--color-gray-500);
-
-  &:hover {
-    --mat-button-filled-container-color: var(--color-yellow-400);
-  }
 }

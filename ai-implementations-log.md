@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-21 19:22) - Feature: Bestätigungsdialog im dunklen Look und mit konkretem Text (confirmation-dialog-look-and-text #1–#5)
+
+- **Was wurde gemacht:** Die Dialog-Stile des Charakter-Editors liegen als `.general-dialog*` in `src/styles/components/dialog.css` (Layer `components`); Editor und `ConfirmationDialog` nutzen sie über `host: { class: 'general-dialog' }`. Der `ConfirmationDialog` übernimmt optionale Texte (`ConfirmationDialogData`) und fällt sonst auf die bisherigen Texte zurück; die Game-Session-Seite bleibt im Code unverändert und zeigt die Rückfrage jetzt dunkel. Der Editor fragt vor dem Entfernen „„<gespeicherter Name>“ wirklich entfernen?“ mit Button „Entfernen“. Request vollständig umgesetzt und nach `done/` verschoben.
+- **Dateien geändert:** `src/styles/components/dialog.css` (neu), `src/styles.css`, `shared/models/confirmation-dialog-data.model.ts` (neu), `shared/components/confirmation-dialog/confirmation-dialog.ts` + Spec, `shared/components/character-editor-dialog/character-editor-dialog.ts/.html/.css`, `character-editor-dialog-remove.spec.ts`, `shared/testing/character-editor-dialog.fixtures.ts`, `e2e/character-editor.spec.ts`, `.claude/rules/architecture.md`, `docs/feature-requests/confirmation-dialog-look-and-text.md` (→ done/)
+- **Wichtige Entscheidung:** Dunkler Look für alle Aufrufer (Entscheidung des Nutzers). Material setzt den Dialog-Host ohne Layer auf `display: contents`; `.general-dialog` hält deshalb `display: block !important` (nach Freigabe; Gegenprobe ohne `!important`: 75 % der Pixel abweichend). Der gespeicherte Name steht in einem eigenen Feld, damit eine Umbenennung im Formular die Rückfrage nicht verfälscht und kein unerreichbarer Zweig entsteht. Pixel-Baseline des Editors (Bearbeiten/Neu, Toleranz 0) vor und nach #1 gleich; Proben 3/3 Soll vorher rot, nachher grün; 343 Tests (geänderte Dateien 100 % Coverage), Lint, Build und e2e (16) grün.
+
 ### (2026-10-21 18:51) - Feature: Charakter im Editor entfernen (character-editor-remove #1–#5)
 
 - **Was wurde gemacht:** Der Charakter-Editor zeigt im Bearbeiten-Modus links in der Aktionsleiste den roten Button „Entfernen“. Er fragt über den vorhandenen `ConfirmationDialog` nach, löscht den Charakter über `CharactersDbService.removeCharacter()` und schließt den Dialog ohne Wert; Token, Legende, Kartenlayout und Snapshot folgen über ihre Signale. Bei Abbruch der Rückfrage bleibt der Editor mit der Arbeitskopie offen. Request vollständig umgesetzt und nach `done/` verschoben.

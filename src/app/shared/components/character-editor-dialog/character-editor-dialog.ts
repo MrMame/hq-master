@@ -14,6 +14,7 @@ import { ElementalTypes } from '../../../core/models/elemental-types.model';
 import { CharacterAbilities } from '../../../core/models/character-abilities.model';
 import { CHARACTER_IMAGES } from '../../../core/models/character-images.model';
 import { createNewCharacter } from '../../utils/new-character.util';
+import { ConfirmationDialogData } from '../../models/confirmation-dialog-data.model';
 import { ConfirmationDialog } from '../confirmation-dialog/confirmation-dialog';
 
 /** Zahlenwerte eines Charakters, die der Editor als Eingabefeld anbietet. */
@@ -27,6 +28,7 @@ type CharacterStat = 'health' | 'armor' | 'attack' | 'defense' | 'speed';
 @Component({
   selector: 'app-character-editor-dialog',
   imports: [FormsModule, MatDialogModule, MatButtonModule],
+  host: { class: 'general-dialog' },
   templateUrl: './character-editor-dialog.html',
   styleUrl: './character-editor-dialog.css',
 })
@@ -40,6 +42,8 @@ export class CharacterEditorDialog {
 
   protected readonly isEditMode: boolean = this.character !== null;
   protected readonly title: string = this.isEditMode ? 'Charakter bearbeiten' : 'Neuer Charakter';
+  /** Gespeicherter Name für die Rückfrage; die Arbeitskopie kann schon umbenannt sein. */
+  private readonly storedName: string = this.character?.name ?? '';
   /** Arbeitskopie: Die Session ändert sich erst mit „Übernehmen“. */
   protected readonly draft: WritableSignal<CharacterInfo> = signal<CharacterInfo>(
     this.character ? { ...this.character } : createNewCharacter(),
@@ -89,9 +93,15 @@ export class CharacterEditorDialog {
   private async confirmRemoval(): Promise<boolean> {
     const confirmation: MatDialogRef<ConfirmationDialog, boolean> = this.dialog.open<
       ConfirmationDialog,
-      unknown,
+      ConfirmationDialogData,
       boolean
-    >(ConfirmationDialog);
+    >(ConfirmationDialog, {
+      data: {
+        title: 'Charakter entfernen',
+        message: `„${this.storedName}“ wirklich entfernen?`,
+        confirmLabel: 'Entfernen',
+      },
+    });
     return (await firstValueFrom(confirmation.afterClosed())) === true;
   }
 }

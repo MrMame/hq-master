@@ -64,6 +64,7 @@ features/
 
 shared/
   components/          → Feature-unabhängige UI (z. B. ConfirmationDialog, CharacterEditorDialog)
+  models/              → confirmation-dialog-data.model.ts (Texte der Rückfrage)
   services/            → character-editor.service.ts (öffnet den Charakter-Editor systemweit)
   utils/               → new-character.util.ts (Startwerte für neue Charaktere)
   testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
@@ -211,8 +212,11 @@ Slice-Map des `GameSessionService`; der Compiler meldet dann Snapshot und XML-Ma
 - Template/Styles inline, wenn < 100 Zeilen; sonst separate `.html`/`.css`.
 - Styling: reines CSS mit semantischen Klassen je Komponente; Farben, Abstände und Typografie
   nur über die Tokens aus `src/styles/tokens.css` (`var(--…)`).
-- Feature-übergreifende Bausteine (z. B. `.general-sidebar`) liegen global unter `src/styles/components/`
+- Feature-übergreifende Bausteine (z. B. `.general-sidebar`, `.general-dialog`) liegen global unter `src/styles/components/`
   und werden in `src/styles.css` per `@import … layer(components)` eingebunden; `tokens.css` enthält nur Tokens.
+- Shared-Dialoge nutzen den dunklen Look über `host: { class: 'general-dialog' }` und die Element-Klassen
+  `general-dialog__title`, `__cancel`, `__confirm`. Material setzt den Dialog-Host (ohne Layer) auf
+  `display: contents`; `.general-dialog` hält deshalb `display: block !important`, damit die Fläche eine Box hat.
 
 ### Dateigrößenlimit
 
