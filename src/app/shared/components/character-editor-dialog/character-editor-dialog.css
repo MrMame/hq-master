@@ -111,6 +111,12 @@
   object-fit: cover;
 }
 
+/* Links in der Aktionsleiste, abgesetzt von „Abbrechen“ und „Übernehmen“ */
+.character-editor__remove {
+  --mat-button-text-label-text-color: var(--color-red-400);
+  margin-inline-end: auto;
+}
+
 .character-editor__cancel {
   --mat-button-text-label-text-color: var(--color-gray-400);
 }

@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-21  
 **Priorität:** Mittel  
-**Status:** open — Rückfrage vor dem Löschen auf PC und Tablet entschieden (2026-10-21)  
+**Status:** done (2026-10-21 18:51) — #1–#5 umgesetzt; Rückfrage vor dem Löschen auf PC und Tablet entschieden (2026-10-21)  
 **Bezug:** `REQUIREMENTS.md` §3 (Dungeon Tracker), `.claude/rules/architecture.md` → „Session-State-Services: reaktive Schnittstelle“ (Regel 6), `docs/feature-requests/done/character-editor-dialog.md`
 
 ---
@@ -54,7 +54,7 @@ verschwinden, ist bereits getestet (`dungeon-board-sync.service.spec.ts`, `dunge
 
 ## Anforderungen
 
-### 1. Button „Entfernen“ im Bearbeiten-Modus
+### 1. Button „Entfernen“ im Bearbeiten-Modus ✅ done (2026-10-21 18:51)
 
 - `character-editor-dialog.ts`: neues Feld
   `protected readonly isEditMode: boolean = this.character !== null;`. Der Titel nutzt es ebenfalls,
@@ -81,14 +81,14 @@ verschwinden, ist bereits getestet (`dungeon-board-sync.service.spec.ts`, `dunge
 
 ---
 
-### 2. Entfernen mit Bestätigung
+### 2. Entfernen mit Bestätigung ✅ done (2026-10-21 18:51)
 
 - `character-editor-dialog.ts`: `MatDialog` kommt per `inject()` hinzu.
 
   ```typescript
   async remove(): Promise<void> {
-    if (!this.character || !(await this.confirmRemoval())) return;
-    this.charactersDbService.removeCharacter(this.character);
+    if (!(await this.confirmRemoval())) return;
+    this.charactersDbService.removeCharacter(this.draft());
     this.dialogRef.close();
   }
 
@@ -102,6 +102,10 @@ verschwinden, ist bereits getestet (`dungeon-board-sync.service.spec.ts`, `dunge
   }
   ```
 
+  - `removeCharacter()` löscht anhand der ID, und die Arbeitskopie hat dieselbe ID wie der
+    gespeicherte Charakter. Bei der Umsetzung am 2026-10-21 wurde `this.draft()` statt
+    `this.character` übergeben. So entfällt die Prüfung `!this.character`. Sie ließe sich nicht
+    testen, weil der Button im Neu-Modus gar nicht erscheint, und bliebe ein toter Zweig.
   - Die Bestätigung nutzt den vorhandenen `ConfirmationDialog` aus `src/app/shared/components/`, genau
     wie `GameSessionPage.confirm()`.
   - **Die Rückfrage erscheint immer**, am PC wie auf dem Tablet und mit Maus wie mit Touch
@@ -122,7 +126,7 @@ schließt sich. „Abbrechen“ in der Rückfrage führt zurück in den Editor, 
 
 ---
 
-### 3. Tests
+### 3. Tests ✅ done (2026-10-21 18:51)
 
 - `src/app/shared/testing/character-editor-dialog.fixtures.ts`:
   - `MatDialog` wird mit `TestBed.overrideProvider(MatDialog, { useValue: { open: dialogOpen } })`
@@ -150,7 +154,7 @@ Abbruch und Neu-Modus.
 
 ---
 
-### 4. E2E-Test: Rückfrage auf PC und Tablet
+### 4. E2E-Test: Rückfrage auf PC und Tablet ✅ done (2026-10-21 18:51)
 
 In jsdom gibt es keinen Unterschied zwischen PC und Tablet. Deshalb prüft Playwright die Rückfrage für
 beide Eingabearten. `e2e/character-editor.spec.ts` bekommt dafür neue Szenarien nach denselben
@@ -171,6 +175,11 @@ Konventionen: Locator über Rolle oder Text, kein `waitForTimeout`.
     dieses Requests.
   - Gerätevorlagen wie `devices['iPad …']` eignen sich nicht, weil sie `defaultBrowserType` setzen,
     und das ist in einer `describe`-Gruppe nicht erlaubt.
+- **Umgesetzt** als Schleife über `INPUT_DEVICES` (PC und Tablet, jeweils mit eigener Druckmethode).
+  Daraus entstehen die Gruppen `"Entfernen" on PC` und `"Entfernen" on Tablet`. Weil zwei Dialoge
+  übereinanderliegen, findet der Test sie über ihren Namen:
+  `getByRole('dialog', { name: 'Auswahl treffen' })` für die Rückfrage, die Titel des Editors für den
+  Editor.
 - Die Szenarien für PC und Tablet nutzen gemeinsame Schritte, etwa einen Helfer mit der Druckmethode
   als Parameter. So bleibt die Datei unter 150 Zeilen.
 
@@ -179,7 +188,7 @@ in `npm run e2e` stabil durch.
 
 ---
 
-### 5. Dokumentation
+### 5. Dokumentation ✅ done (2026-10-21 18:51)
 
 `REQUIREMENTS.md` §3: Nach dem Satz über den Doppelklick („… ‚Abbrechen‘ verwirft sie.“) kommt hinzu:
 „Über ‚Entfernen‘ löscht der DM den Charakter nach einer Rückfrage, am PC wie auf dem Tablet, aus der Spielesession; er
@@ -228,14 +237,14 @@ verschwindet sofort vom Spielbrett und aus dem Character Tracker, und der Dialog
 
 ## Akzeptanzkriterien
 
-- [ ] Im Bearbeiten-Modus zeigt der Editor links in der Aktionsleiste einen roten Button „Entfernen“, im Neu-Modus nicht
-- [ ] „Entfernen“ fragt über den `ConfirmationDialog` nach, ausnahmslos am PC (Maus) und auf dem Tablet (Touch)
-- [ ] Die E2E-Szenarien prüfen Bestätigen und Abbrechen der Rückfrage für PC (`click()`) und Tablet (`tap()`, `hasTouch`)
-- [ ] Nach „Bestätigen“ ist der Charakter über `CharactersDbService.removeCharacter()` gelöscht: Token, Legende, Character Tracker und Session-Snapshot zeigen ihn sofort nicht mehr, auch nach einem Reload
-- [ ] Danach schließt sich der Editor ohne Wert. Ungespeicherte Änderungen werden nicht geschrieben
-- [ ] Bricht der DM die Rückfrage ab, bleibt der Editor mit unveränderter Arbeitskopie offen, und es wird nichts gelöscht
-- [ ] „Entfernen“ ist auch bei ungültigem Formular aktiv
-- [ ] Es gibt keine neuen Tokens und keine neue Service-Logik
-- [ ] Jede Datei hat höchstens 150 Zeilen, und die neue Spec prüft das Verhalten über die DOM-Buttons
-- [ ] `REQUIREMENTS.md` §3 ist aktualisiert
-- [ ] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün
+- [x] Im Bearbeiten-Modus zeigt der Editor links in der Aktionsleiste einen roten Button „Entfernen“, im Neu-Modus nicht
+- [x] „Entfernen“ fragt über den `ConfirmationDialog` nach, ausnahmslos am PC (Maus) und auf dem Tablet (Touch)
+- [x] Die E2E-Szenarien prüfen Bestätigen und Abbrechen der Rückfrage für PC (`click()`) und Tablet (`tap()`, `hasTouch`)
+- [x] Nach „Bestätigen“ ist der Charakter über `CharactersDbService.removeCharacter()` gelöscht: Token, Legende, Character Tracker und Session-Snapshot zeigen ihn sofort nicht mehr, auch nach einem Reload
+- [x] Danach schließt sich der Editor ohne Wert. Ungespeicherte Änderungen werden nicht geschrieben
+- [x] Bricht der DM die Rückfrage ab, bleibt der Editor mit unveränderter Arbeitskopie offen, und es wird nichts gelöscht
+- [x] „Entfernen“ ist auch bei ungültigem Formular aktiv
+- [x] Es gibt keine neuen Tokens und keine neue Service-Logik
+- [x] Jede Datei hat höchstens 150 Zeilen, und die neue Spec prüft das Verhalten über die DOM-Buttons
+- [x] `REQUIREMENTS.md` §3 ist aktualisiert
+- [x] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün

@@ -1,13 +1,20 @@
 import { Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
+import { firstValueFrom } from 'rxjs';
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
 import { CharacterInfo } from '../../../core/models/character-info.model';
 import { ElementalTypes } from '../../../core/models/elemental-types.model';
 import { CharacterAbilities } from '../../../core/models/character-abilities.model';
 import { CHARACTER_IMAGES } from '../../../core/models/character-images.model';
 import { createNewCharacter } from '../../utils/new-character.util';
+import { ConfirmationDialog } from '../confirmation-dialog/confirmation-dialog';
 
 /** Zahlenwerte eines Charakters, die der Editor als Eingabefeld anbietet. */
 type CharacterStat = 'health' | 'armor' | 'attack' | 'defense' | 'speed';
@@ -15,6 +22,7 @@ type CharacterStat = 'health' | 'armor' | 'attack' | 'defense' | 'speed';
 /**
  * Systemweiter Charakter-Editor: Ohne Daten geöffnet legt er einen neuen Charakter an, sonst bearbeitet
  * er den übergebenen. „Übernehmen“ schreibt sofort in die Session, „Abbrechen“ verwirft die Arbeitskopie.
+ * „Entfernen“ (nur beim Bearbeiten) löscht den Charakter nach einer Rückfrage aus der Session.
  */
 @Component({
   selector: 'app-character-editor-dialog',
@@ -27,9 +35,11 @@ export class CharacterEditorDialog {
   private readonly dialogRef: MatDialogRef<CharacterEditorDialog, CharacterInfo> = inject(
     MatDialogRef<CharacterEditorDialog, CharacterInfo>,
   );
+  private readonly dialog: MatDialog = inject(MatDialog);
   private readonly character: CharacterInfo | null = inject<CharacterInfo | null>(MAT_DIALOG_DATA);
 
-  protected readonly title: string = this.character ? 'Charakter bearbeiten' : 'Neuer Charakter';
+  protected readonly isEditMode: boolean = this.character !== null;
+  protected readonly title: string = this.isEditMode ? 'Charakter bearbeiten' : 'Neuer Charakter';
   /** Arbeitskopie: Die Session ändert sich erst mit „Übernehmen“. */
   protected readonly draft: WritableSignal<CharacterInfo> = signal<CharacterInfo>(
     this.character ? { ...this.character } : createNewCharacter(),
@@ -67,5 +77,21 @@ export class CharacterEditorDialog {
 
   cancel(): void {
     this.dialogRef.close();
+  }
+
+  /** Löscht anhand der ID; ungespeicherte Änderungen der Arbeitskopie werden nicht geschrieben. */
+  async remove(): Promise<void> {
+    if (!(await this.confirmRemoval())) return;
+    this.charactersDbService.removeCharacter(this.draft());
+    this.dialogRef.close();
+  }
+
+  private async confirmRemoval(): Promise<boolean> {
+    const confirmation: MatDialogRef<ConfirmationDialog, boolean> = this.dialog.open<
+      ConfirmationDialog,
+      unknown,
+      boolean
+    >(ConfirmationDialog);
+    return (await firstValueFrom(confirmation.afterClosed())) === true;
   }
 }

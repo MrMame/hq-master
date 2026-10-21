@@ -15,8 +15,8 @@ export const CHARACTER_EDITOR_DIALOG_CONFIG: MatDialogConfig = {
 };
 
 /**
- * Öffnet den systemweiten Charakter-Editor. Der Dialog speichert selbst; das Ergebnis
- * (gespeicherter Charakter, `undefined` bei Abbruch) muss nicht abonniert werden.
+ * Öffnet den systemweiten Charakter-Editor. Der Dialog speichert und löscht selbst; das Ergebnis
+ * (gespeicherter Charakter, `undefined` bei Abbruch oder Entfernen) muss nicht abonniert werden.
  */
 @Injectable({
   providedIn: 'root',

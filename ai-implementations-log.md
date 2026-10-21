@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-21 18:51) - Feature: Charakter im Editor entfernen (character-editor-remove #1–#5)
+
+- **Was wurde gemacht:** Der Charakter-Editor zeigt im Bearbeiten-Modus links in der Aktionsleiste den roten Button „Entfernen“. Er fragt über den vorhandenen `ConfirmationDialog` nach, löscht den Charakter über `CharactersDbService.removeCharacter()` und schließt den Dialog ohne Wert; Token, Legende, Kartenlayout und Snapshot folgen über ihre Signale. Bei Abbruch der Rückfrage bleibt der Editor mit der Arbeitskopie offen. Request vollständig umgesetzt und nach `done/` verschoben.
+- **Dateien geändert:** `shared/components/character-editor-dialog/character-editor-dialog.ts/.html/.css`, `character-editor-dialog-remove.spec.ts` (neu), `shared/testing/character-editor-dialog.fixtures.ts`, `shared/services/character-editor.service.ts` (JSDoc), `e2e/character-editor.spec.ts`, `REQUIREMENTS.md`, `docs/feature-requests/character-editor-remove.md` (→ done/)
+- **Wichtige Entscheidung:** Rückfrage immer, am PC wie auf dem Tablet (Entscheidung des Nutzers). Gelöscht wird über `removeCharacter(this.draft())`, gleiche ID wie der gespeicherte Charakter; so entfällt ein im Neu-Modus nicht erreichbarer Zweig. `MatDialog` im Spec per `TestBed.overrideProvider`, weil `MatDialogModule` ihn im Standalone-Injector bereitstellt. E2E als Schleife über PC (`click()`) und Tablet (`tap()`, `hasTouch`, 1024×768); gestapelte Dialoge über ihren Namen gefunden. Probe vorher 4/4 rot, nachher grün; 340 Tests (geänderte Dateien 100 % Coverage), Lint, Build und e2e (16) grün.
+
 ### (2026-10-21 17:54) - Refactoring: Charakter-Modelle und Test-Fabrik nach `core/` (character-models-to-core #1–#4)
 
 - **Was wurde gemacht:** `CharacterInfo`, `ElementalTypes`, `CharacterAbilities` und die Bildlisten liegen per `git mv` unter `core/models/`, die Test-Fabrik `createTestCharacter` unter `core/testing/character.fixtures.ts`. Importe in 44 Dateien direkt auf die neuen Orte umgestellt, keine Re-Exports. `shared/` importiert damit nichts mehr aus `features/`. `architecture.md` beschreibt die neue Lage und die Importregel für `shared/`. Punkt #4 nach Rückfrage ergänzt: `testing.md` und die Dateinamen-Tabelle nennen `core/testing/`. Request vollständig umgesetzt und nach `done/` verschoben.

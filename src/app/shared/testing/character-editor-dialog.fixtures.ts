@@ -3,7 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { of } from 'rxjs';
 import { Mock, vi } from 'vitest';
 
 import { CharacterEditorDialog } from '../components/character-editor-dialog/character-editor-dialog';
@@ -15,6 +16,10 @@ type EditorField = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export interface CharacterEditorDialogSetup {
   host: HTMLElement;
   close: Mock;
+  /** Gemocktes `MatDialog.open` für die Rückfrage vor dem Entfernen. */
+  dialogOpen: Mock;
+  /** Legt fest, ob die Rückfrage mit „Bestätigen“ (`true`) geschlossen wird. */
+  confirmWith: (confirmed: boolean) => void;
   /** Charaktere der Session (echter `CharactersDbService`). */
   characters: Signal<CharacterInfo[]>;
   /** Material-Button der Aktionsleiste mit genau dieser Beschriftung. */
@@ -26,21 +31,26 @@ export interface CharacterEditorDialogSetup {
 }
 
 /**
- * Rendert den Editor mit `data` (`null` = neuer Charakter) und gemocktem `MatDialogRef`;
- * `stored` liegt vorher schon in der Session (nur für Specs).
+ * Rendert den Editor mit `data` (`null` = neuer Charakter), gemocktem `MatDialogRef` und gemockter
+ * Rückfrage (Standard: bestätigt); `stored` liegt vorher schon in der Session (nur für Specs).
  */
 export async function setupCharacterEditorDialog(
   data: CharacterInfo | null,
   stored: CharacterInfo[] = [],
 ): Promise<CharacterEditorDialogSetup> {
   const close: Mock = vi.fn();
-  await TestBed.configureTestingModule({
+  let confirmed: boolean = true;
+  const dialogOpen: Mock = vi.fn(() => ({ afterClosed: () => of(confirmed) }));
+  TestBed.configureTestingModule({
     imports: [CharacterEditorDialog],
     providers: [
       { provide: MatDialogRef, useValue: { close } },
       { provide: MAT_DIALOG_DATA, useValue: data },
     ],
-  }).compileComponents();
+  });
+  // Nicht über providers: MatDialogModule stellt MatDialog im Standalone-Injector des Editors bereit.
+  TestBed.overrideProvider(MatDialog, { useValue: { open: dialogOpen } });
+  await TestBed.compileComponents();
   const charactersDb: CharactersDbService = TestBed.inject(CharactersDbService);
   stored.forEach((character) => charactersDb.writeCharacter(character));
 
@@ -65,6 +75,10 @@ export async function setupCharacterEditorDialog(
   return {
     host,
     close,
+    dialogOpen,
+    confirmWith: (value: boolean): void => {
+      confirmed = value;
+    },
     characters: charactersDb.characters,
     button: (text: string) => loader.getHarness(MatButtonHarness.with({ text })),
     enter,

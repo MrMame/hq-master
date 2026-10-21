@@ -108,6 +108,9 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
+  @if (isEditMode) {
+    <button mat-button class="character-editor__remove" (click)="remove()">Entfernen</button>
+  }
   <button mat-button class="character-editor__cancel" (click)="cancel()">Abbrechen</button>
   <button
     mat-flat-button
