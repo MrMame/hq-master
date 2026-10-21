@@ -1,4 +1,5 @@
 import { expect, Locator, Page, test } from '@playwright/test';
+import { createCharacter } from './support/create-character';
 
 /** Klick am PC oder Tippen auf dem Tablet. */
 type Press = (target: Locator) => Promise<void>;
@@ -24,11 +25,9 @@ function sidebar(page: Page): Locator {
   return page.locator('aside');
 }
 
-/** Legt im Character Tracker ein Monster an und öffnet es im Dungeon Tracker per Doppelklick. */
-async function editNewMonster(page: Page): Promise<void> {
-  await page.goto('/charactertracker');
-  await page.getByRole('button', { name: 'Add Monster' }).click();
-  await page.goto('/dungeontracker');
+/** Legt über „Character Neu“ einen Charakter an und öffnet ihn per Doppelklick auf das Token. */
+async function editNewCharacter(page: Page): Promise<void> {
+  await createCharacter(page, 'Ork');
 
   await page.locator('app-dungeon-token > div').dblclick();
   await expect(editor(page).getByRole('heading', { name: 'Charakter bearbeiten' })).toBeVisible();
@@ -44,7 +43,7 @@ async function askToRemove(page: Page, press: Press): Promise<void> {
 }
 
 test('a character edited via double click keeps its new name after a reload', async ({ page }) => {
-  await editNewMonster(page);
+  await editNewCharacter(page);
   await editor(page).getByLabel('Name').fill('Grimgor');
   await editor(page).getByRole('button', { name: 'Übernehmen' }).click();
 
@@ -78,7 +77,7 @@ for (const device of INPUT_DEVICES) {
     test.use(device.touch ? { viewport: { width: 1024, height: 768 }, hasTouch: true } : {});
 
     test('removes the character after confirmation', async ({ page }) => {
-      await editNewMonster(page);
+      await editNewCharacter(page);
       await askToRemove(page, device.press);
       await device.press(confirmation(page).getByRole('button', { name: 'Entfernen' }));
 
@@ -92,7 +91,7 @@ for (const device of INPUT_DEVICES) {
     });
 
     test('keeps the character when the confirmation is cancelled', async ({ page }) => {
-      await editNewMonster(page);
+      await editNewCharacter(page);
       await askToRemove(page, device.press);
       await device.press(confirmation(page).getByRole('button', { name: 'Abbrechen' }));
 

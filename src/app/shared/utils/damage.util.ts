@@ -1,5 +1,5 @@
-import { CharacterInfo } from '../../../core/models/character-info.model';
-import { DamageTypes } from '../models/damage-types.model';
+import { CharacterInfo } from '../../core/models/character-info.model';
+import { DamageTypes } from '../../core/models/damage-types.model';
 
 const CRITICAL_DAMAGE_MULTIPLIER: number = 1.0;
 

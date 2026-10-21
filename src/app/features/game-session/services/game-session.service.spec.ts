@@ -6,7 +6,6 @@ import { GameTimeService } from '../../../core/services/game-time/game-time.serv
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
 import { CardManagerService } from '../../card-manager/services/card-manager.service';
 import { DungeonBoardService } from '../../dungeon-tracker/services/dungeon-board.service';
-import { CharacterCardLayoutService } from '../../character-tracker/services/character-card-layout.service';
 import { DEFAULT_DUNGEON_BOARD_STATE } from '../../dungeon-tracker/models/dungeon-board-state.model';
 import { SessionMeta } from '../models/session-meta.model';
 import { describePersistedState } from '../../../core/session-state/testing/describe-persisted-state';
@@ -102,7 +101,6 @@ describe('GameSessionService', () => {
       TestBed.inject(CharactersDbService),
       TestBed.inject(DungeonBoardService),
       TestBed.inject(CardManagerService),
-      TestBed.inject(CharacterCardLayoutService),
     ];
 
     it('should reset every slice on startSession', () => {
@@ -120,7 +118,6 @@ describe('GameSessionService', () => {
         snapshot.characters,
         snapshot.dungeon,
         snapshot.deck,
-        snapshot.characterCards,
       ];
       const spies: MockInstance[] = slices().map((slice) => vi.spyOn(slice, 'restore'));
       service.restoreSnapshot(snapshot);

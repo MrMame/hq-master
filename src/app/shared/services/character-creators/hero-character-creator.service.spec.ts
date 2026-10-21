@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 
 import { HeroCharacterCreatorService } from './hero-character-creator.service';
-import { CharacterInfo } from '../../../../core/models/character-info.model';
-import { ElementalTypes } from '../../../../core/models/elemental-types.model';
-import { CharacterAbilities } from '../../../../core/models/character-abilities.model';
+import { CharacterInfo } from '../../../core/models/character-info.model';
+import { ElementalTypes } from '../../../core/models/elemental-types.model';
+import { CharacterAbilities } from '../../../core/models/character-abilities.model';
 
 const ALL_ABILITIES: CharacterAbilities[] = Object.values(CharacterAbilities);
 

@@ -28,7 +28,6 @@ describe('App', () => {
     expect(links).toEqual([
       ['/gamesession', 'Game Session'],
       ['/cardmanager', 'Card Manager'],
-      ['/charactertracker', 'Character Tracker'],
       ['/timetracker', 'Time Tracker'],
       ['/dungeontracker', 'Dungeon Tracker'],
     ]);

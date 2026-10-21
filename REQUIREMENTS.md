@@ -9,16 +9,7 @@
   - Alle Features greifen auf die gleiche SpieleSession Daten zu. D.h. wenn im TimeTracker eine neue Runde registriert wird, wirkt sich das auf alle anderen Features aus, wie z.b. das automatische berechnen von Gift schaden für diese Runde.
   - Alle Features beziehen sich auf den zustand der aktuellen Spielesession. Die Spielesession soll auch erhalten bleiben, wenn der Browser das Fenster schliesst und danach öffnet.
 
-## 1. Character Tracker (`/charactertracker`)
-
-- **Ziel:** Erlaubt es Nutzern, Rollenspiel-Charaktere zu erstellen und deren Zustände zu Verwalten.
-- **Funktionen:**
-  - Der Benutzer kann eine verschiebbare Box mit den beiden Werten Health in Rot und Defense in Blau erzeugen. Die Positionsverschiebung wird für die positionierung säter auf dem Spielbrett verwendet
-  - Neuen Charakter anlegen (Name, Klasse, Level).
-  - Level-Up-Button: Erhöht das Level um 1.
-- **Datenstruktur:** Ein Charakter-Objekt besteht aus `id (string)`, `name (string)`, `class (string)` und `level (number)`.
-
-## 2. Time Tracker (`/timetracker`)
+## 1. Time Tracker (`/timetracker`)
 
 - **Ziel:** Erfassen und manipulieren der aktuell vergangenen Runden- und Aktionsbasierten ingame Zeit.
 - **Funktionen:**
@@ -28,12 +19,12 @@
   - Im TimeTracker können verschiedene Ereignisse per Knopfdruck im Spielzeitablauf registriert werden.
   - Jede Änderunge oder zeitlich abhängige und ausgelöste Aktion soll in einem einsehbaren Log für den Dungeon Master einsehbar sein.
 
-## 3. Dungeon Tracker ('/dungeontracker)
+## 2. Dungeon Tracker ('/dungeontracker)
 
-- **Ziel:** Im DungeonTracker kann der Dungeon Master (DM) die genaue Spielposition der einzelnen erzeugten Charactere auf einem Bild des aktuelle Spielplans bestimmen. Alle im Charakter Tracker erstellen Charactere sind ebenfalls auf dem Dungeon Tracker als kleine Symbole zu finden. Die Im DungeonTracker angezeigtne CharacterSymbole können auf einem Raster, das über dem Spielplan Bild liegt verschoben und positioniert werden. Das Raster entspricht dem Spielplan kacheln, auf denen die Figurenmodelle abgesetllt werden können. Ein Doppelklick auf eines der kleinen Charaktersymbole öffnet den Charakter-Editor als Dialog. Dort können alle Eigenschaften des Charakters geändert werden; „Übernehmen“ schreibt die Änderungen sofort in die Spielesession, „Abbrechen“ verwirft sie. Über „Entfernen“ löscht der DM den Charakter nach einer Rückfrage, am PC wie auf dem Tablet, aus der Spielesession; er verschwindet sofort vom Spielbrett und aus dem Character Tracker, und der Dialog schließt sich. Über den Button „Character Neu“ in der Seitenleiste legt der DM direkt im Dungeon Tracker einen neuen Charakter an; er erscheint sofort als Token auf dem ersten freien Feld.
+- **Ziel:** Im DungeonTracker kann der Dungeon Master (DM) die genaue Spielposition der einzelnen erzeugten Charactere auf einem Bild des aktuelle Spielplans bestimmen. Der Dungeon Tracker ist die Startseite der App. Alle Charaktere der Spielesession sind auf dem Dungeon Tracker als kleine Symbole zu finden. Die Im DungeonTracker angezeigtne CharacterSymbole können auf einem Raster, das über dem Spielplan Bild liegt verschoben und positioniert werden. Das Raster entspricht dem Spielplan kacheln, auf denen die Figurenmodelle abgesetllt werden können. Ein Doppelklick auf eines der kleinen Charaktersymbole öffnet den Charakter-Editor als Dialog. Dort können alle Eigenschaften des Charakters geändert werden; „Übernehmen“ schreibt die Änderungen sofort in die Spielesession, „Abbrechen“ verwirft sie. Über „Entfernen“ löscht der DM den Charakter nach einer Rückfrage, am PC wie auf dem Tablet, aus der Spielesession; er verschwindet sofort vom Spielbrett und aus der Legende, und der Dialog schließt sich. Über den Button „Character Neu“ in der Seitenleiste legt der DM direkt im Dungeon Tracker einen neuen Charakter an; er erscheint sofort als Token auf dem ersten freien Feld.
   Über einen Bild-Laden Button soll eine Bilddatei mit dem Foto des aktuellen Spielbretts hochgeladen und gespiehcert werden können. Anschliessend kann der DM ein 2 Dimensionales Raster über dieses Bild legen, um die positionierung der VirtuellenCharactere zu erleichtern. Das Raster soll einstellbar sein, damit der DM das Raster exakt auf das Raster der fotogrfierten Spielbretts anpassen kann.
 
-## 4. GameSession ('/gamesession')
+## 3. GameSession ('/gamesession')
 
 - **Ziel:** Der DungeonMaste kann über das GameSession Feature alle Aspekte der aktuellen SpieleSession einstellen.
 - **Funktionen:**

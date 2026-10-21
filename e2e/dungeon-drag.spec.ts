@@ -1,4 +1,5 @@
 import { expect, Locator, Page, test } from '@playwright/test';
+import { createCharacter } from './support/create-character';
 
 /** Rastergröße in px laut `DEFAULT_DUNGEON_BOARD_STATE.gridCellSizePx`. */
 const CELL: number = 60;
@@ -17,9 +18,7 @@ async function legendPosition(page: Page): Promise<[number, number]> {
 }
 
 test('a dragged token keeps its new field after a reload', async ({ page }) => {
-  await page.goto('/charactertracker');
-  await page.getByRole('button', { name: 'Add Monster' }).click();
-  await page.goto('/dungeontracker');
+  await createCharacter(page, 'Läufer');
 
   const token: Locator = page.locator('app-dungeon-token > div');
   await expect(token).toBeVisible();

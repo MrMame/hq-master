@@ -17,7 +17,8 @@ Alle Features teilen eine gemeinsame Session-Datenbasis über root-provided Serv
 core/
   models/         → game-time.model.ts, game-time-span.model.ts,
                     character-info.model.ts, elemental-types.model.ts,
-                    character-abilities.model.ts, character-images.model.ts (Bildlisten)
+                    character-abilities.model.ts, character-images.model.ts (Bildlisten),
+                    damage-types.model.ts (Schadensarten)
   session-state/  → persisted-state.ts (persistedState), session-keys.ts (SESSION_KEYS),
                     session-state-slice.ts (SessionStateSlice), session-slices.ts (SessionSliceData)
     testing/      → describe-persisted-state.ts (Vertragstest für Regel 8, nur für Specs)
@@ -28,17 +29,7 @@ core/
   testing/        → character.fixtures.ts (Testdaten für Charaktere, nur für Specs)
 
 features/
-  character-tracker/   → Charakterverwaltung & Kampf
-    components/        → CharacterTrackerPage, MovableCharacterCard, CharacterCardMinimised,
-                         CharacterCard, Dialoge
-    models/            → card-layout.model.ts, damage-types.model.ts
-    services/          → character-card-layout.service.ts (Kartenlayout, Session-Slice),
-                         character-dialogs.service.ts
-      character-creators/ → hero-/monster-character-creator.service.ts
-    utils/             → damage.util.ts (reine Schadensberechnung)
-    testing/           → character-tracker-page.fixtures.ts (Page-Setup mit Dialog-Mock, nur für Specs)
-
-  dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung
+  dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung (Startseite)
     components/        → DungeonTrackerPage, DungeonToken
     models/            → dungeon-board-state.model.ts, dungeon-position.model.ts, dungeon-session-state.model.ts,
                          board-token.model.ts
@@ -63,10 +54,13 @@ features/
     testing/           → session.fixtures.ts, game-session-page.fixtures.ts (nur für Specs)
 
 shared/
-  components/          → Feature-unabhängige UI (z. B. ConfirmationDialog, CharacterEditorDialog)
+  components/          → Feature-unabhängige UI (z. B. ConfirmationDialog, CharacterEditorDialog,
+                         DamageTakenDialog)
   models/              → confirmation-dialog-data.model.ts (Texte der Rückfrage)
   services/            → character-editor.service.ts (öffnet den Charakter-Editor systemweit)
-  utils/               → new-character.util.ts (Startwerte für neue Charaktere)
+    character-creators/ → hero-/monster-character-creator.service.ts (Zufallscharaktere)
+  utils/               → new-character.util.ts (Startwerte für neue Charaktere),
+                         damage.util.ts (reine Schadensberechnung)
   testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
                          character-editor-dialog.fixtures.ts)
 ```
@@ -77,6 +71,8 @@ Playwright-Smoke-Tests (`npm run e2e`) liegen unter `e2e/` – **nicht** unter `
 von Vitest noch vom App-Build erfasst werden. `playwright.config.ts` (Root) startet `ng serve` auf Port 4321.
 Nur wenige, stabile Abläufe über echte Browser-Interaktion (Routing, Reload-Persistenz, Drag & Drop,
 Datei-Export/-Import); Logik wird weiterhin in Vitest-Specs getestet.
+Gemeinsame Schritte (z. B. `createCharacter()` über „Character Neu“) liegen unter `e2e/support/`
+und heißen nicht `*.spec.ts`, damit Playwright sie nicht als Tests ausführt.
 
 ## Dateinamen
 
@@ -85,7 +81,7 @@ Kebab-Case, die Rolle steht als Punkt-Suffix im Dateinamen. Der Dateiname folgt 
 
 | Rolle               | Muster                                                                | Inhalt               |
 | ------------------- | --------------------------------------------------------------------- | -------------------- |
-| Component           | `character-card.ts` (Angular-21-Default)                              | `CharacterCard`      |
+| Component           | `dungeon-token.ts` (Angular-21-Default)                               | `DungeonToken`       |
 | Service             | `game-session.service.ts`                                             | `GameSessionService` |
 | Model / Interface   | `session-meta.model.ts`                                               | `SessionMeta`        |
 | Reine Hilfsfunktion | `xml.util.ts`                                                         | Funktionen           |

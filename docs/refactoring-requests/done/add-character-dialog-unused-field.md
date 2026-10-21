@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-18  
 **Priorität:** Niedrig  
-**Status:** open  
+**Status:** rejected (2026-10-21) — obsolet: `AddCharacterDialog` wurde mit dem Character Tracker entfernt (`docs/feature-requests/done/character-tracker-removal.md` #4).  
 **Bezug:** Fund aus `docs/refactoring-requests/done/tailwind-to-css.md`; `.claude/rules/clean-code.md`
 
 ---
