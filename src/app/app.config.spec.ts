@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { appConfig } from './app.config';
 import { CharactersDbService } from './core/services/characters/characters-db.service';
 import { DungeonPosition } from './features/dungeon-tracker/models/dungeon-position.model';
-import { createTestCharacter } from './features/game-session/testing/session.fixtures';
+import { createTestCharacter } from './core/testing/character.fixtures';
 
 const readStoredPositions: () => DungeonPosition[] | null = (): DungeonPosition[] | null =>
   JSON.parse(localStorage.getItem('dungeon_positions') ?? 'null') as DungeonPosition[] | null;

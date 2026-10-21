@@ -13,11 +13,8 @@ import { describePersistedState } from '../../../core/session-state/testing/desc
 import { SESSION_KEYS } from '../../../core/session-state/session-keys';
 import { SessionStateSlice } from '../../../core/session-state/session-state-slice';
 import { SessionSnapshot } from '../models/session-snapshot.model';
-import {
-  createDeckState,
-  createSessionSnapshot,
-  createTestCharacter,
-} from '../testing/session.fixtures';
+import { createDeckState, createSessionSnapshot } from '../testing/session.fixtures';
+import { createTestCharacter } from '../../../core/testing/character.fixtures';
 
 const readStoredMeta: () => SessionMeta | null = (): SessionMeta | null =>
   JSON.parse(localStorage.getItem('game_session_meta') ?? 'null') as SessionMeta | null;

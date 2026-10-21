@@ -4,8 +4,8 @@ import { CdkDrag, CdkDragEnd } from '@angular/cdk/drag-drop';
 
 import { DungeonToken } from './dungeon-token';
 import { DungeonPosition } from '../../models/dungeon-position.model';
-import { CharacterInfo } from '../../../character-tracker/models/character-info.model';
-import { createTestCharacter } from '../../../game-session/testing/session.fixtures';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
+import { createTestCharacter } from '../../../../core/testing/character.fixtures';
 
 const position: DungeonPosition = { characterId: 'a', col: 2, row: 3 };
 

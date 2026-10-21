@@ -1,24 +1,7 @@
-import { CharacterInfo } from '../../character-tracker/models/character-info.model';
+import { createTestCharacter } from '../../../core/testing/character.fixtures';
 import { DeckState } from '../../card-manager/models/deck-state.model';
 import { Card } from '../../card-manager/models/card.model';
 import { SessionSnapshot } from '../models/session-snapshot.model';
-
-/** Testdaten für die GameSession-Specs (wird nicht in den App-Code importiert). */
-export function createTestCharacter(id: string): CharacterInfo {
-  return {
-    id,
-    name: `Char ${id} <&>`,
-    type: 'monster',
-    health: 12,
-    armor: 2,
-    attack: 3,
-    defense: 4,
-    speed: 5,
-    abilities: ['Feuer', 'Gift'],
-    image: 'assets/ork.png',
-    description: 'Ein "gefährlicher" Ork',
-  };
-}
 
 const combatCard: Card = {
   id: 'c1',

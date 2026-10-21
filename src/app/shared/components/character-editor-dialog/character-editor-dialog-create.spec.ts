@@ -1,6 +1,6 @@
-import { CharacterInfo } from '../../../features/character-tracker/models/character-info.model';
-import { CHARACTER_IMAGES } from '../../../features/character-tracker/models/character-images.model';
-import { createTestCharacter } from '../../../features/game-session/testing/session.fixtures';
+import { CharacterInfo } from '../../../core/models/character-info.model';
+import { CHARACTER_IMAGES } from '../../../core/models/character-images.model';
+import { createTestCharacter } from '../../../core/testing/character.fixtures';
 import {
   abilityCheckbox,
   CharacterEditorDialogSetup,

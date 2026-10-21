@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CharacterCardMinimised } from './character-card-minimised';
-import { CharacterInfo } from '../../models/character-info.model';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { DamageTypes } from '../../models/damage-types.model';
 
 const orc: CharacterInfo = {

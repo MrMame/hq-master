@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DungeonTrackerPage } from './dungeon-tracker-page';
 import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
 import { DungeonBoardService } from '../../services/dungeon-board.service';
-import { CharacterInfo } from '../../../character-tracker/models/character-info.model';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
 
 const createCharacter: (id: string) => CharacterInfo = (id: string): CharacterInfo => ({
   id,

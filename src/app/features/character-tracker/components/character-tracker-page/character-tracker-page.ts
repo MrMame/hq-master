@@ -1,6 +1,6 @@
 import { Component, inject, Signal } from '@angular/core';
 import { MovableCharacterCard } from '../movable-character-card/movable-character-card';
-import { CharacterInfo } from '../../models/character-info.model';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { DamageTypes } from '../../models/damage-types.model';
 import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
 import { MonsterCharacterCreatorService } from '../../services/character-creators/monster-character-creator.service';

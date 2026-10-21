@@ -8,7 +8,7 @@ import { Mock, vi } from 'vitest';
 
 import { CharacterEditorDialog } from '../components/character-editor-dialog/character-editor-dialog';
 import { CharactersDbService } from '../../core/services/characters/characters-db.service';
-import { CharacterInfo } from '../../features/character-tracker/models/character-info.model';
+import { CharacterInfo } from '../../core/models/character-info.model';
 
 type EditorField = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 

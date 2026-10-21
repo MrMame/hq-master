@@ -15,7 +15,9 @@ Alle Features teilen eine gemeinsame Session-Datenbasis über root-provided Serv
 
 ```
 core/
-  models/         → game-time.model.ts, game-time-span.model.ts
+  models/         → game-time.model.ts, game-time-span.model.ts,
+                    character-info.model.ts, elemental-types.model.ts,
+                    character-abilities.model.ts, character-images.model.ts (Bildlisten)
   session-state/  → persisted-state.ts (persistedState), session-keys.ts (SESSION_KEYS),
                     session-state-slice.ts (SessionStateSlice), session-slices.ts (SessionSliceData)
     testing/      → describe-persisted-state.ts (Vertragstest für Regel 8, nur für Specs)
@@ -23,13 +25,13 @@ core/
     game-time/    → GameTimeService: In-Game-Zeitlogik (app-weit)
     storage/      → StorageService (LocalStorage-Abstraktion)
     characters/   → CharactersDbService
+  testing/        → character.fixtures.ts (Testdaten für Charaktere, nur für Specs)
 
 features/
   character-tracker/   → Charakterverwaltung & Kampf
     components/        → CharacterTrackerPage, MovableCharacterCard, CharacterCardMinimised,
                          CharacterCard, Dialoge
-    models/            → character-info.model.ts, character-images.model.ts (Bildlisten),
-                         card-layout.model.ts, damage-types.model.ts, …
+    models/            → card-layout.model.ts, damage-types.model.ts
     services/          → character-card-layout.service.ts (Kartenlayout, Session-Slice),
                          character-dialogs.service.ts
       character-creators/ → hero-/monster-character-creator.service.ts
@@ -80,16 +82,16 @@ Datei-Export/-Import); Logik wird weiterhin in Vitest-Specs getestet.
 Kebab-Case, die Rolle steht als Punkt-Suffix im Dateinamen. Der Dateiname folgt dem Klassen-/Typnamen ohne Rollenwort.
 `ng g s` erzeugt dank `angular.json` automatisch `*.service.ts`.
 
-| Rolle               | Muster                                   | Inhalt               |
-| ------------------- | ---------------------------------------- | -------------------- |
-| Component           | `character-card.ts` (Angular-21-Default) | `CharacterCard`      |
-| Service             | `game-session.service.ts`                | `GameSessionService` |
-| Model / Interface   | `session-meta.model.ts`                  | `SessionMeta`        |
-| Reine Hilfsfunktion | `xml.util.ts`                            | Funktionen           |
-| XML-Mapper          | `meta.xml-mapper.ts`                     | `writeX` / `readX`   |
-| Testdaten           | `<feature>/testing/<name>.fixtures.ts`   | Fabrikfunktionen     |
-| E2E-Test            | `e2e/<szenario>.spec.ts`                 | Playwright-Tests     |
-| Test                | `<dateiname>.spec.ts` (gleicher Stamm)   | Vitest-Specs         |
+| Rolle               | Muster                                                                | Inhalt               |
+| ------------------- | --------------------------------------------------------------------- | -------------------- |
+| Component           | `character-card.ts` (Angular-21-Default)                              | `CharacterCard`      |
+| Service             | `game-session.service.ts`                                             | `GameSessionService` |
+| Model / Interface   | `session-meta.model.ts`                                               | `SessionMeta`        |
+| Reine Hilfsfunktion | `xml.util.ts`                                                         | Funktionen           |
+| XML-Mapper          | `meta.xml-mapper.ts`                                                  | `writeX` / `readX`   |
+| Testdaten           | `<feature>/testing/<name>.fixtures.ts`, Core-Modelle: `core/testing/` | Fabrikfunktionen     |
+| E2E-Test            | `e2e/<szenario>.spec.ts`                                              | Playwright-Tests     |
+| Test                | `<dateiname>.spec.ts` (gleicher Stamm)                                | Vitest-Specs         |
 
 - Keine PascalCase-Dateinamen, keine Models unter `services/`, keine Testdaten neben Produktivcode.
 - Komponentenklassen ohne `Component`-Suffix (`confirmation-dialog.ts` → `ConfirmationDialog`).
@@ -112,6 +114,8 @@ Kebab-Case, die Rolle steht als Punkt-Suffix im Dateinamen. Der Dateiname folgt 
 - State lebt in root-provided Services als **private Signals** (`signal()`).
 - Öffentlicher Zugriff nur via `.asReadonly()`.
 - Features, die gemeinsamen State benötigen, injizieren den Service aus `core/`.
+- **Code unter `shared/` importiert nichts aus `features/`. Modelle, die außer ihrem Feature auch
+  `shared/` oder andere Features nutzen, liegen in `core/models/`.**
 - Persistenz immer über `StorageService` → kein direktes `localStorage` in Features.
 
 ### Session-State-Services: reaktive Schnittstelle (verbindlich)

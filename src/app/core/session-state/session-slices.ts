@@ -1,6 +1,6 @@
 import { DeckState } from '../../features/card-manager/models/deck-state.model';
 import { CardLayoutState } from '../../features/character-tracker/models/card-layout.model';
-import { CharacterInfo } from '../../features/character-tracker/models/character-info.model';
+import { CharacterInfo } from '../models/character-info.model';
 import { DungeonSessionState } from '../../features/dungeon-tracker/models/dungeon-session-state.model';
 import { SessionStateSlice } from './session-state-slice';
 

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { CharacterTrackerPage } from './character-tracker-page';
-import { CharacterInfo } from '../../models/character-info.model';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
 import { MovableCharacterCard } from '../movable-character-card/movable-character-card';
 import { clickButton } from '../../../../shared/testing/click-button';

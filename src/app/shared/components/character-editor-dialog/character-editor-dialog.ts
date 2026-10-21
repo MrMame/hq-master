@@ -3,10 +3,10 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
-import { CharacterInfo } from '../../../features/character-tracker/models/character-info.model';
-import { ElementalTypes } from '../../../features/character-tracker/models/elemental-types.model';
-import { CharacterAbilities } from '../../../features/character-tracker/models/character-abilities.model';
-import { CHARACTER_IMAGES } from '../../../features/character-tracker/models/character-images.model';
+import { CharacterInfo } from '../../../core/models/character-info.model';
+import { ElementalTypes } from '../../../core/models/elemental-types.model';
+import { CharacterAbilities } from '../../../core/models/character-abilities.model';
+import { CHARACTER_IMAGES } from '../../../core/models/character-images.model';
 import { createNewCharacter } from '../../utils/new-character.util';
 
 /** Zahlenwerte eines Charakters, die der Editor als Eingabefeld anbietet. */

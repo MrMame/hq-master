@@ -1,5 +1,5 @@
 import { Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
-import { CharacterInfo } from '../../models/character-info.model';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { DamageTypes } from '../../models/damage-types.model';
 
 /** Kompakte Kartenansicht: Bild, Treffer-Buttons sowie Health und Armor. */

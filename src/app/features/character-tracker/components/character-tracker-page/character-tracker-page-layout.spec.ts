@@ -7,7 +7,7 @@ import { MovableCharacterCard } from '../movable-character-card/movable-characte
 import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
 import { CharacterCardLayoutService } from '../../services/character-card-layout.service';
 import { CardLayout, DEFAULT_CARD_LAYOUT } from '../../models/card-layout.model';
-import { createTestCharacter } from '../../../game-session/testing/session.fixtures';
+import { createTestCharacter } from '../../../../core/testing/character.fixtures';
 
 describe('CharacterTrackerPage – layout', () => {
   let fixture: ComponentFixture<CharacterTrackerPage>;

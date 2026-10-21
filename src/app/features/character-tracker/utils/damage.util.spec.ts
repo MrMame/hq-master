@@ -1,7 +1,7 @@
 import { applyDamage } from './damage.util';
 import { DamageTypes } from '../models/damage-types.model';
-import { CharacterInfo } from '../models/character-info.model';
-import { ElementalTypes } from '../models/elemental-types.model';
+import { CharacterInfo } from '../../../core/models/character-info.model';
+import { ElementalTypes } from '../../../core/models/elemental-types.model';
 
 function makeCharacter(health: number, armor: number): CharacterInfo {
   return {

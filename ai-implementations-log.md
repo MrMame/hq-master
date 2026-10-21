@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-21 17:54) - Refactoring: Charakter-Modelle und Test-Fabrik nach `core/` (character-models-to-core #1–#4)
+
+- **Was wurde gemacht:** `CharacterInfo`, `ElementalTypes`, `CharacterAbilities` und die Bildlisten liegen per `git mv` unter `core/models/`, die Test-Fabrik `createTestCharacter` unter `core/testing/character.fixtures.ts`. Importe in 44 Dateien direkt auf die neuen Orte umgestellt, keine Re-Exports. `shared/` importiert damit nichts mehr aus `features/`. `architecture.md` beschreibt die neue Lage und die Importregel für `shared/`. Punkt #4 nach Rückfrage ergänzt: `testing.md` und die Dateinamen-Tabelle nennen `core/testing/`. Request vollständig umgesetzt und nach `done/` verschoben.
+- **Dateien geändert:** `core/models/{character-info,elemental-types,character-abilities,character-images}.model.ts` (verschoben), `core/testing/character.fixtures.ts` (neu), `game-session/testing/session.fixtures.ts`, Importzeilen in 43 weiteren Dateien unter `core/`, `shared/` und den Features (darunter 9 Specs mit `createTestCharacter`), `.claude/rules/architecture.md`, `.claude/rules/testing.md`, `docs/refactoring-requests/character-models-to-core.md` (→ done/)
+- **Wichtige Entscheidung:** Importe per Skript umgeschrieben, das jeden relativen Import auflöst und nur Treffer auf die alten Module ersetzt; der Diff enthält außer der verschobenen Fabrik nur Importzeilen. Doc-Kommentar der Fabrik von „GameSession-Specs“ auf „Specs“ verallgemeinert. Keine neuen Tests (reine Verschiebung von Typen, Enums und Konstanten). `session-slices.ts` importiert weiterhin Slice-Typen aus den Features (bewusst außerhalb des Scopes). Smoke-Suite vorher und nach #1/#2 jeweils 12/12 grün; 335 Tests (verschobene Dateien 100 % Coverage), Lint und Build grün.
+
 ### (2026-10-21 17:26) - Feature: Systemweiter Charakter-Editor (character-editor-dialog #1–#8)
 
 - **Was wurde gemacht:** Neuer Shared-Dialog `CharacterEditorDialog` legt Charaktere an und bearbeitet alle Felder außer der ID; „Übernehmen“ schreibt sofort über `CharactersDbService.writeCharacter()`, Token, Legende, Character Tracker und Snapshot folgen über ihre Signale. Geöffnet über `CharacterEditorService` (`openCreate`/`openEdit`). Im Dungeon Tracker öffnet der Doppelklick auf ein Token den Editor statt zu navigieren; neuer Button „Character Neu“ in der Seitenleiste. Bildlisten der Creators als gemeinsame Konstanten. Request vollständig umgesetzt und nach `done/` verschoben.

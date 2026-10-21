@@ -1,6 +1,6 @@
 import { Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CharacterInfo } from '../../models/character-info.model';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
 
 /** Vollansicht eines Charakters; Änderungen werden nur ausgegeben, gespeichert wird beim Aufrufer. */
 @Component({

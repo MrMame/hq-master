@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { CharacterInfo } from '../../features/character-tracker/models/character-info.model';
+import { CharacterInfo } from '../../core/models/character-info.model';
 import { CharacterEditorDialog } from '../components/character-editor-dialog/character-editor-dialog';
 
 /**

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { CharacterTrackerPage } from './character-tracker-page';
-import { CharacterInfo } from '../../models/character-info.model';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { DamageTypes } from '../../models/damage-types.model';
 import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
 import { CharacterCardLayoutService } from '../../services/character-card-layout.service';

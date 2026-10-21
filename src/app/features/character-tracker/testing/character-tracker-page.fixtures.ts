@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { Mock, vi } from 'vitest';
 
 import { CharacterTrackerPage } from '../components/character-tracker-page/character-tracker-page';
-import { CharacterInfo } from '../models/character-info.model';
+import { CharacterInfo } from '../../../core/models/character-info.model';
 
 export const dialogCharacter: CharacterInfo = {
   id: '1700000000000-42',

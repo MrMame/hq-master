@@ -1,7 +1,7 @@
 import { Component, computed, inject, Signal } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { CharacterEditorService } from '../../../../shared/services/character-editor.service';
-import { CharacterInfo } from '../../../character-tracker/models/character-info.model';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { DungeonBoardState } from '../../models/dungeon-board-state.model';
 import { BoardToken } from '../../models/board-token.model';

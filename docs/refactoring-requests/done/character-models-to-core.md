@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-21  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** done (2026-10-21 17:54)  
 **Bezug:** `docs/feature-requests/done/character-editor-dialog.md` (Hinweis „Modelle im Feature-Ordner“), `.claude/rules/architecture.md` (Verzeichnisstruktur; `shared/` = „Feature-unabhängige UI“; gemeinsam genutzte Bausteine kommen aus `core/`)
 
 ---
@@ -41,7 +41,7 @@ Fachliches Verhalten ändert sich nicht.
 
 ## Anforderungen
 
-### 1. Charakter-Modelle nach `core/models/` verschieben
+### 1. Charakter-Modelle nach `core/models/` verschieben ✅ done (2026-10-21 17:54)
 
 - Die Dateien werden per `git mv` verschoben, damit ihr Verlauf erhalten bleibt. Dateinamen und Inhalt
   bleiben gleich:
@@ -64,7 +64,7 @@ Fachliches Verhalten ändert sich nicht.
 
 ---
 
-### 2. Test-Fabrik `createTestCharacter` nach `core/testing/` verschieben
+### 2. Test-Fabrik `createTestCharacter` nach `core/testing/` verschieben ✅ done (2026-10-21 17:54)
 
 - Neue Datei `src/app/core/testing/character.fixtures.ts` mit `createTestCharacter(id: string): CharacterInfo`.
   Der Inhalt kommt unverändert aus `features/game-session/testing/session.fixtures.ts`, samt
@@ -84,7 +84,7 @@ Fachliches Verhalten ändert sich nicht.
 
 ---
 
-### 3. Architektur-Doku
+### 3. Architektur-Doku ✅ done (2026-10-21 17:54)
 
 `.claude/rules/architecture.md`:
 
@@ -103,6 +103,21 @@ von Features abhängig wird.
 
 ---
 
+### 4. Test-Doku nennt `core/testing/` ✅ done (2026-10-21 17:54)
+
+_Ergänzt bei der Umsetzung am 2026-10-21 (nach Rückfrage)._ Die Ablageregeln für Testdaten kennen
+bisher nur `<feature>/testing/` und `shared/testing/`. Ohne Hinweis landet die nächste
+feature-übergreifende Testdaten-Fabrik wieder in einem Feature.
+
+- `.claude/rules/testing.md`, „Wiederverwendbares Test-Setup“: Testdaten zu Core-Modellen liegen unter
+  `core/testing/*.fixtures.ts` (z. B. `createTestCharacter`).
+- `.claude/rules/architecture.md`, Tabelle „Dateinamen“, Zeile „Testdaten“: Neben
+  `<feature>/testing/<name>.fixtures.ts` steht `core/testing/` für Core-Modelle.
+
+**Erwartetes Verhalten:** Unverändert. Die Doku nennt alle Ablageorte für Testdaten.
+
+---
+
 ## Betroffene Dateien
 
 | Bereich                                        | Änderung                                                                                                    |
@@ -116,7 +131,8 @@ von Features abhängig wird.
 | `src/app/features/game-session/` (2)           | Importe: `characters.xml-mapper.ts`, `session.fixtures.ts` (Punkt 1, 2)                                     |
 | `src/app/core/testing/character.fixtures.ts`   | Neu: `createTestCharacter` (Punkt 2)                                                                        |
 | `src/app/app.config.spec.ts` und weitere Specs | Import von `createTestCharacter` (Punkt 2)                                                                  |
-| `.claude/rules/architecture.md`                | Verzeichnisstruktur und Importregel für `shared/` (Punkt 3)                                                 |
+| `.claude/rules/architecture.md`                | Verzeichnisstruktur und Importregel für `shared/` (Punkt 3), Dateinamen-Tabelle (Punkt 4)                   |
+| `.claude/rules/testing.md`                     | Ablageort `core/testing/` für Testdaten (Punkt 4)                                                           |
 
 ---
 
@@ -136,11 +152,12 @@ von Features abhängig wird.
 
 ## Akzeptanzkriterien
 
-- [ ] Die vier Modelldateien liegen unter `src/app/core/models/`. Am alten Ort gibt es weder die Dateien noch Re-Exports
-- [ ] Die Suche nach `character-tracker/models/(character-info|elemental-types|character-abilities|character-images)` unter `src/` findet nichts
-- [ ] Kein Code unter `src/app/shared/` importiert aus `src/app/features/`
-- [ ] `CharactersDbService` importiert `CharacterInfo` aus `core/models/`
-- [ ] `createTestCharacter` liegt in `src/app/core/testing/character.fixtures.ts` und wird überall von dort importiert
-- [ ] Der Dateiverlauf der verschobenen Modelle ist erhalten (`git log --follow`)
-- [ ] `architecture.md` beschreibt die neue Lage und die Importregel für `shared/`
-- [ ] Kein fachliches Verhalten geändert. `npm run lint`, `npm run test -- --watch=false --coverage`, `npm run build` und `npm run e2e` laufen grün
+- [x] Die vier Modelldateien liegen unter `src/app/core/models/`. Am alten Ort gibt es weder die Dateien noch Re-Exports
+- [x] Die Suche nach `character-tracker/models/(character-info|elemental-types|character-abilities|character-images)` unter `src/` findet nichts
+- [x] Kein Code unter `src/app/shared/` importiert aus `src/app/features/`
+- [x] `CharactersDbService` importiert `CharacterInfo` aus `core/models/`
+- [x] `createTestCharacter` liegt in `src/app/core/testing/character.fixtures.ts` und wird überall von dort importiert
+- [x] Der Dateiverlauf der verschobenen Modelle ist erhalten (`git log --follow`; `git mv`, Rename mit 100 % Ähnlichkeit)
+- [x] `architecture.md` beschreibt die neue Lage und die Importregel für `shared/`
+- [x] `testing.md` und die Dateinamen-Tabelle in `architecture.md` nennen `core/testing/` als Ablageort für Testdaten
+- [x] Kein fachliches Verhalten geändert. `npm run lint`, `npm run test -- --watch=false --coverage`, `npm run build` und `npm run e2e` laufen grün

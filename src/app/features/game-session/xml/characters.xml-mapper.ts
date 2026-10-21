@@ -1,4 +1,4 @@
-import { CharacterInfo } from '../../character-tracker/models/character-info.model';
+import { CharacterInfo } from '../../../core/models/character-info.model';
 import {
   appendTextElement,
   childElements,

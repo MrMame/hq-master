@@ -1,5 +1,5 @@
 import { createNewCharacter } from './new-character.util';
-import { CharacterInfo } from '../../features/character-tracker/models/character-info.model';
+import { CharacterInfo } from '../../core/models/character-info.model';
 
 describe('createNewCharacter', () => {
   afterEach(() => vi.restoreAllMocks());

@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MovableCharacterCard } from './movable-character-card';
 import { CardLayout } from '../../models/card-layout.model';
-import { CharacterInfo } from '../../models/character-info.model';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
 
 const orc: CharacterInfo = {
   id: 'orc-1',

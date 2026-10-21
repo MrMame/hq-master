@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { CharacterInfo } from '../../models/character-info.model';
-import { ElementalTypes } from '../../models/elemental-types.model';
-import { CharacterAbilities } from '../../models/character-abilities.model';
-import { MONSTER_IMAGES } from '../../models/character-images.model';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
+import { ElementalTypes } from '../../../../core/models/elemental-types.model';
+import { CharacterAbilities } from '../../../../core/models/character-abilities.model';
+import { MONSTER_IMAGES } from '../../../../core/models/character-images.model';
 
 @Injectable({
   providedIn: 'root',

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CharacterCard } from './character-card';
-import { CharacterInfo } from '../../models/character-info.model';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
 
 const orc: CharacterInfo = {

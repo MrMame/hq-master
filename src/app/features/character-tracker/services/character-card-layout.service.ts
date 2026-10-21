@@ -4,7 +4,7 @@ import { CharactersDbService } from '../../../core/services/characters/character
 import { PersistedState, persistedState } from '../../../core/session-state/persisted-state';
 import { SESSION_KEYS } from '../../../core/session-state/session-keys';
 import { SessionStateSlice } from '../../../core/session-state/session-state-slice';
-import { CharacterInfo } from '../models/character-info.model';
+import { CharacterInfo } from '../../../core/models/character-info.model';
 import {
   CardLayout,
   CardLayoutState,

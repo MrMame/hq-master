@@ -5,7 +5,7 @@ import { CharactersDbService } from '../../../core/services/characters/character
 import { SESSION_KEYS } from '../../../core/session-state/session-keys';
 import { describePersistedState } from '../../../core/session-state/testing/describe-persisted-state';
 import { CardLayoutState, DEFAULT_CARD_LAYOUT_STATE } from '../models/card-layout.model';
-import { CharacterInfo } from '../models/character-info.model';
+import { CharacterInfo } from '../../../core/models/character-info.model';
 
 function character(id: string): CharacterInfo {
   return {

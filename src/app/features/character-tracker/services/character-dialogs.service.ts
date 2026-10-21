@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { CharacterInfo } from '../models/character-info.model';
+import { CharacterInfo } from '../../../core/models/character-info.model';
 import { AddCharacterDialog } from '../components/add-character-dialog/add-character-dialog';
 import { DamageTakenDialog } from '../components/damage-taken-dialog/damage-taken-dialog';
 

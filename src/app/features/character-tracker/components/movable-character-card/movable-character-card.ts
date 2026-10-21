@@ -3,7 +3,7 @@ import { CdkDragEnd, DragDropModule, Point } from '@angular/cdk/drag-drop';
 import { CharacterCard } from '../character-card/character-card';
 import { CharacterCardMinimised } from '../character-card-minimised/character-card-minimised';
 import { CardLayout } from '../../models/card-layout.model';
-import { CharacterInfo } from '../../models/character-info.model';
+import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { DamageTypes } from '../../models/damage-types.model';
 
 /** Verschiebbare Karte mit Griffleiste; zeigt je nach Layout die kompakte oder volle Ansicht. */

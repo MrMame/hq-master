@@ -1,5 +1,5 @@
-import { CharacterInfo } from '../../features/character-tracker/models/character-info.model';
-import { ElementalTypes } from '../../features/character-tracker/models/elemental-types.model';
+import { CharacterInfo } from '../../core/models/character-info.model';
+import { ElementalTypes } from '../../core/models/elemental-types.model';
 
 /**
  * Startwerte für einen neuen, noch leeren Charakter. Die ID folgt dem Schema der Creator-Services;

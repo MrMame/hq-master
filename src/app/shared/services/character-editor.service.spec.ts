@@ -4,8 +4,8 @@ import { firstValueFrom, of } from 'rxjs';
 
 import { CHARACTER_EDITOR_DIALOG_CONFIG, CharacterEditorService } from './character-editor.service';
 import { CharacterEditorDialog } from '../components/character-editor-dialog/character-editor-dialog';
-import { CharacterInfo } from '../../features/character-tracker/models/character-info.model';
-import { createTestCharacter } from '../../features/game-session/testing/session.fixtures';
+import { CharacterInfo } from '../../core/models/character-info.model';
+import { createTestCharacter } from '../../core/testing/character.fixtures';
 
 describe('CharacterEditorService', () => {
   let service: CharacterEditorService;

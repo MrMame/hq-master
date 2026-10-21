@@ -7,7 +7,7 @@ import { CharactersDbService } from '../../../../core/services/characters/charac
 import { CharacterEditorService } from '../../../../shared/services/character-editor.service';
 import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { DungeonBoardState } from '../../models/dungeon-board-state.model';
-import { createTestCharacter } from '../../../game-session/testing/session.fixtures';
+import { createTestCharacter } from '../../../../core/testing/character.fixtures';
 import { clickButton } from '../../../../shared/testing/click-button';
 
 type GridSetting = 'gridCellSizePx' | 'gridOffsetX' | 'gridOffsetY' | 'gridOpacity';
