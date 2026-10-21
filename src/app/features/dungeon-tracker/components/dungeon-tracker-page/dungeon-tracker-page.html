@@ -81,6 +81,9 @@
       <h3 class="general-sidebar__heading general-sidebar__heading--spaced">
         Charaktere ({{ tokens().length }})
       </h3>
+      <button class="general-sidebar__button new-character-button" (click)="onNewCharacterClick()">
+        Character Neu
+      </button>
       @for (token of tokens(); track token.position.characterId) {
         <div class="legend-entry">
           <img
@@ -95,7 +98,7 @@
         </div>
       }
       @if (tokens().length === 0) {
-        <p class="legend-empty">Keine Charaktere im Character Tracker angelegt.</p>
+        <p class="legend-empty">Noch keine Charaktere angelegt.</p>
       }
     </div>
   </aside>
@@ -130,7 +133,7 @@
         [offsetX]="boardState().gridOffsetX"
         [offsetY]="boardState().gridOffsetY"
         (tokenMoved)="onTokenMoved($event)"
-        (tokenDoubleClicked)="onTokenDoubleClick()"
+        (tokenDoubleClicked)="onTokenDoubleClick(token.character)"
       />
     }
   </div>

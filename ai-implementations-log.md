@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-21 17:26) - Feature: Systemweiter Charakter-Editor (character-editor-dialog #1–#8)
+
+- **Was wurde gemacht:** Neuer Shared-Dialog `CharacterEditorDialog` legt Charaktere an und bearbeitet alle Felder außer der ID; „Übernehmen“ schreibt sofort über `CharactersDbService.writeCharacter()`, Token, Legende, Character Tracker und Snapshot folgen über ihre Signale. Geöffnet über `CharacterEditorService` (`openCreate`/`openEdit`). Im Dungeon Tracker öffnet der Doppelklick auf ein Token den Editor statt zu navigieren; neuer Button „Character Neu“ in der Seitenleiste. Bildlisten der Creators als gemeinsame Konstanten. Request vollständig umgesetzt und nach `done/` verschoben.
+- **Dateien geändert:** `character-images.model.ts` (neu), `hero-/monster-character-creator.service.ts`, `shared/utils/new-character.util.ts` (+ Spec, neu), `shared/components/character-editor-dialog/*` (neu, zwei Specs), `shared/services/character-editor.service.ts` (+ Spec, neu), `shared/testing/character-editor-dialog.fixtures.ts` (neu), `dungeon-tracker-page.ts/.html/.css` + zwei Specs, `e2e/character-editor.spec.ts` (neu), `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/character-editor-dialog.md` (→ done/)
+- **Wichtige Entscheidung:** Der Dialog speichert selbst, damit ihn jedes Feature nur öffnen muss; die Arbeitskopie ist Formularzustand, die Session ändert sich nur über `writeCharacter()`. Bild ist Pflicht (neue Charaktere ohne Bild erschienen in der Legende als kaputtes Bild). `autoFocus: 'dialog'`, damit auf dem Tablet keine Bildschirmtastatur aufspringt. `REQUIREMENTS.md` für den pre-commit-Prettier-Check vollständig formatiert (nur Whitespace). Die Charakter-Modelle bleiben vorerst im Feature; Umzug nach `core/` als `docs/refactoring-requests/character-models-to-core.md` angelegt. Proben 5/6 vorher rot, nachher grün; 335 Tests (geänderte Dateien 100 % Coverage), Lint, Build und e2e (12) grün.
+
 ### (2026-10-18 19:47) - Refactoring: Card-Zone in den Seitencontainer einpassen (card-zone-layout #1–#3)
 
 - **Was wurde gemacht:** Die `.card-zone` ragte rechts aus `.cardManagerPageContainer` heraus (16rem Sidebar + 90vw Inhalt > 100vw). Container auf `width: 100%`, `.card-zone` auf `flex: 1; min-width: 0`, Stapel-/Bankbereich auf `width: 100%` umgestellt; doppelte Styles von `.bankCardsContainer` entfernt. Request vollständig umgesetzt und nach `done/` verschoben.

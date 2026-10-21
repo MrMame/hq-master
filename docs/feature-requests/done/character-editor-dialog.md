@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-21  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** done (2026-10-21 17:26) — #1–#8 umgesetzt; Bild als Pflichtfeld bei der Umsetzung entschieden  
 **Bezug:** `REQUIREMENTS.md` §0 (gemeinsame Session-Daten) und §3 (Dungeon Tracker), `.claude/rules/architecture.md` → „Session-State-Services: reaktive Schnittstelle“ (Regeln 1, 4, 6), `docs/feature-requests/done/shared-session-state.md`
 
 ---
@@ -89,7 +89,7 @@ Konsumenten leiten ihren Zustand davon ab (Regel 6).
 
 ## Anforderungen
 
-### 1. Gemeinsame Charakterbilder
+### 1. Gemeinsame Charakterbilder ✅ done (2026-10-21 17:26)
 
 - Neue Datei `src/app/features/character-tracker/models/character-images.model.ts`, von Hand angelegt
   (für Konstanten gibt es keinen CLI-Blueprint):
@@ -106,7 +106,7 @@ Konsumenten leiten ihren Zustand davon ab (Regel 6).
 
 ---
 
-### 2. Startwerte für neue Charaktere
+### 2. Startwerte für neue Charaktere ✅ done (2026-10-21 17:26)
 
 - Neue Datei `src/app/shared/utils/new-character.util.ts` mit `createNewCharacter(): CharacterInfo`,
   von Hand angelegt, dazu eine Spec mit gleichem Dateistamm.
@@ -114,7 +114,8 @@ Konsumenten leiten ihren Zustand davon ab (Regel 6).
   `crypto.randomUUID()` kommt nicht in Frage, weil es nur in einem sicheren Kontext (https oder
   localhost) verfügbar ist. Ein Tablet, das den Dev-Server per LAN-IP über http öffnet, hätte es nicht.
 - Startwerte: Name `''`, Typ `ElementalTypes.FEUER`, `health`, `armor`, `attack`, `defense` und `speed`
-  jeweils `0`, `abilities: []`, `image: ''` (das Token zeigt dann Initialen), `description: ''`.
+  jeweils `0`, `abilities: []`, `image: ''`, `description: ''`. Ein Bild wählt der DM im Editor; ohne
+  Bild lässt sich nicht speichern (siehe Punkt 3, Entscheidung vom 2026-10-21).
 - Spec `new-character.util.spec.ts`:
   - Die Startwerte stimmen.
   - Die ID wird mit gemocktem `Date.now`/`Math.random` deterministisch geprüft.
@@ -124,7 +125,7 @@ Konsumenten leiten ihren Zustand davon ab (Regel 6).
 
 ---
 
-### 3. `CharacterEditorDialog` (shared)
+### 3. `CharacterEditorDialog` (shared) ✅ done (2026-10-21 17:26)
 
 - Erzeugen mit `ng g c shared/components/character-editor-dialog`. Das ergibt `CharacterEditorDialog` in
   `character-editor-dialog.ts`, `.html`, `.css` und `.spec.ts` mit dem Selector
@@ -146,14 +147,18 @@ Konsumenten leiten ihren Zustand davon ab (Regel 6).
   | Typ                                                         | `<select>` über `ElementalTypes`                                              | –                  |
   | Leben, Rüstung, Angriff, Abwehr, Tempo (`health` … `speed`) | `type="number"`, per `@for` über eine Feldliste `{ key, label }`              | Pflicht, `min="0"` |
   | Fähigkeiten                                                 | Checkboxen über `CharacterAbilities`                                          | –                  |
-  | Bild                                                        | runde Icon-Buttons über `CHARACTER_IMAGES`, Auswahl markiert, je `aria-label` | –                  |
+  | Bild                                                        | runde Icon-Buttons über `CHARACTER_IMAGES`, Auswahl markiert, je `aria-label` | Pflicht            |
   | Beschreibung                                                | `<textarea>`                                                                  | –                  |
 
   Die `id` wird weder angezeigt noch geändert, weil sie Token-Position und Kartenlayout verknüpft.
 
 - **Formular:** `FormsModule` mit `[ngModel]` + `(ngModelChange)` wie in `CharacterCard`. Jedes Feld
   hat ein `name`, alles steht in `<form #form="ngForm">`, und „Übernehmen“ hat
-  `[disabled]="form.invalid"`.
+  `[disabled]="form.invalid || !draft().image"`.
+- **Bild ist Pflicht** (entschieden 2026-10-21, bei der Umsetzung gefunden): Ein Charakter ohne Bild
+  erschien in der Legende und auf den Charakterkarten als kaputtes Bild. Deshalb bleibt „Übernehmen“
+  gesperrt, bis ein Bild gewählt ist. Ohne Auswahl sind die Bild-Buttons rot umrandet wie ein
+  ungültiges Feld. Das gilt auch für Altdaten ohne Bild.
 - **Aktionen** in `mat-dialog-actions`, rechtsbündig:
   - „Abbrechen“ (`mat-button`) ruft `dialogRef.close()` auf. Es wird nichts geschrieben.
   - „Übernehmen“ (`mat-flat-button`) ruft `charactersDbService.writeCharacter(draft())` und danach
@@ -184,12 +189,12 @@ Konsumenten leiten ihren Zustand davon ab (Regel 6).
     der geänderte Charakter in `characters()`, und `close` hat ihn erhalten.
   - „Abbrechen“ lässt `characters()` unverändert, `close` wird ohne Wert aufgerufen. Das übergebene
     Original-Objekt bleibt in jedem Fall unverändert.
-  - „Übernehmen“ ist deaktiviert bei leerem Namen sowie bei leerem oder negativem Zahlenwert.
+  - „Übernehmen“ ist deaktiviert bei leerem Namen, bei leerem oder negativem Zahlenwert und ohne Bild.
   - Fähigkeiten lassen sich an- und abwählen.
   - Altwerte außerhalb der Auswahllisten, etwa Typ `monster` oder die Fähigkeit `Gift` aus
     `createTestCharacter`, bleiben erhalten, solange sie unberührt bleiben.
-  - Neu-Modus: Der Titel lautet „Neuer Charakter“. Mit leerem Namen ist „Übernehmen“ deaktiviert. Nach
-    der Namenseingabe entsteht ein zusätzlicher Charakter mit neuer ID.
+  - Neu-Modus: Der Titel lautet „Neuer Charakter“. „Übernehmen“ wird erst mit Name und Bild frei.
+    Danach entsteht ein zusätzlicher Charakter mit neuer ID.
   - Wird die Spec länger als 150 Zeilen, wird sie nach Aspekt aufgeteilt
     (`character-editor-dialog-create.spec.ts`). Das gemeinsame Setup kommt dann nach
     `src/app/shared/testing/character-editor-dialog.fixtures.ts`.
@@ -199,7 +204,7 @@ speichert sofort und schließt den Dialog. „Abbrechen“ schließt ihn, ohne e
 
 ---
 
-### 4. `CharacterEditorService` (shared)
+### 4. `CharacterEditorService` (shared) ✅ done (2026-10-21 17:26)
 
 - Erzeugen mit `ng g s shared/services/character-editor`. Das ergibt `CharacterEditorService` mit
   `providedIn: 'root'`.
@@ -220,7 +225,7 @@ speichert sofort und schließt den Dialog. „Abbrechen“ schließt ihn, ohne e
 
 ---
 
-### 5. Dungeon Tracker: Doppelklick öffnet den Editor
+### 5. Dungeon Tracker: Doppelklick öffnet den Editor ✅ done (2026-10-21 17:26)
 
 - `dungeon-tracker-page.ts`: `Router` entfällt, `CharacterEditorService` kommt per `inject()` hinzu.
 
@@ -250,7 +255,7 @@ navigieren. Nach „Übernehmen“ zeigen Token und Legende sofort die neuen Wer
 
 ---
 
-### 6. Button „Character Neu“ im Dungeon Tracker
+### 6. Button „Character Neu“ im Dungeon Tracker ✅ done (2026-10-21 17:26)
 
 - `dungeon-tracker-page.html`: Im Abschnitt „Charaktere (n)“ der Seitenleiste steht direkt unter der
   Überschrift und über der Liste
@@ -282,7 +287,7 @@ ein neues Token auf dem ersten freien Feld und ein Eintrag in der Legende. „Ab
 
 ---
 
-### 7. E2E-Smoke-Test (empfohlen, optional)
+### 7. E2E-Smoke-Test (empfohlen, optional) ✅ done (2026-10-21 17:26)
 
 `e2e/character-editor.spec.ts` folgt den Konventionen aus `e2e/dungeon-drag.spec.ts`: Locator über
 Rolle, Text oder `data-testid`, kein `waitForTimeout`.
@@ -290,14 +295,14 @@ Rolle, Text oder `data-testid`, kein `waitForTimeout`.
 - **Bearbeiten:** Im Character Tracker „Add Monster“ → Dungeon Tracker → Doppelklick auf das Token →
   Name ändern → „Übernehmen“ → Die Legende zeigt den neuen Namen → Nach einem Reload ist der Name noch
   da.
-- **Neu:** Dungeon Tracker → „Character Neu“ → Name eingeben → „Übernehmen“ → Token und Eintrag in der
+- **Neu:** Dungeon Tracker → „Character Neu“ → Name eingeben → Bild wählen → „Übernehmen“ → Token und Eintrag in der
   Legende erscheinen.
 
 **Erwartetes Verhalten:** Beide Abläufe laufen in `npm run e2e` stabil durch.
 
 ---
 
-### 8. Dokumentation
+### 8. Dokumentation ✅ done (2026-10-21 17:26)
 
 `.claude/rules/architecture.md`, Verzeichnisstruktur:
 
@@ -350,6 +355,7 @@ Rolle, Text oder `data-testid`, kein `waitForTimeout`.
   `features/character-tracker/models/`. Der Shared-Editor importiert sie von dort, so wie
   `CharactersDbService` in `core/` es heute schon tut. Ein Umzug nach `core/models/` (etwa 25 Dateien,
   nur Importpfade) wäre ein eigener Refactoring Request und ist **nicht** Teil dieses Requests.
+  Angelegt am 2026-10-21 als `docs/refactoring-requests/character-models-to-core.md`.
 - **Beschriftungen:** Der Dialog ist deutsch beschriftet wie die Dungeon-Tracker-Seite (Leben, Rüstung,
   Angriff, Abwehr, Tempo). Die Charakterkarte im Character Tracker nutzt weiterhin englische Begriffe.
   Der Button heißt auf Wunsch „Character Neu“, Überschrift und Dialogtitel schreiben „Charakter“.
@@ -365,17 +371,17 @@ Rolle, Text oder `data-testid`, kein `waitForTimeout`.
 
 ## Akzeptanzkriterien
 
-- [ ] Ein Doppelklick auf ein Token öffnet den Charakter-Editor mit den Werten dieses Charakters, es wird nicht mehr navigiert
-- [ ] Der Button „Character Neu“ in der Seitenleiste öffnet den Editor im Neu-Modus
-- [ ] Alle Felder von `CharacterInfo` außer `id` sind änderbar: Name, Typ, Leben, Rüstung, Angriff, Abwehr, Tempo, Fähigkeiten, Bild und Beschreibung
-- [ ] „Übernehmen“ schreibt über `CharactersDbService.writeCharacter()`. Token, Legende, Character Tracker und Session-Snapshot zeigen die Änderung sofort, auch nach einem Reload
-- [ ] Ein neu angelegter Charakter erscheint sofort als Token auf einem freien Feld und in der Legende
-- [ ] „Abbrechen“ ändert nichts und legt nichts an
-- [ ] „Übernehmen“ ist bei leerem Namen sowie bei leerem oder negativem Zahlenwert deaktiviert
-- [ ] Unberührte Altwerte außerhalb der Auswahllisten bleiben beim Übernehmen erhalten
-- [ ] Editor und Öffner-Service liegen unter `src/app/shared/` und brauchen keine Feature-Services
-- [ ] Der Dialog sieht aus wie der Dungeon Tracker und nutzt nur Tokens aus `tokens.css`, ohne neue Tokens
-- [ ] Die Creator-Services nutzen die gemeinsame Bildliste, ihr Verhalten ist unverändert
-- [ ] Jede Datei hat höchstens 150 Zeilen, und Specs prüfen mehr als `should create`
-- [ ] `REQUIREMENTS.md` §3 und `.claude/rules/architecture.md` sind aktualisiert
-- [ ] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün
+- [x] Ein Doppelklick auf ein Token öffnet den Charakter-Editor mit den Werten dieses Charakters, es wird nicht mehr navigiert
+- [x] Der Button „Character Neu“ in der Seitenleiste öffnet den Editor im Neu-Modus
+- [x] Alle Felder von `CharacterInfo` außer `id` sind änderbar: Name, Typ, Leben, Rüstung, Angriff, Abwehr, Tempo, Fähigkeiten, Bild und Beschreibung
+- [x] „Übernehmen“ schreibt über `CharactersDbService.writeCharacter()`. Token, Legende, Character Tracker und Session-Snapshot zeigen die Änderung sofort, auch nach einem Reload
+- [x] Ein neu angelegter Charakter erscheint sofort als Token auf einem freien Feld und in der Legende
+- [x] „Abbrechen“ ändert nichts und legt nichts an
+- [x] „Übernehmen“ ist bei leerem Namen, bei leerem oder negativem Zahlenwert und ohne Bild deaktiviert
+- [x] Unberührte Altwerte außerhalb der Auswahllisten bleiben beim Übernehmen erhalten
+- [x] Editor und Öffner-Service liegen unter `src/app/shared/` und brauchen keine Feature-Services
+- [x] Der Dialog sieht aus wie der Dungeon Tracker und nutzt nur Tokens aus `tokens.css`, ohne neue Tokens
+- [x] Die Creator-Services nutzen die gemeinsame Bildliste, ihr Verhalten ist unverändert
+- [x] Jede Datei hat höchstens 150 Zeilen, und Specs prüfen mehr als `should create`
+- [x] `REQUIREMENTS.md` §3 und `.claude/rules/architecture.md` sind aktualisiert
+- [x] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün

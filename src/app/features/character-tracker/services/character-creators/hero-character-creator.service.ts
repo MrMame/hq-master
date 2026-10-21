@@ -2,18 +2,12 @@ import { Injectable } from '@angular/core';
 import { CharacterInfo } from '../../models/character-info.model';
 import { ElementalTypes } from '../../models/elemental-types.model';
 import { CharacterAbilities } from '../../models/character-abilities.model';
+import { HERO_IMAGES } from '../../models/character-images.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HeroCharacterCreatorService {
-  private images: string[] = [
-    './img/hero-icon-barbarian.jpeg',
-    './img/hero-icon-dwarf.jpeg',
-    './img/hero-icon-rogue.jpeg',
-    './img/hero-icon-wizard.jpeg',
-  ];
-
   CreateNewRandomHero(): CharacterInfo {
     // Holt alle String-Werte ('Feuer', 'Wasser', etc.) als Array
     const elemntalTypesArray: ElementalTypes[] = Object.values(ElementalTypes);
@@ -32,7 +26,7 @@ export class HeroCharacterCreatorService {
       0,
       Math.floor(Math.random() * abilitiesArray.length) + 1,
     );
-    const randomImage: string = this.images[Math.floor(Math.random() * this.images.length)];
+    const randomImage: string = HERO_IMAGES[Math.floor(Math.random() * HERO_IMAGES.length)];
     const randomDescription: string = `Dies ist eine zufällige Beschreibung für ${randomName}.`;
 
     return {

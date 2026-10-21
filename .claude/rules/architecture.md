@@ -28,7 +28,8 @@ features/
   character-tracker/   → Charakterverwaltung & Kampf
     components/        → CharacterTrackerPage, MovableCharacterCard, CharacterCardMinimised,
                          CharacterCard, Dialoge
-    models/            → character-info.model.ts, card-layout.model.ts, damage-types.model.ts, …
+    models/            → character-info.model.ts, character-images.model.ts (Bildlisten),
+                         card-layout.model.ts, damage-types.model.ts, …
     services/          → character-card-layout.service.ts (Kartenlayout, Session-Slice),
                          character-dialogs.service.ts
       character-creators/ → hero-/monster-character-creator.service.ts
@@ -60,8 +61,11 @@ features/
     testing/           → session.fixtures.ts, game-session-page.fixtures.ts (nur für Specs)
 
 shared/
-  components/          → Feature-unabhängige UI (z. B. ConfirmationDialog)
-  testing/             → feature-übergreifende DOM-Helfer für Specs (z. B. click-button.ts)
+  components/          → Feature-unabhängige UI (z. B. ConfirmationDialog, CharacterEditorDialog)
+  services/            → character-editor.service.ts (öffnet den Charakter-Editor systemweit)
+  utils/               → new-character.util.ts (Startwerte für neue Charaktere)
+  testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
+                         character-editor-dialog.fixtures.ts)
 ```
 
 ## E2E-Tests (`e2e/`, Projekt-Root)

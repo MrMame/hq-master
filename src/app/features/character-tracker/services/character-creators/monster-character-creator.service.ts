@@ -2,23 +2,12 @@ import { Injectable } from '@angular/core';
 import { CharacterInfo } from '../../models/character-info.model';
 import { ElementalTypes } from '../../models/elemental-types.model';
 import { CharacterAbilities } from '../../models/character-abilities.model';
+import { MONSTER_IMAGES } from '../../models/character-images.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MonsterCharacterCreatorService {
-  private images: string[] = [
-    './img/monster-icon-ChaosWarrior.png',
-    './img/monster-icon-FimirAbomination.png',
-    './img/monster-icon-Gargoyle.png',
-    './img/monster-icon-Goblin.png',
-    './img/monster-icon-Hexer.png',
-    './img/monster-icon-Mummy.png',
-    './img/monster-icon-Orc.png',
-    './img/monster-icon-Skeleton.png',
-    './img/monster-icon-Zombie.png',
-  ];
-
   CreateNewRandomMonster(): CharacterInfo {
     // Holt alle String-Werte ('Feuer', 'Wasser', etc.) als Array
     const elemntalTypesArray: ElementalTypes[] = Object.values(ElementalTypes);
@@ -37,7 +26,7 @@ export class MonsterCharacterCreatorService {
       0,
       Math.floor(Math.random() * abilitiesArray.length) + 1,
     );
-    const randomImage: string = this.images[Math.floor(Math.random() * this.images.length)];
+    const randomImage: string = MONSTER_IMAGES[Math.floor(Math.random() * MONSTER_IMAGES.length)];
     const randomDescription: string = `Dies ist eine zufällige Beschreibung für ${randomName}.`;
 
     return {

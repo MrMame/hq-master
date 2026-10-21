@@ -1,0 +1,130 @@
+/* Charakter-Editor im Look des Dungeon Trackers: dunkle Fläche wie die Seitenleiste, gelbe Akzente */
+:host {
+  --mat-dialog-subhead-color: var(--color-yellow-400);
+  --mat-dialog-supporting-text-color: var(--color-white);
+  display: block;
+  background-color: var(--color-gray-800);
+  color: var(--color-white);
+}
+
+/* Material-Dialogtitel über seine Token-Variablen setzen */
+.character-editor__title {
+  --mat-dialog-subhead-size: var(--text-lg);
+  --mat-dialog-subhead-line-height: calc(var(--text-lg) * var(--text-lg--line-height));
+  --mat-dialog-subhead-weight: var(--font-weight-bold);
+}
+
+.character-editor__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.character-editor__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* Beschriftung wie die Überschriften der Seitenleiste */
+.character-editor__caption {
+  color: var(--color-gray-400);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+.character-editor__input {
+  min-width: 0;
+  padding: var(--space-2);
+  border: 1px solid var(--color-gray-600);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-gray-900);
+  color: var(--color-white);
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-yellow-400);
+  }
+
+  &.ng-invalid {
+    border-color: var(--color-red-400);
+  }
+}
+
+.character-editor__divider {
+  border-color: var(--color-gray-600);
+}
+
+.character-editor__stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.character-editor__abilities {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+/* Checkbox in Akzentfarbe wie die Raster-Slider */
+.character-editor__ability {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  accent-color: var(--color-yellow-400);
+}
+
+.character-editor__images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Rund und so groß wie die Tokens auf dem Spielbrett */
+.character-editor__image-option {
+  width: var(--space-10);
+  height: var(--space-10);
+  overflow: hidden;
+  border: 2px solid var(--color-gray-600);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Ein Bild ist Pflicht: ohne Auswahl rot wie ein ungültiges Eingabefeld */
+.character-editor__images--missing .character-editor__image-option {
+  border-color: var(--color-red-400);
+}
+
+.character-editor__image-option--selected {
+  border-color: var(--color-yellow-400);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-yellow-400) 50%, transparent);
+}
+
+.character-editor__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.character-editor__cancel {
+  --mat-button-text-label-text-color: var(--color-gray-400);
+}
+
+/* Gelber Hauptbutton wie „Bild hochladen“ in der Seitenleiste */
+.character-editor__apply {
+  --mat-button-filled-container-color: var(--color-yellow-500);
+  --mat-button-filled-label-text-color: var(--color-black);
+  --mat-button-filled-label-text-weight: var(--font-weight-semibold);
+  --mat-button-filled-container-shape: var(--radius-sm);
+  --mat-button-filled-disabled-container-color: var(--color-gray-700);
+  --mat-button-filled-disabled-label-text-color: var(--color-gray-500);
+
+  &:hover {
+    --mat-button-filled-container-color: var(--color-yellow-400);
+  }
+}

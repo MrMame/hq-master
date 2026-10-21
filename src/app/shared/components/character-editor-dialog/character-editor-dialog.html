@@ -1,0 +1,120 @@
+<h2 mat-dialog-title class="character-editor__title">{{ title }}</h2>
+
+<mat-dialog-content>
+  <form #form="ngForm" class="character-editor__form">
+    <!-- Name und Typ -->
+    <label class="character-editor__field">
+      <span class="character-editor__caption">Name</span>
+      <input
+        name="name"
+        required
+        class="character-editor__input"
+        [ngModel]="draft().name"
+        (ngModelChange)="setField('name', $event)"
+      />
+    </label>
+
+    <label class="character-editor__field">
+      <span class="character-editor__caption">Typ</span>
+      <select
+        name="type"
+        class="character-editor__input"
+        [ngModel]="draft().type"
+        (ngModelChange)="setField('type', $event)"
+      >
+        @for (type of types; track type) {
+          <option [value]="type">{{ type }}</option>
+        }
+      </select>
+    </label>
+
+    <hr class="character-editor__divider" />
+
+    <!-- Zahlenwerte -->
+    <div class="character-editor__stats">
+      @for (stat of stats; track stat.key) {
+        <label class="character-editor__field">
+          <span class="character-editor__caption">{{ stat.label }}</span>
+          <input
+            type="number"
+            min="0"
+            required
+            class="character-editor__input"
+            [name]="stat.key"
+            [ngModel]="draft()[stat.key]"
+            (ngModelChange)="setField(stat.key, $event)"
+          />
+        </label>
+      }
+    </div>
+
+    <hr class="character-editor__divider" />
+
+    <!-- Fähigkeiten -->
+    <div class="character-editor__field">
+      <span class="character-editor__caption">Fähigkeiten</span>
+      <div class="character-editor__abilities">
+        @for (ability of abilities; track ability) {
+          <label class="character-editor__ability">
+            <input
+              type="checkbox"
+              [checked]="draft().abilities.includes(ability)"
+              (change)="toggleAbility(ability)"
+            />
+            {{ ability }}
+          </label>
+        }
+      </div>
+    </div>
+
+    <hr class="character-editor__divider" />
+
+    <!-- Bild -->
+    <div class="character-editor__field">
+      <span class="character-editor__caption">Bild</span>
+      <div
+        class="character-editor__images"
+        [class.character-editor__images--missing]="!draft().image"
+      >
+        @for (image of images; track image) {
+          <button
+            type="button"
+            class="character-editor__image-option"
+            [class.character-editor__image-option--selected]="image === draft().image"
+            [attr.aria-label]="'Bild ' + ($index + 1)"
+            [attr.aria-pressed]="image === draft().image"
+            (click)="setField('image', image)"
+          >
+            <img [src]="image" alt="" class="character-editor__image" />
+          </button>
+        }
+      </div>
+    </div>
+
+    <hr class="character-editor__divider" />
+
+    <!-- Beschreibung -->
+    <label class="character-editor__field">
+      <span class="character-editor__caption">Beschreibung</span>
+      <textarea
+        name="description"
+        rows="3"
+        class="character-editor__input"
+        [ngModel]="draft().description"
+        (ngModelChange)="setField('description', $event)"
+      ></textarea>
+    </label>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button class="character-editor__cancel" (click)="cancel()">Abbrechen</button>
+  <button
+    mat-flat-button
+    class="character-editor__apply"
+    [disabled]="form.invalid || !draft().image"
+    (click)="apply()"
+  >
+    Übernehmen
+  </button>
+</mat-dialog-actions>
