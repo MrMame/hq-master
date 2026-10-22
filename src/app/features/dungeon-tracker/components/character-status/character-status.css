@@ -1,0 +1,35 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Wert als Button (Legende): 24 px Trefferfläche für das Tablet, sonst wie die reine Anzeige */
+.character-status__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--space-6);
+  min-height: var(--space-6);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--color-gray-700);
+  }
+}
+
+.character-status__health {
+  color: var(--color-red-400);
+}
+
+.character-status__armor {
+  color: var(--color-blue-500);
+}

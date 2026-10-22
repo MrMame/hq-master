@@ -1,9 +1,23 @@
+/* Container ohne Rahmen: hält Bild, Werteleiste und Buttons zusammen (kein overflow: hidden). */
 .dungeon-token {
-  --token-glow: color-mix(in oklab, var(--color-yellow-400) 50%, transparent);
   position: absolute;
   z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: var(--space-10);
+  user-select: none;
+}
+
+.dungeon-token--selected {
+  z-index: 20;
+}
+
+.dungeon-token__portrait {
+  --token-glow: color-mix(in oklab, var(--color-yellow-400) 50%, transparent);
   width: var(--space-10);
   height: var(--space-10);
+  flex-shrink: 0;
   overflow: hidden;
   border: 2px solid var(--color-yellow-400);
   border-radius: 50%;
@@ -11,18 +25,22 @@
     0 4px 6px -1px var(--token-glow),
     0 2px 4px -2px var(--token-glow);
   cursor: grab;
-  user-select: none;
 
   &:active {
     cursor: grabbing;
   }
 }
 
+/* Markiertes Token: stärkerer gelber Ring */
+.dungeon-token--selected .dungeon-token__portrait {
+  border-width: 3px;
+  box-shadow: 0 0 0 3px var(--color-yellow-500);
+}
+
 .dungeon-token__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  pointer-events: none;
 }
 
 .dungeon-token__initials {
@@ -36,4 +54,54 @@
   font-size: var(--text-xs);
   line-height: var(--text-xs--line-height);
   font-weight: var(--font-weight-bold);
+}
+
+/* Werteleiste überlappt den unteren Bildrand leicht und darf breiter als das Bild sein. */
+.dungeon-token__status {
+  position: relative;
+  margin-top: calc(-1 * var(--space-1));
+  padding-inline: var(--space-1);
+  border-radius: var(--radius-sm);
+  background-color: color-mix(in oklab, var(--color-gray-900) 80%, transparent);
+  white-space: nowrap;
+}
+
+.dungeon-token__actions {
+  display: flex;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+/* Mindestens 24 px, damit die Buttons auf dem Tablet sicher antippbar sind. */
+.dungeon-token__damage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.dungeon-token__damage--armor {
+  background-color: var(--color-blue-600);
+
+  &:hover {
+    background-color: var(--color-blue-700);
+  }
+}
+
+.dungeon-token__damage--health {
+  background-color: var(--color-red-600);
+
+  &:hover {
+    background-color: var(--color-red-700);
+  }
+}
+
+.dungeon-token__damage-icon {
+  width: var(--space-4);
+  height: var(--space-4);
 }

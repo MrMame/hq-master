@@ -30,7 +30,8 @@ core/
 
 features/
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung (Startseite)
-    components/        → DungeonTrackerPage, DungeonToken
+    components/        → DungeonTrackerPage, DungeonToken, DungeonLegendEntry (Legendeneintrag),
+                         CharacterStatus (Leben/Rüstung an Token und Legende, später Statuseffekte)
     models/            → dungeon-board-state.model.ts, dungeon-position.model.ts, dungeon-session-state.model.ts,
                          board-token.model.ts
     services/          → dungeon-board.service.ts (Signal-State + LocalStorage, Charakter-Sync per effect())
@@ -56,8 +57,10 @@ features/
 shared/
   components/          → Feature-unabhängige UI (z. B. ConfirmationDialog, CharacterEditorDialog,
                          DamageTakenDialog)
-  models/              → confirmation-dialog-data.model.ts (Texte der Rückfrage)
-  services/            → character-editor.service.ts (öffnet den Charakter-Editor systemweit)
+  models/              → confirmation-dialog-data.model.ts (Texte der Rückfrage),
+                         damage-dialog-data.model.ts (Titel des Schadensauswahl-Dialogs)
+  services/            → character-editor.service.ts (öffnet den Charakter-Editor systemweit),
+                         character-damage.service.ts (Schadensauswahl → applyDamage → Session)
     character-creators/ → hero-/monster-character-creator.service.ts (Zufallscharaktere)
   utils/               → new-character.util.ts (Startwerte für neue Charaktere),
                          damage.util.ts (reine Schadensberechnung)

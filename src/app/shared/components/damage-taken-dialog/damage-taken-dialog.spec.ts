@@ -1,23 +1,58 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HarnessLoader, TestElement } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { DamageTakenDialog } from './damage-taken-dialog';
+import { DamageTypes } from '../../../core/models/damage-types.model';
+import { DamageDialogData } from '../../models/damage-dialog-data.model';
 
 describe('DamageTakenDialog', () => {
   let loader: HarnessLoader;
+  let fixture: ComponentFixture<DamageTakenDialog>;
   const close: ReturnType<typeof vi.fn> = vi.fn();
+
+  const create: (data: DamageDialogData) => Promise<void> = async (
+    data: DamageDialogData,
+  ): Promise<void> => {
+    await TestBed.configureTestingModule({
+      imports: [DamageTakenDialog],
+      providers: [
+        { provide: MatDialogRef, useValue: { close } },
+        { provide: MAT_DIALOG_DATA, useValue: data },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(DamageTakenDialog);
+    loader = TestbedHarnessEnvironment.loader(fixture);
+  };
 
   beforeEach(async () => {
     close.mockReset();
-    await TestBed.configureTestingModule({
-      imports: [DamageTakenDialog],
-      providers: [{ provide: MatDialogRef, useValue: { close } }],
-    }).compileComponents();
+    await create({ characterName: 'Ork', damageType: DamageTypes.Normal });
+  });
 
-    loader = TestbedHarnessEnvironment.loader(TestBed.createComponent(DamageTakenDialog));
+  const title: () => string | undefined = (): string | undefined =>
+    (fixture.nativeElement as HTMLElement).querySelector('h2')?.textContent?.trim();
+
+  it('uses the shared dark dialog look', () => {
+    fixture.detectChanges();
+    const host: HTMLElement = fixture.nativeElement as HTMLElement;
+    expect(host.classList).toContain('general-dialog');
+    expect(host.querySelector('h2')?.classList).toContain('general-dialog__title');
+  });
+
+  it('names damage type and character in the title', () => {
+    fixture.detectChanges();
+    expect(title()).toBe('Schaden auf Rüstung: Ork');
+  });
+
+  it('names a critical hit as damage to health', async () => {
+    TestBed.resetTestingModule();
+    await create({ characterName: 'Brom', damageType: DamageTypes.Critical });
+    fixture.detectChanges();
+    expect(title()).toBe('Schaden auf Leben: Brom');
   });
 
   const button: (text: string) => Promise<MatButtonHarness> = (
@@ -54,7 +89,9 @@ describe('DamageTakenDialog', () => {
   });
 
   it('closes without a result on "Abbrechen"', async () => {
-    await (await button('Abbrechen')).click();
+    const cancel: MatButtonHarness = await button('Abbrechen');
+    expect(await (await cancel.host()).hasClass('general-dialog__cancel')).toBe(true);
+    await cancel.click();
     expect(close).toHaveBeenCalledExactlyOnceWith();
   });
 });

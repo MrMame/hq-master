@@ -1,0 +1,58 @@
+<!-- Der Container bewegt Bild, Werteleiste und Buttons gemeinsam; gezogen wird nur über das Bild. -->
+<div
+  cdkDrag
+  [cdkDragFreeDragPosition]="{ x: 0, y: 0 }"
+  (cdkDragStarted)="dragged = true"
+  (cdkDragEnded)="onDragEnd($event)"
+  (click)="onClick($event)"
+  (dblclick)="tokenDoubleClicked.emit(position().characterId)"
+  [style.left.px]="tokenLeft()"
+  [style.top.px]="tokenTop()"
+  [title]="character().name"
+  [class.dungeon-token--selected]="selected()"
+  class="dungeon-token"
+>
+  <div cdkDragHandle class="dungeon-token__portrait">
+    @if (character().image) {
+      <img
+        [src]="character().image"
+        [alt]="character().name"
+        draggable="false"
+        class="dungeon-token__image"
+      />
+    } @else {
+      <div class="dungeon-token__initials">
+        {{ initials() }}
+      </div>
+    }
+  </div>
+
+  <app-character-status [character]="character()" class="dungeon-token__status" />
+
+  @if (selected()) {
+    <div
+      class="dungeon-token__actions"
+      (click)="$event.stopPropagation()"
+      (dblclick)="$event.stopPropagation()"
+    >
+      <button
+        type="button"
+        aria-label="Schaden auf Leben"
+        title="Schaden auf Leben"
+        class="dungeon-token__damage dungeon-token__damage--health"
+        (click)="damageRequested.emit(damageTypes.Critical)"
+      >
+        <img src="./img/hit-critical.svg" alt="" class="dungeon-token__damage-icon" />
+      </button>
+      <button
+        type="button"
+        aria-label="Schaden auf Rüstung"
+        title="Schaden auf Rüstung"
+        class="dungeon-token__damage dungeon-token__damage--armor"
+        (click)="damageRequested.emit(damageTypes.Normal)"
+      >
+        <img src="./img/hit-normal.svg" alt="" class="dungeon-token__damage-icon" />
+      </button>
+    </div>
+  }
+</div>

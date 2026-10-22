@@ -52,7 +52,7 @@ describe('DungeonToken', () => {
   it('should show the initials when the character has no image', () => {
     const token: HTMLElement = render({ ...createTestCharacter('a'), name: 'goblin', image: '' });
     expect(token.querySelector('img')).toBeNull();
-    expect(token.textContent?.trim()).toBe('GO');
+    expect(token.querySelector('.dungeon-token__initials')?.textContent?.trim()).toBe('GO');
   });
 
   it('should show the image and use the name as title and alt text', () => {

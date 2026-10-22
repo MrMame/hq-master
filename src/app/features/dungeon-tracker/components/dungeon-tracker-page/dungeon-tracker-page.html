@@ -85,17 +85,10 @@
         Character Neu
       </button>
       @for (token of tokens(); track token.position.characterId) {
-        <div class="legend-entry">
-          <img
-            [src]="token.character.image"
-            [alt]="token.character.name"
-            class="legend-entry__avatar"
-          />
-          <span class="legend-entry__name">{{ token.character.name }}</span>
-          <span class="legend-entry__position" data-testid="token-position">
-            [{{ token.position.col }},{{ token.position.row }}]
-          </span>
-        </div>
+        <app-dungeon-legend-entry
+          [token]="token"
+          (damageRequested)="onDamageRequested(token.character, $event)"
+        />
       }
       @if (tokens().length === 0) {
         <p class="legend-empty">Noch keine Charaktere angelegt.</p>
@@ -104,7 +97,7 @@
   </aside>
 
   <!-- Hauptbereich: Spielbrett -->
-  <div class="board">
+  <div class="board" (click)="selectedCharacterId.set(null)">
     @if (!boardState().boardImageBase64) {
       <!-- Placeholder wenn kein Bild geladen -->
       <div class="board__placeholder">
@@ -132,8 +125,11 @@
         [cellSize]="boardState().gridCellSizePx"
         [offsetX]="boardState().gridOffsetX"
         [offsetY]="boardState().gridOffsetY"
+        [selected]="selectedId() === token.position.characterId"
         (tokenMoved)="onTokenMoved($event)"
+        (tokenSelected)="selectedCharacterId.set($event)"
         (tokenDoubleClicked)="onTokenDoubleClick(token.character)"
+        (damageRequested)="onDamageRequested(token.character, $event)"
       />
     }
   </div>

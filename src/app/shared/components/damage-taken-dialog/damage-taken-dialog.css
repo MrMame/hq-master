@@ -1,10 +1,4 @@
-/* Material-Dialogtitel über seine Token-Variablen vergrößern */
-.dialog-title {
-  --mat-dialog-subhead-size: var(--text-xl);
-  --mat-dialog-subhead-line-height: calc(var(--text-xl) * var(--text-xl--line-height));
-  --mat-dialog-subhead-weight: var(--font-weight-bold);
-}
-
+/* Dunkles Raster passend zum gemeinsamen Dialog-Look (`.general-dialog`) */
 .damage-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -12,9 +6,9 @@
   max-height: 55vh;
   overflow-y: auto;
   padding: var(--space-1);
-  border: 1px solid var(--color-gray-100);
+  border: 1px solid var(--color-gray-700);
   border-radius: var(--radius-lg);
-  background-color: var(--color-gray-50);
+  background-color: var(--color-gray-900);
 }
 
 @media (min-width: 40rem) {
@@ -23,8 +17,12 @@
   }
 }
 
-/* Kleine Material-Buttons, die die Rasterzelle ausfüllen */
+/* Kleine Material-Buttons, die die Rasterzelle ausfüllen; 32 px hoch, damit alle zehn Reihen
+   auf dem Tablet (1024×768) ohne Scrollen passen. */
 .damage-grid-btn {
+  --mat-button-filled-container-height: var(--space-8);
+  /* Die unsichtbare 48-px-Trefferfläche ragte unter die letzte Reihe und erzwang Scrollen. */
+  --mat-button-filled-touch-target-display: none;
   --mat-button-filled-container-shape: var(--radius-md);
   --mat-button-filled-horizontal-padding: 0;
   min-width: 0;
@@ -78,8 +76,4 @@
   &:hover {
     --mat-button-filled-container-color: var(--color-red-700);
   }
-}
-
-.dialog-action {
-  --mat-button-text-label-text-color: var(--color-gray-500);
 }

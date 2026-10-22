@@ -1,4 +1,4 @@
-<h2 mat-dialog-title class="dialog-title">Schaden auswählen</h2>
+<h2 mat-dialog-title class="general-dialog__title">{{ title }}</h2>
 
 <mat-dialog-content>
   <!-- Grid-Container für die Schadensbuttons -->
@@ -18,5 +18,5 @@
 
 <!-- Feste Aktionsleiste für den Abbruch -->
 <mat-dialog-actions align="end">
-  <button mat-button (click)="onNoClick()" class="dialog-action">Abbrechen</button>
+  <button mat-button (click)="onNoClick()" class="general-dialog__cancel">Abbrechen</button>
 </mat-dialog-actions>

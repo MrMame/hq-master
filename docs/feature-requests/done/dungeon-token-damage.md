@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-21 (ergänzt 2026-10-21: Werte am Token und in der Legende)  
 **Priorität:** Hoch  
-**Status:** open  
+**Status:** done (2026-10-22 16:12, #10: 2026-10-22 16:18, #11: 2026-10-22 16:30)  
 **Bezug:** `REQUIREMENTS.md` (Dungeon Tracker), `.claude/rules/architecture.md` → „Komponenten“ (Shared-Dialoge im dunklen Look) und „Session-State-Services“ (Regel 4, 6), Voraussetzung `docs/feature-requests/done/character-tracker-removal.md` #1
 
 ---
@@ -64,7 +64,7 @@ Legende:  [Bild] Ork            120  30   [3,4]
 
 ## Anforderungen
 
-### 1. Werteanzeige `CharacterStatus`
+### 1. Werteanzeige `CharacterStatus` ✅ done (2026-10-22 16:12)
 
 - Neue Komponente per CLI: `ng g c features/dungeon-tracker/components/character-status` →
   `CharacterStatus` (entschieden 2026-10-21: im Dungeon Tracker, weil beide Nutzer dort liegen; bei
@@ -82,7 +82,7 @@ Charakters.
 
 ---
 
-### 2. Werteleiste am Token, immer sichtbar
+### 2. Werteleiste am Token, immer sichtbar ✅ done (2026-10-22 16:12)
 
 - `DungeonToken` wird umgebaut:
   - Das `cdkDrag`-Element ist ein Container ohne `overflow: hidden`. Er trägt weiterhin
@@ -104,7 +104,7 @@ Ziehens. Drag & Drop und Doppelklick funktionieren wie bisher.
 
 ---
 
-### 3. Werte in der Legende
+### 3. Werte in der Legende ✅ done (2026-10-22 16:12)
 
 - Der Legendeneintrag wird eine eigene Komponente: `ng g c features/dungeon-tracker/components/dungeon-legend-entry`
   → `DungeonLegendEntry` mit Input `token: BoardToken`. `dungeon-tracker-page.html` hat schon
@@ -119,7 +119,7 @@ immer gleich zu den Werten am Token.
 
 ---
 
-### 4. Token markieren
+### 4. Token markieren ✅ done (2026-10-22 16:12)
 
 - `DungeonTrackerPage` hält die Markierung als reinen UI-Zustand:
   `selectedCharacterId: WritableSignal<string | null>`. Sie gehört nicht zur Spielesession und
@@ -138,7 +138,7 @@ funktionieren wie bisher.
 
 ---
 
-### 5. Schadens-Buttons unter der Werteleiste
+### 5. Schadens-Buttons unter der Werteleiste ✅ done (2026-10-22 16:12)
 
 - `DungeonToken` bekommt den Input `selected: boolean` und den Output
   `damageRequested: DamageTypes`.
@@ -156,7 +156,7 @@ nicht.
 
 ---
 
-### 6. Schadensauswahl-Dialog als Shared-Dialog im dunklen Look
+### 6. Schadensauswahl-Dialog als Shared-Dialog im dunklen Look ✅ done (2026-10-22 16:12)
 
 - `shared/components/damage-taken-dialog/` (aus `character-tracker-removal.md` #1) nutzt den
   gemeinsamen Look wie `ConfirmationDialog` und `CharacterEditorDialog`:
@@ -178,7 +178,7 @@ welcher Schaden bei welchem Charakter eingetragen wird.
 
 ---
 
-### 7. Schaden anwenden über einen Shared-Service
+### 7. Schaden anwenden über einen Shared-Service ✅ done (2026-10-22 16:12)
 
 - Neuer Service per CLI: `ng g s shared/services/character-damage` → `CharacterDamageService`.
   - `requestDamage(character: CharacterInfo, damageType: DamageTypes): void` öffnet den Dialog. Bei
@@ -195,7 +195,7 @@ Werte, auch nach einem Reload. Nach „Abbrechen“ bleibt alles unverändert.
 
 ---
 
-### 8. Tests
+### 8. Tests ✅ done (2026-10-22 16:12)
 
 - `character-status.spec.ts`: zeigt Leben und Rüstung mit den Klassen und `aria-label`s; aktualisiert
   sich, wenn sich der Input ändert; zeigt auch den Wert 0.
@@ -222,7 +222,7 @@ Werte, auch nach einem Reload. Nach „Abbrechen“ bleibt alles unverändert.
 
 ---
 
-### 9. Dokumentation
+### 9. Dokumentation ✅ done (2026-10-22 16:12)
 
 - `REQUIREMENTS.md`, Dungeon Tracker: „Unter jedem Charaktersymbol und in der Legende stehen das
   Leben (rot) und die Rüstung (blau) des Charakters. Ein Klick auf ein Charaktersymbol markiert es.
@@ -231,6 +231,41 @@ Werte, auch nach einem Reload. Nach „Abbrechen“ bleibt alles unverändert.
 - `.claude/rules/architecture.md`: `CharacterStatus` und `DungeonLegendEntry` unter
   `dungeon-tracker/components/`, `CharacterDamageService` unter `shared/services/`,
   `damage-dialog-data.model.ts` unter `shared/models/`.
+
+---
+
+### 10. Reihenfolge der Schadens-Buttons tauschen (ergänzt 2026-10-22) ✅ done (2026-10-22 16:18)
+
+- Unter dem markierten Token steht der **rote** Button (Schaden auf Leben, `DamageTypes.Critical`)
+  links und der **blaue** Button (Schaden auf Rüstung, `DamageTypes.Normal`) rechts.
+- Farben, Icons, `aria-label`s und Wirkung bleiben unverändert (#5).
+- `dungeon-token-selection.spec.ts` prüft die neue Reihenfolge.
+
+**Erwartetes Verhalten:** Der DM sieht unter dem markierten Token links den roten und rechts den
+blauen Button.
+
+---
+
+### 11. Schnellschaden über die Werte in der Legende (ergänzt 2026-10-22) ✅ done (2026-10-22 16:30)
+
+- In der Charakter-Legende der Seitenleiste sind Leben und Rüstung anklickbar bzw. antippbar:
+  - Klick auf das **Leben** öffnet den Dialog „Schaden auf Leben: <Name>“ (`DamageTypes.Critical`).
+  - Klick auf die **Rüstung** öffnet den Dialog „Schaden auf Rüstung: <Name>“ (`DamageTypes.Normal`).
+- Der gewählte Wert wird wie bei den Token-Buttons über `CharacterDamageService.requestDamage()`
+  geschrieben (#7); „Abbrechen“ ändert nichts. Die Markierung am Spielbrett bleibt unverändert.
+- `CharacterStatus` bleibt die einzige Werteanzeige: Ein Input `damageable: boolean` (Standard
+  `false`) stellt die Werte als Buttons dar (`aria-label`/`title` „Schaden auf Leben“ bzw. „Schaden
+  auf Rüstung“) und gibt über den Output `damageRequested: DamageTypes` die Schadensart aus. Nur
+  `DungeonLegendEntry` setzt `damageable`; am Token bleiben die Werte reine Anzeige.
+- Farben wie bisher (rot/blau); Hover hebt den Wert dezent hervor (z. B. `--color-gray-700`).
+  Trefferfläche mindestens `--space-6` (24 px) für das Tablet. Keine neuen Tokens.
+- Tests: `character-status.spec.ts` (Buttons nur bei `damageable`, Klick gibt die Schadensart aus),
+  `dungeon-legend-entry.spec.ts` (Output), `dungeon-tracker-page-selection.spec.ts` (Legenden-Klick
+  ruft den Service), E2E `dungeon-damage.spec.ts` (Schaden über die Legende, PC und Tablet).
+- `REQUIREMENTS.md`, Dungeon Tracker: Satz zum Schnellschaden über die Legende ergänzen.
+
+**Erwartetes Verhalten:** Ein Klick auf einen Wert in der Legende öffnet direkt den passenden
+Schadensdialog, ohne das Token vorher zu markieren.
 
 ---
 
@@ -259,16 +294,18 @@ Werte, auch nach einem Reload. Nach „Abbrechen“ bleibt alles unverändert.
 
 ## Akzeptanzkriterien
 
-- [ ] Jedes Token zeigt unter dem Bild immer Leben (rot) und Rüstung (blau), auch während des Ziehens
-- [ ] Jeder Legendeneintrag zeigt dieselben Werte; Bild, Name und Position bleiben erhalten
-- [ ] Token und Legende nutzen dieselbe Komponente `CharacterStatus`
-- [ ] Klick oder Tipp markiert genau ein Token; ein Klick aufs freie Brett hebt die Markierung auf
-- [ ] Unter der Werteleiste des markierten Tokens erscheinen ein blauer Button (Schaden auf Rüstung) und ein roter Button (Schaden auf Leben), bei anderen Tokens nicht
-- [ ] Doppelklick öffnet weiterhin den Editor; Ziehen über das Bild funktioniert und ändert die Markierung nicht
-- [ ] Der Schadensauswahl-Dialog liegt unter `shared/`, nutzt den `general-dialog`-Look und nennt Schadensart und Charakter
-- [ ] Ein gewählter Wert ändert Leben und Rüstung nach `applyDamage()`; Token und Legende zeigen das sofort und nach einem Reload; „Abbrechen“ ändert nichts
-- [ ] Keine neuen Tokens, keine Kopie von Charakterwerten in der Seite, keine Änderung an `CharacterInfo`
-- [ ] Jede Datei hat höchstens 150 Zeilen; die Specs prüfen das Verhalten über DOM und Harnesses
-- [ ] E2E für PC und Tablet grün
-- [ ] `REQUIREMENTS.md` und `architecture.md` sind angepasst
-- [ ] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün
+- [x] Jedes Token zeigt unter dem Bild immer Leben (rot) und Rüstung (blau), auch während des Ziehens
+- [x] Jeder Legendeneintrag zeigt dieselben Werte; Bild, Name und Position bleiben erhalten
+- [x] Token und Legende nutzen dieselbe Komponente `CharacterStatus`
+- [x] Klick oder Tipp markiert genau ein Token; ein Klick aufs freie Brett hebt die Markierung auf
+- [x] Unter der Werteleiste des markierten Tokens erscheinen ein blauer Button (Schaden auf Rüstung) und ein roter Button (Schaden auf Leben), bei anderen Tokens nicht
+- [x] Doppelklick öffnet weiterhin den Editor; Ziehen über das Bild funktioniert und ändert die Markierung nicht
+- [x] Der Schadensauswahl-Dialog liegt unter `shared/`, nutzt den `general-dialog`-Look und nennt Schadensart und Charakter
+- [x] Ein gewählter Wert ändert Leben und Rüstung nach `applyDamage()`; Token und Legende zeigen das sofort und nach einem Reload; „Abbrechen“ ändert nichts
+- [x] Keine neuen Tokens, keine Kopie von Charakterwerten in der Seite, keine Änderung an `CharacterInfo`
+- [x] Jede Datei hat höchstens 150 Zeilen; die Specs prüfen das Verhalten über DOM und Harnesses
+- [x] Der rote Button (Schaden auf Leben) steht links, der blaue (Schaden auf Rüstung) rechts
+- [x] Ein Klick auf Leben bzw. Rüstung in der Legende öffnet den passenden Schadensdialog; der Wert wird wie über die Token-Buttons geschrieben
+- [x] E2E für PC und Tablet grün
+- [x] `REQUIREMENTS.md` und `architecture.md` sind angepasst
+- [x] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün

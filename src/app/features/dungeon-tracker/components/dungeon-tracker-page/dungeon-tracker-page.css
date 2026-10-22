@@ -40,33 +40,6 @@
   margin-bottom: var(--space-2);
 }
 
-.legend-entry {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding-block: var(--space-1);
-  font-size: var(--text-xs);
-  line-height: var(--text-xs--line-height);
-}
-
-.legend-entry__avatar {
-  width: var(--space-6);
-  height: var(--space-6);
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.legend-entry__name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.legend-entry__position {
-  margin-left: auto;
-  color: var(--color-gray-500);
-}
-
 .legend-empty {
   color: var(--color-gray-500);
   font-size: var(--text-xs);
