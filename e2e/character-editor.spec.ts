@@ -25,7 +25,7 @@ function sidebar(page: Page): Locator {
   return page.locator('aside');
 }
 
-/** Legt über „Character Neu“ einen Charakter an und öffnet ihn per Doppelklick auf das Token. */
+/** Legt über „Neuer Charakter“ einen Charakter an und öffnet ihn per Doppelklick auf das Token. */
 async function editNewCharacter(page: Page): Promise<void> {
   await createCharacter(page, 'Ork');
 
@@ -56,11 +56,11 @@ test('a character edited via double click keeps its new name after a reload', as
   await expect(sidebar(page).getByText('Grimgor')).toBeVisible();
 });
 
-test('"Character Neu" adds a character as token and legend entry', async ({ page }) => {
+test('"Neuer Charakter" adds a character as token and legend entry', async ({ page }) => {
   await page.goto('/dungeontracker');
   await expect(page.locator('app-dungeon-token')).toHaveCount(0);
 
-  await sidebar(page).getByRole('button', { name: 'Character Neu' }).click();
+  await sidebar(page).getByRole('button', { name: 'Neuer Charakter' }).click();
   await expect(editor(page).getByRole('heading', { name: 'Neuer Charakter' })).toBeVisible();
   await editor(page).getByLabel('Name').fill('Neuling');
   await editor(page).getByRole('button', { name: 'Bild 1', exact: true }).click();

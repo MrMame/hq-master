@@ -13,6 +13,7 @@
   z-index: 20;
 }
 
+/* Größe muss zu TOKEN_PORTRAIT_SIZE_PX in dungeon-token.ts passen (Zentrierung im Feld). */
 .dungeon-token__portrait {
   --token-glow: color-mix(in oklab, var(--color-yellow-400) 50%, transparent);
   width: var(--space-10);

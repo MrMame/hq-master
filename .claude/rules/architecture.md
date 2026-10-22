@@ -30,12 +30,16 @@ core/
 
 features/
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung (Startseite)
-    components/        → DungeonTrackerPage, DungeonToken, DungeonLegendEntry (Legendeneintrag),
+    components/        → DungeonTrackerPage (Sidebar, Zoom), DungeonBoard (zoombare Spielfläche mit Foto,
+                         Raster, Tokens), DungeonToken, DungeonLegendEntry (Legendeneintrag),
                          CharacterStatus (Leben/Rüstung an Token und Legende, später Statuseffekte)
+    directives/        → board-pan.ts (BoardPan: Ausschnitt eines Scroll-Containers per Ziehen verschieben)
     models/            → dungeon-board-state.model.ts, dungeon-position.model.ts, dungeon-session-state.model.ts,
-                         board-token.model.ts
+                         board-token.model.ts, size.model.ts
     services/          → dungeon-board.service.ts (Signal-State + LocalStorage, Charakter-Sync per effect())
-    utils/             → token-placement.util.ts (freies Feld für neue Tokens)
+    utils/             → token-placement.util.ts (freies Feld für neue Tokens),
+                         board-scale.util.ts (Spielflächengröße, Maßstab), grid-style.util.ts (Rasterlinien)
+    testing/           → resize-observer.fixtures.ts (steuerbarer ResizeObserver, nur für Specs)
 
   time-tracker/        → In-Game-Zeiterfassung
     components/        → TimeTrackerPage
@@ -74,7 +78,7 @@ Playwright-Smoke-Tests (`npm run e2e`) liegen unter `e2e/` – **nicht** unter `
 von Vitest noch vom App-Build erfasst werden. `playwright.config.ts` (Root) startet `ng serve` auf Port 4321.
 Nur wenige, stabile Abläufe über echte Browser-Interaktion (Routing, Reload-Persistenz, Drag & Drop,
 Datei-Export/-Import); Logik wird weiterhin in Vitest-Specs getestet.
-Gemeinsame Schritte (z. B. `createCharacter()` über „Character Neu“) liegen unter `e2e/support/`
+Gemeinsame Schritte (z. B. `createCharacter()` über „Neuer Charakter“) liegen unter `e2e/support/`
 und heißen nicht `*.spec.ts`, damit Playwright sie nicht als Tests ausführt.
 
 ## Dateinamen
@@ -85,6 +89,7 @@ Kebab-Case, die Rolle steht als Punkt-Suffix im Dateinamen. Der Dateiname folgt 
 | Rolle               | Muster                                                                | Inhalt               |
 | ------------------- | --------------------------------------------------------------------- | -------------------- |
 | Component           | `dungeon-token.ts` (Angular-21-Default)                               | `DungeonToken`       |
+| Directive           | `directives/board-pan.ts` (Angular-21-Default)                        | `BoardPan`           |
 | Service             | `game-session.service.ts`                                             | `GameSessionService` |
 | Model / Interface   | `session-meta.model.ts`                                               | `SessionMeta`        |
 | Reine Hilfsfunktion | `xml.util.ts`                                                         | Funktionen           |

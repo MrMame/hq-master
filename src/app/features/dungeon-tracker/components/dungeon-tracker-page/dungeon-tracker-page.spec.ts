@@ -49,6 +49,31 @@ describe('DungeonTrackerPage', () => {
     expect(renderedTokens()).toBe(1);
   });
 
+  it('should show the sidebar sections with the same heading and one divider between each', () => {
+    const sidebar: HTMLElement = (fixture.nativeElement as HTMLElement).querySelector(
+      'aside',
+    ) as HTMLElement;
+    const headings: HTMLElement[] = Array.from(sidebar.querySelectorAll('h3'));
+
+    expect(Array.from(sidebar.children).map((c) => c.tagName.toLowerCase())).toEqual([
+      'h2',
+      'div',
+      'hr',
+      'div',
+      'hr',
+      'div',
+    ]);
+    expect(headings.map((h) => h.textContent?.trim())).toEqual([
+      'Charaktere (1)',
+      'Spielbrett-Foto laden',
+      'Raster-Einstellungen',
+    ]);
+    for (const heading of headings) {
+      expect(heading.className).toBe('general-sidebar__heading general-sidebar__heading--spaced');
+    }
+    expect(sidebar.querySelector('.general-sidebar__caption')).toBeNull();
+  });
+
   it('should react immediately when a character is added', async () => {
     charactersDb.writeCharacter(createCharacter('b'));
     await fixture.whenStable();

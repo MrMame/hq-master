@@ -2,6 +2,7 @@
 <div
   cdkDrag
   [cdkDragFreeDragPosition]="{ x: 0, y: 0 }"
+  [cdkDragScale]="scale()"
   (cdkDragStarted)="dragged = true"
   (cdkDragEnded)="onDragEnd($event)"
   (click)="onClick($event)"

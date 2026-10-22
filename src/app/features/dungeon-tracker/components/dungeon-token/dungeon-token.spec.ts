@@ -43,10 +43,17 @@ describe('DungeonToken', () => {
   const endDrag: (event: CdkDragEnd) => void = (event: CdkDragEnd): void =>
     fixture.debugElement.query(By.directive(CdkDrag)).triggerEventHandler('cdkDragEnded', event);
 
-  it('should place the token in pixels from field, cell size and offset', () => {
+  it('should center the 40px portrait in its field from field, cell size and offset', () => {
     const token: HTMLElement = render(createTestCharacter('a'));
-    expect(token.style.left).toBe('112px');
-    expect(token.style.top).toBe('172px');
+    expect(token.style.left).toBe('115px');
+    expect(token.style.top).toBe('175px');
+  });
+
+  it('should center the portrait also in a field smaller than the portrait', () => {
+    fixture.componentRef.setInput('cellSize', 30);
+    const token: HTMLElement = render(createTestCharacter('a'));
+    expect(token.style.left).toBe('65px');
+    expect(token.style.top).toBe('105px');
   });
 
   it('should show the initials when the character has no image', () => {
@@ -73,7 +80,17 @@ describe('DungeonToken', () => {
     expect(classNames[0]).toBe(classNames[1]);
   });
 
-  it('should emit the rounded field after dragging and reset the drag offset', () => {
+  it('should keep the field after a drag without movement', () => {
+    render(createTestCharacter('a'));
+    const moved: (event: { characterId: string; col: number; row: number }) => void = vi.fn();
+    component.tokenMoved.subscribe(moved);
+
+    endDrag(dragEnd(0, 0, vi.fn()));
+
+    expect(moved).toHaveBeenCalledWith({ characterId: 'a', col: 2, row: 3 });
+  });
+
+  it('should emit the field under the portrait center after dragging and reset the offset', () => {
     render(createTestCharacter('a'));
     const reset: () => void = vi.fn();
     const moved: (event: { characterId: string; col: number; row: number }) => void = vi.fn();
@@ -83,6 +100,19 @@ describe('DungeonToken', () => {
 
     expect(moved).toHaveBeenCalledWith({ characterId: 'a', col: 3, row: 2 });
     expect(reset).toHaveBeenCalledTimes(1);
+  });
+
+  it('should pass the board scale to the drag and convert the screen distance into units', () => {
+    fixture.componentRef.setInput('scale', 2);
+    render(createTestCharacter('a'));
+    const moved: (event: { characterId: string; col: number; row: number }) => void = vi.fn();
+    component.tokenMoved.subscribe(moved);
+
+    endDrag(dragEnd(70, -30, vi.fn()));
+
+    expect(fixture.debugElement.query(By.directive(CdkDrag)).injector.get(CdkDrag).scale).toBe(2);
+    // 70 px / 2 = 35: Porträtmitte 115 + 35 + 20 = 170 → Spalte 3; -15: 175 - 15 + 20 = 180 → Zeile 3
+    expect(moved).toHaveBeenCalledWith({ characterId: 'a', col: 3, row: 3 });
   });
 
   it('should never emit a negative field', () => {

@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-22  
 **Priorität:** Mittel  
-**Status:** open  
+**Status:** done (2026-10-22 17:32)  
 **Bezug:** `src/app/features/dungeon-tracker/components/dungeon-tracker-page/dungeon-tracker-page.html`, `src/app/features/dungeon-tracker/components/dungeon-token/dungeon-token.ts`, `src/styles/components/sidebar.css`
 
 ---
@@ -17,7 +17,7 @@
 
 ## Anforderungen
 
-### 1. Sidebar-Reihenfolge: Charaktere → Spielbrett-Foto → Raster
+### 1. Sidebar-Reihenfolge: Charaktere → Spielbrett-Foto → Raster ✅ done (2026-10-22 17:32)
 
 - Reihenfolge in `dungeon-tracker-page.html` unterhalb des Titels „Dungeon Tracker“:
   1. Charaktere (Überschrift, Button „Neuer Charakter“ (siehe #4), Legenden-Einträge bzw. Leer-Hinweis)
@@ -31,7 +31,7 @@
 
 ---
 
-### 2. Einheitliche Abschnittsüberschriften
+### 2. Einheitliche Abschnittsüberschriften ✅ done (2026-10-22 17:32)
 
 - Alle drei Abschnittsüberschriften verwenden dasselbe Element und dieselben Klassen: `<h3 class="general-sidebar__heading general-sidebar__heading--spaced">`.
 - „Spielbrett-Foto laden“ wird vom `<label class="general-sidebar__caption">` auf diese Überschrift umgestellt.
@@ -43,7 +43,7 @@
 
 ---
 
-### 3. Charakter-Tokens mittig im Rasterfeld
+### 3. Charakter-Tokens mittig im Rasterfeld ✅ done (2026-10-22 17:32)
 
 - `tokenLeft` / `tokenTop` in `dungeon-token.ts` richten die **Mitte des Porträts** auf die Mitte des Rasterfelds aus:
   - `left = offsetX + col * cellSize + (cellSize - portraitSize) / 2`
@@ -57,7 +57,7 @@
 
 ---
 
-### 4. Button „Character Neu“ auf Deutsch: „Neuer Charakter“
+### 4. Button „Character Neu“ auf Deutsch: „Neuer Charakter“ ✅ done (2026-10-22 17:32)
 
 - Der Button in der Charakter-Sektion heißt künftig „Neuer Charakter“. Das passt zur Überschrift „Charaktere“ und zum Dialogtitel, die schon „Charakter“ schreiben.
 - Text anpassen in:
@@ -74,9 +74,9 @@
 
 ## Akzeptanzkriterien
 
-- [ ] Sidebar-Reihenfolge: Titel → Charaktere → Spielbrett-Foto laden → Raster-Einstellungen, mit genau einem Trennstrich zwischen je zwei Abschnitten (Spec prüft die Reihenfolge der Überschriften und die Anzahl der `hr`)
-- [ ] Alle drei Abschnittsüberschriften sind `h3.general-sidebar__heading.general-sidebar__heading--spaced`. Im Dungeon Tracker wird `general-sidebar__caption` nicht mehr verwendet.
-- [ ] `dungeon-token.spec.ts`: Die erwarteten `left`/`top`-Werte entsprechen der zentrierten Position. Neue Fälle decken eine Zellgröße unter 40 px und einen Drag ohne Bewegung (gleiches Feld) ab. Der bestehende Drag-Test ergibt das Feld unter der Porträtmitte.
-- [ ] Der Button heißt „Neuer Charakter“. Außerhalb von `done/` und `ai-implementations-log.md` kommt „Character Neu“ nicht mehr vor. Unit-Spec und E2E-Smoke-Tests (`npm run e2e`) sind grün.
-- [ ] Playwright-Probe (`e2e/probe/`) bestätigt, dass die Porträtmitte eines Tokens in der Feldmitte liegt (Toleranz ±1 px)
-- [ ] Alle Vitest-Tests grün (`npm run test -- --watch=false --coverage`), Lint und Build fehlerfrei
+- [x] Sidebar-Reihenfolge: Titel → Charaktere → Spielbrett-Foto laden → Raster-Einstellungen, mit genau einem Trennstrich zwischen je zwei Abschnitten (Spec prüft die Reihenfolge der Überschriften und die Anzahl der `hr`)
+- [x] Alle drei Abschnittsüberschriften sind `h3.general-sidebar__heading.general-sidebar__heading--spaced`. Im Dungeon Tracker wird `general-sidebar__caption` nicht mehr verwendet.
+- [x] `dungeon-token.spec.ts`: Die erwarteten `left`/`top`-Werte entsprechen der zentrierten Position. Neue Fälle decken eine Zellgröße unter 40 px und einen Drag ohne Bewegung (gleiches Feld) ab. Der bestehende Drag-Test ergibt das Feld unter der Porträtmitte.
+- [x] Der Button heißt „Neuer Charakter“. Außerhalb von `done/` und `ai-implementations-log.md` kommt „Character Neu“ nicht mehr vor. Unit-Spec und E2E-Smoke-Tests (`npm run e2e`) sind grün.
+- [x] Playwright-Probe (`e2e/probe/`) bestätigt, dass die Porträtmitte eines Tokens in der Feldmitte liegt (Toleranz ±1 px)
+- [x] Alle Vitest-Tests grün (`npm run test -- --watch=false --coverage`), Lint und Build fehlerfrei

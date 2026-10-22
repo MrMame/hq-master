@@ -1,0 +1,64 @@
+<!-- Scroll-Container: nur hier wird gezoomt, gezogen und gescrollt. -->
+<div
+  #viewport
+  class="board"
+  [class.board--pannable]="zoom() > 1"
+  appBoardPan
+  (clickWithoutPan)="selectedCharacterId.set(null)"
+  (scroll)="rememberViewCenter()"
+>
+  @if (!boardState().boardImageBase64) {
+    <div class="board__placeholder">
+      <div class="board__placeholder-content">
+        <div class="board__placeholder-icon">🗺️</div>
+        <p class="board__placeholder-title">Kein Spielbrett geladen</p>
+        <p class="board__placeholder-hint">Lade ein Foto des Spielbretts über die Seitenleiste</p>
+      </div>
+    </div>
+  }
+
+  <!-- Hat die gezoomte Größe; die Spielfläche darin rechnet in festen Einheiten. -->
+  <div
+    class="board__sizer"
+    [style.width.px]="stage().width * scale()"
+    [style.height.px]="stage().height * scale()"
+  >
+    <div
+      class="board__stage"
+      data-testid="board-stage"
+      [style.width.px]="stage().width"
+      [style.height.px]="stage().height"
+      [style.transform]="'scale(' + scale() + ')'"
+    >
+      @if (boardState().boardImageBase64; as photo) {
+        <img
+          [src]="photo"
+          alt="Spielbrett"
+          draggable="false"
+          class="board__image"
+          (load)="onPhotoLoad($event)"
+        />
+      }
+
+      @if (boardState().gridOpacity > 0) {
+        <div class="board__grid" [ngStyle]="gridStyle()"></div>
+      }
+
+      @for (token of tokens(); track token.position.characterId) {
+        <app-dungeon-token
+          [position]="token.position"
+          [character]="token.character"
+          [cellSize]="boardState().gridCellSizePx"
+          [offsetX]="boardState().gridOffsetX"
+          [offsetY]="boardState().gridOffsetY"
+          [scale]="scale()"
+          [selected]="selectedId() === token.position.characterId"
+          (tokenMoved)="onTokenMoved($event)"
+          (tokenSelected)="selectedCharacterId.set($event)"
+          (tokenDoubleClicked)="onTokenDoubleClick(token.character)"
+          (damageRequested)="onDamageRequested(token.character, $event)"
+        />
+      }
+    </div>
+  </div>
+</div>

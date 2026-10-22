@@ -1,9 +1,29 @@
 /* Hauptbereich der Dungeon-Tracker-Seite: Spielbrett mit Raster und Platzhalter */
+:host {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Scroll-Container: nur dieser Bereich zoomt und scrollt, Seite und Sidebar bleiben unverändert. */
 .board {
   position: relative;
+  display: flex;
   flex: 1;
-  overflow: hidden;
+  min-width: 0;
+  overflow: auto;
+  /* Finger-Ziehen übernimmt BoardPan; sonst wanderte der Ausschnitt doppelt. */
+  touch-action: none;
+  scrollbar-color: var(--color-gray-600) var(--color-gray-900);
   background-color: var(--color-gray-950);
+}
+
+.board--pannable {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 .board__placeholder {
@@ -37,12 +57,27 @@
   line-height: var(--text-sm--line-height);
 }
 
+/* Hat die gezoomte Größe der Spielfläche; `margin: auto` zentriert sie, solange sie kleiner ist. */
+.board__sizer {
+  position: relative;
+  flex-shrink: 0;
+  margin: auto;
+}
+
+/* Spielfläche in festen Einheiten; `transform: scale` vergrößert Foto, Raster und Tokens gemeinsam. */
+.board__stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+
+/* Das Foto füllt die Spielfläche genau, ihr Seitenverhältnis stammt vom Foto. */
 .board__image {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
   user-select: none;
 }
 

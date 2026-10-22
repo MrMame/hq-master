@@ -3,7 +3,7 @@
 **Datum:** 2026-10-21  
 **Priorität:** Mittel  
 **Status:** open  
-**Bezug:** `REQUIREMENTS.md` (Dungeon Tracker, „Character Neu“), `.claude/rules/architecture.md` → „Dateinamen“ (reine Funktionen in `*.util.ts`), `docs/feature-requests/done/character-kind-hero-monster.md` (rejected: keine Unterscheidung Held/Monster), Voraussetzung `docs/feature-requests/done/character-tracker-removal.md` #1
+**Bezug:** `REQUIREMENTS.md` (Dungeon Tracker, „Neuer Charakter“), `.claude/rules/architecture.md` → „Dateinamen“ (reine Funktionen in `*.util.ts`), `docs/feature-requests/done/character-kind-hero-monster.md` (rejected: keine Unterscheidung Held/Monster), Voraussetzung `docs/feature-requests/done/character-tracker-removal.md` #1
 
 ---
 
@@ -87,14 +87,14 @@ aktiv, weil Name und Bild gesetzt sind. Im Bearbeiten-Modus gibt es den Button n
 - `character-editor-dialog-create.spec.ts`: Button nur im Neu-Modus (Harness); Klick füllt Name und
   Bild, die ID bleibt gleich, „Übernehmen“ ist aktiv und speichert den Zufallscharakter; „Abbrechen“
   speichert nichts.
-- E2E (`character-editor.spec.ts`): „Character Neu“ → „Zufälliger Charakter erstellen“ →
+- E2E (`character-editor.spec.ts`): „Neuer Charakter“ → „Zufälliger Charakter erstellen“ →
   „Übernehmen“ → Token und Legendeneintrag erscheinen.
 
 ---
 
 ### 4. Dokumentation
 
-- `REQUIREMENTS.md`, Dungeon Tracker: Nach dem Satz zu „Character Neu“ ergänzen: „Im Dialog kann er
+- `REQUIREMENTS.md`, Dungeon Tracker: Nach dem Satz zu „Neuer Charakter“ ergänzen: „Im Dialog kann er
   über ‚Zufälliger Charakter erstellen‘ alle Felder mit Zufallswerten füllen und vor dem Übernehmen
   anpassen.“
 - `.claude/rules/architecture.md`: `shared/utils/random-character.util.ts` eintragen,

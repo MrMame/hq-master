@@ -13,6 +13,9 @@ import { DamageTypes } from '../../../../core/models/damage-types.model';
 import { DungeonPosition } from '../../models/dungeon-position.model';
 import { CharacterStatus } from '../character-status/character-status';
 
+/** Kantenlänge des runden Porträts; muss zu `--space-10` in `dungeon-token.css` passen. */
+export const TOKEN_PORTRAIT_SIZE_PX: number = 40;
+
 @Component({
   selector: 'app-dungeon-token',
   standalone: true,
@@ -27,6 +30,8 @@ export class DungeonToken {
   offsetX: InputSignal<number> = input<number>(0);
   offsetY: InputSignal<number> = input<number>(0);
   selected: InputSignal<boolean> = input<boolean>(false);
+  /** Maßstab der Spielfläche: Bildschirm-Pixel je Einheit. */
+  scale: InputSignal<number> = input<number>(1);
 
   tokenMoved: OutputEmitterRef<{ characterId: string; col: number; row: number }> = output<{
     characterId: string;
@@ -45,11 +50,18 @@ export class DungeonToken {
    */
   protected dragged: boolean = false;
 
+  /** Die Porträtmitte liegt in der Feldmitte; Werteleiste und Buttons hängen darunter. */
   tokenLeft: Signal<number> = computed(
-    () => this.offsetX() + this.position().col * this.cellSize() + 2,
+    () =>
+      this.offsetX() +
+      this.position().col * this.cellSize() +
+      (this.cellSize() - TOKEN_PORTRAIT_SIZE_PX) / 2,
   );
   tokenTop: Signal<number> = computed(
-    () => this.offsetY() + this.position().row * this.cellSize() + 2,
+    () =>
+      this.offsetY() +
+      this.position().row * this.cellSize() +
+      (this.cellSize() - TOKEN_PORTRAIT_SIZE_PX) / 2,
   );
 
   initials: Signal<string> = computed(() => this.character().name.slice(0, 2).toUpperCase());
@@ -61,17 +73,24 @@ export class DungeonToken {
   }
 
   onDragEnd(event: CdkDragEnd): void {
+    // Die CDK liefert die Drag-Strecke in Bildschirm-Pixeln, das Token rechnet in Einheiten.
     const dragOffset: Point = event.source.getFreeDragPosition();
-    const newPixelX: number = this.tokenLeft() + dragOffset.x;
-    const newPixelY: number = this.tokenTop() + dragOffset.y;
-
-    const col: number = Math.max(0, Math.round((newPixelX - this.offsetX()) / this.cellSize()));
-    const row: number = Math.max(0, Math.round((newPixelY - this.offsetY()) / this.cellSize()));
+    const col: number = this.fieldAt(
+      this.tokenLeft() + dragOffset.x / this.scale(),
+      this.offsetX(),
+    );
+    const row: number = this.fieldAt(this.tokenTop() + dragOffset.y / this.scale(), this.offsetY());
 
     event.source.reset();
     // Der abschließende Maus-Klick folgt noch in derselben Task; nach Touch kommt keiner.
     setTimeout(() => (this.dragged = false));
 
     this.tokenMoved.emit({ characterId: this.position().characterId, col, row });
+  }
+
+  /** Feld (Spalte bzw. Zeile), über dem die Porträtmitte liegt; nie negativ. */
+  private fieldAt(portraitStart: number, gridOffset: number): number {
+    const portraitCenter: number = portraitStart + TOKEN_PORTRAIT_SIZE_PX / 2;
+    return Math.max(0, Math.floor((portraitCenter - gridOffset) / this.cellSize()));
   }
 }

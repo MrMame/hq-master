@@ -2,8 +2,8 @@
 
 **Datum:** 2026-10-22  
 **Priorität:** Mittel  
-**Status:** open  
-**Bezug:** `REQUIREMENTS.md` (Dungeon Tracker), `src/app/features/dungeon-tracker/components/dungeon-tracker-page/`, `src/app/features/dungeon-tracker/components/dungeon-token/`, Voraussetzung `docs/refactoring-requests/dungeon-tracker-layout.md` (Sidebar-Reihenfolge, Token-Zentrierung)
+**Status:** done (2026-10-22 17:48)  
+**Bezug:** `REQUIREMENTS.md` (Dungeon Tracker), `src/app/features/dungeon-tracker/components/dungeon-tracker-page/`, `src/app/features/dungeon-tracker/components/dungeon-token/`, Voraussetzung `docs/refactoring-requests/done/dungeon-tracker-layout.md` (Sidebar-Reihenfolge, Token-Zentrierung)
 
 ---
 
@@ -27,7 +27,7 @@ Foto, Raster und Tokens liegen auf einer gemeinsamen **Spielfläche** und werden
 │ SPIELBRETT-FOTO LADEN││  │ (Foto + Raster + Tokens)       │  █  │ ← Bildlaufleiste
 │ ──────────────────── ││  │   ↔ Ziehen auf freier Fläche   │  ▼  │
 │ RASTER-EINSTELLUNGEN ││  └───────────────────────────────┘      │
-│ Zoom: 200 %  ━━━●━━━ ││   ◄━━━━━━━━█━━━━━━━━━━━━━━━━━━━━►       │
+│ Zoom: 200%   ━━━●━━━ ││   ◄━━━━━━━━█━━━━━━━━━━━━━━━━━━━━►       │
 │ Zellgröße …          │└─────────────────────────────────────────┘
 ```
 
@@ -35,7 +35,7 @@ Foto, Raster und Tokens liegen auf einer gemeinsamen **Spielfläche** und werden
 
 ## Anforderungen
 
-### 1. Spielfläche mit festem Koordinatensystem
+### 1. Spielfläche mit festem Koordinatensystem ✅ done (2026-10-22 17:48)
 
 - Die Spielfläche ist immer **1000 Einheiten breit**. Die Höhe ergibt sich aus dem Seitenverhältnis des Fotos (`naturalWidth`/`naturalHeight` aus dem `load`-Event des Bildes). Ohne Foto gilt 4:3 (1000 × 750).
 - Das Foto füllt die Spielfläche genau aus. Raster und Tokens liegen darauf und rechnen weiter wie bisher mit `gridCellSizePx`, `gridOffsetX/Y` und `col`/`row`, jetzt aber in Einheiten der Spielfläche statt in Bildschirm-Pixeln.
@@ -51,9 +51,9 @@ Foto, Raster und Tokens liegen auf einer gemeinsamen **Spielfläche** und werden
 
 ---
 
-### 2. Zoom-Regler in den Raster-Einstellungen
+### 2. Zoom-Regler in den Raster-Einstellungen ✅ done (2026-10-22 17:48)
 
-- Neuer Schieberegler als erster Eintrag in „Raster-Einstellungen“: **„Zoom: 150 %“**, Bereich 100 % bis 400 %, Schrittweite 10 %.
+- Neuer Schieberegler als erster Eintrag in „Raster-Einstellungen“: **„Zoom: 150%“** (Schreibweise wie „Deckkraft: 40%“), Bereich 100 % bis 400 %, Schrittweite 10 %.
 - Der Zoom ist reiner Anzeigezustand (wie die Token-Markierung). Die Page hält ihn als Signal. Er wird nicht gespeichert und startet nach dem Neuladen bei 100 %.
 - Beim Ändern des Zooms bleibt die Mitte des sichtbaren Ausschnitts an derselben Stelle der Spielfläche.
 
@@ -61,7 +61,7 @@ Foto, Raster und Tokens liegen auf einer gemeinsamen **Spielfläche** und werden
 
 ---
 
-### 3. Bildlaufleisten
+### 3. Bildlaufleisten ✅ done (2026-10-22 17:48)
 
 - Nur der Spielbrettbereich ist ein Scroll-Container (`overflow: auto`). Ist die gezoomte Spielfläche größer als der Bereich, zeigt er **eigene** Bildlaufleisten an seinem unteren bzw. rechten Rand. Es sind die Standard-Bildlaufleisten, die der Browser für einen einzelnen Bereich anzeigt.
 - Die gezoomte Spielfläche bleibt innerhalb des Spielbrettbereichs. Sie vergrößert weder den Bereich selbst noch die Seite. Seite, App-Navigation und Sidebar bekommen dadurch keine Bildlaufleisten und verschieben sich nicht.
@@ -71,7 +71,7 @@ Foto, Raster und Tokens liegen auf einer gemeinsamen **Spielfläche** und werden
 
 ---
 
-### 4. Ausschnitt per Ziehen verschieben
+### 4. Ausschnitt per Ziehen verschieben ✅ done (2026-10-22 17:48)
 
 - Ziehen auf einer freien Stelle (Foto oder Raster, kein Token) verschiebt den Ausschnitt mit Maus und Finger. Technisch ändert das Ziehen nur `scrollLeft`/`scrollTop` des Scroll-Containers. Ziehen und Bildlaufleisten teilen sich damit denselben Zustand.
 - Das Ziehen eines Tokens verschiebt weiterhin nur das Token, nicht den Ausschnitt.
@@ -83,16 +83,16 @@ Foto, Raster und Tokens liegen auf einer gemeinsamen **Spielfläche** und werden
 
 ---
 
-### 5. Tokens im Zoom
+### 5. Tokens im Zoom ✅ done (2026-10-22 17:48)
 
 - Tokens wachsen mit der Spielfläche. Ihr Größenverhältnis zum Feld bleibt gleich.
-- Beim Ziehen folgt das Token dem Zeiger genau. Dafür bekommt `cdkDrag` den aktuellen Maßstab über `cdkDragScale` (in `@angular/cdk` 21.2 vorhanden). Ob `getFreeDragPosition()` dann Einheiten der Spielfläche liefert, wird bei der Umsetzung geprüft. Danach richtet sich die Zielfeld-Berechnung in `onDragEnd`.
+- Beim Ziehen folgt das Token dem Zeiger genau. Dafür bekommt `cdkDrag` den aktuellen Maßstab über `cdkDragScale` (in `@angular/cdk` 21.2 vorhanden). `getFreeDragPosition()` liefert auch dann Bildschirm-Pixel (geprüft in `drag-drop.mjs`); `onDragEnd` teilt die Drag-Strecke deshalb durch den Maßstab.
 
 **Erwartetes Verhalten:** Bei jedem Zoom landet ein gezogenes Token in dem Feld, über dem die Porträtmitte losgelassen wird.
 
 ---
 
-### 6. Code-Aufbau: einfach und lesbar
+### 6. Code-Aufbau: einfach und lesbar ✅ done (2026-10-22 17:48)
 
 Die Page wächst sonst über 150 Zeilen. Deshalb wird nach Zuständigkeiten aufgeteilt, und jedes Teil bleibt klein:
 
@@ -101,14 +101,15 @@ Die Page wächst sonst über 150 Zeilen. Deshalb wird nach Zuständigkeiten aufg
 | `DungeonTrackerPage`                                                                | Nur die Sidebar sowie das Signal `zoom`, das an das Spielbrett geht                                                             |
 | **neu** `DungeonBoard` (`ng g c features/dungeon-tracker/components/dungeon-board`) | Spielbrettbereich aus der Page: Scroll-Container, Spielfläche, Foto, Raster, Tokens, Markierung. Übernimmt `dungeon-board.css`. |
 | **neu** Direktive `BoardPan` (`ng g d …`)                                           | Nur das Verschieben per Ziehen über Pointer-Events am Scroll-Container                                                          |
-| **neu** `board-scale.util.ts`                                                       | Reine Funktionen: Flächenhöhe aus dem Seitenverhältnis, `fitScale`, Raster-Style (`gridStyle` aus der Page)                     |
+| **neu** `board-scale.util.ts`                                                       | Reine Funktionen: Flächengröße aus dem Seitenverhältnis (`stageSize`), `fitScale`                                               |
+| **neu** `grid-style.util.ts`                                                        | Raster-Style (`gridStyle` aus der Page); eigene Datei, weil er nichts mit dem Maßstab zu tun hat                                |
 
 - Es gibt keine eigene Matrix- oder Transformationslogik. Die einzige Umrechnung ist `scale`, der Browser übernimmt das Scrollen.
 - Kein Mausrad- und kein Pinch-Zoom (siehe „Nicht im Umfang“).
 
 ---
 
-### 7. Dokumentation
+### 7. Dokumentation ✅ done (2026-10-22 17:48)
 
 - `REQUIREMENTS.md`, Abschnitt Dungeon Tracker, nach dem Satz zum Raster ergänzen: „Über einen Zoom-Regler in den Raster-Einstellungen vergrößert der DM Foto, Raster und Charaktere gemeinsam; den Ausschnitt verschiebt er per Ziehen auf einer freien Stelle oder über die Bildlaufleisten. Das Raster bleibt dabei und bei jeder Fenstergröße fest auf dem Foto.“
 
@@ -124,14 +125,14 @@ Die Page wächst sonst über 150 Zeilen. Deshalb wird nach Zuständigkeiten aufg
 
 ## Akzeptanzkriterien
 
-- [ ] Unit-Tests für `board-scale.util.ts`: Flächenhöhe für Hoch- und Querformat und ohne Foto, `fitScale` für breite und hohe Bereiche
-- [ ] `DungeonBoard`-Spec: Die Spielfläche bekommt den Maßstab aus gemessener Größe × Zoom (`ResizeObserver` per `vi.stubGlobal` ersetzt). Raster und Tokens liegen in der Spielfläche. Ein Klick auf eine freie Stelle hebt die Markierung auf, Verschieben nicht.
-- [ ] Page-Spec: Der Zoom-Regler zeigt „Zoom: 100 %“ und gibt den geänderten Wert an das Spielbrett weiter
-- [ ] Token-Spec: `cdkDragScale` erhält den Maßstab. Das Zielfeld stimmt bei Zoom ≠ 100 %.
-- [ ] Playwright-Probe (`e2e/probe/`):
+- [x] Unit-Tests für `board-scale.util.ts`: Flächenhöhe für Hoch- und Querformat und ohne Foto, `fitScale` für breite und hohe Bereiche
+- [x] `DungeonBoard`-Spec: Die Spielfläche bekommt den Maßstab aus gemessener Größe × Zoom (`ResizeObserver` per `vi.stubGlobal` ersetzt). Raster und Tokens liegen in der Spielfläche. Ein Klick auf eine freie Stelle hebt die Markierung auf, Verschieben nicht.
+- [x] Page-Spec: Der Zoom-Regler zeigt „Zoom: 100%“ und gibt den geänderten Wert an das Spielbrett weiter
+- [x] Token-Spec: `cdkDragScale` erhält den Maßstab. Das Zielfeld stimmt bei Zoom ≠ 100 %.
+- [x] Playwright-Probe (`e2e/probe/`):
   - Ein Token liegt bei 100 % und 300 % sowie nach einer Änderung der Viewport-Größe auf derselben Fotostelle (Toleranz ±1 px auf der Spielfläche).
-  - Ziehen auf freier Fläche und die Bildlaufleisten verschieben den Ausschnitt.
+  - Ziehen auf freier Fläche verschiebt den Ausschnitt; bei Zoom > 100 % läuft der Spielbrettbereich über (Bildlaufleisten), bei 100 % nicht. Die Leisten selbst blendet Headless-Chromium aus.
   - Bei 400 % hat die Seite selbst keine Bildlaufleisten (`document.scrollingElement` ohne Überlauf). Sidebar und Spielbrettbereich behalten Position und Größe.
   - Ein Token-Drag bei 200 % landet im Zielfeld.
-- [ ] Keine Datei über 150 Zeilen. Alle Vitest-Tests grün mit Coverage (`npm run test -- --watch=false --coverage`), Lint und Build fehlerfrei, `npm run e2e` grün.
-- [ ] `REQUIREMENTS.md` ist ergänzt
+- [x] Keine Datei über 150 Zeilen. Alle Vitest-Tests grün mit Coverage (`npm run test -- --watch=false --coverage`), Lint und Build fehlerfrei, `npm run e2e` grün.
+- [x] `REQUIREMENTS.md` ist ergänzt

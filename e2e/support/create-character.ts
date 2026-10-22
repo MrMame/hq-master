@@ -6,14 +6,14 @@ export interface CharacterStartValues {
   armor?: number;
 }
 
-/** Legt im Dungeon Tracker über „Character Neu“ einen Charakter mit Namen und erstem Bild an. */
+/** Legt im Dungeon Tracker über „Neuer Charakter“ einen Charakter mit Namen und erstem Bild an. */
 export async function createCharacter(
   page: Page,
   name: string,
   values: CharacterStartValues = {},
 ): Promise<void> {
   await page.goto('/dungeontracker');
-  await page.locator('aside').getByRole('button', { name: 'Character Neu' }).click();
+  await page.locator('aside').getByRole('button', { name: 'Neuer Charakter' }).click();
 
   const editor: Locator = page.getByRole('dialog', { name: 'Neuer Charakter' });
   await editor.getByLabel('Name').fill(name);

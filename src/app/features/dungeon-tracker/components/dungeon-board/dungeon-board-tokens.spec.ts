@@ -1,29 +1,37 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
-import { DungeonTrackerPage } from './dungeon-tracker-page';
+import { DungeonBoard } from './dungeon-board';
+import { DungeonToken } from '../dungeon-token/dungeon-token';
 import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
 import { CharacterDamageService } from '../../../../shared/services/character-damage.service';
-import { CharacterInfo } from '../../../../core/models/character-info.model';
+import { CharacterEditorService } from '../../../../shared/services/character-editor.service';
+import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { DamageTypes } from '../../../../core/models/damage-types.model';
 import { createTestCharacter } from '../../../../core/testing/character.fixtures';
 
-describe('DungeonTrackerPage – selection and damage', () => {
-  let fixture: ComponentFixture<DungeonTrackerPage>;
+describe('DungeonBoard – tokens and selection', () => {
+  let fixture: ComponentFixture<DungeonBoard>;
   let charactersDb: CharactersDbService;
   let host: HTMLElement;
   const requestDamage: ReturnType<typeof vi.fn> = vi.fn();
+  const openEdit: ReturnType<typeof vi.fn> = vi.fn();
 
   beforeEach(async () => {
     requestDamage.mockReset();
+    openEdit.mockReset();
     await TestBed.configureTestingModule({
-      imports: [DungeonTrackerPage],
-      providers: [{ provide: CharacterDamageService, useValue: { requestDamage } }],
+      imports: [DungeonBoard],
+      providers: [
+        { provide: CharacterDamageService, useValue: { requestDamage } },
+        { provide: CharacterEditorService, useValue: { openEdit } },
+      ],
     }).compileComponents();
 
     charactersDb = TestBed.inject(CharactersDbService);
     charactersDb.writeCharacter(createTestCharacter('a'));
     charactersDb.writeCharacter(createTestCharacter('b'));
-    fixture = TestBed.createComponent(DungeonTrackerPage);
+    fixture = TestBed.createComponent(DungeonBoard);
     host = fixture.nativeElement as HTMLElement;
     await fixture.whenStable();
   });
@@ -75,6 +83,24 @@ describe('DungeonTrackerPage – selection and damage', () => {
     expect(selectedTokens()).toBe(0);
   });
 
+  it('keeps the selection after panning the board', async () => {
+    // jsdom hat kein Layout: Client-Fläche und Pointer-Capture vorgeben (s. board-pan.spec.ts).
+    const viewport: HTMLElement = host.querySelector('.board') as HTMLElement;
+    Object.defineProperty(viewport, 'clientWidth', { value: 400 });
+    Object.defineProperty(viewport, 'clientHeight', { value: 300 });
+    viewport.setPointerCapture = vi.fn();
+    await click(tokenAt(0));
+
+    const pointer: (type: string, x: number) => boolean = (type: string, x: number): boolean =>
+      viewport.dispatchEvent(new PointerEvent(type, { clientX: x, clientY: 100 }));
+    pointer('pointerdown', 100);
+    pointer('pointermove', 160);
+    pointer('pointerup', 160);
+    await click(viewport);
+
+    expect(tokenAt(0).classList).toContain('dungeon-token--selected');
+  });
+
   it('leaves no selection behind when the selected character is removed', async () => {
     await click(tokenAt(0));
     charactersDb.removeCharacter(createTestCharacter('a'));
@@ -95,25 +121,22 @@ describe('DungeonTrackerPage – selection and damage', () => {
     expect(tokenAt(1).classList).toContain('dungeon-token--selected');
   });
 
-  it('a click on a legend value asks the damage service without selecting the token', async () => {
-    const legendEntry: Element = host.querySelectorAll('app-dungeon-legend-entry')[1];
-    await click(legendEntry.querySelector('button[aria-label="Schaden auf Leben"]') as Element);
-
-    expect(requestDamage).toHaveBeenCalledExactlyOnceWith(
-      createTestCharacter('b'),
-      DamageTypes.Critical,
-    );
-    expect(selectedTokens()).toBe(0);
-  });
-
-  it('shows changed health and armor immediately at token and legend', async () => {
-    const hit: CharacterInfo = { ...createTestCharacter('a'), health: 3, armor: 0 };
-    charactersDb.writeCharacter(hit);
+  it('moves the position of a dragged token', async () => {
+    const token: DungeonToken = fixture.debugElement.query(By.directive(DungeonToken))
+      .componentInstance as DungeonToken;
+    token.tokenMoved.emit({ characterId: 'a', col: 3, row: 2 });
     await fixture.whenStable();
 
-    for (const scope of [tokenAt(0), host.querySelector('app-dungeon-legend-entry')]) {
-      expect(scope?.querySelector('[aria-label="Leben"]')?.textContent?.trim()).toBe('3');
-      expect(scope?.querySelector('[aria-label="Rüstung"]')?.textContent?.trim()).toBe('0');
-    }
+    expect(TestBed.inject(DungeonBoardService).positions()).toContainEqual({
+      characterId: 'a',
+      col: 3,
+      row: 2,
+    });
+  });
+
+  it('opens the character editor for the double-clicked token', () => {
+    tokenAt(0).dispatchEvent(new MouseEvent('dblclick'));
+
+    expect(openEdit).toHaveBeenCalledExactlyOnceWith(createTestCharacter('a'));
   });
 });

@@ -3,9 +3,32 @@
   <aside class="general-sidebar">
     <h2 class="general-sidebar__title">Dungeon Tracker</h2>
 
+    <!-- Charakter-Legende -->
+    <div>
+      <h3 class="general-sidebar__heading general-sidebar__heading--spaced">
+        Charaktere ({{ tokens().length }})
+      </h3>
+      <button class="general-sidebar__button new-character-button" (click)="onNewCharacterClick()">
+        Neuer Charakter
+      </button>
+      @for (token of tokens(); track token.position.characterId) {
+        <app-dungeon-legend-entry
+          [token]="token"
+          (damageRequested)="onDamageRequested(token.character, $event)"
+        />
+      }
+      @if (tokens().length === 0) {
+        <p class="legend-empty">Noch keine Charaktere angelegt.</p>
+      }
+    </div>
+
+    <hr class="general-sidebar__divider" />
+
     <!-- Bild Upload -->
     <div>
-      <label class="general-sidebar__caption">Spielbrett-Foto laden</label>
+      <h3 class="general-sidebar__heading general-sidebar__heading--spaced">
+        Spielbrett-Foto laden
+      </h3>
       <label class="general-sidebar__button">
         <span>📁 Bild hochladen</span>
         <input type="file" accept="image/*" hidden (change)="onImageUpload($event)" />
@@ -18,119 +41,79 @@
     <hr class="general-sidebar__divider" />
 
     <!-- Raster-Einstellungen -->
-    <div class="grid-settings">
-      <h3 class="general-sidebar__heading">Raster-Einstellungen</h3>
-
-      <label class="grid-setting">
-        Zellgröße: {{ boardState().gridCellSizePx }}px
-        <input
-          type="range"
-          min="20"
-          max="150"
-          step="1"
-          [value]="boardState().gridCellSizePx"
-          (input)="onGridSettingChange('gridCellSizePx', +$any($event.target).value)"
-          class="grid-setting__slider"
-        />
-      </label>
-
-      <label class="grid-setting">
-        Versatz X: {{ boardState().gridOffsetX }}px
-        <input
-          type="range"
-          min="-100"
-          max="100"
-          step="1"
-          [value]="boardState().gridOffsetX"
-          (input)="onGridSettingChange('gridOffsetX', +$any($event.target).value)"
-          class="grid-setting__slider"
-        />
-      </label>
-
-      <label class="grid-setting">
-        Versatz Y: {{ boardState().gridOffsetY }}px
-        <input
-          type="range"
-          min="-100"
-          max="100"
-          step="1"
-          [value]="boardState().gridOffsetY"
-          (input)="onGridSettingChange('gridOffsetY', +$any($event.target).value)"
-          class="grid-setting__slider"
-        />
-      </label>
-
-      <label class="grid-setting">
-        Deckkraft: {{ (boardState().gridOpacity * 100).toFixed(0) }}%
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.05"
-          [value]="boardState().gridOpacity"
-          (input)="onGridSettingChange('gridOpacity', +$any($event.target).value)"
-          class="grid-setting__slider"
-        />
-      </label>
-    </div>
-
-    <hr class="general-sidebar__divider" />
-
-    <!-- Charakter-Legende -->
     <div>
       <h3 class="general-sidebar__heading general-sidebar__heading--spaced">
-        Charaktere ({{ tokens().length }})
+        Raster-Einstellungen
       </h3>
-      <button class="general-sidebar__button new-character-button" (click)="onNewCharacterClick()">
-        Character Neu
-      </button>
-      @for (token of tokens(); track token.position.characterId) {
-        <app-dungeon-legend-entry
-          [token]="token"
-          (damageRequested)="onDamageRequested(token.character, $event)"
-        />
-      }
-      @if (tokens().length === 0) {
-        <p class="legend-empty">Noch keine Charaktere angelegt.</p>
-      }
+      <div class="grid-settings">
+        <label class="grid-setting">
+          Zoom: {{ (zoom() * 100).toFixed(0) }}%
+          <input
+            type="range"
+            min="1"
+            max="4"
+            step="0.1"
+            [value]="zoom()"
+            (input)="zoom.set(+$any($event.target).value)"
+            class="grid-setting__slider"
+          />
+        </label>
+
+        <label class="grid-setting">
+          Zellgröße: {{ boardState().gridCellSizePx }}px
+          <input
+            type="range"
+            min="20"
+            max="150"
+            step="1"
+            [value]="boardState().gridCellSizePx"
+            (input)="onGridSettingChange('gridCellSizePx', +$any($event.target).value)"
+            class="grid-setting__slider"
+          />
+        </label>
+
+        <label class="grid-setting">
+          Versatz X: {{ boardState().gridOffsetX }}px
+          <input
+            type="range"
+            min="-100"
+            max="100"
+            step="1"
+            [value]="boardState().gridOffsetX"
+            (input)="onGridSettingChange('gridOffsetX', +$any($event.target).value)"
+            class="grid-setting__slider"
+          />
+        </label>
+
+        <label class="grid-setting">
+          Versatz Y: {{ boardState().gridOffsetY }}px
+          <input
+            type="range"
+            min="-100"
+            max="100"
+            step="1"
+            [value]="boardState().gridOffsetY"
+            (input)="onGridSettingChange('gridOffsetY', +$any($event.target).value)"
+            class="grid-setting__slider"
+          />
+        </label>
+
+        <label class="grid-setting">
+          Deckkraft: {{ (boardState().gridOpacity * 100).toFixed(0) }}%
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            [value]="boardState().gridOpacity"
+            (input)="onGridSettingChange('gridOpacity', +$any($event.target).value)"
+            class="grid-setting__slider"
+          />
+        </label>
+      </div>
     </div>
   </aside>
 
-  <!-- Hauptbereich: Spielbrett -->
-  <div class="board" (click)="selectedCharacterId.set(null)">
-    @if (!boardState().boardImageBase64) {
-      <!-- Placeholder wenn kein Bild geladen -->
-      <div class="board__placeholder">
-        <div class="board__placeholder-content">
-          <div class="board__placeholder-icon">🗺️</div>
-          <p class="board__placeholder-title">Kein Spielbrett geladen</p>
-          <p class="board__placeholder-hint">Lade ein Foto des Spielbretts über die Seitenleiste</p>
-        </div>
-      </div>
-    } @else {
-      <!-- Spielbrett-Foto -->
-      <img [src]="boardState().boardImageBase64" alt="Spielbrett" class="board__image" />
-    }
-
-    <!-- CSS-Raster Overlay (immer sichtbar wenn Deckkraft > 0) -->
-    @if (boardState().gridOpacity > 0) {
-      <div class="board__grid" [ngStyle]="gridStyle()"></div>
-    }
-
-    <!-- Charakter-Token -->
-    @for (token of tokens(); track token.position.characterId) {
-      <app-dungeon-token
-        [position]="token.position"
-        [character]="token.character"
-        [cellSize]="boardState().gridCellSizePx"
-        [offsetX]="boardState().gridOffsetX"
-        [offsetY]="boardState().gridOffsetY"
-        [selected]="selectedId() === token.position.characterId"
-        (tokenMoved)="onTokenMoved($event)"
-        (tokenSelected)="selectedCharacterId.set($event)"
-        (tokenDoubleClicked)="onTokenDoubleClick(token.character)"
-        (damageRequested)="onDamageRequested(token.character, $event)"
-      />
-    }
-  </div>
+  <!-- Hauptbereich: Spielbrett (zoombar, scrollt für sich) -->
+  <app-dungeon-board [zoom]="zoom()" />
 </div>

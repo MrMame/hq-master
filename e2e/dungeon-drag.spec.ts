@@ -1,8 +1,10 @@
 import { expect, Locator, Page, test } from '@playwright/test';
 import { createCharacter } from './support/create-character';
 
-/** Rastergröße in px laut `DEFAULT_DUNGEON_BOARD_STATE.gridCellSizePx`. */
-const CELL: number = 60;
+/** Rastergröße laut `DEFAULT_DUNGEON_BOARD_STATE.gridCellSizePx`, in Einheiten der Spielfläche. */
+const CELL_UNITS: number = 60;
+/** Breite der Spielfläche in Einheiten (`STAGE_WIDTH`); der Bildschirm zeigt sie skaliert. */
+const STAGE_WIDTH: number = 1000;
 
 /** Positionsanzeige `[col,row]` des (einzigen) Charakters in der Legende der Seitenleiste. */
 function legend(page: Page): Locator {
@@ -27,11 +29,14 @@ test('a dragged token keeps its new field after a reload', async ({ page }) => {
   const box: { x: number; y: number; width: number; height: number } | null =
     await token.boundingBox();
   if (!box) throw new Error('Token ohne Position');
+  const stage: { width: number } | null = await page.getByTestId('board-stage').boundingBox();
+  if (!stage) throw new Error('Spielfläche ohne Größe');
+  const cell: number = (stage.width / STAGE_WIDTH) * CELL_UNITS;
   const startX: number = box.x + box.width / 2;
   const startY: number = box.y + box.height / 2;
   await page.mouse.move(startX, startY);
   await page.mouse.down();
-  await page.mouse.move(startX + 2 * CELL, startY + CELL, { steps: 10 });
+  await page.mouse.move(startX + 2 * cell, startY + cell, { steps: 10 });
   await page.mouse.up();
 
   const expected: string = `[${col + 2},${row + 1}]`;
