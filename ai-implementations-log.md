@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-24 20:20) - Refactoring: Ungenutzten Token `--color-card-manager-menu` entfernen (unused-card-manager-menu-token #1)
+
+- **Was wurde gemacht:** Den verwaisten Token `--color-card-manager-menu: orange;` aus `tokens.css` entfernt; Request nach `done/` verschoben. Beim Abgleich aller Tokens mit den `var(--…)`-Referenzen fielen `--color-gray-50` und `--color-gray-100` als ebenfalls ungenutzt auf; dafür gibt es den neuen Request `unused-gray-tokens`. Zusätzlich (auf Wunsch des Nutzers) die Vitest-Konfiguration korrigiert: Unter Node v26 verdeckte Nodes eingebautes `localStorage` das von jsdom, und alle 373 Specs schlugen fehl, auch ohne diese Änderung.
+- **Dateien geändert:** `src/styles/tokens.css`, `vitest.config.ts`, `docs/refactoring-requests/done/unused-card-manager-menu-token.md` (per `git mv`), `docs/refactoring-requests/unused-gray-tokens.md` (neu)
+- **Wichtige Entscheidung:** Die Gray-Tokens kommen in einen eigenen Request (Entscheidung des Nutzers); Akzeptanzkriterium 2 gilt daher nur für den Card-Manager-Token. Node-Problem über `execArgv: ['--no-experimental-webstorage']` in `vitest.config.ts` gelöst statt über eine festgelegte Node-Version, damit Stop-Hook, `pre-push` und `npm run test` ohne Zusatz laufen. Probe vorher und nachher 3× grün, Card Manager pixelgleich; ein Screenshot des Dungeon Trackers ohne Raster war zu früh aufgenommen (bei Wiederholung pixelgleich). 373 Tests, Lint, Build und e2e (19) grün.
+
 ### (2026-10-22 17:48) - Feature: Zoom und Ausschnitt-Verschieben für das Spielbrett (dungeon-board-zoom #1–#7)
 
 - **Was wurde gemacht:** Neue Komponente `DungeonBoard` mit einer Spielfläche in festen Einheiten (1000 breit, Höhe nach dem Seitenverhältnis des Fotos), die Foto, Raster und Tokens gemeinsam per `transform: scale(fitScale × zoom)` vergrößert; Raster und Tokens bleiben so bei jedem Zoom und jeder Fenstergröße fest auf dem Foto. Zoom-Regler (100–400 %) in den Raster-Einstellungen; nur der Spielbrettbereich scrollt, Ziehen auf freier Fläche verschiebt den Ausschnitt (Direktive `BoardPan`), die Mitte bleibt beim Zoomen stehen.

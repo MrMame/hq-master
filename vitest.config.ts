@@ -6,6 +6,9 @@ import { defineConfig } from 'vitest/config';
 // (98,3 % Lines, 94,0 % Branches, 89,8 % Functions, 96,8 % Statements).
 export default defineConfig({
   test: {
+    // Ab Node 25 ist Nodes eigenes Web Storage standardmäßig aktiv und verdeckt
+    // das localStorage von jsdom (Folge: localStorage === undefined in Specs).
+    execArgv: ['--no-experimental-webstorage'],
     coverage: {
       thresholds: {
         lines: 95,
