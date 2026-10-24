@@ -1,8 +1,8 @@
 ---
-description: "Create an HQ-Master feature using the project architecture, requirements, tests, and lazy routing."
-name: "Create HQ-Master Feature"
-argument-hint: "Describe the feature and its user-visible behavior"
-agent: "agent"
+description: 'Create an HQ-Master feature using the project architecture, requirements, tests, and lazy routing.'
+name: 'Create HQ-Master Feature'
+argument-hint: 'Describe the feature and its user-visible behavior'
+agent: 'agent'
 ---
 
 Implement the requested HQ-Master feature.

@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-24  
 **Priorität:** Niedrig  
-**Status:** open  
+**Status:** rejected (2026-10-24 21:02) – vom Nutzer verworfen, wird nicht umgesetzt; die Tokens bleiben in `tokens.css`.  
 **Bezug:** Fund aus `docs/refactoring-requests/done/unused-card-manager-menu-token.md` #1; `.claude/rules/architecture.md` → „Komponenten“ (Farben nur über Tokens aus `src/styles/tokens.css`)
 
 ---

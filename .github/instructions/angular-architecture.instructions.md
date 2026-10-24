@@ -1,9 +1,9 @@
 ---
 name: Angular Architecture
-description: "Use when creating or modifying Angular components, services, routes, signals, state management, or feature folders."
+description: 'Use when creating or modifying Angular components, services, routes, signals, state management, or feature folders.'
 applyTo:
-  - "src/**/*.ts"
-  - "src/**/*.html"
+  - 'src/**/*.ts'
+  - 'src/**/*.html'
 ---
 
 # Angular Architecture

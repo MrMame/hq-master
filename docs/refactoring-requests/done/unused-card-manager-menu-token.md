@@ -44,5 +44,5 @@ Kein fachliches Verhalten ändert sich.
 ## Akzeptanzkriterien
 
 - [x] `grep -r "card-manager-menu" src/` findet keinen Treffer
-- [x] Kein Card-Manager-Token in `tokens.css` ist unreferenziert (angepasst 2026-10-24: Die ebenfalls ungenutzten `--color-gray-50` und `--color-gray-100` behandelt der eigene Request `docs/refactoring-requests/unused-gray-tokens.md`)
+- [x] Kein Card-Manager-Token in `tokens.css` ist unreferenziert (angepasst 2026-10-24: Die ebenfalls ungenutzten `--color-gray-50` und `--color-gray-100` behandelt der eigene Request `docs/refactoring-requests/done/unused-gray-tokens.md`)
 - [x] `npm run lint`, `npm run test -- --watch=false`, `npm run build` und `npm run e2e` laufen grün

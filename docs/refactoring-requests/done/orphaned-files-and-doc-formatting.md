@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-18  
 **Priorität:** Niedrig  
-**Status:** offen — #1 rejected (2026-10-21, obsolet), #2 offen  
+**Status:** done (2026-10-24 21:04) — #1 rejected (2026-10-21, obsolet), #2 done (2026-10-24 21:04)  
 **Bezug:** `docs/refactoring-requests/done/test-strategy-improvements.md` (bei der Umsetzung gefunden), `.claude/rules/testing.md` (Git-Hooks)
 
 ---
@@ -36,11 +36,11 @@ Kein fachliches Verhalten ändert sich.
 - Vorher per `Grep` bestätigen, dass kein `templateUrl` oder sonstiger Verweis darauf existiert.
 - Prüfen, ob es weitere nicht referenzierte `.html`/`.scss`-Dateien unter `src/` gibt; Funde auflisten und nach Rückfrage mit entfernen.
 
-### 2. Doku- und Prompt-Dateien mit Prettier formatieren
+### 2. Doku- und Prompt-Dateien mit Prettier formatieren ✅ done (2026-10-24 21:04)
 
 - Betroffen:
   - `.github/instructions/angular-architecture.instructions.md`
-  - `.github/instructions/angular-templates.instructions.md`
+  - ~~`.github/instructions/angular-templates.instructions.md`~~ (bei der Umsetzung am 2026-10-24 bereits formatiert)
   - `.github/prompts/create-feature.prompt.md`
   - `.github/prompts/create-vitest.prompt.md`
   - `.github/prompts/review-angular-change.prompt.md`
@@ -53,5 +53,5 @@ Kein fachliches Verhalten ändert sich.
 ## Akzeptanzkriterien
 
 - [ ] ~~Die beiden Platzhalter-Templates sind entfernt; Build, Lint und Tests bleiben grün.~~ Entfällt (#1 rejected, 2026-10-21).
-- [ ] `npx prettier --check .github .claude` meldet keine Datei mehr.
-- [ ] Keine inhaltlichen Änderungen an den formatierten Dateien.
+- [x] `npx prettier --check .github .claude` meldet keine Datei mehr.
+- [x] Keine inhaltlichen Änderungen an den formatierten Dateien.

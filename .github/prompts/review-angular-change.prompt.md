@@ -1,8 +1,8 @@
 ---
-description: "Review an HQ-Master Angular change for architecture, tests, typing, persistence, and validation gaps."
-name: "Review HQ-Master Change"
-argument-hint: "Review the current changes or selected files"
-agent: "agent"
+description: 'Review an HQ-Master Angular change for architecture, tests, typing, persistence, and validation gaps.'
+name: 'Review HQ-Master Change'
+argument-hint: 'Review the current changes or selected files'
+agent: 'agent'
 ---
 
 Review the current HQ-Master changes against the project rules.

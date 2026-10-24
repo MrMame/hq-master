@@ -1,8 +1,8 @@
 ---
-description: "Add focused Vitest coverage for HQ-Master services, Signals, persistence, or Angular components."
-name: "Create HQ-Master Vitest Tests"
-argument-hint: "Select the code or describe the behavior to cover"
-agent: "agent"
+description: 'Add focused Vitest coverage for HQ-Master services, Signals, persistence, or Angular components.'
+name: 'Create HQ-Master Vitest Tests'
+argument-hint: 'Select the code or describe the behavior to cover'
+agent: 'agent'
 ---
 
 Add or improve Vitest tests for the selected HQ-Master behavior.

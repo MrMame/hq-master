@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-24 21:04) - Refactoring: Doku- und Prompt-Dateien mit Prettier formatieren (orphaned-files-and-doc-formatting #2)
+
+- **Was wurde gemacht:** Sechs Markdown-Dateien unter `.github/` und `.claude/` mit Prettier formatiert, damit der `pre-commit`-Hook beim Anfassen nicht mehr fehlschlägt. Request vollständig abgeschlossen (#1 war bereits rejected) und nach `done/` verschoben. Zusätzlich den Request `unused-gray-tokens` auf Wunsch des Nutzers als rejected nach `done/` verschoben.
+- **Dateien geändert:** `.claude/rules/clean-code.md`, `.github/instructions/angular-architecture.instructions.md`, `.github/prompts/create-feature.prompt.md`, `create-vitest.prompt.md`, `review-angular-change.prompt.md`, `review-code.prompt.md`, `docs/refactoring-requests/done/orphaned-files-and-doc-formatting.md`, `docs/refactoring-requests/done/unused-gray-tokens.md`, `docs/refactoring-requests/done/unused-card-manager-menu-token.md` (Verweis)
+- **Wichtige Entscheidung:** `angular-templates.instructions.md` war bereits formatiert und ist im Request durchgestrichen. Im Frontmatter ersetzt Prettier `"…"` durch `'…'`; das ist in YAML gleichwertig, Copilot liest die Dateien weiter wie bisher. Wortweiser Diff bestätigt: keine inhaltliche Änderung. 416 Tests, Lint und Build grün.
+
 ### (2026-10-24 20:51) - Feature: Zufälligen Charakter im Charakter-Editor erstellen (character-editor-random-character #1–#5)
 
 - **Was wurde gemacht:** Im Modus „Neuer Charakter“ füllt „Zufälliger Charakter erstellen“ die Arbeitskopie mit Zufallswerten (ID bleibt); der Name kommt aus den Vor-/Nachnamenslisten der Charakterklasse des gewürfelten Bildes. Die Zufallslogik der beiden Creator-Services ist in `createRandomCharacter()` zusammengeführt, die Services sind gelöscht. Request vollständig umgesetzt und nach `done/` verschoben.
