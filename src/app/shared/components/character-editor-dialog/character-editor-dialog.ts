@@ -14,6 +14,7 @@ import { ElementalTypes } from '../../../core/models/elemental-types.model';
 import { CharacterAbilities } from '../../../core/models/character-abilities.model';
 import { CHARACTER_IMAGES } from '../../../core/models/character-images.model';
 import { createNewCharacter } from '../../utils/new-character.util';
+import { createRandomCharacter } from '../../utils/random-character.util';
 import { ConfirmationDialogData } from '../../models/confirmation-dialog-data.model';
 import { ConfirmationDialog } from '../confirmation-dialog/confirmation-dialog';
 
@@ -24,6 +25,7 @@ type CharacterStat = 'health' | 'armor' | 'attack' | 'defense' | 'speed';
  * Systemweiter Charakter-Editor: Ohne Daten geöffnet legt er einen neuen Charakter an, sonst bearbeitet
  * er den übergebenen. „Übernehmen“ schreibt sofort in die Session, „Abbrechen“ verwirft die Arbeitskopie.
  * „Entfernen“ (nur beim Bearbeiten) löscht den Charakter nach einer Rückfrage aus der Session.
+ * „Zufälliger Charakter erstellen“ (nur beim Anlegen) füllt die Arbeitskopie mit Zufallswerten.
  */
 @Component({
   selector: 'app-character-editor-dialog',
@@ -72,6 +74,11 @@ export class CharacterEditorDialog {
         ? abilities.filter((a) => a !== ability)
         : [...abilities, ability],
     );
+  }
+
+  /** Nur im Neu-Modus: überschreibt die Arbeitskopie ohne Rückfrage, die ID bleibt. */
+  randomize(): void {
+    this.draft.set(createRandomCharacter(this.draft().id));
   }
 
   apply(): void {

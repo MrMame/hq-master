@@ -110,6 +110,10 @@
 <mat-dialog-actions align="end">
   @if (isEditMode) {
     <button mat-button class="character-editor__remove" (click)="remove()">Entfernen</button>
+  } @else {
+    <button mat-button class="character-editor__random" (click)="randomize()">
+      Zufälliger Charakter erstellen
+    </button>
   }
   <button mat-button class="general-dialog__cancel" (click)="cancel()">Abbrechen</button>
   <button

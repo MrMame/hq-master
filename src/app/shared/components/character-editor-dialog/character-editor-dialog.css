@@ -101,3 +101,8 @@
   --mat-button-text-label-text-color: var(--color-red-400);
   margin-inline-end: auto;
 }
+
+.character-editor__random {
+  --mat-button-text-label-text-color: var(--color-yellow-400);
+  margin-inline-end: auto;
+}

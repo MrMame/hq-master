@@ -72,6 +72,23 @@ test('"Neuer Charakter" adds a character as token and legend entry', async ({ pa
   await expect(page.locator('app-dungeon-token')).toHaveCount(1);
 });
 
+test('"Zufälliger Charakter erstellen" adds a random character as token and legend entry', async ({
+  page,
+}) => {
+  await page.goto('/dungeontracker');
+  await sidebar(page).getByRole('button', { name: 'Neuer Charakter' }).click();
+  await editor(page).getByRole('button', { name: 'Zufälliger Charakter erstellen' }).click();
+  // ngModel schreibt den gewürfelten Namen asynchron ins Feld.
+  await expect(editor(page).getByLabel('Name')).not.toHaveValue('');
+  const name: string = await editor(page).getByLabel('Name').inputValue();
+  await editor(page).getByRole('button', { name: 'Übernehmen' }).click();
+
+  await expect(editor(page)).toBeHidden();
+  await expect(sidebar(page).getByText('Charaktere (1)')).toBeVisible();
+  await expect(sidebar(page).getByText(name)).toBeVisible();
+  await expect(page.locator('app-dungeon-token')).toHaveCount(1);
+});
+
 for (const device of INPUT_DEVICES) {
   test.describe(`"Entfernen" on ${device.name}`, () => {
     test.use(device.touch ? { viewport: { width: 1024, height: 768 }, hasTouch: true } : {});

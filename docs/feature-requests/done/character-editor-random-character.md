@@ -1,8 +1,8 @@
 # Feature Request: Zufälligen Charakter im Charakter-Editor erstellen
 
-**Datum:** 2026-10-21  
+**Datum:** 2026-10-21 (überarbeitet 2026-10-24: Zufallsnamen je Charakterklasse)  
 **Priorität:** Mittel  
-**Status:** open  
+**Status:** done (2026-10-24 20:51)  
 **Bezug:** `REQUIREMENTS.md` (Dungeon Tracker, „Neuer Charakter“), `.claude/rules/architecture.md` → „Dateinamen“ (reine Funktionen in `*.util.ts`), `docs/feature-requests/done/character-kind-hero-monster.md` (rejected: keine Unterscheidung Held/Monster), Voraussetzung `docs/feature-requests/done/character-tracker-removal.md` #1
 
 ---
@@ -37,26 +37,45 @@ dieser Stelle weiterhin „Entfernen“.
 
 ## Anforderungen
 
-### 1. Zufallswerte als reine Funktion
+### 1. Zufallswerte als reine Funktion ✅ done (2026-10-24 20:51)
 
 - Neue Datei `shared/utils/random-character.util.ts` mit
   `createRandomCharacter(id: string): CharacterInfo`. Wertebereiche wie bisher in den
   Creator-Services: Leben 50–249, Rüstung 5–54, Angriff 10–59, Abwehr 5–54, Tempo 5–34, zufälliger
   Element-Typ, die ersten 1…n Fähigkeiten, Beschreibung „Dies ist eine zufällige Beschreibung für …“.
 - Das Bild kommt zufällig aus `CHARACTER_IMAGES`.
-- Der Name ist lesbar, nicht „Hero 1729…-123“: Er wird aus dem Bild abgeleitet, z. B.
-  `hero-icon-barbarian.jpeg` → „Barbarian“, `monster-icon-ChaosWarrior.png` → „ChaosWarrior“.
+- Der Name besteht aus einem zufälligen Vor- und Nachnamen der Charakterklasse des gezogenen Bildes
+  (siehe #2), z. B. Barbar → „Ragnar Eisenfaust“, Goblin → „Grutz Schlammzahn“.
 - Die ID wird übergeben, damit die Arbeitskopie ihre ID behält.
 - `HeroCharacterCreatorService`, `MonsterCharacterCreatorService` und ihre Specs werden gelöscht.
   `HERO_IMAGES` und `MONSTER_IMAGES` bleiben als Bestandteile von `CHARACTER_IMAGES`; ihre Kommentare
   nennen die Creator nicht mehr.
 
 **Erwartetes Verhalten:** Ein Aufruf liefert einen gültigen Charakter mit Name, Bild und Werten in
-den genannten Bereichen.
+den genannten Bereichen. Der Name passt zur Klasse des Bildes.
 
 ---
 
-### 2. Button im Neu-Modus
+### 2. Namenslisten je Charakterklasse ✅ done (2026-10-24 20:51)
+
+- Die Charakterklasse ergibt sich aus dem Bild (13 Klassen: 4 Helden, 9 Monster).
+- Pro Klasse eine editierbare Datei `core/models/character-names/<klasse>-names.model.ts` mit je
+  50 Vor- und 50 Nachnamen (`CharacterNameList` aus `character-name-list.model.ts`). Stil:
+  Fantasy-Vorname + deutscher, sprechender Nachname.
+- `character-names.model.ts` ordnet jedem Bild aus `CHARACTER_IMAGES` seine Liste zu
+  (`CHARACTER_NAMES_BY_IMAGE`).
+- **Bereits angelegt (2026-10-24):** alle 13 Listen, das Interface und die Zuordnung.
+- **Länge:** Vorname höchstens 8, Nachname höchstens 11 Zeichen; Vorname + Leerzeichen + Nachname
+  sind damit höchstens 20 Zeichen lang. Ist eine Kombination kürzer als 12 Zeichen, wird neu gezogen.
+- Die Namenslisten sind vom Dateilimit (150 Zeilen) ausgenommen (Entscheidung des Nutzers); derzeit
+  haben sie je 109 Zeilen.
+
+**Erwartetes Verhalten:** Ein Zufallsname ist 12–20 Zeichen lang und stammt aus den Listen der
+Klasse des Bildes. Wer eine Liste ändert, ändert damit die künftig gewürfelten Namen.
+
+---
+
+### 3. Button im Neu-Modus ✅ done (2026-10-24 20:51)
 
 - `character-editor-dialog.html`: In `mat-dialog-actions` steht als erster Button
 
@@ -75,29 +94,37 @@ den genannten Bereichen.
 - Jeder Klick würfelt neu und überschreibt bisherige Eingaben ohne Rückfrage. Gespeichert ist zu
   diesem Zeitpunkt noch nichts.
 
-**Erwartetes Verhalten:** Nach einem Klick zeigen alle Felder zufällige Werte, und „Übernehmen“ ist
+- Der gewürfelte Name steht sofort im Namensfeld und kann dort überschrieben werden.
+
+**Erwartetes Verhalten:** Nach einem Klick zeigen alle Felder zufällige Werte, der neue Name steht im
+Namensfeld, und „Übernehmen“ ist
 aktiv, weil Name und Bild gesetzt sind. Im Bearbeiten-Modus gibt es den Button nicht.
 
 ---
 
-### 3. Tests
+### 4. Tests ✅ done (2026-10-24 20:51)
 
 - `random-character.util.spec.ts`: `Math.random` per `vi.spyOn` festlegen; Grenzwerte der
-  Wertebereiche (0 und knapp unter 1), Name aus dem Bild, übergebene ID bleibt erhalten.
+  Wertebereiche (0 und knapp unter 1), Name aus den Listen der Bildklasse, übergebene ID bleibt erhalten; eine zu kurze Kombination
+  (< 12 Zeichen) wird neu gezogen.
+- `character-names.model.spec.ts`: Jedes Bild aus `CHARACTER_IMAGES` hat eine Liste; jede Liste
+  hat 50 eindeutige Vor- und Nachnamen; Vornamen ≤ 8, Nachnamen ≤ 11 Zeichen; pro Klasse ist eine
+  Kombination mit mindestens 12 Zeichen möglich.
 - `character-editor-dialog-create.spec.ts`: Button nur im Neu-Modus (Harness); Klick füllt Name und
-  Bild, die ID bleibt gleich, „Übernehmen“ ist aktiv und speichert den Zufallscharakter; „Abbrechen“
+  Bild (der Name steht im Namensfeld), die ID bleibt gleich, „Übernehmen“ ist aktiv und speichert den Zufallscharakter; „Abbrechen“
   speichert nichts.
 - E2E (`character-editor.spec.ts`): „Neuer Charakter“ → „Zufälliger Charakter erstellen“ →
   „Übernehmen“ → Token und Legendeneintrag erscheinen.
 
 ---
 
-### 4. Dokumentation
+### 5. Dokumentation ✅ done (2026-10-24 20:51)
 
 - `REQUIREMENTS.md`, Dungeon Tracker: Nach dem Satz zu „Neuer Charakter“ ergänzen: „Im Dialog kann er
   über ‚Zufälliger Charakter erstellen‘ alle Felder mit Zufallswerten füllen und vor dem Übernehmen
-  anpassen.“
-- `.claude/rules/architecture.md`: `shared/utils/random-character.util.ts` eintragen,
+  anpassen. Der Name passt zur Charakterklasse.“
+- `.claude/rules/architecture.md`: `shared/utils/random-character.util.ts` und
+  `core/models/character-names/` (Namenslisten je Klasse, Ausnahme vom Dateilimit) eintragen,
   `shared/services/character-creators/` entfernen.
 
 ---
@@ -118,10 +145,12 @@ aktiv, weil Name und Bild gesetzt sind. Im Bearbeiten-Modus gibt es den Button n
 
 ## Akzeptanzkriterien
 
-- [ ] Im Modus „Neuer Charakter“ steht links in der Aktionsleiste „Zufälliger Charakter erstellen“, im Bearbeiten-Modus nicht
-- [ ] Ein Klick füllt die Arbeitskopie mit Zufallswerten; die ID bleibt, Name und Bild sind gesetzt
-- [ ] „Übernehmen“ speichert den Zufallscharakter, „Abbrechen“ speichert nichts
-- [ ] Die Zufallslogik liegt als reine Funktion in `shared/utils/random-character.util.ts`; die beiden Creator-Services sind gelöscht
-- [ ] Keine neuen Tokens; jede Datei hat höchstens 150 Zeilen
-- [ ] `REQUIREMENTS.md` und `architecture.md` sind angepasst
-- [ ] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün
+- [x] Im Modus „Neuer Charakter“ steht links in der Aktionsleiste „Zufälliger Charakter erstellen“, im Bearbeiten-Modus nicht
+- [x] Ein Klick füllt die Arbeitskopie mit Zufallswerten; die ID bleibt, Name und Bild sind gesetzt
+- [x] Der Name besteht aus Vor- und Nachname der Bildklasse, ist 12–20 Zeichen lang und steht sofort im Namensfeld
+- [x] Je Charakterklasse liegt eine editierbare Liste mit 50 Vor- und 50 Nachnamen unter `core/models/character-names/`
+- [x] „Übernehmen“ speichert den Zufallscharakter, „Abbrechen“ speichert nichts
+- [x] Die Zufallslogik liegt als reine Funktion in `shared/utils/random-character.util.ts`; die beiden Creator-Services sind gelöscht
+- [x] Keine neuen Tokens; jede Datei hat höchstens 150 Zeilen (Ausnahme: Namenslisten)
+- [x] `REQUIREMENTS.md` und `architecture.md` sind angepasst
+- [x] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün

@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-24 20:51) - Feature: Zufälligen Charakter im Charakter-Editor erstellen (character-editor-random-character #1–#5)
+
+- **Was wurde gemacht:** Im Modus „Neuer Charakter“ füllt „Zufälliger Charakter erstellen“ die Arbeitskopie mit Zufallswerten (ID bleibt); der Name kommt aus den Vor-/Nachnamenslisten der Charakterklasse des gewürfelten Bildes. Die Zufallslogik der beiden Creator-Services ist in `createRandomCharacter()` zusammengeführt, die Services sind gelöscht. Request vollständig umgesetzt und nach `done/` verschoben.
+- **Dateien geändert:** `shared/utils/random-character.util.ts` + Spec (neu), `core/models/character-names/*` (13 Listen, Interface, Zuordnung + Spec, neu), `character-editor-dialog.ts/.html/.css` + `-create.spec.ts` + `-remove.spec.ts`, `core/models/character-images.model.ts`, `shared/utils/new-character.util.ts` + Spec (Kommentare), `shared/services/character-creators/*` (gelöscht), `e2e/character-editor.spec.ts`, `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/done/character-editor-random-character.md`
+- **Wichtige Entscheidung:** Ein Generator für Helden und Monster (keine Unterscheidung laut rejected `character-kind-hero-monster`). Erst wird das Bild gewürfelt, dann der Name aus `CHARACTER_NAMES_BY_IMAGE`; Kombinationen < 12 Zeichen werden neu gezogen. Button als `@else` am Entfernen-Block. Namenslisten vom Dateilimit ausgenommen (Entscheidung des Nutzers). Im E2E wird auf den Namen im Feld gewartet, weil `ngModel` asynchron schreibt. `e2e/support/create-character.ts` bleibt bei festen Werten, damit die E2E-Tests reproduzierbar bleiben. Probe vorher rot, nachher grün; 416 Tests (geänderte Dateien 100 % Coverage), Lint, Build und e2e (20) grün.
+
 ### (2026-10-24 20:20) - Refactoring: Ungenutzten Token `--color-card-manager-menu` entfernen (unused-card-manager-menu-token #1)
 
 - **Was wurde gemacht:** Den verwaisten Token `--color-card-manager-menu: orange;` aus `tokens.css` entfernt; Request nach `done/` verschoben. Beim Abgleich aller Tokens mit den `var(--…)`-Referenzen fielen `--color-gray-50` und `--color-gray-100` als ebenfalls ungenutzt auf; dafür gibt es den neuen Request `unused-gray-tokens`. Zusätzlich (auf Wunsch des Nutzers) die Vitest-Konfiguration korrigiert: Unter Node v26 verdeckte Nodes eingebautes `localStorage` das von jsdom, und alle 373 Specs schlugen fehl, auch ohne diese Änderung.

@@ -2,7 +2,7 @@ import { CharacterInfo } from '../../core/models/character-info.model';
 import { ElementalTypes } from '../../core/models/elemental-types.model';
 
 /**
- * Startwerte für einen neuen, noch leeren Charakter. Die ID folgt dem Schema der Creator-Services;
+ * Startwerte für einen neuen, noch leeren Charakter. Die ID besteht aus Zeitstempel und Zufallszahl;
  * `crypto.randomUUID()` gibt es nur im sicheren Kontext (nicht bei http über die LAN-IP).
  */
 export function createNewCharacter(): CharacterInfo {

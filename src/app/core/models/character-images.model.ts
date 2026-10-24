@@ -1,4 +1,4 @@
-/** Bilder der Helden-Creator; Reihenfolge bestimmt die Zufallsauswahl. */
+/** Bilder der Helden; Teil von `CHARACTER_IMAGES`. */
 export const HERO_IMAGES: string[] = [
   './img/hero-icon-barbarian.jpeg',
   './img/hero-icon-dwarf.jpeg',
@@ -6,7 +6,7 @@ export const HERO_IMAGES: string[] = [
   './img/hero-icon-wizard.jpeg',
 ];
 
-/** Bilder der Monster-Creator; Reihenfolge bestimmt die Zufallsauswahl. */
+/** Bilder der Monster; Teil von `CHARACTER_IMAGES`. */
 export const MONSTER_IMAGES: string[] = [
   './img/monster-icon-ChaosWarrior.png',
   './img/monster-icon-FimirAbomination.png',

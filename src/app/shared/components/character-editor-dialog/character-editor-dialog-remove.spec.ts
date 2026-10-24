@@ -37,6 +37,12 @@ describe('CharacterEditorDialog – remove', () => {
     await expect(editor.button('Entfernen')).rejects.toThrow();
   });
 
+  it('offers "Zufälliger Charakter erstellen" only when creating a character', async () => {
+    const editor: CharacterEditorDialogSetup = await editOrc();
+
+    await expect(editor.button('Zufälliger Charakter erstellen')).rejects.toThrow();
+  });
+
   it('removes the character after confirmation and closes without a value', async () => {
     const editor: CharacterEditorDialogSetup = await editOrc();
 

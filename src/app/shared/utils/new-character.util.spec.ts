@@ -22,7 +22,7 @@ describe('createNewCharacter', () => {
     });
   });
 
-  it('builds the id from time and a random number like the creators', () => {
+  it('builds the id from time and a random number', () => {
     vi.spyOn(Date, 'now').mockReturnValue(1700000000000);
     vi.spyOn(Math, 'random').mockReturnValue(0.042);
 

@@ -19,6 +19,8 @@ core/
                     character-info.model.ts, elemental-types.model.ts,
                     character-abilities.model.ts, character-images.model.ts (Bildlisten),
                     damage-types.model.ts (Schadensarten)
+    character-names/ → <klasse>-names.model.ts (editierbare Vor-/Nachnamen je Charakterklasse,
+                    vom Dateilimit ausgenommen), character-names.model.ts (CHARACTER_NAMES_BY_IMAGE)
   session-state/  → persisted-state.ts (persistedState), session-keys.ts (SESSION_KEYS),
                     session-state-slice.ts (SessionStateSlice), session-slices.ts (SessionSliceData)
     testing/      → describe-persisted-state.ts (Vertragstest für Regel 8, nur für Specs)
@@ -65,8 +67,8 @@ shared/
                          damage-dialog-data.model.ts (Titel des Schadensauswahl-Dialogs)
   services/            → character-editor.service.ts (öffnet den Charakter-Editor systemweit),
                          character-damage.service.ts (Schadensauswahl → applyDamage → Session)
-    character-creators/ → hero-/monster-character-creator.service.ts (Zufallscharaktere)
   utils/               → new-character.util.ts (Startwerte für neue Charaktere),
+                         random-character.util.ts (Zufallscharakter, Name passend zur Bildklasse),
                          damage.util.ts (reine Schadensberechnung)
   testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
                          character-editor-dialog.fixtures.ts)
@@ -225,6 +227,7 @@ Slice-Map des `GameSessionService`; der Compiler meldet dann Snapshot und XML-Ma
 ### Dateigrößenlimit
 
 - Max. **150 Zeilen** pro Datei. Bei Überschreitung refaktorieren.
+- Ausnahme: Namenslisten unter `core/models/character-names/` (reine Daten, je 50 Vor- und Nachnamen).
 
 ## Neue Features hinzufügen
 
