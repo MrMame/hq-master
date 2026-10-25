@@ -4,7 +4,7 @@
   class="board"
   [class.board--pannable]="zoom() > 1"
   appBoardPan
-  (clickWithoutPan)="selectedCharacterId.set(null)"
+  (clickWithoutPan)="selectionChange.emit(null)"
   (scroll)="rememberViewCenter()"
 >
   @if (!boardState().boardImageBase64) {
@@ -52,11 +52,11 @@
           [offsetX]="boardState().gridOffsetX"
           [offsetY]="boardState().gridOffsetY"
           [scale]="scale()"
-          [selected]="selectedId() === token.position.characterId"
+          [selected]="selection()?.characterId === token.position.characterId"
+          [reveal]="selection()?.source === 'legend'"
           (tokenMoved)="onTokenMoved($event)"
-          (tokenSelected)="selectedCharacterId.set($event)"
+          (tokenSelected)="selectionChange.emit($event)"
           (tokenDoubleClicked)="onTokenDoubleClick(token.character)"
-          (damageRequested)="onDamageRequested(token.character, $event)"
         />
       }
     </div>

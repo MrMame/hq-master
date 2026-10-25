@@ -67,42 +67,9 @@
   white-space: nowrap;
 }
 
+/* Höchstens 4 Buttons je Reihe (4 × 24 px, 3 Abstände, 2 × Innenabstand), dann Umbruch. */
 .dungeon-token__actions {
-  display: flex;
-  gap: var(--space-1);
+  width: max-content;
+  max-width: calc(4 * var(--space-6) + 5 * var(--space-1));
   margin-top: var(--space-1);
-}
-
-/* Mindestens 24 px, damit die Buttons auf dem Tablet sicher antippbar sind. */
-.dungeon-token__damage {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--space-6);
-  height: var(--space-6);
-  padding: 0;
-  border: none;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-}
-
-.dungeon-token__damage--armor {
-  background-color: var(--color-blue-600);
-
-  &:hover {
-    background-color: var(--color-blue-700);
-  }
-}
-
-.dungeon-token__damage--health {
-  background-color: var(--color-red-600);
-
-  &:hover {
-    background-color: var(--color-red-700);
-  }
-}
-
-.dungeon-token__damage-icon {
-  width: var(--space-4);
-  height: var(--space-4);
 }

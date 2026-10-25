@@ -32,16 +32,21 @@ core/
 
 features/
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung (Startseite)
-    components/        → DungeonTrackerPage (Sidebar, Zoom), DungeonBoard (zoombare Spielfläche mit Foto,
-                         Raster, Tokens), DungeonToken, DungeonLegendEntry (Legendeneintrag),
-                         CharacterStatus (Leben/Rüstung an Token und Legende, später Statuseffekte)
+    components/        → DungeonTrackerPage (Sidebar, Zoom, Markierung für Brett und Legende),
+                         DungeonBoard (zoombare Spielfläche mit Foto, Raster, Tokens), DungeonToken,
+                         DungeonLegendEntry (Legendeneintrag),
+                         CharacterStatus (Leben/Rüstung an Token und Legende, später Statuseffekte),
+                         CharacterActionBar (Menüleiste des markierten Charakters an Token und Legende;
+                         neue Befehle nur hier ergänzen)
     directives/        → board-pan.ts (BoardPan: Ausschnitt eines Scroll-Containers per Ziehen verschieben)
     models/            → dungeon-board-state.model.ts, dungeon-position.model.ts, dungeon-session-state.model.ts,
-                         board-token.model.ts, size.model.ts
+                         board-token.model.ts, size.model.ts, character-selection.model.ts (Markierung, UI-Zustand)
     services/          → dungeon-board.service.ts (Signal-State + LocalStorage, Charakter-Sync per effect())
     utils/             → token-placement.util.ts (freies Feld für neue Tokens),
-                         board-scale.util.ts (Spielflächengröße, Maßstab), grid-style.util.ts (Rasterlinien)
-    testing/           → resize-observer.fixtures.ts (steuerbarer ResizeObserver, nur für Specs)
+                         board-scale.util.ts (Spielflächengröße, Maßstab), grid-style.util.ts (Rasterlinien),
+                         scroll-into-view.util.ts (nur bei Bedarf ins Bild scrollen)
+    testing/           → resize-observer.fixtures.ts (steuerbarer ResizeObserver),
+                         scroll-into-view.fixtures.ts (Spy für das in jsdom fehlende scrollIntoView), nur für Specs
 
   time-tracker/        → In-Game-Zeiterfassung
     components/        → TimeTrackerPage

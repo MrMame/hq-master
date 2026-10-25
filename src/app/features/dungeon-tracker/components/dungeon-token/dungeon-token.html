@@ -1,5 +1,6 @@
-<!-- Der Container bewegt Bild, Werteleiste und Buttons gemeinsam; gezogen wird nur über das Bild. -->
+<!-- Der Container bewegt Bild, Werteleiste und Menüleiste gemeinsam; gezogen wird nur über das Bild. -->
 <div
+  #tokenElement
   cdkDrag
   [cdkDragFreeDragPosition]="{ x: 0, y: 0 }"
   [cdkDragScale]="scale()"
@@ -30,30 +31,8 @@
 
   <app-character-status [character]="character()" class="dungeon-token__status" />
 
+  <!-- Die Menüleiste hält Klicks und Doppelklicks selbst vom Token und vom Spielbrett fern. -->
   @if (selected()) {
-    <div
-      class="dungeon-token__actions"
-      (click)="$event.stopPropagation()"
-      (dblclick)="$event.stopPropagation()"
-    >
-      <button
-        type="button"
-        aria-label="Schaden auf Leben"
-        title="Schaden auf Leben"
-        class="dungeon-token__damage dungeon-token__damage--health"
-        (click)="damageRequested.emit(damageTypes.Critical)"
-      >
-        <img src="./img/hit-critical.svg" alt="" class="dungeon-token__damage-icon" />
-      </button>
-      <button
-        type="button"
-        aria-label="Schaden auf Rüstung"
-        title="Schaden auf Rüstung"
-        class="dungeon-token__damage dungeon-token__damage--armor"
-        (click)="damageRequested.emit(damageTypes.Normal)"
-      >
-        <img src="./img/hit-normal.svg" alt="" class="dungeon-token__damage-icon" />
-      </button>
-    </div>
+    <app-character-action-bar [character]="character()" class="dungeon-token__actions" />
   }
 </div>

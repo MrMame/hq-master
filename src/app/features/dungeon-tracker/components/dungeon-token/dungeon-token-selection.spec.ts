@@ -4,8 +4,8 @@ import { By } from '@angular/platform-browser';
 import { CdkDrag, CdkDragEnd } from '@angular/cdk/drag-drop';
 
 import { DungeonToken } from './dungeon-token';
-import { DamageTypes } from '../../../../core/models/damage-types.model';
 import { createTestCharacter } from '../../../../core/testing/character.fixtures';
+import { spyOnScrollIntoView } from '../../testing/scroll-into-view.fixtures';
 
 /** Drag-Ende ohne Versatz (Stub, s. dungeon-token.spec.ts). */
 const dragEnd: () => CdkDragEnd = (): CdkDragEnd =>
@@ -16,6 +16,7 @@ const dragEnd: () => CdkDragEnd = (): CdkDragEnd =>
 describe('DungeonToken – status and selection', () => {
   let fixture: ComponentFixture<DungeonToken>;
   let host: HTMLElement;
+  const scrolledElements: () => Element[] = spyOnScrollIntoView();
 
   const render: (selected: boolean) => void = (selected: boolean): void => {
     fixture.componentRef.setInput('selected', selected);
@@ -25,8 +26,11 @@ describe('DungeonToken – status and selection', () => {
   const token: () => HTMLElement = (): HTMLElement =>
     host.querySelector('.dungeon-token') as HTMLElement;
 
-  const damageButtons: () => HTMLButtonElement[] = (): HTMLButtonElement[] =>
+  const buttons: () => HTMLButtonElement[] = (): HTMLButtonElement[] =>
     Array.from(host.querySelectorAll<HTMLButtonElement>('button'));
+
+  const actionBar: () => HTMLElement | null = (): HTMLElement | null =>
+    host.querySelector('[role="toolbar"]');
 
   beforeEach(() => {
     TestBed.configureTestingModule({ imports: [DungeonToken] });
@@ -50,47 +54,62 @@ describe('DungeonToken – status and selection', () => {
     expect(host.querySelector('[aria-label="Rüstung"]')?.textContent?.trim()).toBe('5');
   });
 
-  it('shows no damage buttons and no highlight while not selected', () => {
+  it('shows no action bar and no highlight while not selected', () => {
     render(false);
 
-    expect(damageButtons()).toHaveLength(0);
+    expect(actionBar()).toBeNull();
+    expect(buttons()).toHaveLength(0);
     expect(token().classList).not.toContain('dungeon-token--selected');
   });
 
-  it('shows the health (left) and the armor (right) damage button and the highlight when selected', () => {
+  it('shows the action bar of the character as its only buttons and the highlight when selected', () => {
     render(true);
 
-    expect(damageButtons().map((b) => b.getAttribute('aria-label'))).toEqual([
+    expect(actionBar()?.getAttribute('aria-label')).toBe('Aktionen für Char a <&>');
+    expect(buttons().map((b) => b.getAttribute('aria-label'))).toEqual([
+      'Charakter editieren',
       'Schaden auf Leben',
       'Schaden auf Rüstung',
     ]);
+    expect(buttons().every((b) => actionBar()?.contains(b))).toBe(true);
     expect(token().classList).toContain('dungeon-token--selected');
   });
 
-  it.each<[string, DamageTypes]>([
-    ['Schaden auf Rüstung', DamageTypes.Normal],
-    ['Schaden auf Leben', DamageTypes.Critical],
-  ])('"%s" requests %s damage without reporting a selection', (label, damageType) => {
+  it('reports no selection for a click into the action bar', () => {
     render(true);
-    const requested: (type: DamageTypes) => void = vi.fn();
     const selectedSpy: (id: string) => void = vi.fn();
-    fixture.componentInstance.damageRequested.subscribe(requested);
     fixture.componentInstance.tokenSelected.subscribe(selectedSpy);
 
-    (host.querySelector(`button[aria-label="${label}"]`) as HTMLButtonElement).click();
+    actionBar()?.click();
 
-    expect(requested).toHaveBeenCalledExactlyOnceWith(damageType);
     expect(selectedSpy).not.toHaveBeenCalled();
   });
 
-  it('does not open the editor on a double click on the damage buttons', () => {
+  it('does not open the editor on a double click on the action bar', () => {
     render(true);
     const doubleClicked: (id: string) => void = vi.fn();
     fixture.componentInstance.tokenDoubleClicked.subscribe(doubleClicked);
 
-    damageButtons()[0].dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+    buttons()[0].dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
 
     expect(doubleClicked).not.toHaveBeenCalled();
+  });
+
+  it('scrolls the token and then its wider action bar into view if selected from the legend', () => {
+    fixture.componentRef.setInput('reveal', true);
+    render(true);
+
+    expect(scrolledElements()).toEqual([token(), actionBar()]);
+  });
+
+  it.each<[boolean, boolean]>([
+    [true, false],
+    [false, true],
+  ])('does not scroll otherwise (selected %s, reveal %s)', (sel, reveal) => {
+    fixture.componentRef.setInput('reveal', reveal);
+    render(sel);
+
+    expect(scrolledElements()).toEqual([]);
   });
 
   it('reports the selection on click and keeps the click away from the board', () => {

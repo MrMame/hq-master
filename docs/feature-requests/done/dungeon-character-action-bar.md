@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-25  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** done (2026-10-25 19:35)  
 **Bezug:** `REQUIREMENTS.md` (Dungeon Tracker), `.claude/rules/architecture.md` → „Verzeichnisstruktur“,
 `docs/feature-requests/done/dungeon-token-damage.md` #4, #5, #10, #11,
 `docs/feature-requests/done/character-editor-dialog.md`
@@ -55,7 +55,7 @@ Spielbrett (markiertes Token)              Legende (Seitenleiste)
 
 ## Anforderungen
 
-### 1. Gemeinsame Markierung in der Seite
+### 1. Gemeinsame Markierung in der Seite ✅ done (2026-10-25 19:35)
 
 - Die Markierung wandert aus `DungeonBoard` in `DungeonTrackerPage`. Sie bleibt reiner UI-Zustand: nicht
   Teil der Spielesession, nicht persistiert. Nach einem Reload ist nichts markiert.
@@ -78,7 +78,7 @@ immer dieselbe Markierung.
 
 ---
 
-### 2. Markieren über die Legende
+### 2. Markieren über die Legende ✅ done (2026-10-25 19:35)
 
 - `DungeonLegendEntry` bekommt den Input `selected: boolean` und einen Output, z. B.
   `selectionToggled: void`.
@@ -100,7 +100,7 @@ Tipp hebt beides auf. Ein Tipp auf die Werte trägt weiterhin nur Schaden ein.
 
 ---
 
-### 3. Menüleiste `CharacterActionBar`
+### 3. Menüleiste `CharacterActionBar` ✅ done (2026-10-25 19:35)
 
 - Neue Komponente per CLI: `ng g c features/dungeon-tracker/components/character-action-bar` →
   `CharacterActionBar` (im Dungeon Tracker, weil beide Nutzer dort liegen, wie bei `CharacterStatus`).
@@ -139,7 +139,7 @@ wie ein Doppelklick aufs Token. Die beiden Schadens-Buttons verhalten sich wie d
 
 ---
 
-### 4. Menüleiste am Token
+### 4. Menüleiste am Token ✅ done (2026-10-25 19:35)
 
 - `DungeonToken` zeigt bei `selected()` statt der beiden Schadens-Buttons die `CharacterActionBar`,
   mittig unter der Werteleiste.
@@ -158,7 +158,7 @@ Tokens nichts.
 
 ---
 
-### 5. Menüleiste in der Legende
+### 5. Menüleiste in der Legende ✅ done (2026-10-25 19:35)
 
 - `DungeonLegendEntry` zeigt bei `selected()` die `CharacterActionBar` unter der Zeile. Sie beginnt
   bündig mit dem Namen, ist also um Bildbreite und Abstand eingerückt
@@ -170,7 +170,7 @@ Tokens nichts.
 
 ---
 
-### 6. Zum markierten Charakter scrollen
+### 6. Zum markierten Charakter scrollen ✅ done (2026-10-25 19:35)
 
 - **Auswahl über die Legende** (Quelle `legend`): Liegt das Token außerhalb des sichtbaren
   Brettausschnitts (Zoom über 100 %), scrollt das Brett so weit, dass Token und Leiste sichtbar sind. Ist
@@ -190,7 +190,7 @@ Brett, und umgekehrt.
 
 ---
 
-### 7. Tests
+### 7. Tests ✅ done (2026-10-25 19:35)
 
 - `character-action-bar.spec.ts`:
   - Drei Buttons in der Reihenfolge Editieren, Leben, Rüstung, mit `aria-label`s, Icons und dem
@@ -224,7 +224,7 @@ Brett, und umgekehrt.
 
 ---
 
-### 8. E2E
+### 8. E2E ✅ done (2026-10-25 19:35)
 
 - `e2e/dungeon-damage.spec.ts` anpassen: Der erste Test nutzt die Schadens-Buttons der Leiste am Token
   (Locator auf die Toolbar des Tokens). Ablauf und Werte bleiben gleich. Der Schnellschaden über die
@@ -240,7 +240,7 @@ Brett, und umgekehrt.
 
 ---
 
-### 9. Dokumentation
+### 9. Dokumentation ✅ done (2026-10-25 19:35)
 
 - `REQUIREMENTS.md`, Dungeon Tracker: Die Sätze zur Markierung und zu den Schadens-Buttons ersetzen,
   z. B.: „Ein Klick auf ein Charaktersymbol oder auf seinen Eintrag in der Legende markiert den
@@ -253,6 +253,17 @@ Brett, und umgekehrt.
 - `.claude/rules/architecture.md`: `CharacterActionBar` unter `dungeon-tracker/components/`,
   `character-selection.model.ts` unter `dungeon-tracker/models/`; bei `DungeonTrackerPage` „Markierung“
   ergänzen.
+
+---
+
+### 10. Ungenutzte Material-Icons-Schrift entfernen (ergänzt 2026-10-25) ✅ done (2026-10-25 19:35)
+
+- `src/index.html` lud die Schrift `https://fonts.googleapis.com/icon?family=Material+Icons`. Keine
+  Komponente nutzt sie (kein `mat-icon`, keine Klasse `material-icons`). Der Link entfällt.
+- Icons kommen weiterhin als SVG aus `public/img/` (siehe #3 und Hinweis „Icon offline“).
+
+**Erwartetes Verhalten:** Die App lädt die Icon-Schrift nicht mehr; Aussehen und Verhalten bleiben
+unverändert.
 
 ---
 
@@ -270,8 +281,8 @@ Brett, und umgekehrt.
   - Am Token höchstens 4 Buttons je Reihe.
   - Die Leiste löst ihre Befehle selbst aus.
   - In der Legende ist die Leiste bündig mit dem Namen.
-- **Icon offline:** `index.html` lädt die Material-Icons-Schrift von Google Fonts, sie wird aber nirgends
-  genutzt. Die App hat keinen Service Worker. Ohne Internet am Spieltisch zeigte ein Schrift-Icon das
+- **Icon offline:** `index.html` lud die Material-Icons-Schrift von Google Fonts, sie wurde aber nirgends
+  genutzt (mit #10 entfernt). Die App hat keinen Service Worker. Ohne Internet am Spieltisch zeigte ein Schrift-Icon das
   Wort „edit“ statt des Stifts. Deshalb liegt das Icon als SVG unter `public/img/`. Spätere Icons für
   die Leiste kommen auf dieselbe Weise dazu.
 - **Gleich benannte Buttons:** In der markierten Legendenzeile heißen Werte-Button und Leisten-Button
@@ -283,25 +294,32 @@ Brett, und umgekehrt.
   Schadensaufruf und bekommt nur Input und Output; das Scrollen liegt bei Token und Legendeneintrag
   (#6). `dungeon-tracker-page.html` hat 119 Zeilen. `dungeon-board-tokens.spec.ts` (142) und
   `dungeon-token.spec.ts` (137) liegen nahe am Limit, bei Bedarf nach Aspekt aufteilen.
+- **Umsetzung Scrollen (2026-10-25):** Die Menüleiste am Token ist breiter als das 40 px breite Token.
+  Das Token scrollt deshalb erst sich selbst (Höhe samt Leiste) und dann die Leiste (volle Breite) per
+  `scrollIntoViewIfNeeded()` ins Bild. Die Probe zeigte vorher bei Zoom 400 % eine rechts abgeschnittene
+  Leiste.
+- **Hervorhebung (2026-10-25):** Der Hintergrund des markierten Legendeneintrags ist `--color-gray-700`
+  zu 60 % statt voll, damit der graue Hover der Werte-Buttons sichtbar bleibt.
 
 ---
 
 ## Akzeptanzkriterien
 
-- [ ] Ein Klick oder Tipp auf einen Legendeneintrag (Bild, Name, Position) markiert Eintrag und Token; ein zweiter hebt beides auf
-- [ ] Ein Klick aufs Token markiert auch den Legendeneintrag; ein Klick aufs freie Brett hebt beide Markierungen auf
-- [ ] Ein Klick auf Leben oder Rüstung in der Legende öffnet weiterhin direkt den Schadensdialog und ändert die Markierung nicht
-- [ ] Der markierte Legendeneintrag ist hervorgehoben (gelbe Kante, hellerer Hintergrund) und per `aria-current` erkennbar
-- [ ] Unter markiertem Token und markiertem Legendeneintrag erscheint dieselbe `CharacterActionBar` mit Editieren (grau), Leben (rot), Rüstung (blau)
-- [ ] „Charakter editieren“ öffnet den Editor mit dem markierten Charakter; das Icon kommt aus `public/img/edit.svg`
-- [ ] Die Schadens-Buttons der Leiste tragen Schaden wie bisher ein; die alten Buttons am Token und `DungeonToken.damageRequested` gibt es nicht mehr
-- [ ] Am Token stehen höchstens 4 Buttons je Reihe; in der Legende beginnt die Leiste bündig mit dem Namen
-- [ ] Ein Klick in der Leiste ändert die Markierung nicht, startet kein Ziehen und öffnet keinen zusätzlichen Editor
-- [ ] Doppelklick aufs Token und Drag & Drop funktionieren wie bisher
-- [ ] Auswahl über die Legende scrollt das Brett zum Token, Auswahl über das Token scrollt die Legende zum Eintrag, jeweils nur wenn nötig
-- [ ] Die Markierung wird nicht persistiert und verschwindet mit dem Charakter
-- [ ] Keine neuen Tokens, keine Kopie von Charakterwerten, keine Änderung an `CharacterInfo`
-- [ ] Jede Datei hat höchstens 150 Zeilen; die Specs prüfen das Verhalten über DOM und Harnesses
-- [ ] E2E für PC und Tablet grün; Scrollen per Playwright-Probe geprüft
-- [ ] `REQUIREMENTS.md` und `architecture.md` sind angepasst
-- [ ] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün
+- [x] Ein Klick oder Tipp auf einen Legendeneintrag (Bild, Name, Position) markiert Eintrag und Token; ein zweiter hebt beides auf
+- [x] Ein Klick aufs Token markiert auch den Legendeneintrag; ein Klick aufs freie Brett hebt beide Markierungen auf
+- [x] Ein Klick auf Leben oder Rüstung in der Legende öffnet weiterhin direkt den Schadensdialog und ändert die Markierung nicht
+- [x] Der markierte Legendeneintrag ist hervorgehoben (gelbe Kante, hellerer Hintergrund) und per `aria-current` erkennbar
+- [x] Unter markiertem Token und markiertem Legendeneintrag erscheint dieselbe `CharacterActionBar` mit Editieren (grau), Leben (rot), Rüstung (blau)
+- [x] „Charakter editieren“ öffnet den Editor mit dem markierten Charakter; das Icon kommt aus `public/img/edit.svg`
+- [x] Die Schadens-Buttons der Leiste tragen Schaden wie bisher ein; die alten Buttons am Token und `DungeonToken.damageRequested` gibt es nicht mehr
+- [x] Am Token stehen höchstens 4 Buttons je Reihe; in der Legende beginnt die Leiste bündig mit dem Namen
+- [x] Ein Klick in der Leiste ändert die Markierung nicht, startet kein Ziehen und öffnet keinen zusätzlichen Editor
+- [x] Doppelklick aufs Token und Drag & Drop funktionieren wie bisher
+- [x] Auswahl über die Legende scrollt das Brett zum Token, Auswahl über das Token scrollt die Legende zum Eintrag, jeweils nur wenn nötig
+- [x] Die Markierung wird nicht persistiert und verschwindet mit dem Charakter
+- [x] Keine neuen Tokens, keine Kopie von Charakterwerten, keine Änderung an `CharacterInfo`
+- [x] Jede Datei hat höchstens 150 Zeilen; die Specs prüfen das Verhalten über DOM und Harnesses
+- [x] E2E für PC und Tablet grün; Scrollen per Playwright-Probe geprüft
+- [x] `REQUIREMENTS.md` und `architecture.md` sind angepasst
+- [x] `index.html` lädt die ungenutzte Material-Icons-Schrift nicht mehr
+- [x] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün

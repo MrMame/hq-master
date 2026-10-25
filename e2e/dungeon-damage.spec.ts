@@ -13,6 +13,11 @@ function token(page: Page): Locator {
   return page.locator('app-dungeon-token');
 }
 
+/** Menüleiste unter dem markierten Token. */
+function tokenActionBar(page: Page): Locator {
+  return token(page).getByRole('toolbar', { name: 'Aktionen für Ork' });
+}
+
 function legendEntry(page: Page): Locator {
   return page.locator('aside app-dungeon-legend-entry');
 }
@@ -25,13 +30,13 @@ async function expectValues(page: Page, health: string, armor: string): Promise<
   }
 }
 
-/** Öffnet über einen Button (Token oder Legende) den Dialog und wählt den Schadenswert. */
+/** Öffnet über einen Button (Menüleiste am Token oder Wert in der Legende) den Dialog und wählt den Wert. */
 async function hit(
   page: Page,
   press: Press,
   button: string,
   value: number,
-  scope: Locator = token(page),
+  scope: Locator = tokenActionBar(page),
 ): Promise<void> {
   await press(scope.getByRole('button', { name: button }));
   const dialog: Locator = page.getByRole('dialog', { name: `${button}: Ork` });
@@ -43,7 +48,7 @@ for (const device of INPUT_DEVICES) {
   test.describe(`damage on ${device.name}`, () => {
     test.use(device.touch ? { viewport: { width: 1024, height: 768 }, hasTouch: true } : {});
 
-    test('damage via the token buttons changes token and legend and survives a reload', async ({
+    test('damage via the action bar at the token changes token and legend and survives a reload', async ({
       page,
     }) => {
       await createCharacter(page, 'Ork', { health: 20, armor: 5 });
@@ -74,6 +79,7 @@ for (const device of INPUT_DEVICES) {
       await hit(page, device.press, 'Schaden auf Rüstung', 7, legendEntry(page));
       await expectValues(page, '14', '0');
       await expect(token(page).getByRole('button')).toHaveCount(0);
+      await expect(page.getByRole('toolbar')).toHaveCount(0);
     });
   });
 }

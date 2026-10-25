@@ -1,10 +1,26 @@
+/* Die ganze Zeile ist Klickfläche für die Markierung. */
 :host {
+  display: block;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  cursor: pointer;
+}
+
+/*
+ * Markiert: gelbe Kante wie der Ring am Token, ohne den Inhalt zu verschieben. Der Grund bleibt unter
+ * --color-gray-700, damit der Hover der Werte und der graue Editieren-Button sichtbar bleiben.
+ */
+:host(.legend-entry--selected) {
+  box-shadow: inset 2px 0 0 var(--color-yellow-400);
+  background-color: color-mix(in oklab, var(--color-gray-700) 60%, transparent);
+}
+
+.legend-entry__row {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding-block: var(--space-1);
-  font-size: var(--text-xs);
-  line-height: var(--text-xs--line-height);
 }
 
 .legend-entry__avatar {
@@ -31,4 +47,10 @@
 
 .legend-entry__position {
   color: var(--color-gray-500);
+}
+
+/* Bündig mit dem Namen: um Bildbreite und Abstand eingerückt. */
+.legend-entry__actions {
+  margin-top: var(--space-1);
+  margin-left: calc(var(--space-6) + var(--space-2));
 }

@@ -1,17 +1,21 @@
 import {
+  afterRenderEffect,
   Component,
   computed,
+  ElementRef,
   input,
   output,
   InputSignal,
   OutputEmitterRef,
   Signal,
+  viewChild,
 } from '@angular/core';
 import { CdkDrag, CdkDragEnd, CdkDragHandle, Point } from '@angular/cdk/drag-drop';
 import { CharacterInfo } from '../../../../core/models/character-info.model';
-import { DamageTypes } from '../../../../core/models/damage-types.model';
 import { DungeonPosition } from '../../models/dungeon-position.model';
+import { scrollIntoViewIfNeeded } from '../../utils/scroll-into-view.util';
 import { CharacterStatus } from '../character-status/character-status';
+import { CharacterActionBar } from '../character-action-bar/character-action-bar';
 
 /** Kantenlänge des runden Porträts; muss zu `--space-10` in `dungeon-token.css` passen. */
 export const TOKEN_PORTRAIT_SIZE_PX: number = 40;
@@ -19,7 +23,7 @@ export const TOKEN_PORTRAIT_SIZE_PX: number = 40;
 @Component({
   selector: 'app-dungeon-token',
   standalone: true,
-  imports: [CdkDrag, CdkDragHandle, CharacterStatus],
+  imports: [CdkDrag, CdkDragHandle, CharacterStatus, CharacterActionBar],
   templateUrl: './dungeon-token.html',
   styleUrl: './dungeon-token.css',
 })
@@ -30,6 +34,8 @@ export class DungeonToken {
   offsetX: InputSignal<number> = input<number>(0);
   offsetY: InputSignal<number> = input<number>(0);
   selected: InputSignal<boolean> = input<boolean>(false);
+  /** Kam die Markierung aus der Legende, scrollt das markierte Token ins Bild. */
+  reveal: InputSignal<boolean> = input<boolean>(false);
   /** Maßstab der Spielfläche: Bildschirm-Pixel je Einheit. */
   scale: InputSignal<number> = input<number>(1);
 
@@ -40,9 +46,13 @@ export class DungeonToken {
   }>();
   tokenDoubleClicked: OutputEmitterRef<string> = output<string>();
   tokenSelected: OutputEmitterRef<string> = output<string>();
-  damageRequested: OutputEmitterRef<DamageTypes> = output<DamageTypes>();
 
-  protected readonly damageTypes: typeof DamageTypes = DamageTypes;
+  private readonly tokenElement: Signal<ElementRef<HTMLElement>> =
+    viewChild.required('tokenElement');
+  private readonly actionBar: Signal<ElementRef<HTMLElement> | undefined> = viewChild(
+    CharacterActionBar,
+    { read: ElementRef },
+  );
 
   /**
    * Ob gerade gezogen wurde; der Klick, mit dem ein Maus-Drag endet, markiert dann nicht.
@@ -65,6 +75,16 @@ export class DungeonToken {
   );
 
   initials: Signal<string> = computed(() => this.character().name.slice(0, 2).toUpperCase());
+
+  constructor() {
+    // Erst nach dem Rendern, damit die Menüleiste schon steht. Das Token deckt die Höhe samt Leiste
+    // ab, die breitere Leiste danach ihre volle Breite.
+    afterRenderEffect(() => {
+      if (!this.selected() || !this.reveal()) return;
+      const actionBar: HTMLElement | undefined = this.actionBar()?.nativeElement;
+      scrollIntoViewIfNeeded(this.tokenElement().nativeElement, ...(actionBar ? [actionBar] : []));
+    });
+  }
 
   /** Der Klick erreicht das Spielbrett nicht, sonst höbe es die Markierung gleich wieder auf. */
   onClick(event: MouseEvent): void {

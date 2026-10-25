@@ -1,0 +1,53 @@
+/* Dunkler Grund wie die Werteleiste am Token; Breite und Umbruch legt der Einbettende fest. */
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-1);
+  width: fit-content;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  background-color: color-mix(in oklab, var(--color-gray-900) 80%, transparent);
+}
+
+/* Mindestens 24 px, damit die Buttons auf dem Tablet sicher antippbar sind. */
+.character-action-bar__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.character-action-bar__button--edit {
+  background-color: var(--color-gray-700);
+
+  &:hover {
+    background-color: var(--color-gray-600);
+  }
+}
+
+.character-action-bar__button--health {
+  background-color: var(--color-red-600);
+
+  &:hover {
+    background-color: var(--color-red-700);
+  }
+}
+
+.character-action-bar__button--armor {
+  background-color: var(--color-blue-600);
+
+  &:hover {
+    background-color: var(--color-blue-700);
+  }
+}
+
+.character-action-bar__icon {
+  width: var(--space-4);
+  height: var(--space-4);
+}

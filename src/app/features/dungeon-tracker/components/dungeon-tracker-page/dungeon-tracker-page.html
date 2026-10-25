@@ -14,7 +14,10 @@
       @for (token of tokens(); track token.position.characterId) {
         <app-dungeon-legend-entry
           [token]="token"
+          [selected]="activeSelection()?.characterId === token.position.characterId"
+          [reveal]="activeSelection()?.source === 'board'"
           (damageRequested)="onDamageRequested(token.character, $event)"
+          (selectionToggled)="onLegendSelectionToggled(token.position.characterId)"
         />
       }
       @if (tokens().length === 0) {
@@ -115,5 +118,9 @@
   </aside>
 
   <!-- Hauptbereich: Spielbrett (zoombar, scrollt für sich) -->
-  <app-dungeon-board [zoom]="zoom()" />
+  <app-dungeon-board
+    [zoom]="zoom()"
+    [selection]="activeSelection()"
+    (selectionChange)="onBoardSelectionChange($event)"
+  />
 </div>

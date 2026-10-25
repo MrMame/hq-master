@@ -1,4 +1,4 @@
-import { Component, inject, Signal, signal, WritableSignal } from '@angular/core';
+import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { CharacterEditorService } from '../../../../shared/services/character-editor.service';
 import { CharacterDamageService } from '../../../../shared/services/character-damage.service';
 import { CharacterInfo } from '../../../../core/models/character-info.model';
@@ -6,6 +6,7 @@ import { DamageTypes } from '../../../../core/models/damage-types.model';
 import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { DungeonBoardState } from '../../models/dungeon-board-state.model';
 import { BoardToken } from '../../models/board-token.model';
+import { CharacterSelection } from '../../models/character-selection.model';
 import { DungeonBoard } from '../dungeon-board/dungeon-board';
 import { DungeonLegendEntry } from '../dungeon-legend-entry/dungeon-legend-entry';
 
@@ -26,6 +27,29 @@ export class DungeonTrackerPage {
 
   /** Zoomstufe des Spielbretts: reiner Anzeigezustand, wird nicht gespeichert. */
   readonly zoom: WritableSignal<number> = signal<number>(1);
+
+  /** Eine Markierung für Spielbrett und Legende: reiner UI-Zustand, wird nicht gespeichert. */
+  private readonly selection: WritableSignal<CharacterSelection | null> =
+    signal<CharacterSelection | null>(null);
+
+  /** Die Markierung gilt nur, solange es den Charakter noch gibt. */
+  readonly activeSelection: Signal<CharacterSelection | null> = computed(() => {
+    const selection: CharacterSelection | null = this.selection();
+    return this.tokens().some((t) => t.position.characterId === selection?.characterId)
+      ? selection
+      : null;
+  });
+
+  /** Klick aufs Token markiert (ohne Umschalten, wegen des Doppelklicks), freie Stelle hebt auf. */
+  onBoardSelectionChange(characterId: string | null): void {
+    this.selection.set(characterId ? { characterId, source: 'board' } : null);
+  }
+
+  /** In der Legende schaltet ein Klick die Markierung um. */
+  onLegendSelectionToggled(characterId: string): void {
+    const isSelected: boolean = this.activeSelection()?.characterId === characterId;
+    this.selection.set(isSelected ? null : { characterId, source: 'legend' });
+  }
 
   onImageUpload(event: Event): void {
     const input: HTMLInputElement = event.target as HTMLInputElement;

@@ -8,6 +8,8 @@ import {
   inject,
   input,
   InputSignal,
+  output,
+  OutputEmitterRef,
   Signal,
   signal,
   viewChild,
@@ -15,12 +17,11 @@ import {
 } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { CharacterEditorService } from '../../../../shared/services/character-editor.service';
-import { CharacterDamageService } from '../../../../shared/services/character-damage.service';
 import { CharacterInfo } from '../../../../core/models/character-info.model';
-import { DamageTypes } from '../../../../core/models/damage-types.model';
 import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { DungeonBoardState } from '../../models/dungeon-board-state.model';
 import { BoardToken } from '../../models/board-token.model';
+import { CharacterSelection } from '../../models/character-selection.model';
 import { Size } from '../../models/size.model';
 import { fitScale, stageSize } from '../../utils/board-scale.util';
 import { gridStyle, GridStyle } from '../../utils/grid-style.util';
@@ -40,7 +41,6 @@ import { DungeonToken } from '../dungeon-token/dungeon-token';
 export class DungeonBoard {
   private readonly dungeonBoardService: DungeonBoardService = inject(DungeonBoardService);
   private readonly characterEditor: CharacterEditorService = inject(CharacterEditorService);
-  private readonly characterDamage: CharacterDamageService = inject(CharacterDamageService);
   private readonly viewport: Signal<ElementRef<HTMLElement>> = viewChild.required('viewport');
 
   /** Zoomstufe aus der Sidebar; 1 = die ganze Spielfläche ist sichtbar. */
@@ -49,14 +49,13 @@ export class DungeonBoard {
   readonly boardState: Signal<DungeonBoardState> = this.dungeonBoardService.boardState;
   readonly tokens: Signal<BoardToken[]> = this.dungeonBoardService.tokens;
 
-  /** Markiertes Token: reiner UI-Zustand, gehört nicht zur Spielesession. */
-  readonly selectedCharacterId: WritableSignal<string | null> = signal<string | null>(null);
+  /** Markierung der Seite; gilt nur für noch vorhandene Charaktere (prüft die Seite). */
+  readonly selection: InputSignal<CharacterSelection | null> = input<CharacterSelection | null>(
+    null,
+  );
 
-  /** Die Markierung gilt nur, solange es den Charakter noch gibt. */
-  readonly selectedId: Signal<string | null> = computed(() => {
-    const id: string | null = this.selectedCharacterId();
-    return this.tokens().some((t) => t.position.characterId === id) ? id : null;
-  });
+  /** Angeklicktes Token bzw. `null` für einen Klick auf eine freie Stelle. */
+  readonly selectionChange: OutputEmitterRef<string | null> = output<string | null>();
 
   /** Natürliche Größe des geladenen Fotos, gemeldet vom `load`-Event des Bildes. */
   private readonly photoSize: WritableSignal<Size | null> = signal<Size | null>(null);
@@ -116,10 +115,5 @@ export class DungeonBoard {
   /** Der Editor speichert selbst; Token und Legende folgen über `tokens` sofort. */
   onTokenDoubleClick(character: CharacterInfo): void {
     this.characterEditor.openEdit(character);
-  }
-
-  /** Der Service schreibt den Treffer; Token und Legende folgen über `tokens` sofort. */
-  onDamageRequested(character: CharacterInfo, damageType: DamageTypes): void {
-    this.characterDamage.requestDamage(character, damageType);
   }
 }
