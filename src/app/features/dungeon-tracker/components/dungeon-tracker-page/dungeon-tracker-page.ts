@@ -8,13 +8,14 @@ import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { DungeonBoardState } from '../../models/dungeon-board-state.model';
 import { BoardToken } from '../../models/board-token.model';
 import { CharacterSelection } from '../../models/character-selection.model';
+import { BoardZoomControl } from '../board-zoom-control/board-zoom-control';
 import { DungeonBoard } from '../dungeon-board/dungeon-board';
 import { DungeonLegendEntry } from '../dungeon-legend-entry/dungeon-legend-entry';
 
 @Component({
   selector: 'app-dungeon-tracker-page',
   standalone: true,
-  imports: [CollapsibleSidebar, DungeonBoard, DungeonLegendEntry],
+  imports: [BoardZoomControl, CollapsibleSidebar, DungeonBoard, DungeonLegendEntry],
   templateUrl: './dungeon-tracker-page.html',
   styleUrl: './dungeon-tracker-page.css',
 })

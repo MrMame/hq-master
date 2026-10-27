@@ -32,8 +32,9 @@ core/
 
 features/
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung (Startseite)
-    components/        → DungeonTrackerPage (Sidebar, Zoom, Markierung für Brett und Legende),
-                         DungeonBoard (zoombare Spielfläche mit Foto, Raster, Tokens), DungeonToken,
+    components/        → DungeonTrackerPage (Sidebar, Schnellzugriffsleiste mit „+“ und Zoom, Markierung für Brett und Legende),
+                         DungeonBoard (zoombare Spielfläche mit Foto, Raster, Tokens),
+                         BoardZoomControl (senkrechter Zoom-Regler in der Schnellzugriffsleiste links neben dem Brett), DungeonToken,
                          DungeonLegendEntry (Legendeneintrag),
                          CharacterStatus (Leben/Rüstung an Token und Legende, später Statuseffekte),
                          CharacterActionBar (Menüleiste des markierten Charakters an Token und Legende;

@@ -2,6 +2,18 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-27 17:53) - Feature: „Neuer Charakter“ in der Schnellzugriffsleiste (quick-access-new-character #1–#4)
+
+- **Was wurde gemacht:** Der Streifen links neben dem Spielbrett ist jetzt die Schnellzugriffsleiste (`.quick-access`): oben ein quadratischer „+“-Button (`aria-label`/`title` „Neuer Charakter“, öffnet `openCreate()`), darunter der Zoom-Regler. Der Button in der Seitenleiste entfällt. Request vollständig umgesetzt und nach `done/` verschoben.
+- **Dateien geändert:** `dungeon-tracker-page.html/.css` + `.spec.ts` + `-interactions.spec.ts`, `e2e/support/create-character.ts`, `e2e/character-editor.spec.ts`, `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/done/quick-access-new-character.md`
+- **Wichtige Entscheidung:** Button direkt im Seiten-Template statt eigener Komponente. Aufbau-Prüfungen in die Basis-Spec verschoben, damit die Interactions-Spec unter 150 Zeilen bleibt. „+“ in `--text-xl` als größeres Touch-Ziel. Probe vorher 2× rot, nachher grün; 453 Tests (geänderte Dateien 100 %), Lint, Build und e2e (24) grün.
+
+### (2026-10-27 17:44) - Feature: Zoom-Regler am Spielbrett (board-zoom-control #1–#4)
+
+- **Was wurde gemacht:** Neue Komponente `BoardZoomControl` (senkrechter Range-Input, oben = größer, Prozentanzeige, `model()`-Bindung an den Zoom der Seite). Sie sitzt in einem schmalen Streifen links neben dem Spielbrett (`.board-area`); der Zoom-Regler in den Raster-Einstellungen der Seitenleiste entfällt. Request vollständig umgesetzt und nach `done/` verschoben.
+- **Dateien geändert:** `board-zoom-control/*` (neu), `dungeon-tracker-page.ts/.html/.css` + `-interactions.spec.ts`, `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/done/board-zoom-control.md`
+- **Wichtige Entscheidung:** Zuerst lag der Regler absolut über dem Brett; dort verdeckte er Feld [0,0], auf dem neue Charaktere landen, und vier Tablet-E2E-Tests konnten das Token nicht antippen. Nach Rückfrage jetzt ein eigener Streifen statt Überlagerung. Zoom bleibt ungespeichert. Probe vorher 2× rot, nachher 6× grün; 453 Tests (geänderte Dateien 100 %), Lint, Build und e2e (24) grün.
+
 ### (2026-10-27 17:23) - Feature: Seitenleiste ein- und ausklappen (collapsible-sidebar #1–#5)
 
 - **Was wurde gemacht:** Neue Shared-Komponente `CollapsibleSidebar` rendert die `.general-sidebar` mit dem Seiteninhalt und einen schmalen Griff am rechten Rand (`‹`/`›`, `aria-expanded`/`-controls`/`-label`). Eingeklappt blendet CSS die Leiste aus; der Inhalt bleibt im DOM. Dungeon Tracker und Card Manager nutzen die Komponente. Request vollständig umgesetzt und nach `done/` verschoben.

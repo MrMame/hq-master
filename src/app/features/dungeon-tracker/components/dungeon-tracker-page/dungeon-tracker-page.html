@@ -8,9 +8,6 @@
       <h3 class="general-sidebar__heading general-sidebar__heading--spaced">
         Charaktere ({{ tokens().length }})
       </h3>
-      <button class="general-sidebar__button new-character-button" (click)="onNewCharacterClick()">
-        Neuer Charakter
-      </button>
       @for (token of tokens(); track token.position.characterId) {
         <app-dungeon-legend-entry
           [token]="token"
@@ -49,19 +46,6 @@
         Raster-Einstellungen
       </h3>
       <div class="grid-settings">
-        <label class="grid-setting">
-          Zoom: {{ (zoom() * 100).toFixed(0) }}%
-          <input
-            type="range"
-            min="1"
-            max="4"
-            step="0.1"
-            [value]="zoom()"
-            (input)="zoom.set(+$any($event.target).value)"
-            class="grid-setting__slider"
-          />
-        </label>
-
         <label class="grid-setting">
           Zellgröße: {{ boardState().gridCellSizePx }}px
           <input
@@ -117,10 +101,24 @@
     </div>
   </app-collapsible-sidebar>
 
-  <!-- Hauptbereich: Spielbrett (zoombar, scrollt für sich) -->
-  <app-dungeon-board
-    [zoom]="zoom()"
-    [selection]="activeSelection()"
-    (selectionChange)="onBoardSelectionChange($event)"
-  />
+  <!-- Hauptbereich: Schnellzugriffsleiste im schmalen Streifen links, daneben das Spielbrett (zoombar, scrollt für sich) -->
+  <div class="board-area">
+    <div class="quick-access">
+      <button
+        type="button"
+        class="quick-access__button"
+        aria-label="Neuer Charakter"
+        title="Neuer Charakter"
+        (click)="onNewCharacterClick()"
+      >
+        +
+      </button>
+      <app-board-zoom-control [(zoom)]="zoom" />
+    </div>
+    <app-dungeon-board
+      [zoom]="zoom()"
+      [selection]="activeSelection()"
+      (selectionChange)="onBoardSelectionChange($event)"
+    />
+  </div>
 </div>

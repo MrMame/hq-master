@@ -10,6 +10,45 @@
   color: var(--color-white);
 }
 
+/* Schnellzugriffsleiste plus Spielbrett; die Leiste liegt neben dem Scroll-Container, scrollt nicht mit und verdeckt kein Feld. */
+.board-area {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Häufige Befehle von oben nach unten; spätere Schnellbefehle kommen hier dazu. */
+.quick-access {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-1);
+}
+
+.quick-access__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-10);
+  height: var(--space-10);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-yellow-500);
+  color: var(--color-black);
+  font-size: var(--text-xl);
+  line-height: var(--text-xl--line-height);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition-property: background-color;
+  transition-duration: var(--transition-duration);
+  transition-timing-function: var(--transition-ease);
+
+  &:hover {
+    background-color: var(--color-yellow-400);
+  }
+}
+
 .upload-status {
   margin-top: var(--space-1);
   color: var(--color-green-400);
@@ -36,10 +75,6 @@
 }
 
 /* Charakter-Legende */
-.new-character-button {
-  margin-bottom: var(--space-2);
-}
-
 .legend-empty {
   color: var(--color-gray-500);
   font-size: var(--text-xs);

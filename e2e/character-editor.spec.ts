@@ -60,7 +60,7 @@ test('"Neuer Charakter" adds a character as token and legend entry', async ({ pa
   await page.goto('/dungeontracker');
   await expect(page.locator('app-dungeon-token')).toHaveCount(0);
 
-  await sidebar(page).getByRole('button', { name: 'Neuer Charakter' }).click();
+  await page.getByRole('button', { name: 'Neuer Charakter' }).click();
   await expect(editor(page).getByRole('heading', { name: 'Neuer Charakter' })).toBeVisible();
   await editor(page).getByLabel('Name').fill('Neuling');
   await editor(page).getByRole('button', { name: 'Bild 1', exact: true }).click();
@@ -76,7 +76,7 @@ test('"Zufälliger Charakter erstellen" adds a random character as token and leg
   page,
 }) => {
   await page.goto('/dungeontracker');
-  await sidebar(page).getByRole('button', { name: 'Neuer Charakter' }).click();
+  await page.getByRole('button', { name: 'Neuer Charakter' }).click();
   await editor(page).getByRole('button', { name: 'Zufälliger Charakter erstellen' }).click();
   // ngModel schreibt den gewürfelten Namen asynchron ins Feld.
   await expect(editor(page).getByLabel('Name')).not.toHaveValue('');

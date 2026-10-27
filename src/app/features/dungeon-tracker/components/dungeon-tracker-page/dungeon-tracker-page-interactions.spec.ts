@@ -11,7 +11,6 @@ import { DungeonBoardState } from '../../models/dungeon-board-state.model';
 import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { DamageTypes } from '../../../../core/models/damage-types.model';
 import { createTestCharacter } from '../../../../core/testing/character.fixtures';
-import { clickButton } from '../../../../shared/testing/click-button';
 
 type GridSetting = 'gridCellSizePx' | 'gridOffsetX' | 'gridOffsetY' | 'gridOpacity';
 
@@ -50,12 +49,11 @@ describe('DungeonTrackerPage – interactions', () => {
     fileInput().dispatchEvent(new Event('change'));
   };
 
-  const slide: (index: number, value: string) => Promise<void> = async (
-    index: number,
+  const slide: (selector: string, value: string) => Promise<void> = async (
+    selector: string,
     value: string,
   ): Promise<void> => {
-    const slider: HTMLInputElement =
-      host.querySelectorAll<HTMLInputElement>('input[type="range"]')[index];
+    const slider: HTMLInputElement = host.querySelector<HTMLInputElement>(selector)!;
     slider.value = value;
     slider.dispatchEvent(new Event('input'));
     await fixture.whenStable();
@@ -81,18 +79,19 @@ describe('DungeonTrackerPage – interactions', () => {
     expect(host.textContent).toContain('Kein Spielbrett geladen');
   });
 
-  it('zooms only the board with the first slider, without saving the zoom', async () => {
+  it('zooms only the board with the slider above the board, without saving the zoom', async () => {
     const before: DungeonBoardState = board.boardState();
     const boardZoom: () => number = (): number =>
       (
         fixture.debugElement.query(By.directive(DungeonBoard)).componentInstance as DungeonBoard
       ).zoom();
-    expect(host.textContent).toContain('Zoom: 100%');
+    const zoomControl: Element = host.querySelector('.board-area app-board-zoom-control')!;
+    expect(zoomControl.textContent).toContain('100 %');
     expect(boardZoom()).toBe(1);
 
-    await slide(0, '2.5');
+    await slide('input[aria-label="Zoom"]', '2.5');
 
-    expect(host.textContent).toContain('Zoom: 250%');
+    expect(zoomControl.textContent).toContain('250 %');
     expect(boardZoom()).toBe(2.5);
     expect(board.boardState()).toBe(before);
   });
@@ -102,16 +101,16 @@ describe('DungeonTrackerPage – interactions', () => {
     [2, 'gridOffsetX', '-10', -10],
     [3, 'gridOffsetY', '15', 15],
     [4, 'gridOpacity', '0.5', 0.5],
-  ])('slider %i changes only %s', async (index, key, rawValue, expected) => {
+  ])('sidebar slider %i changes only %s', async (index, key, rawValue, expected) => {
     const before: DungeonBoardState = board.boardState();
 
-    await slide(index, rawValue);
+    await slide(`aside .grid-setting:nth-child(${index}) input`, rawValue);
 
     expect(board.boardState()).toEqual({ ...before, [key]: expected });
   });
 
-  it('opens the character editor for a new character on "Neuer Charakter"', () => {
-    clickButton(host, 'Neuer Charakter');
+  it('opens the character editor for a new character with the "+" in the quick access bar', () => {
+    host.querySelector<HTMLElement>('.quick-access button[aria-label="Neuer Charakter"]')!.click();
 
     expect(openCreate).toHaveBeenCalledExactlyOnceWith();
     expect(openEdit).not.toHaveBeenCalled();

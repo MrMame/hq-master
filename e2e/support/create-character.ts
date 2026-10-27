@@ -13,7 +13,7 @@ export async function createCharacter(
   values: CharacterStartValues = {},
 ): Promise<void> {
   await page.goto('/dungeontracker');
-  await page.locator('aside').getByRole('button', { name: 'Neuer Charakter' }).click();
+  await page.getByRole('button', { name: 'Neuer Charakter' }).click();
 
   const editor: Locator = page.getByRole('dialog', { name: 'Neuer Charakter' });
   await editor.getByLabel('Name').fill(name);

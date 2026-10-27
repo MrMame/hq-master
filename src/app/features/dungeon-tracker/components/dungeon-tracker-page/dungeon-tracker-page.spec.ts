@@ -73,6 +73,21 @@ describe('DungeonTrackerPage', () => {
       expect(heading.className).toBe('general-sidebar__heading general-sidebar__heading--spaced');
     }
     expect(sidebar.querySelector('.general-sidebar__caption')).toBeNull();
+    expect(sidebar.querySelectorAll('input[type="range"]')).toHaveLength(4);
+    expect(sidebar.textContent).not.toContain('Zoom');
+    expect(sidebar.textContent).not.toContain('Neuer Charakter');
+  });
+
+  it('shows "+" for a new character above the zoom slider in the quick access bar', () => {
+    const quickAccess: HTMLElement = (fixture.nativeElement as HTMLElement).querySelector(
+      '.quick-access',
+    ) as HTMLElement;
+    const button: HTMLButtonElement = quickAccess.children[0] as HTMLButtonElement;
+
+    expect(button.textContent?.trim()).toBe('+');
+    expect(button.getAttribute('aria-label')).toBe('Neuer Charakter');
+    expect(button.title).toBe('Neuer Charakter');
+    expect(quickAccess.children[1].tagName.toLowerCase()).toBe('app-board-zoom-control');
   });
 
   it('should collapse the sidebar via its handle and keep the board and legend', async () => {
