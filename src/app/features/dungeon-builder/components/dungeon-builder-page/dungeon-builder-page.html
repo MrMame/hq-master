@@ -1,0 +1,28 @@
+<div class="builder-page">
+  <!-- Linke Seitenleiste: Datei, Layout und Bibliothek, per Griff einklappbar -->
+  <app-collapsible-sidebar>
+    <h2 class="general-sidebar__title">Dungeon Builder</h2>
+
+    <app-builder-file-panel />
+
+    <hr class="general-sidebar__divider" />
+
+    <div>
+      <h3 class="general-sidebar__heading general-sidebar__heading--spaced">Layout</h3>
+      <app-layout-settings />
+    </div>
+
+    <hr class="general-sidebar__divider" />
+
+    <app-element-library
+      (dragMoved)="onLibraryDragMoved($event)"
+      (dropped)="onLibraryDropped($event)"
+    />
+  </app-collapsible-sidebar>
+
+  <!-- Hauptbereich: Werkzeugstreifen im schmalen Streifen links, daneben der Plan -->
+  <div class="builder-area">
+    <app-builder-tool-strip [(zoom)]="zoom" />
+    <app-layout-plan [zoom]="zoom()" />
+  </div>
+</div>

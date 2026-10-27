@@ -1,4 +1,4 @@
-import { readDungeonBoard } from './dungeon.xml-mapper';
+import { readDungeonBoard, writeDungeonBoard } from './dungeon.xml-mapper';
 import { DEFAULT_DUNGEON_BOARD_STATE } from '../../dungeon-tracker/models/dungeon-board-state.model';
 import { DungeonSessionState } from '../../dungeon-tracker/models/dungeon-session-state.model';
 
@@ -35,5 +35,17 @@ describe('dungeon.xml-mapper – fallbacks for old or hand-edited files', () => 
     expect(read('<dungeonBoard><position/></dungeonBoard>').positions).toEqual([
       { characterId: '', col: 0, row: 0 },
     ]);
+  });
+});
+
+describe('dungeon.xml-mapper – grid with decimals', () => {
+  it('keeps a cell size with all decimals, e.g. for an image of 26 columns', () => {
+    const doc: XMLDocument = document.implementation.createDocument(null, 'gameSession', null);
+    const state: DungeonSessionState = {
+      board: { ...DEFAULT_DUNGEON_BOARD_STATE, gridColumns: 26, gridCellSizePx: 1000 / 26 },
+      positions: [],
+    };
+
+    expect(readDungeonBoard(writeDungeonBoard(doc, state))).toEqual(state);
   });
 });

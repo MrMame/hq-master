@@ -80,7 +80,7 @@ describe('DungeonTrackerPage', () => {
 
   it('shows "+" for a new character above the zoom slider in the quick access bar', () => {
     const quickAccess: HTMLElement = (fixture.nativeElement as HTMLElement).querySelector(
-      '.quick-access',
+      '.general-quick-access',
     ) as HTMLElement;
     const button: HTMLButtonElement = quickAccess.children[0] as HTMLButtonElement;
 

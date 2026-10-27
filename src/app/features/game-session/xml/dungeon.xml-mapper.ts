@@ -11,7 +11,7 @@ import {
   readNumber,
   readString,
   setAttributes,
-} from './xml.util';
+} from '../../../shared/utils/xml.util';
 
 export function writeDungeonBoard(doc: XMLDocument, data: DungeonSessionState): Element {
   const { board, positions }: DungeonSessionState = data;

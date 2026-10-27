@@ -1,0 +1,36 @@
+<div class="file-panel__buttons">
+  <button type="button" class="general-sidebar__button" (click)="onNew()">Neu</button>
+  <label class="general-sidebar__button">
+    <span>Laden</span>
+    <input
+      type="file"
+      accept=".xml,application/xml,text/xml"
+      hidden
+      data-testid="load-layout"
+      (change)="onLoad($event)"
+    />
+  </label>
+  <button type="button" class="general-sidebar__button file-panel__wide" (click)="onSaveXml()">
+    Als XML speichern
+  </button>
+  <button
+    type="button"
+    class="general-sidebar__button file-panel__wide"
+    [disabled]="exporting()"
+    (click)="onExportJpeg()"
+  >
+    Als JPEG exportieren
+  </button>
+</div>
+
+@if (errorMessage(); as message) {
+  <p class="file-panel__message file-panel__message--error" data-testid="builder-file-error">
+    {{ message }}
+  </p>
+}
+@if (unknownCount() > 0) {
+  <p class="file-panel__message" data-testid="builder-unknown-elements">
+    {{ unknownCount() }} {{ unknownCount() === 1 ? 'Element' : 'Elemente' }} ohne Katalogeintrag
+    (grau dargestellt)
+  </p>
+}

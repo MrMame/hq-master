@@ -42,6 +42,13 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
             >
               Dungeon Tracker
             </a>
+            <a
+              routerLink="/dungeonbuilder"
+              routerLinkActive="app-nav__link--active"
+              class="app-nav__link"
+            >
+              Dungeon Builder
+            </a>
           </nav>
         </div>
       </header>

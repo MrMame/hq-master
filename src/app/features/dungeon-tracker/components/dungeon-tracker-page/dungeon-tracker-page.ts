@@ -8,14 +8,15 @@ import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { DungeonBoardState } from '../../models/dungeon-board-state.model';
 import { BoardToken } from '../../models/board-token.model';
 import { CharacterSelection } from '../../models/character-selection.model';
-import { BoardZoomControl } from '../board-zoom-control/board-zoom-control';
+import { BoardZoomControl } from '../../../../shared/components/board-zoom-control/board-zoom-control';
 import { DungeonBoard } from '../dungeon-board/dungeon-board';
 import { DungeonLegendEntry } from '../dungeon-legend-entry/dungeon-legend-entry';
+import { GridSettings } from '../grid-settings/grid-settings';
 
 @Component({
   selector: 'app-dungeon-tracker-page',
   standalone: true,
-  imports: [BoardZoomControl, CollapsibleSidebar, DungeonBoard, DungeonLegendEntry],
+  imports: [BoardZoomControl, CollapsibleSidebar, DungeonBoard, DungeonLegendEntry, GridSettings],
   templateUrl: './dungeon-tracker-page.html',
   styleUrl: './dungeon-tracker-page.css',
 })
@@ -63,13 +64,6 @@ export class DungeonTrackerPage {
       this.dungeonBoardService.setBoardImage(reader.result as string);
     };
     reader.readAsDataURL(file);
-  }
-
-  onGridSettingChange(
-    key: 'gridCellSizePx' | 'gridOffsetX' | 'gridOffsetY' | 'gridOpacity',
-    value: number,
-  ): void {
-    this.dungeonBoardService.updateGridSettings({ [key]: value });
   }
 
   /** Der Service schreibt den Treffer; Token und Legende folgen über `tokens` sofort. */

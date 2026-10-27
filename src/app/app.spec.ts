@@ -30,6 +30,7 @@ describe('App', () => {
       ['/cardmanager', 'Card Manager'],
       ['/timetracker', 'Time Tracker'],
       ['/dungeontracker', 'Dungeon Tracker'],
+      ['/dungeonbuilder', 'Dungeon Builder'],
     ]);
   });
 

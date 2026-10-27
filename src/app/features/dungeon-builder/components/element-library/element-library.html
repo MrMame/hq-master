@@ -1,0 +1,62 @@
+@if (loadError(); as error) {
+  <p class="library__message library__message--error" data-testid="library-error">{{ error }}</p>
+} @else if (!catalog()) {
+  <p class="library__message">Bibliothek wird geladen …</p>
+}
+
+@if (catalog(); as catalog) {
+  <!-- Boden: Tipp wählt die Bodenart für Pinsel, Rechteck und Füllen -->
+  <section class="library__group">
+    <h3 class="general-sidebar__heading">Boden</h3>
+    <div class="library__entries">
+      <button
+        type="button"
+        class="library__entry"
+        [class.library__entry--active]="ui.floorId() === null"
+        [attr.aria-pressed]="ui.floorId() === null"
+        aria-label="Fels"
+        (click)="ui.chooseFloor(null)"
+      >
+        <app-library-entry name="Fels" [swatch]="catalog.appearance.rockColor" />
+      </button>
+      @for (floor of catalog.floors; track floor.id) {
+        <button
+          type="button"
+          class="library__entry"
+          [class.library__entry--active]="ui.floorId() === floor.id"
+          [attr.aria-pressed]="ui.floorId() === floor.id"
+          [attr.aria-label]="floor.name"
+          (click)="ui.chooseFloor(floor.id)"
+        >
+          <app-library-entry [name]="floor.name" [image]="floor.image" />
+        </button>
+      }
+    </div>
+  </section>
+}
+
+<!-- Türen und Möbel: ziehen oder per Tipp als Stempel (ohne Katalog keine Gruppen) -->
+@for (group of groups(); track group.name) {
+  <section class="library__group">
+    <h3 class="general-sidebar__heading">{{ group.name }}</h3>
+    <div class="library__entries">
+      @for (item of group.items; track item.id) {
+        <button
+          type="button"
+          class="library__entry"
+          cdkDrag
+          [cdkDragStartDelay]="dragDelay"
+          [class.library__entry--active]="isStamp(item.id)"
+          [attr.aria-pressed]="isStamp(item.id)"
+          [attr.aria-label]="item.label"
+          [title]="item.label"
+          (click)="ui.toggleStamp(item.id)"
+          (cdkDragMoved)="onDragMoved(item.id, $event)"
+          (cdkDragEnded)="onDragEnded(item.id, $event)"
+        >
+          <app-library-entry [name]="item.name" [image]="item.image" [size]="item.size" />
+        </button>
+      }
+    </div>
+  </section>
+}

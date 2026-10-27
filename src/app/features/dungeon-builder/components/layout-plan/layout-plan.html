@@ -1,0 +1,108 @@
+<!-- Scroll-Container: nur hier wird gezoomt und gescrollt; mit „Auswahl“ verschiebt Ziehen den Ausschnitt. -->
+<div
+  #viewport
+  class="plan"
+  [class.plan--pannable]="pannable() && zoom() > 1"
+  [class.plan--drawing]="!pannable()"
+  appBoardPan
+  (scroll)="rememberViewCenter()"
+>
+  <!-- Hat die gezoomte Größe; das SVG darin rechnet in Einheiten (1 Kachel = 64). -->
+  <div
+    class="plan__sizer"
+    [style.width.px]="plan().width * scale()"
+    [style.height.px]="plan().height * scale()"
+  >
+    <svg
+      #surface
+      class="plan__surface"
+      data-testid="plan-surface"
+      role="img"
+      [attr.aria-label]="'Plan ' + layout().name"
+      [attr.viewBox]="'0 0 ' + plan().width + ' ' + plan().height"
+      preserveAspectRatio="none"
+      (pointerdown)="onPointerDown($event)"
+      (pointermove)="onPointerMove($event)"
+      (pointerup)="onPointerUp($event)"
+      (pointercancel)="onPointerCancel()"
+    >
+      @for (step of steps(); track step.key) {
+        @switch (step.kind) {
+          @case ('rect') {
+            <rect
+              [attr.x]="step.x"
+              [attr.y]="step.y"
+              [attr.width]="step.width"
+              [attr.height]="step.height"
+              [attr.fill]="step.color"
+            />
+          }
+          @case ('image') {
+            <image
+              [attr.href]="step.src"
+              [attr.transform]="transform(step.placement)"
+              [attr.x]="step.placement.x"
+              [attr.y]="step.placement.y"
+              [attr.width]="step.placement.width"
+              [attr.height]="step.placement.height"
+              preserveAspectRatio="none"
+            />
+          }
+          @case ('line') {
+            <line
+              [attr.x1]="step.x1"
+              [attr.y1]="step.y1"
+              [attr.x2]="step.x2"
+              [attr.y2]="step.y2"
+              [attr.stroke]="step.color"
+              [attr.stroke-width]="step.width"
+              stroke-linecap="square"
+            />
+          }
+          @case ('unknown') {
+            <g class="plan__unknown" [attr.data-testid]="'unknown-' + step.key">
+              <rect
+                [attr.x]="step.x"
+                [attr.y]="step.y"
+                [attr.width]="step.width"
+                [attr.height]="step.height"
+                [attr.fill]="unknownFill"
+              />
+              <text
+                class="plan__unknown-text"
+                [attr.x]="step.x + step.width / 2"
+                [attr.y]="step.y + step.height / 2"
+                [attr.font-size]="(step.width < step.height ? step.width : step.height) * 0.7"
+              >
+                ?
+              </text>
+            </g>
+          }
+        }
+      }
+
+      @if (selected(); as box) {
+        <rect
+          class="plan__selection"
+          data-testid="plan-selection"
+          [attr.x]="box.x * tile"
+          [attr.y]="box.y * tile"
+          [attr.width]="box.width * tile"
+          [attr.height]="box.height * tile"
+          vector-effect="non-scaling-stroke"
+        />
+      }
+    </svg>
+
+    <!-- Raster als HTML-Ebene: 1 px breit bei jedem Zoom, nicht Teil des JPEGs -->
+    <div class="plan__grid" [style.--plan-cell.px]="tile * scale()"></div>
+
+    @if (selected(); as box) {
+      <app-element-action-bar
+        class="plan__actions"
+        [style.left.px]="(box.x + box.width / 2) * tile * scale()"
+        [style.top.px]="(box.y + box.height) * tile * scale()"
+      />
+    }
+  </div>
+</div>

@@ -1,5 +1,5 @@
 import { SessionMeta } from '../models/session-meta.model';
-import { readBoolean, readString, setAttributes } from './xml.util';
+import { readBoolean, readString, setAttributes } from '../../../shared/utils/xml.util';
 
 export function writeMeta(doc: XMLDocument, meta: SessionMeta): Element {
   const el: Element = doc.createElement('meta');

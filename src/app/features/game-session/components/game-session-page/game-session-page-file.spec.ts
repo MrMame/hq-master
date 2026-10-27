@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { GameSessionService } from '../../services/game-session.service';
-import { SessionFileService } from '../../services/session-file.service';
+import { FileTransferService } from '../../../../shared/services/file-transfer.service';
 import { SessionXmlService } from '../../services/session-xml.service';
 import { createSessionSnapshot } from '../../testing/session.fixtures';
 import {
@@ -13,12 +13,12 @@ import {
 describe('GameSessionPage – save and load', () => {
   let page: GameSessionPageSetup;
   let service: GameSessionService;
-  let fileService: SessionFileService;
+  let fileService: FileTransferService;
 
   beforeEach(async () => {
     page = await setupGameSessionPage();
     service = TestBed.inject(GameSessionService);
-    fileService = TestBed.inject(SessionFileService);
+    fileService = TestBed.inject(FileTransferService);
   });
 
   /** Wählt Dateien am File-Input aus und wartet, bis der Import verarbeitet ist. */

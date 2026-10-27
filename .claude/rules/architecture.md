@@ -22,6 +22,7 @@ core/
     character-names/ → <klasse>-names.model.ts (editierbare Vor-/Nachnamen je Charakterklasse,
                     vom Dateilimit ausgenommen), character-names.model.ts (CHARACTER_NAMES_BY_IMAGE)
   session-state/  → persisted-state.ts (persistedState), session-keys.ts (SESSION_KEYS),
+                    tool-state-keys.ts (TOOL_STATE_KEYS: Werkzeug-Zustand außerhalb der Spielesession),
                     session-state-slice.ts (SessionStateSlice), session-slices.ts (SessionSliceData)
     testing/      → describe-persisted-state.ts (Vertragstest für Regel 8, nur für Specs)
   services/
@@ -33,21 +34,44 @@ core/
 features/
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung (Startseite)
     components/        → DungeonTrackerPage (Sidebar, Schnellzugriffsleiste mit „+“ und Zoom, Markierung für Brett und Legende),
-                         DungeonBoard (zoombare Spielfläche mit Foto, Raster, Tokens),
-                         BoardZoomControl (senkrechter Zoom-Regler in der Schnellzugriffsleiste links neben dem Brett), DungeonToken,
+                         DungeonBoard (zoombare Spielfläche mit Foto, Raster, Tokens), DungeonToken,
+                         GridSettings (Raster-Einstellungen: Zellgröße per Regler oder Zahl, Spalten über Bildbreite),
                          DungeonLegendEntry (Legendeneintrag),
                          CharacterStatus (Leben/Rüstung an Token und Legende, später Statuseffekte),
                          CharacterActionBar (Menüleiste des markierten Charakters an Token und Legende;
                          neue Befehle nur hier ergänzen)
-    directives/        → board-pan.ts (BoardPan: Ausschnitt eines Scroll-Containers per Ziehen verschieben)
     models/            → dungeon-board-state.model.ts, dungeon-position.model.ts, dungeon-session-state.model.ts,
                          board-token.model.ts, size.model.ts, character-selection.model.ts (Markierung, UI-Zustand)
     services/          → dungeon-board.service.ts (Signal-State + LocalStorage, Charakter-Sync per effect())
     utils/             → token-placement.util.ts (freies Feld für neue Tokens),
                          board-scale.util.ts (Spielflächengröße, Maßstab), grid-style.util.ts (Rasterlinien),
+                         grid-fit.util.ts (Zellgröße prüfen, aus Spaltenanzahl berechnen, deutsch formatieren),
                          scroll-into-view.util.ts (nur bei Bedarf ins Bild scrollen)
     testing/           → resize-observer.fixtures.ts (steuerbarer ResizeObserver),
                          scroll-into-view.fixtures.ts (Spy für das in jsdom fehlende scrollIntoView), nur für Specs
+
+  dungeon-builder/     → Dungeon-Layouts bauen, als XML speichern, als JPEG exportieren (kein Session-Zustand)
+    components/        → DungeonBuilderPage (stellt BuilderUiService bereit, Tastenkürzel, Ziehen aus der Bibliothek),
+                         BuilderFilePanel (Neu, Laden, Als XML speichern, Als JPEG exportieren),
+                         LayoutSettings (Layoutname, Plangröße), ElementLibrary + LibraryEntry (Bibliothek),
+                         BuilderToolStrip (Werkzeuge, Rückgängig/Wiederholen, Zoom), LayoutPlan (SVG-Plan,
+                         Raster, Markierung), ElementActionBar (Drehen, Löschen am markierten Element)
+    gestures/          → *.gesture.ts: unveränderliche Zeiger-Gesten mit Vorschau (Pinsel, Rechteck, Wand,
+                         Verschieben, Platzieren); schreiben beim Loslassen einmal über LayoutCommands
+    models/            → dungeon-layout.model.ts, element-catalog.model.ts, grid.model.ts (TILE_UNITS = 64),
+                         render-step.model.ts (Zeichenschritte für Plan und JPEG), builder-tool.model.ts,
+                         plan-gesture.model.ts, element-selection.model.ts, library-entry.model.ts, rotation.model.ts
+    services/          → dungeon-layout.service.ts (Layout per persistedState mit TOOL_STATE_KEYS, Rückgängig-Verlauf),
+                         element-catalog.service.ts (Katalog aus public/dungeon-builder/catalog.xml),
+                         layout-xml.service.ts, layout-image.service.ts (JPEG über Canvas),
+                         builder-ui.service.ts (UI-Zustand der Seite, nicht root), plan-pointer.service.ts (Zeiger → Gesten)
+    utils/             → reine Geometrie und Layout-Änderungen (grid-geometry, piece-shape, piece-edit, floor-edit,
+                         wall-geometry, door-geometry, layout-edit, layout-resize, hit-test, element-placement),
+                         layout-render/element-steps (Zeichenschritte), canvas-draw, layout-history, layout-codec,
+                         plan-scale, builder-shortcut, file-name
+    xml/               → catalog.xml-mapper.ts (readCatalog), layout.xml-mapper.ts (writeLayout/readLayout)
+    testing/           → builder.fixtures.ts (TEST_CATALOG, createTestLayout), builder-services.fixtures.ts,
+                         builder-file-panel.fixtures.ts, layout-plan.fixtures.ts, canvas.fixtures.ts (nur für Specs)
 
   time-tracker/        → In-Game-Zeiterfassung
     components/        → TimeTrackerPage
@@ -61,22 +85,27 @@ features/
   game-session/        → Session starten/beenden, Speichern/Laden als XML
     components/        → GameSessionPage
     models/            → session-meta.model.ts, session-snapshot.model.ts
-    services/          → game-session.service.ts, session-xml.service.ts, session-file.service.ts
-    xml/               → *.xml-mapper.ts (writeX/readX), xml.util.ts
+    services/          → game-session.service.ts, session-xml.service.ts
+    xml/               → *.xml-mapper.ts (writeX/readX)
     utils/             → date-time-local.util.ts (reine Hilfsfunktionen)
     testing/           → session.fixtures.ts, game-session-page.fixtures.ts (nur für Specs)
 
 shared/
   components/          → Feature-unabhängige UI (z. B. ConfirmationDialog, CharacterEditorDialog,
                          CollapsibleSidebar (einklappbare `.general-sidebar`, UI-Zustand ohne Speicherung),
-                         DamageTakenDialog)
+                         DamageTakenDialog, BoardZoomControl (senkrechter Zoom-Regler für zoombare Spielflächen,
+                         z. B. in der Schnellzugriffsleiste `.general-quick-access`))
+  directives/          → board-pan.ts (BoardPan: Ausschnitt eines Scroll-Containers per Ziehen verschieben)
   models/              → confirmation-dialog-data.model.ts (Texte der Rückfrage),
                          damage-dialog-data.model.ts (Titel des Schadensauswahl-Dialogs)
   services/            → character-editor.service.ts (öffnet den Charakter-Editor systemweit),
-                         character-damage.service.ts (Schadensauswahl → applyDamage → Session)
+                         character-damage.service.ts (Schadensauswahl → applyDamage → Session),
+                         file-transfer.service.ts (Dateien herunterladen und lesen),
+                         confirmation.service.ts (Rückfrage über den ConfirmationDialog als Promise<boolean>)
   utils/               → new-character.util.ts (Startwerte für neue Charaktere),
                          random-character.util.ts (Zufallscharakter, Name passend zur Bildklasse),
-                         damage.util.ts (reine Schadensberechnung)
+                         damage.util.ts (reine Schadensberechnung),
+                         xml.util.ts (XML lesen/schreiben, `requireChild` mit Dateiart in der Fehlermeldung)
   testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
                          character-editor-dialog.fixtures.ts)
 ```
@@ -103,6 +132,7 @@ Kebab-Case, die Rolle steht als Punkt-Suffix im Dateinamen. Der Dateiname folgt 
 | Model / Interface   | `session-meta.model.ts`                                               | `SessionMeta`        |
 | Reine Hilfsfunktion | `xml.util.ts`                                                         | Funktionen           |
 | XML-Mapper          | `meta.xml-mapper.ts`                                                  | `writeX` / `readX`   |
+| Geste               | `gestures/wall.gesture.ts`                                            | `WallGesture`        |
 | Testdaten           | `<feature>/testing/<name>.fixtures.ts`, Core-Modelle: `core/testing/` | Fabrikfunktionen     |
 | E2E-Test            | `e2e/<szenario>.spec.ts`                                              | Playwright-Tests     |
 | Test                | `<dateiname>.spec.ts` (gleicher Stamm)                                | Vitest-Specs         |
@@ -152,7 +182,8 @@ ohne Navigation, Reload oder manuelles Neu-Lesen.
 3. **Initialisierung beim Service-Start:** `persistedState(key, fallback, codec?)` liest den
    Storage einmalig; bei fehlenden/ungültigen Daten greift `fallback()`. Werte, die nicht
    1:1 als JSON gespeichert werden (z. B. `Date`), bekommen einen `StorageCodec`.
-   Keine eigenen `load*()`-Methoden, keine lokalen `KEY_*`-Konstanten – Keys stehen nur in `SESSION_KEYS`.
+   Keine eigenen `load*()`-Methoden, keine lokalen `KEY_*`-Konstanten – Keys stehen nur in `SESSION_KEYS`
+   (bzw. `TOOL_STATE_KEYS` für Werkzeug-Zustand, siehe unten).
 4. **Mutation nur über Service-Methoden:** Fachliche Methoden (`writeX`, `removeX`, `addTime`, …)
    sind der einzige Schreibweg. Sie schreiben ausschließlich über `set()`/`update()` des
    `PersistedState`, die Signal **und** Storage gemeinsam aktualisieren. Keine eigenen
@@ -208,6 +239,11 @@ export class ItemsService implements SessionStateSlice<Item[]> {
 Neuer Session-Zustand: Key in `SESSION_KEYS`, Feld in `SessionSliceData`, Service in die
 Slice-Map des `GameSessionService`; der Compiler meldet dann Snapshot und XML-Mapping.
 
+**Werkzeug-Zustand außerhalb der Spielesession** (z. B. das Layout des Dungeon Builders) nutzt
+`persistedState` mit einem Key aus `TOOL_STATE_KEYS` und gilt für die Regeln 1–8. Er ist **kein**
+`SessionStateSlice`, steht nicht in `SessionSliceData` und nicht in der SaveSession; „Session starten“
+lässt ihn unverändert.
+
 ### Dependency Injection
 
 - Ausschließlich `inject()` – keine Konstruktor-Injection.
@@ -225,7 +261,7 @@ Slice-Map des `GameSessionService`; der Compiler meldet dann Snapshot und XML-Ma
 - Template/Styles inline, wenn < 100 Zeilen; sonst separate `.html`/`.css`.
 - Styling: reines CSS mit semantischen Klassen je Komponente; Farben, Abstände und Typografie
   nur über die Tokens aus `src/styles/tokens.css` (`var(--…)`).
-- Feature-übergreifende Bausteine (z. B. `.general-sidebar`, `.general-dialog`) liegen global unter `src/styles/components/`
+- Feature-übergreifende Bausteine (z. B. `.general-sidebar`, `.general-dialog`, `.general-quick-access`) liegen global unter `src/styles/components/`
   und werden in `src/styles.css` per `@import … layer(components)` eingebunden; `tokens.css` enthält nur Tokens.
 - Shared-Dialoge nutzen den dunklen Look über `host: { class: 'general-dialog' }` und die Element-Klassen
   `general-dialog__title`, `__cancel`, `__confirm`. Material setzt den Dialog-Host (ohne Layer) auf

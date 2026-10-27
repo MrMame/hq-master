@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/test';
 const pages: { path: string; marker: string }[] = [
   { path: '/timetracker', marker: '+1 Hour' },
   { path: '/dungeontracker', marker: 'Dungeon Tracker' },
+  { path: '/dungeonbuilder', marker: 'Dungeon Builder' },
   { path: '/cardmanager', marker: 'Deck laden' },
   { path: '/gamesession', marker: 'Aktuelle Session' },
 ];

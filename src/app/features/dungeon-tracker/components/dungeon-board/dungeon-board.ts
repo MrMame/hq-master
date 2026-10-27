@@ -25,7 +25,7 @@ import { CharacterSelection } from '../../models/character-selection.model';
 import { Size } from '../../models/size.model';
 import { fitScale, stageSize } from '../../utils/board-scale.util';
 import { gridStyle, GridStyle } from '../../utils/grid-style.util';
-import { BoardPan } from '../../directives/board-pan';
+import { BoardPan } from '../../../../shared/directives/board-pan';
 import { DungeonToken } from '../dungeon-token/dungeon-token';
 
 /**

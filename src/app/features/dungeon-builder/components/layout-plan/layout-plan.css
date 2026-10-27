@@ -1,0 +1,88 @@
+/* Hauptbereich der Builder-Seite: zoombarer Plan */
+:host {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Scroll-Container: nur dieser Bereich zoomt und scrollt. */
+.plan {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  /* Finger-Ziehen übernehmen BoardPan bzw. die Zeichenwerkzeuge. */
+  touch-action: none;
+  scrollbar-color: var(--color-gray-600) var(--color-gray-900);
+  background-color: var(--color-gray-950);
+}
+
+.plan--pannable {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.plan--drawing .plan__surface {
+  cursor: crosshair;
+}
+
+/* Hat die gezoomte Größe; `margin: auto` zentriert den Plan, solange er kleiner ist. */
+.plan__sizer {
+  position: relative;
+  flex-shrink: 0;
+  margin: auto;
+}
+
+.plan__surface {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+
+.plan__unknown-text {
+  fill: var(--color-white);
+  font-weight: var(--font-weight-bold);
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.plan__selection {
+  fill: none;
+  stroke: var(--color-yellow-400);
+  stroke-width: 2;
+  pointer-events: none;
+}
+
+/* Rasterlinien links und oben je Zelle, Rand rechts und unten über die Umrandung */
+.plan__grid {
+  position: absolute;
+  inset: 0;
+  border-right: 1px solid color-mix(in oklab, var(--color-white) 25%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--color-white) 25%, transparent);
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in oklab, var(--color-white) 25%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-white) 25%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: var(--plan-cell) var(--plan-cell);
+  pointer-events: none;
+}
+
+/* Menüleiste mittig unter dem markierten Element */
+.plan__actions {
+  position: absolute;
+  z-index: 1;
+  margin-top: var(--space-1);
+  transform: translateX(-50%);
+}

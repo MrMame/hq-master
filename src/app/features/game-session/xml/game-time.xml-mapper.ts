@@ -1,4 +1,4 @@
-import { textOf } from './xml.util';
+import { textOf } from '../../../shared/utils/xml.util';
 
 export function writeGameTime(doc: XMLDocument, gameTime: Date): Element {
   const el: Element = doc.createElement('gameTime');

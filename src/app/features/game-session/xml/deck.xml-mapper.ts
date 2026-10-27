@@ -10,7 +10,7 @@ import {
   readString,
   setAttributes,
   textOf,
-} from './xml.util';
+} from '../../../shared/utils/xml.util';
 
 /** Ein leeres `<cardDeck/>` steht für "kein Deck geladen". */
 export function writeDeck(doc: XMLDocument, deck: DeckState | null): Element {

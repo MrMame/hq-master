@@ -5,11 +5,13 @@ import { readDeck, writeDeck } from '../xml/deck.xml-mapper';
 import { readDungeonBoard, writeDungeonBoard } from '../xml/dungeon.xml-mapper';
 import { readGameTime, writeGameTime } from '../xml/game-time.xml-mapper';
 import { readMeta, writeMeta } from '../xml/meta.xml-mapper';
-import { indentXml, requireChild } from '../xml/xml.util';
+import { indentXml, requireChild } from '../../../shared/utils/xml.util';
 
 const ROOT_ELEMENT: string = 'gameSession';
 const FORMAT_VERSION: string = '1';
 const XML_DECLARATION: string = '<?xml version="1.0" encoding="UTF-8"?>';
+/** Dateiart in den Fehlermeldungen beim Laden. */
+const FILE_KIND: string = 'Session-Datei';
 
 /** Wandelt einen `SessionSnapshot` in eine SaveSession-XML-Datei um und zurück. */
 @Injectable({
@@ -35,11 +37,11 @@ export class SessionXmlService {
   parse(xml: string): SessionSnapshot {
     const root: Element = this.parseRoot(xml);
     return {
-      meta: readMeta(requireChild(root, 'meta')),
-      gameTime: readGameTime(requireChild(root, 'gameTime')),
-      characters: readCharacters(requireChild(root, 'characters')),
-      dungeon: readDungeonBoard(requireChild(root, 'dungeonBoard')),
-      deck: readDeck(requireChild(root, 'cardDeck')),
+      meta: readMeta(requireChild(root, 'meta', FILE_KIND)),
+      gameTime: readGameTime(requireChild(root, 'gameTime', FILE_KIND)),
+      characters: readCharacters(requireChild(root, 'characters', FILE_KIND)),
+      dungeon: readDungeonBoard(requireChild(root, 'dungeonBoard', FILE_KIND)),
+      deck: readDeck(requireChild(root, 'cardDeck', FILE_KIND)),
     };
   }
 

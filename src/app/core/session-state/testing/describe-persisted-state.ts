@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import { SessionStateKey } from '../session-keys';
+import { PersistedStateKey } from '../persisted-state';
 
 /** Beschreibt einen persistierten Zustandsteil eines Session-Service für den Vertragstest. */
 export interface PersistedStateContract<S, T> {
-  key: SessionStateKey;
+  key: PersistedStateKey;
   /** Erzeugt den Service frisch (localStorage ist vorher schon vorbereitet). */
   create: () => S;
   /** Liest den Zustand über das öffentliche Signal. */

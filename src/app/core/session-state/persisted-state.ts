@@ -1,6 +1,10 @@
 import { inject, Signal, signal, untracked, WritableSignal } from '@angular/core';
 import { StorageService } from '../services/storage/storage.service';
 import { SessionStateKey } from './session-keys';
+import { ToolStateKey } from './tool-state-keys';
+
+/** Key eines persistierten Werts: Session-Zustand oder Werkzeug-Zustand außerhalb der Session. */
+export type PersistedStateKey = SessionStateKey | ToolStateKey;
 
 /** Übersetzt einen Wert in seine JSON-taugliche Storage-Form und zurück. */
 export interface StorageCodec<T> {
@@ -27,7 +31,7 @@ export interface PersistedState<T> {
  * wird `fallback()` verwendet.
  */
 export function persistedState<T>(
-  key: SessionStateKey,
+  key: PersistedStateKey,
   fallback: () => T,
   codec?: StorageCodec<T>,
 ): PersistedState<T> {

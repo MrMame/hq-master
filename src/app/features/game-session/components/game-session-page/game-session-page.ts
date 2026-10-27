@@ -8,7 +8,7 @@ import { ConfirmationDialog } from '../../../../shared/components/confirmation-d
 import { SessionMeta } from '../../models/session-meta.model';
 import { SessionSnapshot } from '../../models/session-snapshot.model';
 import { GameSessionService } from '../../services/game-session.service';
-import { SessionFileService } from '../../services/session-file.service';
+import { FileTransferService } from '../../../../shared/services/file-transfer.service';
 import { SessionXmlService } from '../../services/session-xml.service';
 import { parseDateTimeLocal } from '../../utils/date-time-local.util';
 
@@ -23,7 +23,7 @@ const DEFAULT_START_TIME: string = '2390-05-06T07:00';
 export class GameSessionPage {
   private readonly gameSessionService: GameSessionService = inject(GameSessionService);
   private readonly sessionXmlService: SessionXmlService = inject(SessionXmlService);
-  private readonly sessionFileService: SessionFileService = inject(SessionFileService);
+  private readonly fileTransferService: FileTransferService = inject(FileTransferService);
   private readonly dialog: MatDialog = inject(MatDialog);
 
   protected readonly gameTimeService: GameTimeService = inject(GameTimeService);
@@ -50,7 +50,7 @@ export class GameSessionPage {
 
   saveSession(): void {
     const xml: string = this.sessionXmlService.serialize(this.gameSessionService.snapshot());
-    this.sessionFileService.download(xml, buildFileName(this.meta().name));
+    this.fileTransferService.download(xml, buildFileName(this.meta().name));
   }
 
   async loadSession(event: Event): Promise<void> {
@@ -59,7 +59,7 @@ export class GameSessionPage {
     input.value = '';
     if (!file) return;
     try {
-      const xml: string = await this.sessionFileService.readText(file);
+      const xml: string = await this.fileTransferService.readText(file);
       const snapshot: SessionSnapshot = this.sessionXmlService.parse(xml);
       if (!(await this.confirm())) return;
       this.gameSessionService.restoreSnapshot(snapshot);

@@ -1,0 +1,13 @@
+.builder-page {
+  display: flex;
+  height: 90vh;
+  background-color: var(--color-gray-900);
+  color: var(--color-white);
+}
+
+/* Werkzeugstreifen plus Plan; der Streifen scrollt nicht mit und verdeckt keine Kachel. */
+.builder-area {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}

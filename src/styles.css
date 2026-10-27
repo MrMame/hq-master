@@ -8,6 +8,7 @@
 
 @import './styles/components/sidebar.css' layer(components);
 @import './styles/components/dialog.css' layer(components);
+@import './styles/components/quick-access.css' layer(components);
 
 @layer base {
   *,

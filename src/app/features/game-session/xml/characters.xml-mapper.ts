@@ -7,7 +7,7 @@ import {
   readString,
   setAttributes,
   textOf,
-} from './xml.util';
+} from '../../../shared/utils/xml.util';
 
 export function writeCharacters(doc: XMLDocument, characters: CharacterInfo[]): Element {
   const root: Element = doc.createElement('characters');

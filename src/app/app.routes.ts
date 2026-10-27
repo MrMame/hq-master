@@ -17,6 +17,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'dungeonbuilder',
+    loadComponent: () =>
+      import('./features/dungeon-builder/components/dungeon-builder-page/dungeon-builder-page').then(
+        (m) => m.DungeonBuilderPage,
+      ),
+  },
+  {
     path: 'cardmanager',
     loadComponent: () =>
       import('./features/card-manager/components/card-manager-page/card-manager-page').then(

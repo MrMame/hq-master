@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Element-Katalog des Dungeon Builders.
+  Neues Element: Grafik unter dungeon-builder/elements/ ablegen und hier einen Eintrag ergänzen.
+  Maßstab: 1 Kachel = 64 Einheiten. Möbel-SVGs haben viewBox="0 0 (width·64) (height·64)",
+  Böden "0 0 64 64" (nahtlos), Türen "0 0 64 16" (liegen mittig auf der Gitterlinie).
+  Formen: width/height belegt das ganze Rechteck; <cell>-Kinder belegen nur diese Kacheln
+  (über Kanten zusammenhängend, ab 0,0). Weitere <pieces category="…">-Gruppen erscheinen
+  automatisch als eigene Gruppe in der Bibliothek.
+-->
+<catalog version="1">
+  <!-- Optik der Karte: gilt auf dem Plan und im JPEG; wallThickness in Kacheln -->
+  <appearance rockColor="#1c1915" wallColor="#9a8f80" wallThickness="0.2" />
+
+  <floors>
+    <floor id="room" name="Raumboden" image="dungeon-builder/elements/floor-room.svg" />
+    <floor id="corridor" name="Gang" image="dungeon-builder/elements/floor-corridor.svg" />
+  </floors>
+
+  <doors>
+    <door id="door" name="Tür" image="dungeon-builder/elements/door.svg" />
+    <door id="secret-door" name="Geheimtür" image="dungeon-builder/elements/secret-door.svg" />
+    <door id="portcullis" name="Gittertor" image="dungeon-builder/elements/portcullis.svg" />
+  </doors>
+
+  <pieces category="Treppen">
+    <piece id="stairs" name="Treppe" width="2" height="2" image="dungeon-builder/elements/stairs.svg" />
+  </pieces>
+
+  <pieces category="Grundmöbel">
+    <piece id="table" name="Tisch" width="3" height="2" image="dungeon-builder/elements/table.svg" />
+    <piece id="chair" name="Stuhl" width="1" height="1" image="dungeon-builder/elements/chair.svg" />
+    <piece id="cupboard" name="Schrank" width="3" height="1" image="dungeon-builder/elements/cupboard.svg" />
+    <piece id="bookshelf" name="Bücherregal" width="3" height="1" image="dungeon-builder/elements/bookshelf.svg" />
+    <piece id="chest" name="Truhe" width="1" height="1" image="dungeon-builder/elements/chest.svg" />
+    <piece id="bed" name="Bett" width="1" height="2" image="dungeon-builder/elements/bed.svg" />
+  </pieces>
+
+  <pieces category="Besondere Möbel">
+    <piece id="throne" name="Thron" width="1" height="1" image="dungeon-builder/elements/throne.svg" />
+    <piece id="fireplace" name="Kamin" width="3" height="1" image="dungeon-builder/elements/fireplace.svg" />
+    <piece id="altar" name="Altar" width="2" height="1" image="dungeon-builder/elements/altar.svg" />
+    <piece id="coffin" name="Sarg" width="1" height="2" image="dungeon-builder/elements/coffin.svg" />
+    <piece id="alchemy-table" name="Alchemistentisch" width="3" height="2" image="dungeon-builder/elements/alchemy-table.svg" />
+    <piece id="weapon-rack" name="Waffenständer" width="3" height="1" image="dungeon-builder/elements/weapon-rack.svg" />
+    <piece id="torture-rack" name="Folterbank" width="2" height="3" image="dungeon-builder/elements/torture-rack.svg" />
+  </pieces>
+
+  <pieces category="Hindernisse">
+    <piece id="boulder" name="Felsbrocken" width="1" height="1" image="dungeon-builder/elements/boulder.svg" />
+    <!-- Freie Form: L aus drei Kacheln -->
+    <piece id="rubble" name="Schutt" image="dungeon-builder/elements/rubble.svg">
+      <cell col="0" row="0" />
+      <cell col="0" row="1" />
+      <cell col="1" row="1" />
+    </piece>
+    <piece id="pillar" name="Säule" width="1" height="1" image="dungeon-builder/elements/pillar.svg" />
+    <piece id="pit" name="Grube" width="1" height="1" image="dungeon-builder/elements/pit.svg" />
+  </pieces>
+</catalog>

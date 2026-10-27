@@ -12,8 +12,6 @@ import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { DamageTypes } from '../../../../core/models/damage-types.model';
 import { createTestCharacter } from '../../../../core/testing/character.fixtures';
 
-type GridSetting = 'gridCellSizePx' | 'gridOffsetX' | 'gridOffsetY' | 'gridOpacity';
-
 describe('DungeonTrackerPage – interactions', () => {
   let fixture: ComponentFixture<DungeonTrackerPage>;
   let board: DungeonBoardService;
@@ -96,21 +94,10 @@ describe('DungeonTrackerPage – interactions', () => {
     expect(board.boardState()).toBe(before);
   });
 
-  it.each<[number, GridSetting, string, number]>([
-    [1, 'gridCellSizePx', '60', 60],
-    [2, 'gridOffsetX', '-10', -10],
-    [3, 'gridOffsetY', '15', 15],
-    [4, 'gridOpacity', '0.5', 0.5],
-  ])('sidebar slider %i changes only %s', async (index, key, rawValue, expected) => {
-    const before: DungeonBoardState = board.boardState();
-
-    await slide(`aside .grid-setting:nth-child(${index}) input`, rawValue);
-
-    expect(board.boardState()).toEqual({ ...before, [key]: expected });
-  });
-
   it('opens the character editor for a new character with the "+" in the quick access bar', () => {
-    host.querySelector<HTMLElement>('.quick-access button[aria-label="Neuer Charakter"]')!.click();
+    host
+      .querySelector<HTMLElement>('.general-quick-access button[aria-label="Neuer Charakter"]')!
+      .click();
 
     expect(openCreate).toHaveBeenCalledExactlyOnceWith();
     expect(openEdit).not.toHaveBeenCalled();
