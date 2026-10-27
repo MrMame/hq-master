@@ -2,10 +2,11 @@ import { Component, inject, Signal, signal, WritableSignal } from '@angular/core
 import { CardManagerService } from '../../services/card-manager.service';
 import { DeckState } from '../../models/deck-state.model';
 import { CardDisplay } from '../card-display/card-display';
+import { CollapsibleSidebar } from '../../../../shared/components/collapsible-sidebar/collapsible-sidebar';
 
 @Component({
   selector: 'app-card-manager-page',
-  imports: [CardDisplay],
+  imports: [CardDisplay, CollapsibleSidebar],
   templateUrl: './card-manager-page.html',
   styleUrl: './card-manager-page.css',
 })

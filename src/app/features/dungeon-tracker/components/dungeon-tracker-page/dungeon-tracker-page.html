@@ -1,6 +1,6 @@
 <div class="dungeon-page">
-  <!-- Linke Sidebar: Einstellungen -->
-  <aside class="general-sidebar">
+  <!-- Linke Sidebar: Einstellungen, per Griff einklappbar -->
+  <app-collapsible-sidebar>
     <h2 class="general-sidebar__title">Dungeon Tracker</h2>
 
     <!-- Charakter-Legende -->
@@ -115,7 +115,7 @@
         </label>
       </div>
     </div>
-  </aside>
+  </app-collapsible-sidebar>
 
   <!-- Hauptbereich: Spielbrett (zoombar, scrollt für sich) -->
   <app-dungeon-board

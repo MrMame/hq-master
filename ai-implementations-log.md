@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-27 17:23) - Feature: Seitenleiste ein- und ausklappen (collapsible-sidebar #1–#5)
+
+- **Was wurde gemacht:** Neue Shared-Komponente `CollapsibleSidebar` rendert die `.general-sidebar` mit dem Seiteninhalt und einen schmalen Griff am rechten Rand (`‹`/`›`, `aria-expanded`/`-controls`/`-label`). Eingeklappt blendet CSS die Leiste aus; der Inhalt bleibt im DOM. Dungeon Tracker und Card Manager nutzen die Komponente. Request vollständig umgesetzt und nach `done/` verschoben.
+- **Dateien geändert:** `shared/components/collapsible-sidebar/*` (neu), `dungeon-tracker-page.ts/.html` + Spec, `card-manager-page.ts/.html`, `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/done/collapsible-sidebar.md`
+- **Wichtige Entscheidung:** Auf Wunsch des Nutzers wird der Zustand nicht gespeichert (statt localStorage); die Leiste startet immer ausgeklappt. Gemeinsame Komponente statt Lösung nur für den Dungeon Tracker. Eindeutige `id` je Instanz für `aria-controls`. Probe vorher rot, nachher 3× grün (Tablet, Handy, Card Manager); 448 Tests (geänderte Dateien 100 %), Lint, Build und e2e (24) grün.
+
 ### (2026-10-25 19:35) - Feature: Charakter über die Legende markieren und gemeinsame Menüleiste (dungeon-character-action-bar #1–#10)
 
 - **Was wurde gemacht:** Die Markierung liegt jetzt in `DungeonTrackerPage` (`CharacterSelection` mit Quelle `board`/`legend`) und gilt für Spielbrett und Legende gemeinsam. Ein Legendenklick markiert, ein zweiter hebt auf; Werte-Klicks bleiben Schnellschaden. Neue `CharacterActionBar` (Editieren, Schaden auf Leben, Schaden auf Rüstung) unter markiertem Token und Legendeneintrag; sie ruft Editor- und Schadens-Service selbst auf und ersetzt die Schadens-Buttons am Token. Auswahl über die Legende scrollt das Brett zum Token, Auswahl am Token die Legende zum Eintrag (`scrollIntoView` mit `nearest`). Ungenutzte Material-Icons-Schrift aus `index.html` entfernt. Request vollständig umgesetzt und nach `done/` verschoben.

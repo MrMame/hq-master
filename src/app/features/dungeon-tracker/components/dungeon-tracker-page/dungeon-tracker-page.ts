@@ -1,6 +1,7 @@
 import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { CharacterEditorService } from '../../../../shared/services/character-editor.service';
 import { CharacterDamageService } from '../../../../shared/services/character-damage.service';
+import { CollapsibleSidebar } from '../../../../shared/components/collapsible-sidebar/collapsible-sidebar';
 import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { DamageTypes } from '../../../../core/models/damage-types.model';
 import { DungeonBoardService } from '../../services/dungeon-board.service';
@@ -13,7 +14,7 @@ import { DungeonLegendEntry } from '../dungeon-legend-entry/dungeon-legend-entry
 @Component({
   selector: 'app-dungeon-tracker-page',
   standalone: true,
-  imports: [DungeonBoard, DungeonLegendEntry],
+  imports: [CollapsibleSidebar, DungeonBoard, DungeonLegendEntry],
   templateUrl: './dungeon-tracker-page.html',
   styleUrl: './dungeon-tracker-page.css',
 })

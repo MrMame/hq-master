@@ -67,6 +67,7 @@ features/
 
 shared/
   components/          → Feature-unabhängige UI (z. B. ConfirmationDialog, CharacterEditorDialog,
+                         CollapsibleSidebar (einklappbare `.general-sidebar`, UI-Zustand ohne Speicherung),
                          DamageTakenDialog)
   models/              → confirmation-dialog-data.model.ts (Texte der Rückfrage),
                          damage-dialog-data.model.ts (Titel des Schadensauswahl-Dialogs)

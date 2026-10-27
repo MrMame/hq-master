@@ -1,6 +1,6 @@
 <div class="cardManagerPageContainer">
   @if (state()) {
-    <aside class="general-sidebar">
+    <app-collapsible-sidebar>
       <h2 class="general-sidebar__title">Card Manager</h2>
       <label class="general-sidebar__caption">Deck Aktionen</label>
       <button class="general-sidebar__button" (click)="onLoadDeckClick()">Deck Laden</button>
@@ -9,7 +9,7 @@
       </button>
       <button class="general-sidebar__button" (click)="onResetClick()">Zurücksetzen</button>
       <hr class="general-sidebar__divider" />
-    </aside>
+    </app-collapsible-sidebar>
 
     <div class="card-zone">
       <p>Deck: {{ state()!.config.name }}</p>

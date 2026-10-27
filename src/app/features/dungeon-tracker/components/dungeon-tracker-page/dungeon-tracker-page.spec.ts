@@ -4,6 +4,7 @@ import { DungeonTrackerPage } from './dungeon-tracker-page';
 import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
 import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { CharacterInfo } from '../../../../core/models/character-info.model';
+import { clickButton } from '../../../../shared/testing/click-button';
 
 const createCharacter: (id: string) => CharacterInfo = (id: string): CharacterInfo => ({
   id,
@@ -72,6 +73,18 @@ describe('DungeonTrackerPage', () => {
       expect(heading.className).toBe('general-sidebar__heading general-sidebar__heading--spaced');
     }
     expect(sidebar.querySelector('.general-sidebar__caption')).toBeNull();
+  });
+
+  it('should collapse the sidebar via its handle and keep the board and legend', async () => {
+    const host: HTMLElement = fixture.nativeElement as HTMLElement;
+    const sidebar: HTMLElement = host.querySelector('app-collapsible-sidebar') as HTMLElement;
+
+    clickButton(host, '‹');
+    await fixture.whenStable();
+
+    expect(sidebar.classList).toContain('collapsible-sidebar--collapsed');
+    expect(sidebar.querySelector('app-dungeon-legend-entry')).not.toBeNull();
+    expect(renderedTokens()).toBe(1);
   });
 
   it('should react immediately when a character is added', async () => {
