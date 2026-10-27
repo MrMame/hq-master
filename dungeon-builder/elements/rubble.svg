@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- L-Form: Kacheln oben links, unten links, unten rechts; oben rechts bleibt frei -->
+  <path d="M8 14l16-8 22 6 10 18-4 22 10 14 30-2 24 14 4 24-14 18H18L6 102l4-30-6-26z" fill="#5a534a" stroke="#3f3a34" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M18 24l12-4 10 8-4 10-14 2z" fill="#7d746a"/>
+  <path d="M14 64l14-6 10 10-6 12-14-2z" fill="#857b70"/>
+  <path d="M30 96l14-8 12 8-2 14-16 4z" fill="#7d746a"/>
+  <path d="M70 84l16-6 12 10-6 12-16 2z" fill="#857b70"/>
+  <path d="M96 100l14-4 8 12-8 10-14-4z" fill="#7d746a"/>
+</svg>
