@@ -1,24 +1,31 @@
 <div class="grid-settings">
-  <!-- Zellgröße: Regler für grobe, Zahlenfeld für genaue Werte -->
+  <!-- Blendet den ziehbaren Nullpunkt-Marker auf dem Spielbrett ein -->
+  <label class="grid-setting__toggle">
+    <input
+      type="checkbox"
+      [checked]="originMode()"
+      (change)="onOriginModeChange($event)"
+      class="grid-setting__checkbox"
+    />
+    Nullpunkt verschieben
+  </label>
+
+  <!-- Zellgröße: Regler und ±-Buttons, Zahlenfeld für genaue Werte -->
   <div class="grid-setting">
-    <label class="grid-setting__field">
-      Zellgröße: {{ cellSizeText() }}px
-      <input
-        type="range"
-        [min]="cellLimits.min"
-        [max]="cellLimits.max"
-        step="0.1"
-        [value]="boardState().gridCellSizePx"
-        (input)="onSlide('gridCellSizePx', $event)"
-        class="grid-setting__slider"
-      />
-    </label>
+    <app-grid-slider
+      name="Zellgröße"
+      [valueText]="cellSizeText() + 'px'"
+      [value]="boardState().gridCellSizePx"
+      [limits]="cellLimits"
+      [step]="steps.cellSize"
+      (valueChange)="onSlide('gridCellSizePx', $event)"
+    />
     <input
       type="number"
       aria-label="Zellgröße"
       [min]="cellLimits.min"
       [max]="cellLimits.max"
-      step="0.01"
+      [step]="steps.cellSize"
       [value]="cellSizeValue()"
       (change)="onCellSizeEntered($event)"
       class="grid-setting__number"
@@ -49,42 +56,30 @@
     }
   </div>
 
-  <label class="grid-setting grid-setting__field">
-    Versatz X: {{ boardState().gridOffsetX }}px
-    <input
-      type="range"
-      min="-100"
-      max="100"
-      step="1"
-      [value]="boardState().gridOffsetX"
-      (input)="onSlide('gridOffsetX', $event)"
-      class="grid-setting__slider"
-    />
-  </label>
+  <app-grid-slider
+    name="Nullpunkt X"
+    [valueText]="originXText()"
+    [value]="boardState().gridOffsetX"
+    [limits]="originLimits"
+    [step]="steps.origin"
+    (valueChange)="onSlide('gridOffsetX', $event)"
+  />
 
-  <label class="grid-setting grid-setting__field">
-    Versatz Y: {{ boardState().gridOffsetY }}px
-    <input
-      type="range"
-      min="-100"
-      max="100"
-      step="1"
-      [value]="boardState().gridOffsetY"
-      (input)="onSlide('gridOffsetY', $event)"
-      class="grid-setting__slider"
-    />
-  </label>
+  <app-grid-slider
+    name="Nullpunkt Y"
+    [valueText]="originYText()"
+    [value]="boardState().gridOffsetY"
+    [limits]="originLimits"
+    [step]="steps.origin"
+    (valueChange)="onSlide('gridOffsetY', $event)"
+  />
 
-  <label class="grid-setting grid-setting__field">
-    Deckkraft: {{ (boardState().gridOpacity * 100).toFixed(0) }}%
-    <input
-      type="range"
-      min="0"
-      max="1"
-      step="0.05"
-      [value]="boardState().gridOpacity"
-      (input)="onSlide('gridOpacity', $event)"
-      class="grid-setting__slider"
-    />
-  </label>
+  <app-grid-slider
+    name="Deckkraft"
+    [valueText]="opacityText()"
+    [value]="boardState().gridOpacity"
+    [limits]="opacityLimits"
+    [step]="steps.opacity"
+    (valueChange)="onSlide('gridOpacity', $event)"
+  />
 </div>

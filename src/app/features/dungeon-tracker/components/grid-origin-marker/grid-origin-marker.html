@@ -1,0 +1,23 @@
+<!-- Grifffläche um den Nullpunkt; das Fadenkreuz hat eine dunkle Kontur für helle Fotos. -->
+<div
+  role="img"
+  aria-label="Nullpunkt"
+  data-testid="grid-origin"
+  class="grid-origin__grip"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerup)="onPointerUp($event)"
+  (pointercancel)="onPointerCancel()"
+  (click)="$event.stopPropagation()"
+>
+  <svg viewBox="-22 -22 44 44" class="grid-origin__icon" aria-hidden="true">
+    <g class="grid-origin__outline">
+      <circle r="9" />
+      <path d="M -20 0 H 20 M 0 -20 V 20" />
+    </g>
+    <g class="grid-origin__cross">
+      <circle r="9" />
+      <path d="M -20 0 H 20 M 0 -20 V 20" />
+    </g>
+  </svg>
+</div>

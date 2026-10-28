@@ -6,17 +6,9 @@ import { DungeonToken } from './dungeon-token';
 import { DungeonPosition } from '../../models/dungeon-position.model';
 import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { createTestCharacter } from '../../../../core/testing/character.fixtures';
+import { createDragEnd as dragEnd } from '../../testing/drag-end.fixtures';
 
 const position: DungeonPosition = { characterId: 'a', col: 2, row: 3 };
-
-// Ein echter Drag lässt sich in jsdom nicht erzeugen (keine Layout-Maße); das Event-Objekt
-// ist daher ein Stub, ausgelöst wird es aber über die Template-Bindung `(cdkDragEnded)`.
-const dragEnd: (x: number, y: number, reset: () => void) => CdkDragEnd = (
-  x: number,
-  y: number,
-  reset: () => void,
-): CdkDragEnd =>
-  ({ source: { getFreeDragPosition: () => ({ x, y }), reset } }) as unknown as CdkDragEnd;
 
 describe('DungeonToken', () => {
   let fixture: ComponentFixture<DungeonToken>;
@@ -113,16 +105,6 @@ describe('DungeonToken', () => {
     expect(fixture.debugElement.query(By.directive(CdkDrag)).injector.get(CdkDrag).scale).toBe(2);
     // 70 px / 2 = 35: Porträtmitte 115 + 35 + 20 = 170 → Spalte 3; -15: 175 - 15 + 20 = 180 → Zeile 3
     expect(moved).toHaveBeenCalledWith({ characterId: 'a', col: 3, row: 3 });
-  });
-
-  it('should never emit a negative field', () => {
-    render(createTestCharacter('a'));
-    const moved: (event: { characterId: string; col: number; row: number }) => void = vi.fn();
-    component.tokenMoved.subscribe(moved);
-
-    endDrag(dragEnd(-500, -500, vi.fn()));
-
-    expect(moved).toHaveBeenCalledWith({ characterId: 'a', col: 0, row: 0 });
   });
 
   it('should emit the character id on double click', () => {

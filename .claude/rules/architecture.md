@@ -35,20 +35,26 @@ features/
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung (Startseite)
     components/        → DungeonTrackerPage (Sidebar, Schnellzugriffsleiste mit „+“ und Zoom, Markierung für Brett und Legende),
                          DungeonBoard (zoombare Spielfläche mit Foto, Raster, Tokens), DungeonToken,
-                         GridSettings (Raster-Einstellungen: Zellgröße per Regler oder Zahl, Spalten über Bildbreite),
+                         GridSettings (Raster-Einstellungen: Schalter „Nullpunkt verschieben“, Zellgröße per Regler
+                         oder Zahl, Spalten über Bildbreite), GridSlider (Raster-Regler mit „−“/„+“ in feinster Stufe),
+                         GridOriginMarker (ziehbarer Nullpunkt-Marker, nur im Modus „Nullpunkt verschieben“),
                          DungeonLegendEntry (Legendeneintrag),
                          CharacterStatus (Leben/Rüstung an Token und Legende, später Statuseffekte),
                          CharacterActionBar (Menüleiste des markierten Charakters an Token und Legende;
                          neue Befehle nur hier ergänzen)
     models/            → dungeon-board-state.model.ts, dungeon-position.model.ts, dungeon-session-state.model.ts,
-                         board-token.model.ts, size.model.ts, character-selection.model.ts (Markierung, UI-Zustand)
+                         board-token.model.ts, size.model.ts, point.model.ts (Nullpunkt, Zugstrecke),
+                         character-selection.model.ts (Markierung, UI-Zustand)
     services/          → dungeon-board.service.ts (Signal-State + LocalStorage, Charakter-Sync per effect())
     utils/             → token-placement.util.ts (freies Feld für neue Tokens),
                          board-scale.util.ts (Spielflächengröße, Maßstab), grid-style.util.ts (Rasterlinien),
                          grid-fit.util.ts (Zellgröße prüfen, aus Spaltenanzahl berechnen, deutsch formatieren),
+                         grid-step.util.ts (±-Schritt runden und begrenzen, Bereiche, Nullpunkt formatieren),
+                         grid-origin.util.ts (Zugstrecke des Markers → Nullpunkt, Feld unter der Porträtmitte),
                          scroll-into-view.util.ts (nur bei Bedarf ins Bild scrollen)
     testing/           → resize-observer.fixtures.ts (steuerbarer ResizeObserver),
-                         scroll-into-view.fixtures.ts (Spy für das in jsdom fehlende scrollIntoView), nur für Specs
+                         scroll-into-view.fixtures.ts (Spy für das in jsdom fehlende scrollIntoView),
+                         drag-end.fixtures.ts (Stub für das Ende eines CDK-Drags), nur für Specs
 
   dungeon-builder/     → Dungeon-Layouts bauen, als XML speichern, als JPEG exportieren (kein Session-Zustand)
     components/        → DungeonBuilderPage (stellt BuilderUiService bereit, Tastenkürzel, Ziehen aus der Bibliothek),
@@ -95,7 +101,8 @@ shared/
                          CollapsibleSidebar (einklappbare `.general-sidebar`, UI-Zustand ohne Speicherung),
                          DamageTakenDialog, BoardZoomControl (senkrechter Zoom-Regler für zoombare Spielflächen,
                          z. B. in der Schnellzugriffsleiste `.general-quick-access`))
-  directives/          → board-pan.ts (BoardPan: Ausschnitt eines Scroll-Containers per Ziehen verschieben)
+  directives/          → board-pan.ts (BoardPan: Ausschnitt eines Scroll-Containers per Ziehen verschieben),
+                         repeat-on-hold.ts (RepeatOnHold: Schritt-Button wiederholt beim Gedrückthalten)
   models/              → confirmation-dialog-data.model.ts (Texte der Rückfrage),
                          damage-dialog-data.model.ts (Titel des Schadensauswahl-Dialogs)
   services/            → character-editor.service.ts (öffnet den Charakter-Editor systemweit),

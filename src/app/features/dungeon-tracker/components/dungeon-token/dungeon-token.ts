@@ -14,6 +14,7 @@ import { CdkDrag, CdkDragEnd, CdkDragHandle, Point } from '@angular/cdk/drag-dro
 import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { DungeonPosition } from '../../models/dungeon-position.model';
 import { scrollIntoViewIfNeeded } from '../../utils/scroll-into-view.util';
+import { fieldAt } from '../../utils/grid-origin.util';
 import { CharacterStatus } from '../character-status/character-status';
 import { CharacterActionBar } from '../character-action-bar/character-action-bar';
 
@@ -95,11 +96,14 @@ export class DungeonToken {
   onDragEnd(event: CdkDragEnd): void {
     // Die CDK liefert die Drag-Strecke in Bildschirm-Pixeln, das Token rechnet in Einheiten.
     const dragOffset: Point = event.source.getFreeDragPosition();
-    const col: number = this.fieldAt(
+    const col: number = this.fieldUnderPortrait(
       this.tokenLeft() + dragOffset.x / this.scale(),
       this.offsetX(),
     );
-    const row: number = this.fieldAt(this.tokenTop() + dragOffset.y / this.scale(), this.offsetY());
+    const row: number = this.fieldUnderPortrait(
+      this.tokenTop() + dragOffset.y / this.scale(),
+      this.offsetY(),
+    );
 
     event.source.reset();
     // Der abschließende Maus-Klick folgt noch in derselben Task; nach Touch kommt keiner.
@@ -108,9 +112,8 @@ export class DungeonToken {
     this.tokenMoved.emit({ characterId: this.position().characterId, col, row });
   }
 
-  /** Feld (Spalte bzw. Zeile), über dem die Porträtmitte liegt; nie negativ. */
-  private fieldAt(portraitStart: number, gridOffset: number): number {
-    const portraitCenter: number = portraitStart + TOKEN_PORTRAIT_SIZE_PX / 2;
-    return Math.max(0, Math.floor((portraitCenter - gridOffset) / this.cellSize()));
+  /** Feld (Spalte bzw. Zeile), über dem die Porträtmitte liegt; links bzw. oberhalb des Nullpunkts negativ. */
+  private fieldUnderPortrait(portraitStart: number, gridOffset: number): number {
+    return fieldAt(portraitStart + TOKEN_PORTRAIT_SIZE_PX / 2, gridOffset, this.cellSize());
   }
 }

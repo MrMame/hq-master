@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DungeonBoardState } from '../../models/dungeon-board-state.model';
 import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { GridSettings } from './grid-settings';
+import { clickButton } from '../../../../shared/testing/click-button';
 
 type GridSetting = 'gridCellSizePx' | 'gridOffsetX' | 'gridOffsetY' | 'gridOpacity';
 
@@ -31,7 +32,7 @@ describe('GridSettings', () => {
   const columnsField: () => HTMLInputElement = (): HTMLInputElement =>
     host.querySelector('input[step="1"][type="number"]') as HTMLInputElement;
   const apply: () => void = (): void => {
-    (host.querySelector('button') as HTMLButtonElement).click();
+    clickButton(host, 'Übernehmen');
     fixture.detectChanges();
   };
 
@@ -52,8 +53,8 @@ describe('GridSettings', () => {
 
     expect(host.textContent).toContain('Zellgröße: 38,46px');
     expect(cellSizeField().value).toBe('38.46');
-    expect(Number(sliders()[0].value)).toBeCloseTo(38.5, 1);
-    expect(sliders()[0].step).toBe('0.1');
+    expect(Number(sliders()[0].value)).toBeCloseTo(38.46, 2);
+    expect(sliders()[0].step).toBe('0.01');
     expect(cellSizeField().step).toBe('0.01');
   });
 

@@ -94,6 +94,21 @@ describe('DungeonTrackerPage – interactions', () => {
     expect(board.boardState()).toBe(before);
   });
 
+  it('shows the origin marker on the board while "Nullpunkt verschieben" is on', async () => {
+    const originSwitch: HTMLInputElement = host.querySelector('input[type="checkbox"]')!;
+    const marker: () => Element | null = (): Element | null =>
+      host.querySelector('app-dungeon-board [data-testid="grid-origin"]');
+    expect(marker()).toBeNull();
+
+    originSwitch.click();
+    await fixture.whenStable();
+    expect(marker()).not.toBeNull();
+
+    originSwitch.click();
+    await fixture.whenStable();
+    expect(marker()).toBeNull();
+  });
+
   it('opens the character editor for a new character with the "+" in the quick access bar', () => {
     host
       .querySelector<HTMLElement>('.general-quick-access button[aria-label="Neuer Charakter"]')!

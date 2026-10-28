@@ -45,7 +45,7 @@
       <h3 class="general-sidebar__heading general-sidebar__heading--spaced">
         Raster-Einstellungen
       </h3>
-      <app-grid-settings />
+      <app-grid-settings [(originMode)]="originMode" />
     </div>
   </app-collapsible-sidebar>
 
@@ -65,6 +65,7 @@
     </div>
     <app-dungeon-board
       [zoom]="zoom()"
+      [originMode]="originMode()"
       [selection]="activeSelection()"
       (selectionChange)="onBoardSelectionChange($event)"
     />

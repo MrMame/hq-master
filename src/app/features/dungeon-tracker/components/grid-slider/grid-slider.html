@@ -1,0 +1,35 @@
+<div class="grid-slider">
+  <label [for]="sliderId" class="grid-slider__label">{{ name() }}: {{ valueText() }}</label>
+  <div class="grid-slider__row">
+    <button
+      type="button"
+      appRepeatOnHold
+      [attr.aria-label]="name() + ' verringern'"
+      [disabled]="value() <= limits().min"
+      (stepRequested)="onStep(-1)"
+      class="grid-slider__step"
+    >
+      −
+    </button>
+    <input
+      [id]="sliderId"
+      type="range"
+      [min]="limits().min"
+      [max]="limits().max"
+      [step]="step()"
+      [value]="value()"
+      (input)="onSlide($event)"
+      class="grid-slider__range"
+    />
+    <button
+      type="button"
+      appRepeatOnHold
+      [attr.aria-label]="name() + ' erhöhen'"
+      [disabled]="value() >= limits().max"
+      (stepRequested)="onStep(1)"
+      class="grid-slider__step"
+    >
+      +
+    </button>
+  </div>
+</div>

@@ -48,4 +48,24 @@ describe('dungeon.xml-mapper – grid with decimals', () => {
 
     expect(readDungeonBoard(writeDungeonBoard(doc, state))).toEqual(state);
   });
+
+  it('keeps an origin with a decimal and positions left of and above the origin', () => {
+    const doc: XMLDocument = document.implementation.createDocument(null, 'gameSession', null);
+    const state: DungeonSessionState = {
+      board: { ...DEFAULT_DUNGEON_BOARD_STATE, gridOffsetX: 412.4, gridOffsetY: -12.5 },
+      positions: [
+        { characterId: 'a', col: -2, row: -1 },
+        { characterId: 'b', col: 0, row: -3 },
+      ],
+    };
+
+    expect(readDungeonBoard(writeDungeonBoard(doc, state))).toEqual(state);
+  });
+
+  it('reads an old offset from the slider range -100 to 100 unchanged', () => {
+    expect(read('<dungeonBoard gridOffsetX="-100" gridOffsetY="100"/>').board).toMatchObject({
+      gridOffsetX: -100,
+      gridOffsetY: 100,
+    });
+  });
 });

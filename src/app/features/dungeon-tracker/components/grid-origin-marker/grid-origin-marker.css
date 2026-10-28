@@ -1,0 +1,40 @@
+/* Punkt ohne Größe am Nullpunkt; `scale` hebt den Zoom auf, der Inhalt rechnet in Bildschirm-Pixeln. */
+:host {
+  position: absolute;
+  z-index: 30;
+  width: 0;
+  height: 0;
+  transform-origin: 0 0;
+}
+
+/* Grifffläche (44 px), mittig auf dem Nullpunkt; auf dem Tablet gut zu treffen. */
+.grid-origin__grip {
+  --grip-size: calc(var(--space-10) + var(--space-1));
+  position: absolute;
+  top: calc(var(--grip-size) / -2);
+  left: calc(var(--grip-size) / -2);
+  width: var(--grip-size);
+  height: var(--grip-size);
+  border-radius: 50%;
+  cursor: move;
+  touch-action: none;
+}
+
+.grid-origin__icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke-linecap: round;
+}
+
+.grid-origin__outline {
+  stroke: var(--color-gray-950);
+  stroke-width: 4;
+}
+
+.grid-origin__cross {
+  stroke: var(--color-yellow-400);
+  stroke-width: 2;
+}

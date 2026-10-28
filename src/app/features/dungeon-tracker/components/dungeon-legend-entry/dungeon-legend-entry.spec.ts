@@ -71,6 +71,15 @@ describe('DungeonLegendEntry', () => {
     expect(text('[data-testid="token-position"]')).toBe('[3,4]');
   });
 
+  it('shows a position left of and above the origin with its sign', () => {
+    fixture.componentRef.setInput('token', {
+      ...token,
+      position: { ...token.position, col: -2, row: -1 },
+    });
+    fixture.detectChanges();
+    expect(text('[data-testid="token-position"]')).toBe('[-2,-1]');
+  });
+
   it.each<[string]>([
     ['.legend-entry__avatar'],
     ['.legend-entry__name'],

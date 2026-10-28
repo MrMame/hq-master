@@ -23,10 +23,12 @@ import { DungeonBoardState } from '../../models/dungeon-board-state.model';
 import { BoardToken } from '../../models/board-token.model';
 import { CharacterSelection } from '../../models/character-selection.model';
 import { Size } from '../../models/size.model';
+import { Point } from '../../models/point.model';
 import { fitScale, stageSize } from '../../utils/board-scale.util';
 import { gridStyle, GridStyle } from '../../utils/grid-style.util';
 import { BoardPan } from '../../../../shared/directives/board-pan';
 import { DungeonToken } from '../dungeon-token/dungeon-token';
+import { GridOriginMarker } from '../grid-origin-marker/grid-origin-marker';
 
 /**
  * Spielbrettbereich: Foto, Raster und Tokens liegen auf einer Spielfläche mit festen Einheiten,
@@ -34,7 +36,7 @@ import { DungeonToken } from '../dungeon-token/dungeon-token';
  */
 @Component({
   selector: 'app-dungeon-board',
-  imports: [DungeonToken, NgStyle, BoardPan],
+  imports: [DungeonToken, GridOriginMarker, NgStyle, BoardPan],
   templateUrl: './dungeon-board.html',
   styleUrl: './dungeon-board.css',
 })
@@ -45,6 +47,8 @@ export class DungeonBoard {
 
   /** Zoomstufe aus der Sidebar; 1 = die ganze Spielfläche ist sichtbar. */
   readonly zoom: InputSignal<number> = input<number>(1);
+  /** Modus „Nullpunkt verschieben“ aus der Sidebar: zeigt den ziehbaren Nullpunkt-Marker. */
+  readonly originMode: InputSignal<boolean> = input<boolean>(false);
 
   readonly boardState: Signal<DungeonBoardState> = this.dungeonBoardService.boardState;
   readonly tokens: Signal<BoardToken[]> = this.dungeonBoardService.tokens;
@@ -68,8 +72,21 @@ export class DungeonBoard {
   readonly scale: Signal<number> = computed(
     () => fitScale(this.viewportSize(), this.stage()) * this.zoom(),
   );
+  /** Nullpunkt während des Ziehens am Marker, sonst `null`; reiner UI-Zustand. */
+  protected readonly originPreview: WritableSignal<Point | null> = signal<Point | null>(null);
+  /** Nullpunkt für Raster, Tokens und Marker: beim Ziehen die Vorschau, sonst der gespeicherte. */
+  readonly origin: Signal<Point> = computed(
+    () =>
+      this.originPreview() ?? {
+        x: this.boardState().gridOffsetX,
+        y: this.boardState().gridOffsetY,
+      },
+  );
   readonly gridStyle: Signal<GridStyle> = computed(() =>
-    gridStyle(this.boardState(), this.scale() > 0 ? 1 / this.scale() : 1),
+    gridStyle(
+      { ...this.boardState(), gridOffsetX: this.origin().x, gridOffsetY: this.origin().y },
+      this.scale() > 0 ? 1 / this.scale() : 1,
+    ),
   );
 
   /** Mitte des sichtbaren Ausschnitts relativ zur gescrollten Fläche (0..1). */
@@ -106,6 +123,12 @@ export class DungeonBoard {
   onPhotoLoad(event: Event): void {
     const photo: HTMLImageElement = event.target as HTMLImageElement;
     this.photoSize.set({ width: photo.naturalWidth, height: photo.naturalHeight });
+  }
+
+  /** Tokens behalten ihr Feld und wandern mit dem Raster mit. */
+  onOriginMoved(origin: Point): void {
+    this.dungeonBoardService.updateGridSettings({ gridOffsetX: origin.x, gridOffsetY: origin.y });
+    this.originPreview.set(null);
   }
 
   onTokenMoved(event: { characterId: string; col: number; row: number }): void {

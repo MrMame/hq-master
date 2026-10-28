@@ -2,6 +2,12 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-28 16:25) - Feature: Raster-Nullpunkt per Drag & Drop und ±-Buttons (dungeon-grid-origin #1–#9)
+
+- **Was wurde gemacht:** Im Modus „Nullpunkt verschieben“ zieht der DM einen Marker am Nullpunkt des Rasters per Maus, Finger oder Stift auf eine Kachelecke im Foto. Raster und Tokens folgen schon beim Ziehen, gespeichert wird beim Loslassen. Danach wächst das Raster beim Ändern der Zellgröße vom Nullpunkt in alle Richtungen. Charaktere lassen sich auch links und oberhalb des Nullpunkts ablegen (negative Spalte/Zeile). Zellgröße, Nullpunkt X/Y (früher „Versatz“, jetzt −100 bis 1000) und Deckkraft haben „−“/„+“ in feinster Stufe mit Rundung, Begrenzung und Wiederholung beim Gedrückthalten.
+- **Dateien geändert:** `dungeon-tracker/components/grid-slider/*`, `grid-origin-marker/*` (neu), `shared/directives/repeat-on-hold.ts` (+spec, neu), `dungeon-tracker/utils/grid-step.util.ts`, `grid-origin.util.ts` (+specs, neu), `models/point.model.ts`, `testing/drag-end.fixtures.ts` (neu), `grid-settings.ts/.html/.css` (+specs), `dungeon-board.ts/.html` (+`dungeon-board-origin.spec.ts`), `dungeon-token.ts` (+`dungeon-token-origin.spec.ts`), `dungeon-tracker-page.ts/.html` (+spec), `dungeon-legend-entry.spec.ts`, `token-placement.util.spec.ts`, `game-session/xml/dungeon.xml-mapper.spec.ts`, `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/done/dungeon-grid-origin.md`
+- **Wichtige Entscheidung:** Der Marker wertet die Zeiger-Ereignisse selbst aus statt über `cdkDrag` (auf Rückfrage). So sitzt er beim Ziehen immer auf dem gerundeten, begrenzten Nullpunkt, und `BoardPan` blieb unverändert. Beim Ziehen bleibt der Nullpunkt auf der Spielfläche, negative Werte gibt es nur über Regler oder ±. Legende und Session-XML konnten negative Werte schon, dafür kamen nur Tests dazu. 793 Tests (neue Dateien 100 %), Lint, Build, e2e (30) und Probe (5, inkl. Touch und Zoom 200 %) grün.
+
 ### (2026-10-27 21:44) - Feature: Raster im Dungeon Tracker exakt einstellen (dungeon-grid-fine-cell-size #1–#6)
 
 - **Was wurde gemacht:** Die Raster-Einstellungen sind jetzt die Komponente `GridSettings`. Die Zellgröße lässt sich per Regler (Schritt 0,1) und Zahlenfeld (Schritt 0,01, deutsch angezeigt, z. B. „38,46“) einstellen; ungültige Eingaben ändern nichts. „Spalten über Bildbreite“ + „Übernehmen“ setzt Zellgröße 1000 / Spalten, `gridColumns` und Versatz 0 / 0, bei zu vielen oder zu wenigen Spalten erscheint ein Hinweis. Damit liegt ein randloses Builder-JPEG exakt im Raster.

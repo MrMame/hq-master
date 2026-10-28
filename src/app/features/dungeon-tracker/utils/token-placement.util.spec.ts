@@ -34,6 +34,18 @@ describe('placeNewTokens', () => {
     expect(placeNewTokens(occupied, ['a'])).toEqual([{ characterId: 'a', col: 0, row: 0 }]);
   });
 
+  it('should still start at [0,0] when tokens lie left of or above the origin', () => {
+    const occupied: DungeonPosition[] = [
+      { characterId: 'x', col: -1, row: 0 },
+      { characterId: 'y', col: 0, row: -1 },
+      { characterId: 'z', col: -2, row: -1 },
+    ];
+    expect(placeNewTokens(occupied, ['a', 'b'])).toEqual([
+      { characterId: 'a', col: 0, row: 0 },
+      { characterId: 'b', col: 1, row: 0 },
+    ]);
+  });
+
   it('should return no positions when there are no new characters', () => {
     expect(placeNewTokens([{ characterId: 'x', col: 0, row: 0 }], [])).toEqual([]);
   });

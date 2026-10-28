@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-28  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** done (2026-10-28 16:25)  
 **Bezug:** `REQUIREMENTS.md` (Dungeon Tracker: „Das Raster soll einstellbar sein …“),
 `docs/feature-requests/done/dungeon-grid-fine-cell-size.md`
 
@@ -53,7 +53,7 @@ Spielbrett (Bearbeitungsmodus)
 
 ## Anforderungen
 
-### 1. Nullpunkt-Modus
+### 1. Nullpunkt-Modus ✅ done (2026-10-28 16:25)
 
 - In den Raster-Einstellungen gibt es oberhalb der Regler einen Schalter „Nullpunkt verschieben“
   (Checkbox oder Toggle-Button, per Rolle und Text auffindbar).
@@ -65,7 +65,7 @@ Spielbrett (Bearbeitungsmodus)
 
 ---
 
-### 2. Nullpunkt-Marker auf dem Spielbrett
+### 2. Nullpunkt-Marker auf dem Spielbrett ✅ done (2026-10-28 16:25)
 
 - Im Nullpunkt-Modus liegt auf der Spielfläche ein Marker genau auf dem Nullpunkt
   (`gridOffsetX` / `gridOffsetY`), z. B. ein Fadenkreuz mit Kreis in `--color-yellow-400` und dunkler Kontur.
@@ -76,7 +76,7 @@ Spielbrett (Bearbeitungsmodus)
 
 ---
 
-### 3. Nullpunkt per Drag & Drop verschieben
+### 3. Nullpunkt per Drag & Drop verschieben ✅ done (2026-10-28 16:25)
 
 - Der DM zieht den Marker mit Maus, Finger oder Stift. Beim Loslassen schreibt das Spielbrett den neuen
   Nullpunkt über `DungeonBoardService.updateGridSettings({ gridOffsetX, gridOffsetY })`.
@@ -98,7 +98,7 @@ gleichmäßig auf beide Ränder.
 
 ---
 
-### 4. Charaktere links und oberhalb des Nullpunkts
+### 4. Charaktere links und oberhalb des Nullpunkts ✅ done (2026-10-28 16:25)
 
 - Spalte und Zeile einer Position (`DungeonPosition.col` / `row`) dürfen negativ sein. Spalte −1, Zeile 0 ist
   das Feld direkt links neben dem Nullpunkt.
@@ -117,7 +117,7 @@ Laden der Session liegt er auf demselben Feld.
 
 ---
 
-### 5. ±-Buttons an den Raster-Reglern
+### 5. ±-Buttons an den Raster-Reglern ✅ done (2026-10-28 16:25)
 
 - Neben den Reglern Zellgröße, Nullpunkt X, Nullpunkt Y und Deckkraft steht links ein „−“- und rechts ein
   „+“-Button (`aria-label` z. B. „Zellgröße verringern“ / „Zellgröße erhöhen“).
@@ -139,7 +139,7 @@ Laden der Session liegt er auf demselben Feld.
 
 ---
 
-### 6. Regler „Versatz“ werden zu „Nullpunkt“
+### 6. Regler „Versatz“ werden zu „Nullpunkt“ ✅ done (2026-10-28 16:25)
 
 - Die Regler „Versatz X/Y“ heißen „Nullpunkt X/Y“ und zeigen dieselben Werte wie der Marker, deutsch mit
   höchstens einer Nachkommastelle (z. B. „412,4“).
@@ -154,7 +154,7 @@ Laden der Session liegt er auf demselben Feld.
 
 ---
 
-### 7. Aufteilung
+### 7. Aufteilung ✅ done (2026-10-28 16:25)
 
 - Regler mit Beschriftung, „−“, „+“ und Wiederholung kommen in eine eigene Komponente, z. B.
   `ng g c features/dungeon-tracker/components/grid-slider` → `GridSlider` (Eingaben: Beschriftung, Wert,
@@ -170,7 +170,7 @@ Laden der Session liegt er auf demselben Feld.
 
 ---
 
-### 8. Tests
+### 8. Tests ✅ done (2026-10-28 16:25)
 
 - `grid-slider.spec.ts` über DOM: „+“/„−“ ändern um genau einen Schritt; Rundung (38,46 + 0,01 = 38,47);
   Button am Bereichsende deaktiviert; Regler meldet den Wert wie bisher.
@@ -195,7 +195,7 @@ Laden der Session liegt er auf demselben Feld.
 
 ---
 
-### 9. Dokumentation
+### 9. Dokumentation ✅ done (2026-10-28 16:25)
 
 - `REQUIREMENTS.md`, Dungeon Tracker: nach „… stellt der DM das Raster über die Spaltenanzahl in einem Schritt
   passend ein.“ ergänzen, z. B.: „Im Modus ‚Nullpunkt verschieben‘ zieht der DM den markierten Nullpunkt des
@@ -220,22 +220,38 @@ Laden der Session liegt er auf demselben Feld.
 - Liegt der Nullpunkt bei negativen Werten außerhalb der Spielfläche, ist der Marker ganz oder teilweise
   verdeckt. Das ist gewollt; eingestellt wird dann über Regler oder ±-Buttons.
 - Nicht Teil dieses Requests: ±-Buttons am Zoom-Regler und Tastatursteuerung des Markers.
+- **Umsetzung (2026-10-28):**
+  - **Ziehen des Markers (abweichend von #3, auf Rückfrage):** `GridOriginMarker` wertet die Zeiger-Ereignisse
+    selbst aus (`setPointerCapture`) statt `cdkDrag`. So sitzt der Marker während des Ziehens immer genau auf dem
+    gerundeten, begrenzten Nullpunkt. Raster und Tokens folgen über einen Vorschau-Nullpunkt in `DungeonBoard`;
+    gespeichert wird erst beim Loslassen, `pointercancel` verwirft die Vorschau.
+  - **Spielbrett bleibt unberührt:** Druck und Klick hält der Marker selbst vom Spielbrett fern. Deshalb musste
+    `BoardPan` nicht geändert werden.
+  - **Rechnung:** Die Umrechnung liegt in `utils/grid-origin.util.ts` (`draggedOrigin`, `fieldAt`), Schritt,
+    Runden und Begrenzen in `utils/grid-step.util.ts`.
+  - **Grenzen beim Ziehen:** X liegt zwischen 0 und min(1000, Breite), Y zwischen 0 und min(1000, Höhe der
+    Spielfläche).
+  - **Regler und Beschriftung:** Die Regler nutzen dieselbe feine Stufe wie die ±-Buttons. „Nullpunkt X/Y“ steht
+    ohne „px“.
+  - **Tastatur:** Per Enter oder Leertaste löst ein ±-Button genau einen Schritt aus.
+  - **Punkt 4 war teilweise erfüllt:** Legende und Session-XML konnten negative Werte schon. Hier kamen nur
+    Tests dazu.
 
 ---
 
 ## Akzeptanzkriterien
 
-- [ ] Ein Schalter „Nullpunkt verschieben“ blendet einen Marker am Nullpunkt des Rasters ein und aus; der
+- [x] Ein Schalter „Nullpunkt verschieben“ blendet einen Marker am Nullpunkt des Rasters ein und aus; der
       Zustand wird nicht gespeichert
-- [ ] Der Marker lässt sich per Maus und Touch ziehen; Raster und Tokens folgen, der Wert wird gespeichert
-- [ ] Nach dem Verschieben wächst das Raster beim Ändern der Zellgröße vom neuen Nullpunkt in alle Richtungen
-- [ ] Die Umrechnung stimmt bei jedem Zoom; Ziehen am Marker verschiebt nicht den Ausschnitt
-- [ ] Charaktere lassen sich links und oberhalb des Nullpunkts ablegen; ihre Position hat dann eine negative
+- [x] Der Marker lässt sich per Maus und Touch ziehen; Raster und Tokens folgen, der Wert wird gespeichert
+- [x] Nach dem Verschieben wächst das Raster beim Ändern der Zellgröße vom neuen Nullpunkt in alle Richtungen
+- [x] Die Umrechnung stimmt bei jedem Zoom; Ziehen am Marker verschiebt nicht den Ausschnitt
+- [x] Charaktere lassen sich links und oberhalb des Nullpunkts ablegen; ihre Position hat dann eine negative
       Spalte bzw. Zeile, wird in der Legende angezeigt und bleibt beim Speichern und Laden erhalten
-- [ ] Zellgröße, Nullpunkt X/Y und Deckkraft haben „−“/„+“-Buttons mit feinster Schrittweite, Begrenzung und
+- [x] Zellgröße, Nullpunkt X/Y und Deckkraft haben „−“/„+“-Buttons mit feinster Schrittweite, Begrenzung und
       Wiederholung beim Gedrückthalten
-- [ ] Bestehende Spielstände (Versatz −100 bis 100) laden unverändert; Nachkommastellen bleiben beim Speichern
+- [x] Bestehende Spielstände (Versatz −100 bis 100) laden unverändert; Nachkommastellen bleiben beim Speichern
       erhalten
-- [ ] Jede Datei hat höchstens 150 Zeilen; `REQUIREMENTS.md` und `architecture.md` sind angepasst
-- [ ] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und
+- [x] Jede Datei hat höchstens 150 Zeilen; `REQUIREMENTS.md` und `architecture.md` sind angepasst
+- [x] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und
       `npm run e2e` laufen grün

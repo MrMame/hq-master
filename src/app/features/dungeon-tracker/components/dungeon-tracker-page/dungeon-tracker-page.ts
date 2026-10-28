@@ -31,6 +31,9 @@ export class DungeonTrackerPage {
   /** Zoomstufe des Spielbretts: reiner Anzeigezustand, wird nicht gespeichert. */
   readonly zoom: WritableSignal<number> = signal<number>(1);
 
+  /** Modus „Nullpunkt verschieben“: reiner UI-Zustand, wird nicht gespeichert, startet aus. */
+  readonly originMode: WritableSignal<boolean> = signal<boolean>(false);
+
   /** Eine Markierung für Spielbrett und Legende: reiner UI-Zustand, wird nicht gespeichert. */
   private readonly selection: WritableSignal<CharacterSelection | null> =
     signal<CharacterSelection | null>(null);

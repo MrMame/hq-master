@@ -18,7 +18,18 @@
   line-height: var(--text-sm--line-height);
 }
 
-.grid-setting__slider {
+.grid-setting__toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  cursor: pointer;
+}
+
+.grid-setting__checkbox {
+  width: var(--space-4);
+  height: var(--space-4);
   accent-color: var(--color-yellow-400);
 }
 

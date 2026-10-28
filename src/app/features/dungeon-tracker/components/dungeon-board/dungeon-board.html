@@ -49,14 +49,25 @@
           [position]="token.position"
           [character]="token.character"
           [cellSize]="boardState().gridCellSizePx"
-          [offsetX]="boardState().gridOffsetX"
-          [offsetY]="boardState().gridOffsetY"
+          [offsetX]="origin().x"
+          [offsetY]="origin().y"
           [scale]="scale()"
           [selected]="selection()?.characterId === token.position.characterId"
           [reveal]="selection()?.source === 'legend'"
           (tokenMoved)="onTokenMoved($event)"
           (tokenSelected)="selectionChange.emit($event)"
           (tokenDoubleClicked)="onTokenDoubleClick(token.character)"
+        />
+      }
+
+      <!-- Über Raster und Tokens, auch bei Deckkraft 0 -->
+      @if (originMode()) {
+        <app-grid-origin-marker
+          [origin]="origin()"
+          [scale]="scale()"
+          [stage]="stage()"
+          (originPreview)="originPreview.set($event)"
+          (originMoved)="onOriginMoved($event)"
         />
       }
     </div>
