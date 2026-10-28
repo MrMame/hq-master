@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-28  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** done (2026-10-28 17:30)  
 **Bezug:** `REQUIREMENTS.md` (Dungeon Builder: „Die Bibliothek in der linken Seitenleiste kommt aus einer
 Katalog-Datei …“), `src/app/shared/components/collapsible-sidebar/collapsible-sidebar.ts`
 
@@ -49,7 +49,7 @@ Dungeon Builder                    [⊟]   ← alle zuklappen / [⊞] alle aufkl
 
 ## Anforderungen
 
-### 1. Gemeinsame Komponente `SidebarSection`
+### 1. Gemeinsame Komponente `SidebarSection` ✅ done (2026-10-28 17:30)
 
 - Neue Shared-Komponente: `ng g c shared/components/sidebar-section` → `SidebarSection`.
 - Eingaben: `title` (Text), `sectionId` (stabiler Schlüssel, z. B. `dungeon-builder.layout`), optional `count`
@@ -67,7 +67,7 @@ klappt sie wieder auf.
 
 ---
 
-### 2. Zustand speichern
+### 2. Zustand speichern ✅ done (2026-10-28 17:30)
 
 - Der Zustand wird über einen Service gespeichert, z. B. `ng g s shared/services/sidebar-section-state` →
   `SidebarSectionStateService`, mit `persistedState` und neuem Key in `TOOL_STATE_KEYS`
@@ -82,7 +82,7 @@ klappt sie wieder auf.
 
 ---
 
-### 3. Alle auf- und zuklappen
+### 3. Alle auf- und zuklappen ✅ done (2026-10-28 17:30)
 
 - Neben dem Titel der Seitenleiste (`general-sidebar__title`) steht ein kleiner Button, der alle Abschnitte des
   Features zuklappt. Sind alle zu, klappt er alle auf (`aria-label` „Alle Gruppen einklappen“ /
@@ -94,7 +94,7 @@ klappt sie wieder auf.
 
 ---
 
-### 4. Einsatz in allen Features
+### 4. Einsatz in allen Features ✅ done (2026-10-28 17:30)
 
 - **Dungeon Builder:** Datei, Layout, Boden, Türen und jede Katalog-Kategorie werden zu `SidebarSection`s. Boden,
   Türen und die Kategorien zeigen ihre Anzahl.
@@ -109,7 +109,7 @@ klappt sie wieder auf.
 
 ---
 
-### 5. Suche in der Bibliothek (Builder)
+### 5. Suche in der Bibliothek (Builder) ✅ done (2026-10-28 17:30)
 
 - Oben in der Bibliothek steht ein Suchfeld (`type="search"`, `aria-label` „Element suchen“).
 - Gesucht wird ohne Rücksicht auf Groß- und Kleinschreibung im Namen der Einträge aller Gruppen (Boden inkl. „Fels“,
@@ -125,7 +125,7 @@ klappt sie wieder auf.
 
 ---
 
-### 6. Gruppe „Zuletzt verwendet“ (Builder)
+### 6. Gruppe „Zuletzt verwendet“ (Builder) ✅ done (2026-10-28 17:30)
 
 - Ganz oben in der Bibliothek steht die Gruppe „Zuletzt verwendet“ mit den letzten 8 verschiedenen Türen und
   Möbelstücken, das neueste zuerst. Bodenarten zählen nicht dazu.
@@ -140,7 +140,7 @@ klappt sie wieder auf.
 
 ---
 
-### 7. Aufteilung
+### 7. Aufteilung ✅ done (2026-10-28 17:30)
 
 - `ElementLibrary` darf nicht über 150 Zeilen je Datei wachsen. Die Darstellung einer Gruppe mit ihren Einträgen
   kommt z. B. in `ng g c features/dungeon-builder/components/library-group` → `LibraryGroupSection`. Die Bodengruppe
@@ -154,7 +154,7 @@ klappt sie wieder auf.
 
 ---
 
-### 8. Tests
+### 8. Tests ✅ done (2026-10-28 17:30)
 
 - `sidebar-section.spec.ts` über DOM: Titel und Anzahl werden angezeigt; Klick klappt zu und auf;
   `aria-expanded` stimmt; der Inhalt bleibt im DOM; neue Abschnitte sind offen.
@@ -176,7 +176,7 @@ klappt sie wieder auf.
 
 ---
 
-### 9. Dokumentation
+### 9. Dokumentation ✅ done (2026-10-28 17:30)
 
 - `REQUIREMENTS.md`: allgemein ergänzen, dass sich die Gruppen der linken Seitenleiste in allen Features einzeln
   und gemeinsam auf- und zuklappen lassen und der Zustand erhalten bleibt. Beim Dungeon Builder ergänzen, dass die
@@ -197,19 +197,37 @@ klappt sie wieder auf.
   verschachtelte Kategorien (z. B. Möbel > Tische). `SidebarSection` sollte so gebaut sein, dass Verschachteln
   später möglich ist.
 
+- **Umsetzung (2026-10-28):**
+  - **Entscheidungen auf Rückfrage:** Während einer Suche sind Treffergruppen offen und ihr Kopf-Button ist
+    deaktiviert, damit ein Klick nicht unsichtbar den gespeicherten Zustand ändert. Einträge unter „Zuletzt
+    verwendet“ heißen barrierefrei z. B. „Tisch (3 × 2) – zuletzt verwendet“, damit es keine zwei gleichnamigen
+    Buttons gibt; sichtbar bleibt „Tisch“. Eingetragen wird beim Loslassen über dem Plan, weil `placeElement`
+    keinen Erfolg meldet. Der Builder hat die neue Überschrift „Datei“; „Deck Aktionen“ ist jetzt die Überschrift
+    des Abschnitts im Card Manager.
+  - **Alle auf-/zuklappen:** eigene Komponente `SidebarSectionToggleAll` in der neuen Kopfzeile
+    `.general-sidebar__header`. Angezeigte Abschnitte melden sich beim `SidebarSectionStateService` an
+    (nicht gespeichert); daran erkennt der Button, ob alle zu sind.
+  - **Bibliothek:** Auch die Bodengruppe nutzt `LibraryGroupSection` (nicht ziehbar, `draggable=false`); „Fels“
+    hat die ID `ROCK_ID` (`''`). `LibraryGroup` hat ein Feld `key`, die Abschnitts-ID ist
+    `dungeon-builder.library.<key>` (`floor`, `doors`, `recent` bzw. Kategoriename).
+  - **Gespeicherte ID-Listen** prüft der neue `STRING_LIST_CODEC` (`core/session-state/`); ein kaputter Eintrag
+    fällt auf den Startwert zurück.
+  - **In der Probe gefunden:** Der per CSS `::before` gezeichnete Pfeil gehörte zum barrierefreien Namen
+    („▸ Grundmöbel“). Er sitzt jetzt in einem eigenen `aria-hidden`-Element.
+
 ---
 
 ## Akzeptanzkriterien
 
-- [ ] In Dungeon Builder, Dungeon Tracker und Card Manager lässt sich jede Gruppe der Seitenleiste über ihre
+- [x] In Dungeon Builder, Dungeon Tracker und Card Manager lässt sich jede Gruppe der Seitenleiste über ihre
       Überschrift per Maus, Touch und Tastatur auf- und zuklappen
-- [ ] Der Zustand bleibt nach dem Neuladen erhalten, gehört nicht zur Spielesession, und neue Katalog-Kategorien
+- [x] Der Zustand bleibt nach dem Neuladen erhalten, gehört nicht zur Spielesession, und neue Katalog-Kategorien
       sind standardmäßig offen
-- [ ] Ein Button je Feature klappt alle Gruppen auf einmal auf bzw. zu, ohne andere Features zu beeinflussen
-- [ ] Die Suche in der Bibliothek filtert über alle Gruppen, blendet leere Gruppen aus und lässt sich per × und
+- [x] Ein Button je Feature klappt alle Gruppen auf einmal auf bzw. zu, ohne andere Features zu beeinflussen
+- [x] Die Suche in der Bibliothek filtert über alle Gruppen, blendet leere Gruppen aus und lässt sich per × und
       Escape leeren
-- [ ] „Zuletzt verwendet“ zeigt die letzten 8 platzierten bzw. als Stempel gewählten Türen und Möbel, bleibt nach
+- [x] „Zuletzt verwendet“ zeigt die letzten 8 platzierten bzw. als Stempel gewählten Türen und Möbel, bleibt nach
       dem Neuladen erhalten und lässt sich wie die übrigen Einträge ziehen und stempeln
-- [ ] Jede Datei hat höchstens 150 Zeilen; `REQUIREMENTS.md` und `architecture.md` sind angepasst
-- [ ] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten) und `npm run build`
+- [x] Jede Datei hat höchstens 150 Zeilen; `REQUIREMENTS.md` und `architecture.md` sind angepasst
+- [x] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten) und `npm run build`
       laufen grün

@@ -1,13 +1,17 @@
 <div class="cardManagerPageContainer">
   @if (state()) {
     <app-collapsible-sidebar>
-      <h2 class="general-sidebar__title">Card Manager</h2>
-      <label class="general-sidebar__caption">Deck Aktionen</label>
-      <button class="general-sidebar__button" (click)="onLoadDeckClick()">Deck Laden</button>
-      <button class="general-sidebar__button" (click)="onShuffleClick()">
-        Nachziehstapel Mischen
-      </button>
-      <button class="general-sidebar__button" (click)="onResetClick()">Zurücksetzen</button>
+      <div class="general-sidebar__header">
+        <h2 class="general-sidebar__title">Card Manager</h2>
+        <app-sidebar-section-toggle-all scope="card-manager" />
+      </div>
+      <app-sidebar-section title="Deck Aktionen" sectionId="card-manager.deck-actions">
+        <button class="general-sidebar__button" (click)="onLoadDeckClick()">Deck Laden</button>
+        <button class="general-sidebar__button" (click)="onShuffleClick()">
+          Nachziehstapel Mischen
+        </button>
+        <button class="general-sidebar__button" (click)="onResetClick()">Zurücksetzen</button>
+      </app-sidebar-section>
       <hr class="general-sidebar__divider" />
     </app-collapsible-sidebar>
 

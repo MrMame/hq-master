@@ -1,11 +1,14 @@
 import { Component, inject, Signal, signal, viewChild, WritableSignal } from '@angular/core';
 import { CollapsibleSidebar } from '../../../../shared/components/collapsible-sidebar/collapsible-sidebar';
+import { SidebarSection } from '../../../../shared/components/sidebar-section/sidebar-section';
+import { SidebarSectionToggleAll } from '../../../../shared/components/sidebar-section-toggle-all/sidebar-section-toggle-all';
 import { PlaceGesture } from '../../gestures/place.gesture';
 import { ElementSelection } from '../../models/element-selection.model';
 import { PlanPoint } from '../../models/grid.model';
 import { LibraryDrag } from '../../models/library-entry.model';
 import { BuilderUiService } from '../../services/builder-ui.service';
 import { DungeonLayoutService } from '../../services/dungeon-layout.service';
+import { RecentElementsService } from '../../services/recent-elements.service';
 import { BuilderShortcut, shortcutFor } from '../../utils/builder-shortcut.util';
 import { BuilderFilePanel } from '../builder-file-panel/builder-file-panel';
 import { BuilderToolStrip } from '../builder-tool-strip/builder-tool-strip';
@@ -21,6 +24,8 @@ import { LayoutSettings } from '../layout-settings/layout-settings';
   selector: 'app-dungeon-builder-page',
   imports: [
     CollapsibleSidebar,
+    SidebarSection,
+    SidebarSectionToggleAll,
     BuilderFilePanel,
     LayoutSettings,
     ElementLibrary,
@@ -35,6 +40,7 @@ import { LayoutSettings } from '../layout-settings/layout-settings';
 export class DungeonBuilderPage {
   private readonly ui: BuilderUiService = inject(BuilderUiService);
   private readonly layoutService: DungeonLayoutService = inject(DungeonLayoutService);
+  private readonly recentElements: RecentElementsService = inject(RecentElementsService);
   private readonly plan: Signal<LayoutPlan> = viewChild.required(LayoutPlan);
 
   /** Zoomstufe des Plans; nicht gespeichert. */
@@ -53,11 +59,13 @@ export class DungeonBuilderPage {
     this.ui.setGesture(point ? new PlaceGesture(drag.catalogId, point) : null);
   }
 
-  /** Losgelassen über dem Plan: Element setzen; außerhalb passiert nichts. */
+  /** Losgelassen über dem Plan: Element setzen und unter „Zuletzt verwendet“ merken; außerhalb passiert nichts. */
   protected onLibraryDropped(drag: LibraryDrag): void {
     this.ui.setGesture(null);
     const point: PlanPoint | null = this.plan().toPlanPoint(drag.clientX, drag.clientY);
-    if (point) this.layoutService.placeElement(drag.catalogId, point);
+    if (!point) return;
+    this.layoutService.placeElement(drag.catalogId, point);
+    this.recentElements.record(drag.catalogId);
   }
 
   private run(shortcut: BuilderShortcut): void {

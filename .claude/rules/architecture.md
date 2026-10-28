@@ -23,6 +23,7 @@ core/
                     vom Dateilimit ausgenommen), character-names.model.ts (CHARACTER_NAMES_BY_IMAGE)
   session-state/  → persisted-state.ts (persistedState), session-keys.ts (SESSION_KEYS),
                     tool-state-keys.ts (TOOL_STATE_KEYS: Werkzeug-Zustand außerhalb der Spielesession),
+                    string-list-codec.util.ts (STRING_LIST_CODEC: gespeicherte ID-Listen prüfen),
                     session-state-slice.ts (SessionStateSlice), session-slices.ts (SessionSliceData)
     testing/      → describe-persisted-state.ts (Vertragstest für Regel 8, nur für Specs)
   services/
@@ -59,7 +60,9 @@ features/
   dungeon-builder/     → Dungeon-Layouts bauen, als XML speichern, als JPEG exportieren (kein Session-Zustand)
     components/        → DungeonBuilderPage (stellt BuilderUiService bereit, Tastenkürzel, Ziehen aus der Bibliothek),
                          BuilderFilePanel (Neu, Laden, Als XML speichern, Als JPEG exportieren),
-                         LayoutSettings (Layoutname, Plangröße), ElementLibrary + LibraryEntry (Bibliothek),
+                         LayoutSettings (Layoutname, Plangröße), ElementLibrary (Bibliothek: Suche, „Zuletzt verwendet“,
+                         Gruppen), LibrarySearch (Suchfeld), LibraryGroupSection (aufklappbare Gruppe mit Einträgen,
+                         Tipp und Ziehen), LibraryEntry (Inhalt eines Eintrags),
                          BuilderToolStrip (Werkzeuge, Rückgängig/Wiederholen, Zoom), LayoutPlan (SVG-Plan,
                          Raster, Markierung), ElementActionBar (Drehen, Löschen am markierten Element)
     gestures/          → *.gesture.ts: unveränderliche Zeiger-Gesten mit Vorschau (Pinsel, Rechteck, Wand,
@@ -70,14 +73,17 @@ features/
     services/          → dungeon-layout.service.ts (Layout per persistedState mit TOOL_STATE_KEYS, Rückgängig-Verlauf),
                          element-catalog.service.ts (Katalog aus public/dungeon-builder/catalog.xml),
                          layout-xml.service.ts, layout-image.service.ts (JPEG über Canvas),
-                         builder-ui.service.ts (UI-Zustand der Seite, nicht root), plan-pointer.service.ts (Zeiger → Gesten)
+                         builder-ui.service.ts (UI-Zustand der Seite, nicht root), plan-pointer.service.ts (Zeiger → Gesten),
+                         recent-elements.service.ts („Zuletzt verwendet“ per persistedState mit TOOL_STATE_KEYS)
     utils/             → reine Geometrie und Layout-Änderungen (grid-geometry, piece-shape, piece-edit, floor-edit,
                          wall-geometry, door-geometry, layout-edit, layout-resize, hit-test, element-placement),
                          layout-render/element-steps (Zeichenschritte), canvas-draw, layout-history, layout-codec,
-                         plan-scale, builder-shortcut, file-name
+                         plan-scale, builder-shortcut, file-name, library-groups (Gruppen der Bibliothek aus dem Katalog),
+                         library-search (Bibliothek nach Namen filtern)
     xml/               → catalog.xml-mapper.ts (readCatalog), layout.xml-mapper.ts (writeLayout/readLayout)
     testing/           → builder.fixtures.ts (TEST_CATALOG, createTestLayout), builder-services.fixtures.ts,
-                         builder-file-panel.fixtures.ts, layout-plan.fixtures.ts, canvas.fixtures.ts (nur für Specs)
+                         builder-file-panel.fixtures.ts, layout-plan.fixtures.ts, canvas.fixtures.ts,
+                         element-library.fixtures.ts (nur für Specs)
 
   time-tracker/        → In-Game-Zeiterfassung
     components/        → TimeTrackerPage
@@ -99,6 +105,8 @@ features/
 shared/
   components/          → Feature-unabhängige UI (z. B. ConfirmationDialog, CharacterEditorDialog,
                          CollapsibleSidebar (einklappbare `.general-sidebar`, UI-Zustand ohne Speicherung),
+                         SidebarSection (auf-/zuklappbare Gruppe der Seitenleiste, `sectionId` = `<feature>.<abschnitt>`),
+                         SidebarSectionToggleAll (alle Gruppen eines Features auf-/zuklappen, in `.general-sidebar__header`),
                          DamageTakenDialog, BoardZoomControl (senkrechter Zoom-Regler für zoombare Spielflächen,
                          z. B. in der Schnellzugriffsleiste `.general-quick-access`))
   directives/          → board-pan.ts (BoardPan: Ausschnitt eines Scroll-Containers per Ziehen verschieben),
@@ -108,7 +116,8 @@ shared/
   services/            → character-editor.service.ts (öffnet den Charakter-Editor systemweit),
                          character-damage.service.ts (Schadensauswahl → applyDamage → Session),
                          file-transfer.service.ts (Dateien herunterladen und lesen),
-                         confirmation.service.ts (Rückfrage über den ConfirmationDialog als Promise<boolean>)
+                         confirmation.service.ts (Rückfrage über den ConfirmationDialog als Promise<boolean>),
+                         sidebar-section-state.service.ts (zugeklappte Abschnitte per persistedState mit TOOL_STATE_KEYS)
   utils/               → new-character.util.ts (Startwerte für neue Charaktere),
                          random-character.util.ts (Zufallscharakter, Name passend zur Bildklasse),
                          damage.util.ts (reine Schadensberechnung),

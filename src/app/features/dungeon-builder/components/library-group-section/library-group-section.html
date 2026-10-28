@@ -1,0 +1,33 @@
+<app-sidebar-section
+  [title]="group().name"
+  [sectionId]="sectionId()"
+  [count]="group().items.length"
+  [forceExpanded]="forceExpanded()"
+>
+  <div class="library__entries">
+    @for (item of group().items; track item.id) {
+      <button
+        type="button"
+        class="library__entry"
+        cdkDrag
+        [cdkDragDisabled]="!draggable()"
+        [cdkDragStartDelay]="dragDelay"
+        [class.library__entry--active]="activeId() === item.id"
+        [class.library__entry--static]="!draggable()"
+        [attr.aria-pressed]="activeId() === item.id"
+        [attr.aria-label]="item.label"
+        [title]="item.label"
+        (click)="picked.emit(item.id)"
+        (cdkDragMoved)="onDragMoved(item.id, $event)"
+        (cdkDragEnded)="onDragEnded(item.id, $event)"
+      >
+        <app-library-entry
+          [name]="item.name"
+          [image]="item.image"
+          [swatch]="item.swatch ?? ''"
+          [size]="item.size"
+        />
+      </button>
+    }
+  </div>
+</app-sidebar-section>

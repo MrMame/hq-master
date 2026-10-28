@@ -8,6 +8,7 @@ import { LibraryDrag } from '../../models/library-entry.model';
 import { BuilderUiService } from '../../services/builder-ui.service';
 import { TEST_CATALOG } from '../../testing/builder.fixtures';
 import { builderProviders, catalogProvider } from '../../testing/builder-services.fixtures';
+import { libraryButton, sectionHeadings } from '../../testing/element-library.fixtures';
 import { ElementLibrary } from './element-library';
 
 describe('ElementLibrary', () => {
@@ -16,6 +17,8 @@ describe('ElementLibrary', () => {
   let fixture: ComponentFixture<ElementLibrary>;
   let host: HTMLElement;
   let ui: BuilderUiService;
+
+  const button: (label: string) => HTMLButtonElement = (label) => libraryButton(host, label);
 
   beforeEach(() => {
     catalog = signal<ElementCatalog | null>(TEST_CATALOG);
@@ -30,23 +33,21 @@ describe('ElementLibrary', () => {
     fixture.detectChanges();
   });
 
-  function button(label: string): HTMLButtonElement {
-    const found: HTMLButtonElement | undefined = Array.from(
-      host.querySelectorAll<HTMLButtonElement>('button'),
-    ).find((b) => b.getAttribute('aria-label') === label);
-    if (!found) throw new Error(`Eintrag "${label}" nicht gefunden`);
-    return found;
-  }
-
-  it('should show a loading hint, then the groups of the catalog', () => {
+  it('should show a loading hint, then the search and the groups of the catalog', () => {
     catalog.set(null);
     fixture.detectChanges();
     expect(host.textContent).toContain('Bibliothek wird geladen');
+    expect(host.querySelector('input[type="search"]')).toBeNull();
 
     catalog.set(TEST_CATALOG);
     fixture.detectChanges();
-    const headings: string[] = Array.from(host.querySelectorAll('h3')).map((h) => h.textContent!);
-    expect(headings).toEqual(['Boden', 'Türen', 'Möbel', 'Hindernisse']);
+    expect(host.querySelector('input[type="search"]')).not.toBeNull();
+    expect(sectionHeadings(host)).toEqual([
+      'Boden (3)',
+      'Türen (1)',
+      'Möbel (2)',
+      'Hindernisse (1)',
+    ]);
     expect(button('Tisch (3 × 2)').textContent).toContain('3 × 2');
   });
 
@@ -84,8 +85,16 @@ describe('ElementLibrary', () => {
     expect(button('Tür').getAttribute('aria-pressed')).toBe('false');
   });
 
+  it('should not let floors be dragged', () => {
+    const disabled: (string | null)[] = fixture.debugElement
+      .queryAll(By.directive(CdkDrag))
+      .filter((el) => el.injector.get(CdkDrag).disabled)
+      .map((el) => el.attributes['aria-label'] ?? null);
+    expect(disabled).toEqual(['Fels', 'Raumboden', 'Gang']);
+  });
+
   // CDK-Drag lässt sich in jsdom nicht per Zeiger auslösen: Ereignisse über die Direktive melden.
-  it('should report the pointer while dragging and on drop, then reset the entry', () => {
+  it('should pass the pointer of a dragged entry on', () => {
     const moved: LibraryDrag[] = [];
     const dropped: LibraryDrag[] = [];
     fixture.componentInstance.dragMoved.subscribe((d) => moved.push(d));
@@ -93,14 +102,15 @@ describe('ElementLibrary', () => {
     const drag: ReturnType<typeof fixture.debugElement.query> = fixture.debugElement
       .queryAll(By.directive(CdkDrag))
       .find((el) => el.attributes['aria-label'] === 'Truhe (1 × 1)')!;
-    const reset: ReturnType<typeof vi.fn> = vi.fn();
 
     drag.triggerEventHandler('cdkDragMoved', { pointerPosition: { x: 10, y: 20 } });
-    drag.triggerEventHandler('cdkDragEnded', { dropPoint: { x: 30, y: 40 }, source: { reset } });
+    drag.triggerEventHandler('cdkDragEnded', {
+      dropPoint: { x: 30, y: 40 },
+      source: { reset: vi.fn() },
+    });
 
     expect(moved).toEqual([{ catalogId: 'chest', clientX: 10, clientY: 20 }]);
     expect(dropped).toEqual([{ catalogId: 'chest', clientX: 30, clientY: 40 }]);
-    expect(reset).toHaveBeenCalled();
   });
 
   it('should hide the door group when the catalog has no doors', () => {

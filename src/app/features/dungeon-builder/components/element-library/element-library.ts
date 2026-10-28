@@ -1,69 +1,90 @@
-import { CdkDrag, CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
-import { Component, computed, inject, output, OutputEmitterRef, Signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  output,
+  OutputEmitterRef,
+  Signal,
+  signal,
+  WritableSignal,
+} from '@angular/core';
+import { BuilderTool } from '../../models/builder-tool.model';
 import { ElementCatalog } from '../../models/element-catalog.model';
-import { LibraryDrag, LibraryGroup } from '../../models/library-entry.model';
+import {
+  FLOOR_GROUP_KEY,
+  LibraryDrag,
+  LibraryGroup,
+  ROCK_ID,
+} from '../../models/library-entry.model';
 import { BuilderUiService } from '../../services/builder-ui.service';
 import { ElementCatalogService } from '../../services/element-catalog.service';
-import { LibraryEntry } from '../library-entry/library-entry';
+import { RecentElementsService } from '../../services/recent-elements.service';
+import { floorGroup, pieceGroups, recentGroup } from '../../utils/library-groups.util';
+import { filterGroups, isSearching } from '../../utils/library-search.util';
+import { LibraryGroupSection } from '../library-group-section/library-group-section';
+import { LibrarySearch } from '../library-search/library-search';
 
 /**
- * Bibliothek in der Seitenleiste: Bodenarten zum Malen, Türen und Möbel zum Ziehen auf den Plan
- * oder als Stempel per Tipp. Ziehen meldet die Zeigerposition; platziert wird von der Seite.
+ * Bibliothek in der Seitenleiste: Suche, „Zuletzt verwendet“, Bodenarten zum Malen sowie Türen und Möbel
+ * zum Ziehen auf den Plan oder als Stempel per Tipp. Ziehen meldet die Zeigerposition; platziert wird von der Seite.
  */
 @Component({
   selector: 'app-element-library',
-  imports: [CdkDrag, LibraryEntry],
+  imports: [LibraryGroupSection, LibrarySearch],
   templateUrl: './element-library.html',
   styleUrl: './element-library.css',
 })
 export class ElementLibrary {
   protected readonly ui: BuilderUiService = inject(BuilderUiService);
   private readonly catalogService: ElementCatalogService = inject(ElementCatalogService);
+  private readonly recentIds: Signal<string[]> = inject(RecentElementsService).recentIds;
 
   protected readonly catalog: Signal<ElementCatalog | null> = this.catalogService.catalog;
   protected readonly loadError: Signal<string | null> = this.catalogService.loadError;
-  /** Am Tablet erst nach kurzem Halten ziehen, damit die Liste weiter per Wischen scrollt. */
-  protected readonly dragDelay: { touch: number; mouse: number } = { touch: 250, mouse: 0 };
+  protected readonly floorGroupKey: string = FLOOR_GROUP_KEY;
+
+  /** Suchbegriff; reiner UI-Zustand. */
+  protected readonly search: WritableSignal<string> = signal<string>('');
+  protected readonly searching: Signal<boolean> = computed(() => isSearching(this.search()));
 
   /** Zeiger beim Ziehen über die Seite (für die Vorschau auf dem Plan). */
   readonly dragMoved: OutputEmitterRef<LibraryDrag> = output<LibraryDrag>();
   /** Zeiger beim Loslassen. */
   readonly dropped: OutputEmitterRef<LibraryDrag> = output<LibraryDrag>();
 
-  /** Türen und Möbelgruppen in Katalog-Reihenfolge. */
-  protected readonly groups: Signal<LibraryGroup[]> = computed(() => {
+  /** Türen und Möbelgruppen in Katalog-Reihenfolge (ohne Katalog keine Gruppen). */
+  private readonly pieceGroups: Signal<LibraryGroup[]> = computed(() => {
     const catalog: ElementCatalog | null = this.catalog();
-    if (!catalog) return [];
-    const doors: LibraryGroup = {
-      name: 'Türen',
-      items: catalog.doors.map((door) => ({ ...door, size: '', label: door.name })),
-    };
-    const pieces: LibraryGroup[] = catalog.categories.map((category) => ({
-      name: category.name,
-      items: category.pieces.map((piece) => {
-        const size: string = `${piece.width} × ${piece.height}`;
-        return { ...piece, size, label: `${piece.name} (${size})` };
-      }),
-    }));
-    return [doors, ...pieces].filter((group) => group.items.length > 0);
+    return catalog ? pieceGroups(catalog) : [];
   });
 
-  protected isStamp(catalogId: string): boolean {
-    const tool: ReturnType<BuilderUiService['tool']> = this.ui.tool();
-    return tool.kind === 'stamp' && tool.catalogId === catalogId;
-  }
+  /** Boden und Möbelgruppen, bei einer Suche nur die Treffer. */
+  protected readonly shownGroups: Signal<LibraryGroup[]> = computed(() => {
+    const catalog: ElementCatalog | null = this.catalog();
+    if (!catalog) return [];
+    return filterGroups([floorGroup(catalog), ...this.pieceGroups()], this.search());
+  });
 
-  protected onDragMoved(catalogId: string, event: CdkDragMove): void {
-    this.dragMoved.emit({
-      catalogId,
-      clientX: event.pointerPosition.x,
-      clientY: event.pointerPosition.y,
-    });
-  }
+  /** „Zuletzt verwendet“; ausgeblendet, solange leer oder gesucht wird. */
+  protected readonly recent: Signal<LibraryGroup | null> = computed(() => {
+    if (this.searching()) return null;
+    const group: LibraryGroup = recentGroup(this.pieceGroups(), this.recentIds());
+    return group.items.length > 0 ? group : null;
+  });
 
-  /** Der Eintrag springt zurück in die Liste; das Element entsteht auf dem Plan. */
-  protected onDragEnded(catalogId: string, event: CdkDragEnd): void {
-    this.dropped.emit({ catalogId, clientX: event.dropPoint.x, clientY: event.dropPoint.y });
-    event.source.reset();
+  protected readonly activeStamp: Signal<string | null> = computed(() => {
+    const tool: BuilderTool = this.ui.tool();
+    return tool.kind === 'stamp' ? tool.catalogId : null;
+  });
+
+  protected readonly activeFloor: Signal<string> = computed(() => this.ui.floorId() ?? ROCK_ID);
+
+  /** Bodenart wählen bzw. Tür oder Möbel als Stempel. */
+  protected onPicked(groupKey: string, id: string): void {
+    if (groupKey !== FLOOR_GROUP_KEY) {
+      this.ui.toggleStamp(id);
+      return;
+    }
+    this.ui.chooseFloor(id === ROCK_ID ? null : id);
   }
 }

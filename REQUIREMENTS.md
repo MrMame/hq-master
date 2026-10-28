@@ -8,6 +8,7 @@
   - Er muss Überblick über die Position und zustände der Spieler und der Gegner haben. Auch wenn die Spieler nur einen kleinen Teil der aktuellen Session auf dem realen Spielbrett sehen, muss der Dungeon Master mithilfe dieser App den gesamten Spielsession Zustand nachvollziehen können.
   - Alle Features greifen auf die gleiche SpieleSession Daten zu. D.h. wenn im TimeTracker eine neue Runde registriert wird, wirkt sich das auf alle anderen Features aus, wie z.b. das automatische berechnen von Gift schaden für diese Runde.
   - Alle Features beziehen sich auf den zustand der aktuellen Spielesession. Die Spielesession soll auch erhalten bleiben, wenn der Browser das Fenster schliesst und danach öffnet.
+  - Die Gruppen der linken Seitenleiste lassen sich in allen Features über ihre Überschrift einzeln auf- und zuklappen, über einen Button neben dem Titel auch alle auf einmal. Welche Gruppen zugeklappt sind, bleibt im Browser erhalten, gehört aber nicht zur Spielesession.
 
 ## 1. Time Tracker (`/timetracker`)
 
@@ -38,6 +39,7 @@
 - **Ziel:** Im Dungeon Builder baut der DM eigene Dungeon-Layouts aus Boden, Wänden, Türen, Möbeln, Treppen und Hindernissen und exportiert sie als JPEG, das er im Dungeon Tracker über „Bild hochladen“ lädt. Builder und Tracker bleiben getrennt; die Übergabe läuft nur über die Bilddatei. Das Layout bleibt im Browser erhalten, gehört aber nicht zur Spielesession.
 - **Funktionen:**
   - Die Bibliothek in der linken Seitenleiste kommt aus einer Katalog-Datei (`public/dungeon-builder/catalog.xml`). Neue Möbelstücke usw. kommen über eine Grafik und einen Katalogeintrag dazu, ohne Code.
+  - Über ein Suchfeld findet der DM Einträge aller Gruppen nach ihrem Namen. Die Gruppe „Zuletzt verwendet“ zeigt oben die letzten 8 Türen und Möbel, die er als Stempel gewählt oder auf den Plan gezogen hat; sie bleibt im Browser erhalten.
   - Elemente werden per Drag & Drop aus der Bibliothek oder als Stempel per Tipp auf den Plan gesetzt. Möbel, Treppen und Hindernisse belegen ganze Kacheln, auch in beliebig zusammenhängender Form; Wände und Türen liegen auf den Gitterlinien.
   - Boden entsteht per Pinsel, Rechteck, Füllen und Radierer; Wände zieht der DM entlang der Gitterlinien. Eine Tür ersetzt dort das Wandstück.
   - Jedes Element lässt sich markieren, verschieben, in 90°-Schritten drehen und löschen, über eine Menüleiste am Element und am PC auch per Taste. Änderungen lassen sich rückgängig machen und wiederholen.

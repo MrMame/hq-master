@@ -3,10 +3,12 @@ import { CardManagerService } from '../../services/card-manager.service';
 import { DeckState } from '../../models/deck-state.model';
 import { CardDisplay } from '../card-display/card-display';
 import { CollapsibleSidebar } from '../../../../shared/components/collapsible-sidebar/collapsible-sidebar';
+import { SidebarSection } from '../../../../shared/components/sidebar-section/sidebar-section';
+import { SidebarSectionToggleAll } from '../../../../shared/components/sidebar-section-toggle-all/sidebar-section-toggle-all';
 
 @Component({
   selector: 'app-card-manager-page',
-  imports: [CardDisplay, CollapsibleSidebar],
+  imports: [CardDisplay, CollapsibleSidebar, SidebarSection, SidebarSectionToggleAll],
   templateUrl: './card-manager-page.html',
   styleUrl: './card-manager-page.css',
 })

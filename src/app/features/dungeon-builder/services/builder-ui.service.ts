@@ -7,6 +7,7 @@ import { PlanGesture } from '../models/plan-gesture.model';
 import { hasElement } from '../utils/layout-edit.util';
 import { DungeonLayoutService } from './dungeon-layout.service';
 import { ElementCatalogService } from './element-catalog.service';
+import { RecentElementsService } from './recent-elements.service';
 
 /** Bodenart beim Start der Seite. */
 export const DEFAULT_FLOOR_ID: string = 'room';
@@ -19,6 +20,7 @@ export const DEFAULT_FLOOR_ID: string = 'room';
 export class BuilderUiService {
   private readonly layoutService: DungeonLayoutService = inject(DungeonLayoutService);
   private readonly catalog: Signal<ElementCatalog | null> = inject(ElementCatalogService).catalog;
+  private readonly recentElements: RecentElementsService = inject(RecentElementsService);
 
   private readonly _tool: WritableSignal<BuilderTool> = signal<BuilderTool>({ kind: 'select' });
   /** Gewählte Bodenart; `null` ist Fels. */
@@ -51,12 +53,13 @@ export class BuilderUiService {
     if (kind !== 'select') this._selection.set(null);
   }
 
-  /** Ein Tipp auf einen Bibliothekseintrag macht ihn zum Stempel, ein zweiter beendet ihn. */
+  /** Ein Tipp auf einen Bibliothekseintrag macht ihn zum Stempel (und merkt ihn), ein zweiter beendet ihn. */
   toggleStamp(catalogId: string): void {
     const tool: BuilderTool = this._tool();
     const active: boolean = tool.kind === 'stamp' && tool.catalogId === catalogId;
     this._tool.set(active ? { kind: 'select' } : { kind: 'stamp', catalogId });
     this._selection.set(null);
+    if (!active) this.recentElements.record(catalogId);
   }
 
   /** Wählt die Bodenart und schaltet auf den Pinsel, wenn gerade kein Boden-Werkzeug aktiv ist. */

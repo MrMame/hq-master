@@ -1,16 +1,20 @@
 <div class="builder-page">
   <!-- Linke Seitenleiste: Datei, Layout und Bibliothek, per Griff einklappbar -->
   <app-collapsible-sidebar>
-    <h2 class="general-sidebar__title">Dungeon Builder</h2>
+    <div class="general-sidebar__header">
+      <h2 class="general-sidebar__title">Dungeon Builder</h2>
+      <app-sidebar-section-toggle-all scope="dungeon-builder" />
+    </div>
 
-    <app-builder-file-panel />
+    <app-sidebar-section title="Datei" sectionId="dungeon-builder.file">
+      <app-builder-file-panel />
+    </app-sidebar-section>
 
     <hr class="general-sidebar__divider" />
 
-    <div>
-      <h3 class="general-sidebar__heading general-sidebar__heading--spaced">Layout</h3>
+    <app-sidebar-section title="Layout" sectionId="dungeon-builder.layout">
       <app-layout-settings />
-    </div>
+    </app-sidebar-section>
 
     <hr class="general-sidebar__divider" />
 

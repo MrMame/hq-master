@@ -2,6 +2,8 @@ import { Component, computed, inject, Signal, signal, WritableSignal } from '@an
 import { CharacterEditorService } from '../../../../shared/services/character-editor.service';
 import { CharacterDamageService } from '../../../../shared/services/character-damage.service';
 import { CollapsibleSidebar } from '../../../../shared/components/collapsible-sidebar/collapsible-sidebar';
+import { SidebarSection } from '../../../../shared/components/sidebar-section/sidebar-section';
+import { SidebarSectionToggleAll } from '../../../../shared/components/sidebar-section-toggle-all/sidebar-section-toggle-all';
 import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { DamageTypes } from '../../../../core/models/damage-types.model';
 import { DungeonBoardService } from '../../services/dungeon-board.service';
@@ -16,7 +18,15 @@ import { GridSettings } from '../grid-settings/grid-settings';
 @Component({
   selector: 'app-dungeon-tracker-page',
   standalone: true,
-  imports: [BoardZoomControl, CollapsibleSidebar, DungeonBoard, DungeonLegendEntry, GridSettings],
+  imports: [
+    BoardZoomControl,
+    CollapsibleSidebar,
+    DungeonBoard,
+    DungeonLegendEntry,
+    GridSettings,
+    SidebarSection,
+    SidebarSectionToggleAll,
+  ],
   templateUrl: './dungeon-tracker-page.html',
   styleUrl: './dungeon-tracker-page.css',
 })

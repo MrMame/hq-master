@@ -1,6 +1,9 @@
+import { TestBed } from '@angular/core/testing';
+
 import { PlaceGesture } from '../gestures/place.gesture';
 import { BuilderServices, setupBuilderServices } from '../testing/builder-services.fixtures';
 import { DEFAULT_FLOOR_ID } from './builder-ui.service';
+import { RecentElementsService } from './recent-elements.service';
 
 describe('BuilderUiService', () => {
   let s: BuilderServices;
@@ -36,6 +39,16 @@ describe('BuilderUiService', () => {
     expect(s.ui.tool()).toEqual({ kind: 'stamp', catalogId: 'chest' });
     s.ui.escape();
     expect(s.ui.tool()).toEqual({ kind: 'select' });
+  });
+
+  it('should remember an element as recently used when it becomes the stamp', () => {
+    const recent: RecentElementsService = TestBed.inject(RecentElementsService);
+    s.ui.toggleStamp('chest');
+    s.ui.toggleStamp('chest');
+    expect(recent.recentIds()).toEqual(['chest']);
+
+    s.ui.toggleStamp('table');
+    expect(recent.recentIds()).toEqual(['table', 'chest']);
   });
 
   it('should drop the selection when the element disappears or another tool is chosen', () => {

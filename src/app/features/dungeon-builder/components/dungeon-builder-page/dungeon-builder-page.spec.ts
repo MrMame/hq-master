@@ -3,6 +3,7 @@ import { By } from '@angular/platform-browser';
 
 import { BuilderUiService } from '../../services/builder-ui.service';
 import { DungeonLayoutService } from '../../services/dungeon-layout.service';
+import { RecentElementsService } from '../../services/recent-elements.service';
 import { builderProviders } from '../../testing/builder-services.fixtures';
 import { ElementLibrary } from '../element-library/element-library';
 import { DungeonBuilderPage } from './dungeon-builder-page';
@@ -106,9 +107,19 @@ describe('DungeonBuilderPage', () => {
 
     library.triggerEventHandler('dropped', { catalogId: 'chest', clientX: -10, clientY: 96 });
     expect(layout.layout().pieces).toEqual([]);
+    expect(TestBed.inject(RecentElementsService).recentIds()).toEqual([]);
 
     library.triggerEventHandler('dropped', { catalogId: 'chest', clientX: 160, clientY: 96 });
     expect(layout.layout().pieces).toEqual([expect.objectContaining({ col: 2, row: 1 })]);
     expect(ui.gesture()).toBeNull();
+    expect(TestBed.inject(RecentElementsService).recentIds()).toEqual(['chest']);
+  });
+
+  it('should show file and layout as collapsible sections with a toggle for all groups', () => {
+    const toggles: string[] = Array.from(host.querySelectorAll('aside h3 button')).map(
+      (b) => b.textContent?.trim() ?? '',
+    );
+    expect(toggles.slice(0, 2)).toEqual(['Datei', 'Layout']);
+    expect(host.querySelector('[aria-label="Alle Gruppen einklappen"]')).not.toBeNull();
   });
 });

@@ -85,5 +85,17 @@ describe('CardManagerPage', () => {
       expect(service.makeCardActive).toHaveBeenCalledExactlyOnceWith('b1');
       expect(service.discardActiveCard).not.toHaveBeenCalled();
     });
+
+    it('shows the deck actions as a collapsible sidebar section', async () => {
+      await harness.render(createDeckState());
+      const toggle: HTMLButtonElement = host.querySelector('aside h3 button') as HTMLButtonElement;
+      expect(toggle.textContent?.trim()).toBe('Deck Aktionen');
+
+      toggle.click();
+      await harness.fixture.whenStable();
+
+      expect(toggle.getAttribute('aria-expanded')).toBe('false');
+      expect(host.querySelector('[aria-label="Alle Gruppen ausklappen"]')).not.toBeNull();
+    });
   });
 });

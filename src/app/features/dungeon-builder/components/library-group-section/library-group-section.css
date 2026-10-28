@@ -1,0 +1,39 @@
+/* Gruppe der Bibliothek: Einträge in zwei bis drei Spalten */
+.library__entries {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--space-10) + var(--space-8)), 1fr));
+  gap: var(--space-2);
+}
+
+/* Eintrag: Farbe der Seitenleiste, aktiver Stempel bzw. gewählte Bodenart gelb umrandet */
+.library__entry {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-1-5) var(--space-1);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  background-color: var(--color-gray-800);
+  color: var(--color-white);
+  cursor: grab;
+  transition-property: background-color, border-color;
+  transition-duration: var(--transition-duration);
+  transition-timing-function: var(--transition-ease);
+
+  &:hover {
+    background-color: var(--color-gray-700);
+  }
+}
+
+/* Bodenarten werden nur gewählt, nicht gezogen */
+.library__entry--static {
+  cursor: pointer;
+}
+
+.library__entry--active {
+  border-color: var(--color-yellow-400);
+}
+
+/* Vorschau beim Ziehen: halbtransparent über dem Plan */
+.library__entry.cdk-drag-preview {
+  opacity: 0.8;
+}

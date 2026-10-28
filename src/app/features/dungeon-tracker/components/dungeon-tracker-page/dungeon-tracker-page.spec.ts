@@ -50,28 +50,33 @@ describe('DungeonTrackerPage', () => {
     expect(renderedTokens()).toBe(1);
   });
 
-  it('should show the sidebar sections with the same heading and one divider between each', () => {
+  it('should show collapsible sidebar sections with one divider between each', () => {
     const sidebar: HTMLElement = (fixture.nativeElement as HTMLElement).querySelector(
       'aside',
     ) as HTMLElement;
-    const headings: HTMLElement[] = Array.from(sidebar.querySelectorAll('h3'));
+    const toggles: HTMLButtonElement[] = Array.from(sidebar.querySelectorAll('h3 button'));
 
     expect(Array.from(sidebar.children).map((c) => c.tagName.toLowerCase())).toEqual([
-      'h2',
       'div',
+      'app-sidebar-section',
       'hr',
-      'div',
+      'app-sidebar-section',
       'hr',
-      'div',
+      'app-sidebar-section',
     ]);
-    expect(headings.map((h) => h.textContent?.trim())).toEqual([
+    expect(sidebar.querySelector('h2')?.textContent).toBe('Dungeon Tracker');
+    expect(toggles.map((b) => b.textContent?.trim())).toEqual([
       'Charaktere (1)',
       'Spielbrett-Foto laden',
       'Raster-Einstellungen',
     ]);
-    for (const heading of headings) {
-      expect(heading.className).toBe('general-sidebar__heading general-sidebar__heading--spaced');
+    for (const toggle of toggles) {
+      expect(toggle.getAttribute('aria-expanded')).toBe('true');
     }
+    expect(
+      sidebar.querySelector('[aria-label="Alle Gruppen einklappen"]'),
+      'Button „alle zuklappen“ neben dem Titel',
+    ).not.toBeNull();
     expect(sidebar.querySelector('.general-sidebar__caption')).toBeNull();
     expect(sidebar.querySelectorAll('input[type="range"]')).toHaveLength(4);
     expect(sidebar.textContent).not.toContain('Zoom');

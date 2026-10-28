@@ -1,13 +1,17 @@
 <div class="dungeon-page">
   <!-- Linke Sidebar: Einstellungen, per Griff einklappbar -->
   <app-collapsible-sidebar>
-    <h2 class="general-sidebar__title">Dungeon Tracker</h2>
+    <div class="general-sidebar__header">
+      <h2 class="general-sidebar__title">Dungeon Tracker</h2>
+      <app-sidebar-section-toggle-all scope="dungeon-tracker" />
+    </div>
 
     <!-- Charakter-Legende -->
-    <div>
-      <h3 class="general-sidebar__heading general-sidebar__heading--spaced">
-        Charaktere ({{ tokens().length }})
-      </h3>
+    <app-sidebar-section
+      title="Charaktere"
+      sectionId="dungeon-tracker.characters"
+      [count]="tokens().length"
+    >
       @for (token of tokens(); track token.position.characterId) {
         <app-dungeon-legend-entry
           [token]="token"
@@ -20,15 +24,12 @@
       @if (tokens().length === 0) {
         <p class="legend-empty">Noch keine Charaktere angelegt.</p>
       }
-    </div>
+    </app-sidebar-section>
 
     <hr class="general-sidebar__divider" />
 
     <!-- Bild Upload -->
-    <div>
-      <h3 class="general-sidebar__heading general-sidebar__heading--spaced">
-        Spielbrett-Foto laden
-      </h3>
+    <app-sidebar-section title="Spielbrett-Foto laden" sectionId="dungeon-tracker.board-image">
       <label class="general-sidebar__button">
         <span>📁 Bild hochladen</span>
         <input type="file" accept="image/*" hidden (change)="onImageUpload($event)" />
@@ -36,17 +37,14 @@
       @if (boardState().boardImageBase64) {
         <p class="upload-status">✓ Bild geladen</p>
       }
-    </div>
+    </app-sidebar-section>
 
     <hr class="general-sidebar__divider" />
 
     <!-- Raster-Einstellungen -->
-    <div>
-      <h3 class="general-sidebar__heading general-sidebar__heading--spaced">
-        Raster-Einstellungen
-      </h3>
+    <app-sidebar-section title="Raster-Einstellungen" sectionId="dungeon-tracker.grid">
       <app-grid-settings [(originMode)]="originMode" />
-    </div>
+    </app-sidebar-section>
   </app-collapsible-sidebar>
 
   <!-- Hauptbereich: Schnellzugriffsleiste im schmalen Streifen links, daneben das Spielbrett (zoombar, scrollt für sich) -->
