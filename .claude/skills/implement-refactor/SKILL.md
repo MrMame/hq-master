@@ -24,20 +24,7 @@ Arbeite die Schritte **in dieser Reihenfolge** ab. Keinen Schritt überspringen;
 - [ ] Regeln prüfen: `.claude/rules/architecture.md`, `clean-code.md`, `testing.md`, `refactoring-requests.md`.
 - [ ] Alle betroffenen Dateien und ihre Aufrufer lesen (`Grep` nach den Klassen-/Methodennamen).
 
-## 1b. Missverständnisse zwischen Mensch und Maschine vermeiden
-
-- [ ] Vor der Umsetzung sicherstellen, dass alle Anforderungen und Beobachtungen korrekt verstanden wurden.
-- [ ] Bei Unklarheiten immer Rückfragen an den Nutzer stellen, bevor mit der Überprüfung oder Umsetzung begonnen wird.
-- [ ] Rückfragen wenn möglich präzise und konkret formulieren, damit der Nutzer schnell und eindeutig antworten kann.
-- [ ] Rückfragen sollten den aktuellen Stand der Umsetzung und die geplanten Änderungen berücksichtigen, um Missverständnisse zu vermeiden.
-- [ ] Rückfragen sollten so früh wie möglich gestellt werden, um unnötige Arbeit zu vermeiden.
-- [ ] Rückfragen sollten alle relevanten Informationen enthalten, damit der Nutzer die Anfrage ohne zusätzliche Nachfragen beantworten kann.
-- [ ] Rückfragen sollten den Kontext der bisherigen Kommunikation berücksichtigen, um Wiederholungen zu vermeiden.
-- [ ] Rückfragen sollten so formuliert sein, dass der Nutzer den Zusammenhang zwischen Frage und Umsetzung leicht erkennen kann.
-- [ ] Rückfragen möglichst alle zu beginn stellen, um den Kommunikationsaufwand zu minimieren.
-- [ ] Alle Annahmen dokumentieren, damit sie im Plan und in der Verifikation nachvollziehbar sind.
-
-## 1c. Ist-Zustand prüfen (vor dem Plan)
+## 1b. Ist-Zustand prüfen (vor dem Plan)
 
 - [ ] Für jeden Punkt im Umfang prüfen, ob die beschriebene Beobachtung bzw. der Fehler im aktuellen Code noch vorhanden ist (Code lesen, `Grep`, ggf. vorhandene Tests ausführen oder das Verhalten nachstellen).
 - [ ] Ergebnis je Punkt kurz festhalten: **vorhanden** / **nicht mehr vorhanden** / **nur teilweise vorhanden** / **nicht prüfbar**, jeweils mit Beleg (Datei:Zeile, Testausgabe).
