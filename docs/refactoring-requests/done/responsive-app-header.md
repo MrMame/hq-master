@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-31  
 **Priorität:** Hoch (die App ist auf dem Tablet ohne „Desktopwebsite“ nicht vollständig nutzbar)  
-**Status:** open  
+**Status:** done (2026-10-31 08:15) – manuelle Prüfung auf dem Galaxy Tab S11 steht noch aus  
 **Bezug:** `src/app/app.ts`, `src/app/app.css`, `REQUIREMENTS.md` (Bedienung auf dem Tablet)
 
 ---
@@ -36,7 +36,7 @@ Fachliches Verhalten ändert sich nicht. Nur die Anordnung des Headers bei wenig
 
 ## Anforderungen
 
-### 1. Menüeinträge von links nach rechts
+### 1. Menüeinträge von links nach rechts ✅ done (2026-10-31 08:15)
 
 - `.app-header__bar`: `justify-content: flex-start` statt `space-between`. Das Menü beginnt direkt
   rechts neben dem Logo, mit festem Abstand (`gap`, z. B. `var(--space-6)`).
@@ -48,7 +48,7 @@ Logo. Rechts davon bleibt freier Platz.
 
 ---
 
-### 2. Umbrechen statt Überstehen
+### 2. Umbrechen statt Überstehen ✅ done (2026-10-31 08:15)
 
 - `.app-nav`: `flex-wrap: wrap` und `gap` (Zeilen- und Spaltenabstand) statt
   `& > :not(:last-child) { margin-inline-end }`.
@@ -70,7 +70,7 @@ Schmal:  [HQ-Master] Game Session  Card Manager  Time Tracker
 
 ---
 
-### 3. Seitenhöhe unabhängig von der Header-Höhe
+### 3. Seitenhöhe unabhängig von der Header-Höhe ✅ done (2026-10-31 08:15)
 
 - `.app-shell`: Höhe des Bildschirms (`height: 100dvh`) statt `min-height: 100vh`.
 - `.app-main`: füllt den Rest unter dem Header (`flex: 1; min-height: 0`) statt `height: 90vh`.
@@ -85,7 +85,7 @@ scrollen und zoomen wie bisher in ihrem eigenen Bereich.
 
 ---
 
-### 4. Tests
+### 4. Tests ✅ done (2026-10-31 08:15)
 
 - `app.spec.ts`: Die bestehenden Prüfungen der fünf Links (Text und Ziel) bleiben grün.
 - Playwright-Probe unter `e2e/probe/` (Touch, `isMobile`) bei 360, 600, 800 und 1280 px Breite auf allen
@@ -110,10 +110,10 @@ scrollen und zoomen wie bisher in ihrem eigenen Bereich.
 
 ## Akzeptanzkriterien
 
-- [ ] Die Menüeinträge stehen linksbündig direkt hinter dem Logo
-- [ ] Bei wenig Breite brechen ganze Einträge in eine neue Zeile um, kein Text innerhalb eines Eintrags
-- [ ] Bei 360 px Breite ist keine Seite breiter als der Bildschirm, und alle fünf Einträge sind sichtbar
-- [ ] Dungeon Tracker und Dungeon Builder füllen die Höhe unter dem Header, auch bei zweizeiligem Header
+- [x] Die Menüeinträge stehen linksbündig direkt hinter dem Logo
+- [x] Bei wenig Breite brechen ganze Einträge in eine neue Zeile um, kein Text innerhalb eines Eintrags
+- [x] Bei 360 px Breite ist keine Seite breiter als der Bildschirm, und alle fünf Einträge sind sichtbar
+- [x] Dungeon Tracker und Dungeon Builder füllen die Höhe unter dem Header, auch bei zweizeiligem Header
 - [ ] Auf dem Galaxy Tab S11 passt die Seite in Chrome ohne „Desktopwebsite“ in den Bildschirm (manuelle Prüfung durch den Nutzer)
-- [ ] Jede Datei hat höchstens 150 Zeilen
-- [ ] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün
+- [x] Jede Datei hat höchstens 150 Zeilen
+- [x] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün

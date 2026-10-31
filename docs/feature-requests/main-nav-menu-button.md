@@ -3,7 +3,7 @@
 **Datum:** 2026-10-31  
 **Priorität:** Mittel  
 **Status:** open  
-**Bezug:** `docs/refactoring-requests/responsive-app-header.md` (Voraussetzung), `src/app/app.ts`,
+**Bezug:** `docs/refactoring-requests/done/responsive-app-header.md` (Voraussetzung), `src/app/app.ts`,
 `src/app/app.css`, `REQUIREMENTS.md` (Bedienung auf dem Tablet)
 
 ---
@@ -125,7 +125,7 @@ und schließt die Liste.
 
 ## Hinweise
 
-- **Voraussetzung:** `docs/refactoring-requests/responsive-app-header.md` ist umgesetzt (linksbündige
+- **Voraussetzung:** `docs/refactoring-requests/done/responsive-app-header.md` ist umgesetzt (linksbündige
   Einträge, Umbrechen, Seitenhöhe unabhängig vom Header).
 - **Entscheidung (2026-10-31):** Aufklappliste (`mat-menu`) statt seitlicher Schublade (`mat-sidenav`). Eine
   Schublade von links würde mit den einklappbaren Seitenleisten von Dungeon Tracker und Dungeon Builder um den

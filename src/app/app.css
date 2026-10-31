@@ -1,7 +1,7 @@
 .app-shell {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100dvh;
   background-color: var(--color-black);
   color: var(--color-gray-900);
   font-family: var(--font-sans);
@@ -11,10 +11,13 @@
   background-color: var(--color-yellow-500);
 }
 
+/* Menü linksbündig hinter dem Logo; bei wenig Breite rutscht es unter das Logo statt über den Rand. */
 .app-header__bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: var(--space-2) var(--space-6);
   padding: var(--space-2);
 }
 
@@ -25,16 +28,18 @@
   color: var(--color-yellow-800);
 }
 
+/* Teilt sich die Zeile mit dem Logo und bricht in sich um; unter das Logo nur, wenn nicht einmal ein Eintrag daneben passt. */
 .app-nav {
+  flex: 1 1 0;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-
-  & > :not(:last-child) {
-    margin-inline-end: var(--space-4);
-  }
+  gap: var(--space-1) var(--space-4);
 }
 
+/* Bei Platzmangel wandert der ganze Eintrag in die nächste Zeile, der Text bricht nicht um. */
 .app-nav__link {
+  white-space: nowrap;
   font-size: var(--text-sm);
   line-height: var(--text-sm--line-height);
   color: var(--color-gray-600);
@@ -49,9 +54,12 @@
   font-weight: var(--font-weight-bold);
 }
 
+/* Füllt die Höhe unter dem Header, egal wie viele Zeilen er hat; höhere Seiten scrollen hier. */
 .app-main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   width: 100%;
-  height: 90vh;
   border-radius: var(--radius-sm);
   background-color: var(--color-white);
 }
