@@ -1,13 +1,9 @@
 // Liest .claude/logs/activity.log (Format siehe .claude/hooks/log-activity.mjs) und
 // zählt Runden, Rückfragen, Tool-Aufrufe, gelesene Dateien und Fehlschläge eines Laufs.
+import { checkKind, isExpectedFailure } from './check-output.mjs';
+
 const LINE = /^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) {2}(\S{8}) {2}(\[sub\] )?(\S+) *(.*)$/;
 const NO_TOOL = new Set(['PROMPT', 'STOP']);
-const FAILURE_KINDS = [
-  ['test', /npm run test|ng test|vitest/],
-  ['lint', /npm run lint|ng lint|eslint/],
-  ['build', /npm run build|ng build/],
-  ['e2e', /npm run e2e|playwright/],
-];
 
 export function parseActivityLog(text, session) {
   const prefix = session.slice(0, 8);
@@ -51,7 +47,17 @@ function countBy(values) {
 export function classifyFailure(entry) {
   const tool = toolName(entry);
   if (tool !== 'Bash') return ['Edit', 'Write', 'NotebookEdit'].includes(tool) ? 'edit' : 'other';
-  return FAILURE_KINDS.find(([, pattern]) => pattern.test(entry.detail))?.[0] ?? 'bash';
+  return checkKind(entry.detail) ?? 'bash';
+}
+
+function summarizeFailures(entries) {
+  const failures = entries.filter((entry) => entry.kind === 'FAIL');
+  const unexpected = failures.filter((entry) => !isExpectedFailure(entry.detail));
+  return {
+    total: unexpected.length,
+    byKind: countBy(unexpected.map(classifyFailure)),
+    expected: failures.length - unexpected.length,
+  };
 }
 
 function summarizeTools(entries) {
@@ -61,7 +67,6 @@ function summarizeTools(entries) {
 
 export function summarizeActivity(entries) {
   const main = entries.filter((entry) => !entry.sub);
-  const failures = entries.filter((entry) => entry.kind === 'FAIL');
   const reads = entries.filter((entry) => entry.kind === 'Read').map((entry) => entry.detail);
   return {
     start: entries[0]?.time,
@@ -71,6 +76,6 @@ export function summarizeActivity(entries) {
     sub: summarizeTools(entries.filter((entry) => entry.sub)),
     subagentCalls: main.filter((entry) => entry.kind === 'Agent').length,
     filesRead: new Set(reads).size,
-    failures: { total: failures.length, byKind: countBy(failures.map(classifyFailure)) },
+    failures: summarizeFailures(entries),
   };
 }

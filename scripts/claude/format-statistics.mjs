@@ -27,6 +27,16 @@ function minutes({ activity, end }) {
   return Math.max(0, Math.round((end - activity.start) / 60000));
 }
 
+function failureDetails({ total, byKind, expected }) {
+  const details = total ? listCounts(byKind, FAILURE_LABELS) : '–';
+  if (!expected) return details;
+  return total ? `${details}, erwartet ${expected}` : `erwartet ${expected}`;
+}
+
+function failureSummary({ total, expected }) {
+  return expected ? `${total} Fehlschläge (+${expected} erwartet)` : `${total} Fehlschläge`;
+}
+
 function fileCount({ files }) {
   return files.added + files.modified + files.renamed + files.deleted;
 }
@@ -60,11 +70,7 @@ export function formatTable(stats) {
       `neu ${files.added}, geändert ${files.modified}, verschoben ${files.renamed}, ` +
         `gelöscht ${files.deleted}, gelesen ${activity.filesRead} (${files.base})`,
     ],
-    [
-      'Fehlschläge',
-      `${activity.failures.total}`,
-      listCounts(activity.failures.byKind, FAILURE_LABELS),
-    ],
+    ['Fehlschläge', `${activity.failures.total}`, failureDetails(activity.failures)],
     ['Tokens', number(totalTokens(usage.main)), tokenDetails(usage.main)],
     ['Subagenten', ...subagentRow(stats)],
   ];
@@ -83,7 +89,7 @@ export function formatLogLine(stats) {
     `${activity.questions} Rückfragen`,
     `${activity.main.total} Tools`,
     `Dateien ${files.added} neu / ${files.modified} geändert`,
-    `${activity.failures.total} Fehlschläge`,
+    failureSummary(activity.failures),
     `Tokens ${number(totalTokens(usage.main))} (Output ${number(usage.main.output)})`,
   ];
   if (activity.subagentCalls > 0) {

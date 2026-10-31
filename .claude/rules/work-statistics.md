@@ -26,12 +26,23 @@ Arbeitsstatistik ausgegeben, damit der Nutzer die Effektivität der Arbeit einsc
 | ------------------------------- | ---------------------------------------------------------------------------------- |
 | Dauer, Runden, Rückfragen       | `.claude/logs/activity.log` (Hook `log-activity.mjs`), inkl. Wartezeit auf Antwort |
 | Tool-Aufrufe, gelesene Dateien  | `activity.log`; gelesen = eindeutige Pfade aus `Read` (nicht `cat` per Bash)       |
-| Fehlschläge                     | `FAIL`-Zeilen (`PostToolUseFailure`), gruppiert nach Edit, Tests, Lint, Build, E2E |
+| Fehlschläge                     | `FAIL`-Zeilen (siehe „Fehlschläge“), gruppiert nach Edit, Tests, Lint, Build, E2E  |
 | Dateien neu/geändert/verschoben | `git diff --name-status -M` gegen `merge-base development` bzw. `HEAD` + untracked |
 | Tokens                          | Sitzungsprotokoll `~/.claude/projects/*/<session>.jsonl`, je `message.id` einmal   |
 | Subagenten                      | `[sub]`-Zeilen und `<session>/subagents/*.jsonl`, getrennt ausgewiesen             |
 
 Kosten werden bewusst nicht ausgegeben.
+
+## Fehlschläge
+
+- `FAIL` schreibt der Hook bei `PostToolUseFailure` (Exit-Code ≠ 0) und bei Prüfbefehlen (Test, Lint,
+  Build, E2E), deren Ausgabe einen Fehlermarker enthält, obwohl sie mit Exit-Code 0 enden (z. B. über
+  eine Pipe). Befehlsmuster und Marker: `scripts/claude/check-output.mjs`.
+- Filtert eine Pipe die Ergebniszeile weg (z. B. `| tail -1` ohne „Lint errors found“ / „x failed“),
+  bleibt der Fehler unerkannt. Pipes bei Prüfbefehlen so wählen, dass die Ergebniszeile erhalten bleibt.
+- **Erwartet rot:** Läuft ein Prüfbefehl absichtlich rot (z. B. eine Probe als Beleg für „fehlt noch“),
+  „erwartet rot“ in die Bash-Beschreibung schreiben. Der Fehlschlag wird dann als „erwartet“ getrennt
+  ausgewiesen und nicht in die Summe gezählt.
 
 ## Ausgabe
 

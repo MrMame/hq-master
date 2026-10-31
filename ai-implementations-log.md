@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-31 20:56) - Refactoring: Fehlschläge in der Arbeitsstatistik zuverlässig erfassen (work-statistics-failure-detection #1–#3)
+
+- **Was wurde gemacht:** Anforderungen und Akzeptanzkriterien nach Rückfrage ausformuliert. Der Hook `log-activity.mjs` wertet bei Prüfbefehlen (Test, Lint, Build, E2E) die Ausgabe aus und schreibt bei Fehlermarkern („Lint errors found“, „Tests N failed“, „N failed“, „Application bundle generation failed“, verfehlte Coverage-Schwelle) auch bei Exit-Code 0 eine `FAIL`-Zeile. Fehlschläge mit „erwartet rot“ in der Bash-Beschreibung werden in Tabelle und Kurzzeile getrennt ausgewiesen.
+- **Dateien geändert:** `scripts/claude/check-output.mjs` + Test (neu), `scripts/claude/activity-log.mjs`, `scripts/claude/format-statistics.mjs` + Tests, `.claude/hooks/log-activity.mjs`, `.claude/rules/work-statistics.md`, `.claude/skills/implement-feature/SKILL.md`, `.claude/skills/implement-refactor/SKILL.md`, `docs/refactoring-requests/done/work-statistics-failure-detection.md`
+- **Wichtige Entscheidung:** Ausgabe auswerten statt `pipefail`-Regel, damit die Erkennung nicht davon abhängt, wie der Befehl geschrieben ist. Die Ausgabe wird nur bei Prüfbefehlen geprüft, damit z. B. `grep failed` nicht zählt. ANSI-Farbcodes werden entfernt, weil Vitest auch umgeleitete Ausgabe färbt. Logformat und `LINE` bleiben unverändert. Grenze: Schneidet eine Pipe die Ergebniszeile ab, bleibt der Fehler unerkannt (in der Regel dokumentiert). 61 Node-Tests, Lint, 864 Vitest-Tests und Build grün; am echten Hook geprüft.
+- **Statistik:** 8 min · 1 Runden · 2 Rückfragen · 47 Tools · Dateien 3 neu / 8 geändert · 1 Fehlschläge (+1 erwartet) · Tokens 1.955.487 (Output 22.162)
+
 ### (2026-10-31 09:13) - Feature: Menü-Button für die Hauptnavigation auf schmalen Bildschirmen (main-nav-menu-button #1–#6)
 
 - **Was wurde gemacht:** Die Hauptnavigation ist jetzt die Komponente `MainNav` (`shared/components/main-nav/`), die Einträge stehen nur noch in `MAIN_NAV_ITEMS`. Unter 48rem ersetzt ein Menü-Button (☰, 48 × 48 px, `aria-label` „Hauptmenü“) die Linkleiste: Er öffnet ein `mat-menu` mit allen Seiten, die aktive ist fett mit Punkt und `aria-current="page"`. Der einzeilige Header zeigt hinter dem Logo den Namen der aktuellen Seite (auch nach Weiterleitungen, bei Platzmangel mit „…“). Darüber bleibt die Linkleiste wie nach responsive-app-header.

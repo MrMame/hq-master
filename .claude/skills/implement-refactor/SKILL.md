@@ -37,7 +37,7 @@ Arbeite die Schritte **in dieser Reihenfolge** ab. Keinen Schritt überspringen;
 ### Playwright-Probe
 
 - Datei: `e2e/probe/<slug>-<punkt>.spec.ts` (gitignored, nicht Teil der Smoke-Suite). Konventionen wie in `testing.md` (Locator über Rolle/Text/`data-testid`, kein `waitForTimeout`).
-- Ausführen: `npx playwright test --project=probe e2e/probe/<datei>` – startet `ng serve` auf Port 4321 automatisch.
+- Ausführen: `npx playwright test --project=probe e2e/probe/<datei>` – startet `ng serve` auf Port 4321 automatisch. Ist die Probe absichtlich rot, „erwartet rot“ in die Bash-Beschreibung schreiben (zählt dann nicht als Fehlschlag, siehe `work-statistics.md`).
 - Für Layout-/Optik-Fragen zusätzlich `await page.screenshot({ path: 'test-results/probe/<name>.png' })` vor und nach dem Umbau erzeugen und die Bilder vergleichen.
 - Ausgangsdaten über die UI oder `page.evaluate(() => localStorage.setItem(…))` mit den Keys aus `SESSION_KEYS` setzen, nicht über interne APIs.
 - Lohnt sich das Szenario dauerhaft (zentraler User-Flow, der noch nicht abgedeckt ist), im Plan vorschlagen, es als Smoke-Test nach `e2e/` zu übernehmen.

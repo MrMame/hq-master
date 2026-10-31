@@ -94,7 +94,25 @@ describe('summarizeActivity', () => {
   });
 
   it('groups failures by kind', () => {
-    assert.deepEqual(summary.failures, { total: 2, byKind: { edit: 1, test: 1 } });
+    assert.deepEqual(summary.failures, { total: 2, byKind: { edit: 1, test: 1 }, expected: 0 });
+  });
+
+  it('counts failures marked as expected red separately', () => {
+    const expectedRed = [
+      line(
+        '08:05:00',
+        'FAIL',
+        'Bash (Run probe against current code (erwartet rot)) npx playwright test',
+      ),
+      line('08:05:30', 'FAIL', 'Bash (Run probe (expect red)) npx playwright test'),
+    ].join('\n');
+    const withExpected = summarizeActivity(parseActivityLog(`${LOG}\n${expectedRed}`, SESSION));
+    assert.deepEqual(withExpected.failures, {
+      total: 2,
+      byKind: { edit: 1, test: 1 },
+      expected: 2,
+    });
+    assert.equal(withExpected.main.byName.Bash, 3);
   });
 
   it('handles an empty run', () => {
