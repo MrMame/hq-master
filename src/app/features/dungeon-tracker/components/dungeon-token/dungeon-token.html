@@ -10,6 +10,7 @@
   (dblclick)="tokenDoubleClicked.emit(position().characterId)"
   [style.left.px]="tokenLeft()"
   [style.top.px]="tokenTop()"
+  [style.--portrait-size.px]="portraitSize()"
   [title]="character().name"
   [class.dungeon-token--selected]="selected()"
   class="dungeon-token"
@@ -29,10 +30,10 @@
     }
   </div>
 
-  <app-character-status [character]="character()" class="dungeon-token__status" />
-
-  <!-- Die Menüleiste hält Klicks und Doppelklicks selbst vom Token und vom Spielbrett fern. -->
+  <!-- Werte und Menüleiste nur am markierten Token, unter dem Porträt; sonst ist nur das Bild zu sehen.
+       Die Menüleiste hält Klicks und Doppelklicks selbst vom Token und vom Spielbrett fern. -->
   @if (selected()) {
+    <app-character-status [character]="character()" class="dungeon-token__status" />
     <app-character-action-bar [character]="character()" class="dungeon-token__actions" />
   }
 </div>

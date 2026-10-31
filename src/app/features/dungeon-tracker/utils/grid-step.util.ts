@@ -6,12 +6,22 @@ export const ORIGIN_LIMITS: { min: number; max: number } = { min: -100, max: STA
 /** Bereich der Deckkraft (0 bis 100 %). */
 export const OPACITY_LIMITS: { min: number; max: number } = { min: 0, max: 1 };
 
+/** Bereich der Token-Größe als Anteil der Zellgröße (30 bis 150 %). */
+export const TOKEN_SCALE_LIMITS: { min: number; max: number } = { min: 0.3, max: 1.5 };
+
 /** Feinste Stufe je Raster-Regler; „−“ und „+“ ändern den Wert um genau diesen Schritt. */
-export const GRID_STEPS: { cellSize: number; origin: number; opacity: number } = {
-  cellSize: 0.01,
-  origin: 0.1,
-  opacity: 0.05,
-};
+export const GRID_STEPS: { cellSize: number; origin: number; opacity: number; tokenScale: number } =
+  {
+    cellSize: 0.01,
+    origin: 0.1,
+    opacity: 0.05,
+    tokenScale: 0.05,
+  };
+
+/** Anteil als ganze Prozent, z. B. 0.85 → „85 %“. */
+export function formatPercent(value: number): string {
+  return `${Math.round(value * 100)} %`;
+}
 
 export function clamp(value: number, limits: { min: number; max: number }): number {
   return Math.min(limits.max, Math.max(limits.min, value));

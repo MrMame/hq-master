@@ -11,6 +11,8 @@ export interface DungeonBoardState {
   gridOffsetX: number;
   gridOffsetY: number;
   gridOpacity: number;
+  /** Porträtgröße der Tokens als Anteil der Zellgröße, z. B. 0.85 für 85 %. */
+  tokenScale: number;
 }
 
 export const DEFAULT_DUNGEON_BOARD_STATE: DungeonBoardState = {
@@ -21,4 +23,5 @@ export const DEFAULT_DUNGEON_BOARD_STATE: DungeonBoardState = {
   gridOffsetX: 0,
   gridOffsetY: 0,
   gridOpacity: 0.4,
+  tokenScale: 0.85,
 };

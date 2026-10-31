@@ -38,6 +38,7 @@ describe('DungeonToken – status and selection', () => {
     host = fixture.nativeElement as HTMLElement;
     fixture.componentRef.setInput('position', { characterId: 'a', col: 0, row: 0 });
     fixture.componentRef.setInput('cellSize', 60);
+    fixture.componentRef.setInput('tokenScale', 0.85);
     fixture.componentRef.setInput('character', {
       ...createTestCharacter('a'),
       health: 20,
@@ -47,16 +48,20 @@ describe('DungeonToken – status and selection', () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it.each<[boolean]>([[false], [true]])('always shows health and armor (selected: %s)', (sel) => {
-    render(sel);
+  it('shows health and armor below the portrait, above the action bar, when selected', () => {
+    render(true);
 
     expect(host.querySelector('[aria-label="Leben"]')?.textContent?.trim()).toBe('20');
     expect(host.querySelector('[aria-label="Rüstung"]')?.textContent?.trim()).toBe('5');
+    const parts: string[] = Array.from(token().children).map((c) => c.tagName.toLowerCase());
+    expect(parts.slice(1)).toEqual(['app-character-status', 'app-character-action-bar']);
   });
 
-  it('shows no action bar and no highlight while not selected', () => {
+  it('shows only the portrait without values, action bar or highlight while not selected', () => {
     render(false);
 
+    expect(token().children).toHaveLength(1);
+    expect(token().children[0].classList).toContain('dungeon-token__portrait');
     expect(actionBar()).toBeNull();
     expect(buttons()).toHaveLength(0);
     expect(token().classList).not.toContain('dungeon-token--selected');

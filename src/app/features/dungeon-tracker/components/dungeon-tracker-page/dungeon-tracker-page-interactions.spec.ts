@@ -130,7 +130,9 @@ describe('DungeonTrackerPage – interactions', () => {
     expect(host.querySelectorAll('.dungeon-token--selected')).toHaveLength(0);
   });
 
-  it('shows changed health and armor immediately at token and legend', async () => {
+  it('shows changed health and armor immediately at the selected token and in the legend', async () => {
+    // Am Token stehen die Werte nur, solange es markiert ist.
+    (host.querySelector('.dungeon-token') as HTMLElement).click();
     const hit: CharacterInfo = { ...createTestCharacter('a'), health: 3, armor: 0 };
     TestBed.inject(CharactersDbService).writeCharacter(hit);
     await fixture.whenStable();

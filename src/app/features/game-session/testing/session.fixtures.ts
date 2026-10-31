@@ -51,6 +51,7 @@ export function createSessionSnapshot(): SessionSnapshot {
         gridOffsetX: 3,
         gridOffsetY: -4,
         gridOpacity: 0.25,
+        tokenScale: 1.1,
       },
       positions: [
         { characterId: 'a', col: 1, row: 2 },

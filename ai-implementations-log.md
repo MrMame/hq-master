@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-31 21:33) - Feature: Tokens im Dungeon Tracker in Zellgröße (grid-sized-character-models #1–#7)
+
+- **Was wurde gemacht:** Das runde Porträt eines Tokens ist jetzt Zellgröße × Token-Größe groß statt fest 40 Einheiten. Der DM stellt die Token-Größe direkt nach der Zellgröße mit einem Regler ein (30–150 %, Standard 85 %, Schritt 5 %). Der Wert gehört zur Spielesession und steht auch im XML-Spielstand. Auf dem Spielbrett zeigt ein Token nur sein Porträt. Leben und Rüstung stehen nur am markierten Token unter dem Porträt, darunter die Menüleiste. Beide Leisten wachsen nicht mit.
+- **Dateien geändert:** `dungeon-tracker/components/dungeon-token/*` (+Specs), `dungeon-board.html` (+`dungeon-board-origin.spec.ts`), `grid-settings.ts/.html` (+Specs, `grid-settings-token-scale.spec.ts` neu), `dungeon-tracker-page.spec.ts`, `dungeon-tracker-page-interactions.spec.ts`, `models/dungeon-board-state.model.ts`, `services/dungeon-board.service.ts` (+spec), `utils/grid-step.util.ts` (+spec), `utils/board-state-codec.util.ts` (+spec, neu), `game-session/xml/dungeon.xml-mapper.ts` (+spec), `game-session/testing/session.fixtures.ts`, `e2e/dungeon-damage.spec.ts`, `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/done/grid-sized-character-models.md`
+- **Wichtige Entscheidung:** `persistedState` ergänzt beim Laden keine fehlenden Felder. Ein neuer `BOARD_STATE_CODEC` ergänzt deshalb ältere Browser-Zustände um die Standardwerte. Das Token setzt seine Größe als CSS-Variable `--portrait-size`. Nach der Abnahme wurde die Werteleiste vom Porträt weg verlegt, weil sie das Bild verdeckte; sie erscheint jetzt nur am markierten Token unter dem Porträt. Probe, Lint, 887 Tests, Build und e2e (30) grün.
+- **Statistik:** 20 min · 1 Runden · 1 Rückfragen · 117 Tools · Dateien 3 neu / 24 geändert · 4 Fehlschläge (+1 erwartet) · Tokens 8.567.528 (Output 47.456)
+
 ### (2026-10-31 20:56) - Refactoring: Fehlschläge in der Arbeitsstatistik zuverlässig erfassen (work-statistics-failure-detection #1–#3)
 
 - **Was wurde gemacht:** Anforderungen und Akzeptanzkriterien nach Rückfrage ausformuliert. Der Hook `log-activity.mjs` wertet bei Prüfbefehlen (Test, Lint, Build, E2E) die Ausgabe aus und schreibt bei Fehlermarkern („Lint errors found“, „Tests N failed“, „N failed“, „Application bundle generation failed“, verfehlte Coverage-Schwelle) auch bei Exit-Code 0 eine `FAIL`-Zeile. Fehlschläge mit „erwartet rot“ in der Bash-Beschreibung werden in Tabelle und Kurzzeile getrennt ausgewiesen.

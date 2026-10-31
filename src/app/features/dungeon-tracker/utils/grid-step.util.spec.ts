@@ -2,11 +2,13 @@ import { CELL_SIZE_LIMITS } from './grid-fit.util';
 import {
   clamp,
   formatOrigin,
+  formatPercent,
   GRID_STEPS,
   OPACITY_LIMITS,
   ORIGIN_LIMITS,
   roundTo,
   stepWithin,
+  TOKEN_SCALE_LIMITS,
 } from './grid-step.util';
 
 describe('grid-step.util', () => {
@@ -36,6 +38,9 @@ describe('grid-step.util', () => {
     ['the origin below zero', 0, -1, GRID_STEPS.origin, ORIGIN_LIMITS, -0.1],
     ['the opacity up', 0.4, 1, GRID_STEPS.opacity, OPACITY_LIMITS, 0.45],
     ['the opacity down', 0.1, -1, GRID_STEPS.opacity, OPACITY_LIMITS, 0.05],
+    ['the token size up', 0.85, 1, GRID_STEPS.tokenScale, TOKEN_SCALE_LIMITS, 0.9],
+    ['the token size at its maximum', 1.5, 1, GRID_STEPS.tokenScale, TOKEN_SCALE_LIMITS, 1.5],
+    ['the token size at its minimum', 0.3, -1, GRID_STEPS.tokenScale, TOKEN_SCALE_LIMITS, 0.3],
   ])(
     'steps %s without a floating point rest',
     (_case, value, direction, step, limits, expected) => {
@@ -49,6 +54,14 @@ describe('grid-step.util', () => {
     [150, 1, 150],
   ])('keeps the cell size %s stepped %s within the limits', (value, direction, expected) => {
     expect(stepWithin(value, direction, GRID_STEPS.cellSize, CELL_SIZE_LIMITS)).toBe(expected);
+  });
+
+  it.each<[number, string]>([
+    [0.85, '85 %'],
+    [0.3, '30 %'],
+    [1.5000000000000002, '150 %'],
+  ])('formats the share %s as %s', (value, expected) => {
+    expect(formatPercent(value)).toBe(expected);
   });
 
   it('rounds a whole-number step to whole numbers', () => {

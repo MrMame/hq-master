@@ -23,6 +23,7 @@ export function writeDungeonBoard(doc: XMLDocument, data: DungeonSessionState): 
     gridOffsetX: board.gridOffsetX,
     gridOffsetY: board.gridOffsetY,
     gridOpacity: board.gridOpacity,
+    tokenScale: board.tokenScale,
   });
   if (board.boardImageBase64 !== null) {
     appendTextElement(el, 'image', board.boardImageBase64);
@@ -49,6 +50,7 @@ export function readDungeonBoard(el: Element): DungeonSessionState {
       gridOffsetX: readNumber(el, 'gridOffsetX', d.gridOffsetX),
       gridOffsetY: readNumber(el, 'gridOffsetY', d.gridOffsetY),
       gridOpacity: readNumber(el, 'gridOpacity', d.gridOpacity),
+      tokenScale: readNumber(el, 'tokenScale', d.tokenScale),
     },
     positions: childElements(el, 'position').map((p) => ({
       characterId: readString(p, 'characterId'),

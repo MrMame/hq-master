@@ -22,9 +22,15 @@ function legendEntry(page: Page): Locator {
   return page.locator('aside app-dungeon-legend-entry');
 }
 
-/** Token und Legende zeigen dieselben Werte. */
-async function expectValues(page: Page, health: string, armor: string): Promise<void> {
-  for (const scope of [token(page), legendEntry(page)]) {
+/** Legende und – solange markiert – das Token zeigen dieselben Werte. */
+async function expectValues(
+  page: Page,
+  health: string,
+  armor: string,
+  tokenSelected: boolean = true,
+): Promise<void> {
+  if (!tokenSelected) await expect(token(page).getByLabel('Leben', { exact: true })).toHaveCount(0);
+  for (const scope of tokenSelected ? [token(page), legendEntry(page)] : [legendEntry(page)]) {
     await expect(scope.getByLabel('Leben', { exact: true })).toHaveText(health);
     await expect(scope.getByLabel('Rüstung', { exact: true })).toHaveText(armor);
   }
@@ -52,7 +58,7 @@ for (const device of INPUT_DEVICES) {
       page,
     }) => {
       await createCharacter(page, 'Ork', { health: 20, armor: 5 });
-      await expectValues(page, '20', '5');
+      await expectValues(page, '20', '5', false);
       await expect(token(page).getByRole('button')).toHaveCount(0);
 
       await device.press(token(page).getByRole('img', { name: 'Ork' }));
@@ -65,7 +71,8 @@ for (const device of INPUT_DEVICES) {
 
       await page.reload();
 
-      await expectValues(page, '11', '0');
+      // Die Markierung ist UI-Zustand und nach dem Reload weg.
+      await expectValues(page, '11', '0', false);
     });
 
     test('a click on a legend value applies damage without selecting the token', async ({
@@ -74,10 +81,10 @@ for (const device of INPUT_DEVICES) {
       await createCharacter(page, 'Ork', { health: 20, armor: 5 });
 
       await hit(page, device.press, 'Schaden auf Leben', 4, legendEntry(page));
-      await expectValues(page, '16', '5');
+      await expectValues(page, '16', '5', false);
 
       await hit(page, device.press, 'Schaden auf Rüstung', 7, legendEntry(page));
-      await expectValues(page, '14', '0');
+      await expectValues(page, '14', '0', false);
       await expect(token(page).getByRole('button')).toHaveCount(0);
       await expect(page.getByRole('toolbar')).toHaveCount(0);
     });

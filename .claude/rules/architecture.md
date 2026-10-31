@@ -37,7 +37,7 @@ features/
     components/        → DungeonTrackerPage (Sidebar, Schnellzugriffsleiste mit „+“ und Zoom, Markierung für Brett und Legende),
                          DungeonBoard (zoombare Spielfläche mit Foto, Raster, Tokens), DungeonToken,
                          GridSettings (Raster-Einstellungen: Schalter „Nullpunkt verschieben“, Zellgröße per Regler
-                         oder Zahl, Spalten über Bildbreite), GridSlider (Raster-Regler mit „−“/„+“ in feinster Stufe),
+                         oder Zahl, Token-Größe, Spalten über Bildbreite), GridSlider (Raster-Regler mit „−“/„+“ in feinster Stufe),
                          GridOriginMarker (ziehbarer Nullpunkt-Marker, nur im Modus „Nullpunkt verschieben“),
                          DungeonLegendEntry (Legendeneintrag),
                          CharacterStatus (Leben/Rüstung an Token und Legende, später Statuseffekte),
@@ -50,7 +50,8 @@ features/
     utils/             → token-placement.util.ts (freies Feld für neue Tokens),
                          board-scale.util.ts (Spielflächengröße, Maßstab), grid-style.util.ts (Rasterlinien),
                          grid-fit.util.ts (Zellgröße prüfen, aus Spaltenanzahl berechnen, deutsch formatieren),
-                         grid-step.util.ts (±-Schritt runden und begrenzen, Bereiche, Nullpunkt formatieren),
+                         grid-step.util.ts (±-Schritt runden und begrenzen, Bereiche, Nullpunkt und Prozent formatieren),
+                         board-state-codec.util.ts (BOARD_STATE_CODEC: ältere Spielbrett-Zustände mit Standardwerten ergänzen),
                          grid-origin.util.ts (Zugstrecke des Markers → Nullpunkt, Feld unter der Porträtmitte),
                          scroll-into-view.util.ts (nur bei Bedarf ins Bild scrollen)
     testing/           → resize-observer.fixtures.ts (steuerbarer ResizeObserver),

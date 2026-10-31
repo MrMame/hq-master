@@ -21,18 +21,22 @@ import {
 } from '../../utils/grid-fit.util';
 import {
   formatOrigin,
+  formatPercent,
   GRID_STEPS,
   OPACITY_LIMITS,
   ORIGIN_LIMITS,
+  TOKEN_SCALE_LIMITS,
 } from '../../utils/grid-step.util';
 import { GridSlider } from '../grid-slider/grid-slider';
 
 /** Werte, die ein Regler direkt setzt. */
-type SliderSetting = 'gridCellSizePx' | 'gridOffsetX' | 'gridOffsetY' | 'gridOpacity';
+type SliderSetting =
+  'gridCellSizePx' | 'tokenScale' | 'gridOffsetX' | 'gridOffsetY' | 'gridOpacity';
 
 /**
  * Raster-Einstellungen in der Seitenleiste: Schalter „Nullpunkt verschieben“, Zellgröße per Regler
- * oder Zahl (mit Nachkommastellen), Raster über die Spaltenanzahl an die Bildbreite anpassen,
+ * oder Zahl (mit Nachkommastellen), Token-Größe in Prozent der Zellgröße, Raster über die
+ * Spaltenanzahl an die Bildbreite anpassen,
  * Nullpunkt und Deckkraft; jeder Regler mit „−“/„+“ in feinster Stufe. Liest und schreibt nur über
  * den `DungeonBoardService`.
  */
@@ -53,6 +57,7 @@ export class GridSettings {
   protected readonly columnLimits: { min: number; max: number } = COLUMN_LIMITS;
   protected readonly originLimits: { min: number; max: number } = ORIGIN_LIMITS;
   protected readonly opacityLimits: { min: number; max: number } = OPACITY_LIMITS;
+  protected readonly tokenScaleLimits: { min: number; max: number } = TOKEN_SCALE_LIMITS;
   protected readonly steps: typeof GRID_STEPS = GRID_STEPS;
 
   /** Anzeige „38,46“; gerechnet wird mit dem ungerundeten Wert. */
@@ -61,6 +66,9 @@ export class GridSettings {
   );
   protected readonly cellSizeValue: Signal<number> = computed(() =>
     roundCellSize(this.boardState().gridCellSizePx),
+  );
+  protected readonly tokenScaleText: Signal<string> = computed(() =>
+    formatPercent(this.boardState().tokenScale),
   );
   protected readonly originXText: Signal<string> = computed(() =>
     formatOrigin(this.boardState().gridOffsetX),
