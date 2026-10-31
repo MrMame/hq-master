@@ -1,5 +1,7 @@
-// UserPromptSubmit / PostToolUse / Stop: schreibt pro Ereignis eine kompakte
-// Zeile nach .claude/logs/activity.log. Kostet keine Tokens und blockiert nie.
+// UserPromptSubmit / PostToolUse / PostToolUseFailure / Stop: schreibt pro Ereignis
+// eine kompakte Zeile nach .claude/logs/activity.log. Kostet keine Tokens und blockiert nie.
+// Format: `<Zeit>  <Sitzung, 8 Zeichen>  [sub] <Art> <Detail>` – ausgewertet von
+// scripts/claude/work-statistics.mjs (siehe .claude/rules/work-statistics.md).
 import { appendFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
@@ -10,6 +12,9 @@ const oneLine = (text) =>
     .trim();
 const cut = (text) =>
   oneLine(text).length > MAX ? `${oneLine(text).slice(0, MAX)}…` : oneLine(text);
+// IDE-Kontext (<ide_opened_file>…) entfernen, damit z. B. „/implement-refactor …“ sichtbar bleibt.
+const withoutIdeContext = (prompt) =>
+  String(prompt ?? '').replace(/<(ide_[a-z_]+)>[\s\S]*?<\/\1>/g, '');
 
 try {
   const input = JSON.parse(readFileSync(0, 'utf8') || '{}');
@@ -37,6 +42,8 @@ try {
         return args.url;
       case 'WebSearch':
         return cut(args.query);
+      case 'AskUserQuestion':
+        return cut((args.questions ?? []).map((question) => question.header).join(', '));
       default: {
         const firstText = Object.values(args).find((value) => typeof value === 'string');
         return cut(firstText);
@@ -45,18 +52,28 @@ try {
   };
 
   const events = {
-    UserPromptSubmit: () => ['PROMPT', cut(input.prompt)],
+    UserPromptSubmit: () => ['PROMPT', cut(withoutIdeContext(input.prompt))],
     PostToolUse: () => [input.tool_name, describeTool(input.tool_name, input.tool_input)],
+    PostToolUseFailure: () => [
+      'FAIL',
+      `${input.tool_name} ${describeTool(input.tool_name, input.tool_input)}`,
+    ],
     Stop: () => ['STOP', '── Antwort fertig ──'],
   };
   const build = events[input.hook_event_name];
   if (build) {
     const [kind, detail] = build();
     const stamp = new Date().toLocaleString('sv-SE');
+    const session = String(input.session_id ?? '')
+      .slice(0, 8)
+      .padEnd(8, '-');
     const prefix = input.agent_id ? '[sub] ' : '';
     const logDir = join(projectDir, '.claude', 'logs');
     mkdirSync(logDir, { recursive: true });
-    appendFileSync(join(logDir, 'activity.log'), `${stamp}  ${prefix}${kind.padEnd(8)}${detail}\n`);
+    appendFileSync(
+      join(logDir, 'activity.log'),
+      `${stamp}  ${session}  ${prefix}${kind.padEnd(8)} ${detail}\n`,
+    );
   }
 } catch {
   // Logging darf die Sitzung nie stören.

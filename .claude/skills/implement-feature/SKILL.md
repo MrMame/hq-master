@@ -82,5 +82,6 @@ Gemäß `.claude/rules/feature-requests.md`:
 
 - [ ] Chat Ausgabe : was geändert wurde (mit Dateilinks), Test-/Build-Ergebnis, Coverage der geänderten Dateien (inkl. Begründung für ungetestete Stellen), was bewusst offen blieb.
 - [ ] Einen Committext für den gesamten Aufruf vorbereiten (Typ `feat(<scope>): …`, umgesetzte Punkte im Body auflisten).
-- [ ] Einen 'ai-implementations-log.md' Eintrag für den gesamten Aufruf vorbereiten (bei ganzer Datei `#1–#n` in der Überschrift).
+- [ ] Arbeitsstatistik nach `.claude/rules/work-statistics.md` ermitteln (`node scripts/claude/work-statistics.mjs --skill implement-feature`) und als `## Arbeitsstatistik` im Chat ausgeben.
+- [ ] Einen 'ai-implementations-log.md' Eintrag für den gesamten Aufruf vorbereiten (bei ganzer Datei `#1–#n` in der Überschrift), mit der Zeile `- **Statistik:** …` aus dem Skript als letztem Punkt.
 - [ ] Benutzer den Committext und 'ai-implementations-log.md' Eintrag zeigen und fragen, ob der commit durchgeführt und der 'ai-implementations-log.md' Eintrag hinzugefügt werden soll.

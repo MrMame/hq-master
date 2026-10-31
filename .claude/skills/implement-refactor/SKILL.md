@@ -85,6 +85,7 @@ Gemäß `.claude/rules/refactoring-requests.md`:
 
 - [ ] Chat Ausgabe : was geändert wurde (mit Dateilinks), Test-/Build-Ergebnis, Coverage der geänderten Dateien (inkl. Begründung für ungetestete Stellen), was bewusst offen blieb.
 - [ ] Einen Committext für den gesamten Aufruf vorbereiten (Typ `refactor(<scope>): …`, umgesetzte Punkte im Body auflisten).
+- [ ] Arbeitsstatistik nach `.claude/rules/work-statistics.md` ermitteln (`node scripts/claude/work-statistics.mjs --skill implement-refactor`) und als `## Arbeitsstatistik` im Chat ausgeben.
 - [ ] `ai-implementations-log.md`-Eintrag vorbereiten. Der Eintrag ist **Pflicht** für jede durchgeführte Umsetzung. Neuester Eintrag oben unter „Letzte Änderungen“, Format wie die bestehenden Einträge:
 
   ```markdown
@@ -93,6 +94,7 @@ Gemäß `.claude/rules/refactoring-requests.md`:
   - **Was wurde gemacht:** …
   - **Dateien geändert:** …
   - **Wichtige Entscheidung:** …
+  - **Statistik:** … (Kurzzeile aus `work-statistics.mjs`)
   ```
 
 - [ ] Benutzer den Committext und den Log-Eintrag zeigen und um Freigabe bitten. Nach Freigabe den Eintrag in `ai-implementations-log.md` einfügen und im selben Commit mitcommitten.

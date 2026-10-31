@@ -20,3 +20,4 @@ Argumente: `$ARGUMENTS` — Thema des Interviews.
 ## Leistungsstatistik ausgeben
 
 - Am Ende des Interviews gib eine Statistik aus, damit ich mir ein Bild über deine Effektivität machen kann.
+- Ermittlung und Format nach `.claude/rules/work-statistics.md`: `node scripts/claude/work-statistics.mjs --skill interview-me`.

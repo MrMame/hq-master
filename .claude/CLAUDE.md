@@ -31,3 +31,7 @@
 
 - Ablageort und Verhalten beim Abfragen offener Aufgaben: See `.claude/rules/feature-requests.md`.
 - Refactoring Requests (Umbauten ohne neues Verhalten): See `.claude/rules/refactoring-requests.md`.
+
+## Arbeitsstatistik
+
+- Am Ende jedes Skill-Laufs per Skript ermitteln und ausgeben: See `.claude/rules/work-statistics.md`.
