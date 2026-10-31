@@ -1,11 +1,15 @@
-/* Container ohne Rahmen: hält Bild, Werteleiste und Buttons zusammen (kein overflow: hidden). */
+/*
+ * Container ohne Rahmen: hält Bild, Werteleiste und Buttons zusammen (kein overflow: hidden).
+ * `--portrait-size` (Zellgröße × Token-Größe) setzt das Template; die Leisten wachsen nicht mit
+ * und erscheinen nur am markierten Token.
+ */
 .dungeon-token {
   position: absolute;
   z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: var(--space-10);
+  width: var(--portrait-size);
   user-select: none;
 }
 
@@ -13,11 +17,10 @@
   z-index: 20;
 }
 
-/* Größe muss zu TOKEN_PORTRAIT_SIZE_PX in dungeon-token.ts passen (Zentrierung im Feld). */
 .dungeon-token__portrait {
   --token-glow: color-mix(in oklab, var(--color-yellow-400) 50%, transparent);
-  width: var(--space-10);
-  height: var(--space-10);
+  width: var(--portrait-size);
+  height: var(--portrait-size);
   flex-shrink: 0;
   overflow: hidden;
   border: 2px solid var(--color-yellow-400);
@@ -44,6 +47,7 @@
   object-fit: cover;
 }
 
+/* Initialen wachsen mit dem Porträt (rund ein Drittel der Kantenlänge). */
 .dungeon-token__initials {
   display: flex;
   align-items: center;
@@ -52,15 +56,14 @@
   height: 100%;
   background-color: var(--color-gray-600);
   color: var(--color-white);
-  font-size: var(--text-xs);
-  line-height: var(--text-xs--line-height);
+  font-size: calc(var(--portrait-size) * 0.35);
+  line-height: 1;
   font-weight: var(--font-weight-bold);
 }
 
-/* Werteleiste überlappt den unteren Bildrand leicht und darf breiter als das Bild sein. */
+/* Werteleiste des markierten Tokens unter dem Porträt, ohne es zu verdecken; darf breiter sein. */
 .dungeon-token__status {
-  position: relative;
-  margin-top: calc(-1 * var(--space-1));
+  margin-top: var(--space-1);
   padding-inline: var(--space-1);
   border-radius: var(--radius-sm);
   background-color: color-mix(in oklab, var(--color-gray-900) 80%, transparent);

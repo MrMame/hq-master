@@ -78,7 +78,8 @@ describe('DungeonTrackerPage', () => {
       'Button „alle zuklappen“ neben dem Titel',
     ).not.toBeNull();
     expect(sidebar.querySelector('.general-sidebar__caption')).toBeNull();
-    expect(sidebar.querySelectorAll('input[type="range"]')).toHaveLength(4);
+    // Zellgröße, Token-Größe, Nullpunkt X/Y, Deckkraft
+    expect(sidebar.querySelectorAll('input[type="range"]')).toHaveLength(5);
     expect(sidebar.textContent).not.toContain('Zoom');
     expect(sidebar.textContent).not.toContain('Neuer Charakter');
   });

@@ -66,9 +66,9 @@ describe('DungeonBoard – grid origin', () => {
     await pointer('pointerdown', 0, 0);
     await pointer('pointermove', 80, 40);
 
-    // (80 px, 40 px) / 0.8 = (100, 50) Einheiten; Token-Porträt mittig im 60er-Feld: + 10
+    // (80 px, 40 px) / 0.8 = (100, 50) Einheiten; Porträt 60 × 85 % = 51 mittig im Feld: + 4,5
     expect(gridPosition()).toBe('200px 100px');
-    expect(tokenLeft()).toBe('210px');
+    expect(tokenLeft()).toBe('204.5px');
     expect(board.boardState().gridOffsetX).toBe(100);
 
     await pointer('pointerup', 80, 40);
@@ -94,7 +94,7 @@ describe('DungeonBoard – grid origin', () => {
     await pointer('pointercancel', 80, 40);
 
     expect(gridPosition()).toBe('100px 50px');
-    expect(tokenLeft()).toBe('110px');
+    expect(tokenLeft()).toBe('104.5px');
     expect(board.boardState().gridOffsetX).toBe(100);
   });
 

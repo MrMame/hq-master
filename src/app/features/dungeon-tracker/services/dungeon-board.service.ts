@@ -12,6 +12,7 @@ import { BoardToken } from '../models/board-token.model';
 import { DungeonPosition } from '../models/dungeon-position.model';
 import { DungeonSessionState } from '../models/dungeon-session-state.model';
 import { placeNewTokens } from '../utils/token-placement.util';
+import { BOARD_STATE_CODEC } from '../utils/board-state-codec.util';
 
 @Injectable({
   providedIn: 'root',
@@ -21,9 +22,11 @@ export class DungeonBoardService implements SessionStateSlice<DungeonSessionStat
 
   // Mutationen lesen über current()/update() untracked: sie werden u. a. aus effect() aufgerufen.
   private readonly _boardState: PersistedState<DungeonBoardState> =
-    persistedState<DungeonBoardState>(SESSION_KEYS.dungeonBoard, () => ({
-      ...DEFAULT_DUNGEON_BOARD_STATE,
-    }));
+    persistedState<DungeonBoardState>(
+      SESSION_KEYS.dungeonBoard,
+      () => ({ ...DEFAULT_DUNGEON_BOARD_STATE }),
+      BOARD_STATE_CODEC,
+    );
   private readonly _positions: PersistedState<DungeonPosition[]> = persistedState<
     DungeonPosition[]
   >(SESSION_KEYS.dungeonPositions, () => []);

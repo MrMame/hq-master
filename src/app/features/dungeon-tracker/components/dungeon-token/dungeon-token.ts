@@ -18,9 +18,6 @@ import { fieldAt } from '../../utils/grid-origin.util';
 import { CharacterStatus } from '../character-status/character-status';
 import { CharacterActionBar } from '../character-action-bar/character-action-bar';
 
-/** Kantenlänge des runden Porträts; muss zu `--space-10` in `dungeon-token.css` passen. */
-export const TOKEN_PORTRAIT_SIZE_PX: number = 40;
-
 @Component({
   selector: 'app-dungeon-token',
   standalone: true,
@@ -32,6 +29,8 @@ export class DungeonToken {
   position: InputSignal<DungeonPosition> = input.required<DungeonPosition>();
   character: InputSignal<CharacterInfo> = input.required<CharacterInfo>();
   cellSize: InputSignal<number> = input.required<number>();
+  /** Porträtgröße als Anteil der Zellgröße, z. B. 0.85. */
+  tokenScale: InputSignal<number> = input.required<number>();
   offsetX: InputSignal<number> = input<number>(0);
   offsetY: InputSignal<number> = input<number>(0);
   selected: InputSignal<boolean> = input<boolean>(false);
@@ -61,18 +60,21 @@ export class DungeonToken {
    */
   protected dragged: boolean = false;
 
-  /** Die Porträtmitte liegt in der Feldmitte; Werteleiste und Buttons hängen darunter. */
+  /** Kantenlänge des runden Porträts in Einheiten; setzt `--portrait-size` in `dungeon-token.css`. */
+  portraitSize: Signal<number> = computed(() => this.cellSize() * this.tokenScale());
+
+  /** Die Porträtmitte liegt in der Feldmitte; die Buttons hängen darunter. */
   tokenLeft: Signal<number> = computed(
     () =>
       this.offsetX() +
       this.position().col * this.cellSize() +
-      (this.cellSize() - TOKEN_PORTRAIT_SIZE_PX) / 2,
+      (this.cellSize() - this.portraitSize()) / 2,
   );
   tokenTop: Signal<number> = computed(
     () =>
       this.offsetY() +
       this.position().row * this.cellSize() +
-      (this.cellSize() - TOKEN_PORTRAIT_SIZE_PX) / 2,
+      (this.cellSize() - this.portraitSize()) / 2,
   );
 
   initials: Signal<string> = computed(() => this.character().name.slice(0, 2).toUpperCase());
@@ -114,6 +116,6 @@ export class DungeonToken {
 
   /** Feld (Spalte bzw. Zeile), über dem die Porträtmitte liegt; links bzw. oberhalb des Nullpunkts negativ. */
   private fieldUnderPortrait(portraitStart: number, gridOffset: number): number {
-    return fieldAt(portraitStart + TOKEN_PORTRAIT_SIZE_PX / 2, gridOffset, this.cellSize());
+    return fieldAt(portraitStart + this.portraitSize() / 2, gridOffset, this.cellSize());
   }
 }

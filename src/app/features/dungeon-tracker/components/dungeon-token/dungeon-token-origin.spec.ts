@@ -29,6 +29,8 @@ describe('DungeonToken – fields around the origin', () => {
     host = fixture.nativeElement as HTMLElement;
     fixture.componentRef.setInput('character', createTestCharacter('a'));
     fixture.componentRef.setInput('cellSize', 50);
+    // 50 × 0,8: Porträt 40
+    fixture.componentRef.setInput('tokenScale', 0.8);
     fixture.componentRef.setInput('offsetX', 200);
     fixture.componentRef.setInput('offsetY', 100);
     render({ characterId: 'a', col: 2, row: 3 });
@@ -46,6 +48,14 @@ describe('DungeonToken – fields around the origin', () => {
 
   it('reports a negative column and row when dropped left of and above the origin', () => {
     // Porträtmitte (125, 75): 75 links und 25 oberhalb des Nullpunkts
+    dropAfter(-200, -200);
+    expect(moves).toEqual([{ characterId: 'a', col: -2, row: -1 }]);
+  });
+
+  it('uses the portrait center left of and above the origin also at token size 150 %', () => {
+    fixture.componentRef.setInput('tokenScale', 1.5);
+    fixture.detectChanges();
+    // Porträt 75, Mitte weiter (325, 275); nach dem Zug (125, 75)
     dropAfter(-200, -200);
     expect(moves).toEqual([{ characterId: 'a', col: -2, row: -1 }]);
   });

@@ -28,6 +28,8 @@ describe('DungeonToken', () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput('position', position);
     fixture.componentRef.setInput('cellSize', 50);
+    // 50 × 0,8: Porträt 40
+    fixture.componentRef.setInput('tokenScale', 0.8);
     fixture.componentRef.setInput('offsetX', 10);
     fixture.componentRef.setInput('offsetY', 20);
   });
@@ -41,11 +43,34 @@ describe('DungeonToken', () => {
     expect(token.style.top).toBe('175px');
   });
 
-  it('should center the portrait also in a field smaller than the portrait', () => {
-    fixture.componentRef.setInput('cellSize', 30);
-    const token: HTMLElement = render(createTestCharacter('a'));
-    expect(token.style.left).toBe('65px');
-    expect(token.style.top).toBe('105px');
+  it.each<[number, number, string, string, string]>([
+    // 60 × 0,85 = 51: 10 + 2 × 60 + 4,5; 20 + 3 × 60 + 4,5
+    [60, 0.85, '51px', '134.5px', '204.5px'],
+    // 120 × 1,5 = 180, größer als das Feld: 10 + 240 − 30; 20 + 360 − 30
+    [120, 1.5, '180px', '220px', '350px'],
+  ])(
+    'should size the portrait as cell %s × token size %s and center it in its field',
+    (cellSize, tokenScale, size, left, top) => {
+      fixture.componentRef.setInput('cellSize', cellSize);
+      fixture.componentRef.setInput('tokenScale', tokenScale);
+      const token: HTMLElement = render(createTestCharacter('a'));
+      expect(token.style.getPropertyValue('--portrait-size')).toBe(size);
+      expect([token.style.left, token.style.top]).toEqual([left, top]);
+    },
+  );
+
+  it('should keep a token larger than its field on that field after a drag without movement', () => {
+    fixture.componentRef.setInput('tokenScale', 1.5);
+    render(createTestCharacter('a'));
+    const moved: (event: { characterId: string; col: number; row: number }) => void = vi.fn();
+    component.tokenMoved.subscribe(moved);
+
+    // Porträtmitte 10 + 125 = 135 → Spalte 2; 75 Einheiten nach links → 60 → Spalte 1
+    endDrag(dragEnd(0, 0, vi.fn()));
+    endDrag(dragEnd(-75, 0, vi.fn()));
+
+    expect(moved).toHaveBeenNthCalledWith(1, { characterId: 'a', col: 2, row: 3 });
+    expect(moved).toHaveBeenNthCalledWith(2, { characterId: 'a', col: 1, row: 3 });
   });
 
   it('should show the initials when the character has no image', () => {

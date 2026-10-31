@@ -62,6 +62,17 @@ describe('dungeon.xml-mapper – grid with decimals', () => {
     expect(readDungeonBoard(writeDungeonBoard(doc, state))).toEqual(state);
   });
 
+  it('keeps the token size and reads an old file without it as 85 %', () => {
+    const doc: XMLDocument = document.implementation.createDocument(null, 'gameSession', null);
+    const state: DungeonSessionState = {
+      board: { ...DEFAULT_DUNGEON_BOARD_STATE, tokenScale: 1.35 },
+      positions: [],
+    };
+
+    expect(readDungeonBoard(writeDungeonBoard(doc, state))).toEqual(state);
+    expect(read('<dungeonBoard gridCellSizePx="50"/>').board.tokenScale).toBe(0.85);
+  });
+
   it('reads an old offset from the slider range -100 to 100 unchanged', () => {
     expect(read('<dungeonBoard gridOffsetX="-100" gridOffsetY="100"/>').board).toMatchObject({
       gridOffsetX: -100,

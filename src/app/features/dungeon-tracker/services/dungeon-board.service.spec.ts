@@ -38,6 +38,14 @@ describe('DungeonBoardService', () => {
     mutate: (s: DungeonBoardService) => s.updateGridSettings({ gridRows: 3 }),
   });
 
+  it('should complete a board stored by an older version with the default token size', () => {
+    const oldBoard: Partial<DungeonBoardState> = { ...board };
+    delete oldBoard.tokenScale;
+    localStorage.setItem(SESSION_KEYS.dungeonBoard, JSON.stringify(oldBoard));
+
+    expect(createService().boardState()).toEqual({ ...board, tokenScale: 0.85 });
+  });
+
   describePersistedState('positions', {
     key: SESSION_KEYS.dungeonPositions,
     create: createService,

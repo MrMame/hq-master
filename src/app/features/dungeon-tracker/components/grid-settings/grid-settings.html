@@ -32,6 +32,16 @@
     />
   </div>
 
+  <!-- Porträtgröße der Tokens in Prozent der Zellgröße -->
+  <app-grid-slider
+    name="Token-Größe"
+    [valueText]="tokenScaleText()"
+    [value]="boardState().tokenScale"
+    [limits]="tokenScaleLimits"
+    [step]="steps.tokenScale"
+    (valueChange)="onSlide('tokenScale', $event)"
+  />
+
   <!-- Raster an Bildbreite: für randlose Bilder, z. B. aus dem Dungeon Builder -->
   <div class="grid-setting">
     <label class="grid-setting__field">

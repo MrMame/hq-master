@@ -5,7 +5,7 @@ import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { GridSettings } from './grid-settings';
 import { clickButton } from '../../../../shared/testing/click-button';
 
-type GridSetting = 'gridCellSizePx' | 'gridOffsetX' | 'gridOffsetY' | 'gridOpacity';
+type GridSetting = 'gridCellSizePx' | 'tokenScale' | 'gridOffsetX' | 'gridOffsetY' | 'gridOpacity';
 
 describe('GridSettings', () => {
   let fixture: ComponentFixture<GridSettings>;
@@ -38,9 +38,10 @@ describe('GridSettings', () => {
 
   it.each<[number, GridSetting, string, number]>([
     [0, 'gridCellSizePx', '60.5', 60.5],
-    [1, 'gridOffsetX', '-10', -10],
-    [2, 'gridOffsetY', '15', 15],
-    [3, 'gridOpacity', '0.5', 0.5],
+    [1, 'tokenScale', '1.2', 1.2],
+    [2, 'gridOffsetX', '-10', -10],
+    [3, 'gridOffsetY', '15', 15],
+    [4, 'gridOpacity', '0.5', 0.5],
   ])('slider %i changes only %s', (index, key, rawValue, expected) => {
     const before: DungeonBoardState = board.boardState();
     enter(sliders()[index], rawValue, 'input');
