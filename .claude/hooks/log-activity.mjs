@@ -2,8 +2,11 @@
 // eine kompakte Zeile nach .claude/logs/activity.log. Kostet keine Tokens und blockiert nie.
 // Format: `<Zeit>  <Sitzung, 8 Zeichen>  [sub] <Art> <Detail>` – ausgewertet von
 // scripts/claude/work-statistics.mjs (siehe .claude/rules/work-statistics.md).
+// Ein Prüfbefehl, der trotz Fehlern mit Exit-Code 0 endet (z. B. `npm run lint | tail`), wird
+// anhand seiner Ausgabe ebenfalls als FAIL geloggt (scripts/claude/check-output.mjs).
 import { appendFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { isFailedCheck, outputText } from '../../scripts/claude/check-output.mjs';
 
 const MAX = 120;
 const oneLine = (text) =>
@@ -51,13 +54,21 @@ try {
     }
   };
 
+  const failure = () => [
+    'FAIL',
+    `${input.tool_name} ${describeTool(input.tool_name, input.tool_input)}`,
+  ];
+  const failedCheck = () =>
+    input.tool_name === 'Bash' &&
+    isFailedCheck(input.tool_input?.command, outputText(input.tool_response));
+
   const events = {
     UserPromptSubmit: () => ['PROMPT', cut(withoutIdeContext(input.prompt))],
-    PostToolUse: () => [input.tool_name, describeTool(input.tool_name, input.tool_input)],
-    PostToolUseFailure: () => [
-      'FAIL',
-      `${input.tool_name} ${describeTool(input.tool_name, input.tool_input)}`,
-    ],
+    PostToolUse: () =>
+      failedCheck()
+        ? failure()
+        : [input.tool_name, describeTool(input.tool_name, input.tool_input)],
+    PostToolUseFailure: failure,
     Stop: () => ['STOP', '── Antwort fertig ──'],
   };
   const build = events[input.hook_event_name];

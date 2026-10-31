@@ -55,6 +55,17 @@ describe('formatTable', () => {
     assert.match(quiet, /\| Subagenten \| 0 \| – \|/);
   });
 
+  it('shows expected failures separately from the failure count', () => {
+    const mixed = formatTable(
+      stats({ activity: { failures: { total: 1, byKind: { lint: 1 }, expected: 2 } } }),
+    );
+    assert.match(mixed, /\| Fehlschläge \| 1 \| Lint 1, erwartet 2 \|/);
+    const onlyExpected = formatTable(
+      stats({ activity: { failures: { total: 0, byKind: {}, expected: 1 } } }),
+    );
+    assert.match(onlyExpected, /\| Fehlschläge \| 0 \| erwartet 1 \|/);
+  });
+
   it('shows subagent calls, tools and tokens separately', () => {
     const delegated = formatTable(
       stats({
@@ -76,6 +87,13 @@ describe('formatLogLine', () => {
       '- **Statistik:** 42 min · 3 Runden · 2 Rückfragen · 55 Tools · ' +
         'Dateien 3 neu / 10 geändert · 3 Fehlschläge · Tokens 640.485 (Output 10.465)',
     );
+  });
+
+  it('adds expected failures to the failure count only when there are some', () => {
+    const line = formatLogLine(
+      stats({ activity: { failures: { total: 3, byKind: { test: 3 }, expected: 1 } } }),
+    );
+    assert.match(line, / · 3 Fehlschläge \(\+1 erwartet\) · /);
   });
 
   it('mentions subagents only when some were used', () => {
