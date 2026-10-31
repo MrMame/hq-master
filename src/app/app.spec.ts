@@ -16,7 +16,8 @@ describe('App', () => {
     host = fixture.nativeElement as HTMLElement;
   });
 
-  it('renders the app title', () => {
+  it('renders the main navigation inside the header', () => {
+    expect(host.querySelector('header app-main-nav')).not.toBeNull();
     expect(host.querySelector('header')?.textContent).toContain('HQ-Master');
   });
 

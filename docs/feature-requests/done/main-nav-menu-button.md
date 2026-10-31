@@ -2,7 +2,7 @@
 
 **Datum:** 2026-10-31  
 **Priorität:** Mittel  
-**Status:** open  
+**Status:** done (2026-10-31 09:12)  
 **Bezug:** `docs/refactoring-requests/done/responsive-app-header.md` (Voraussetzung), `src/app/app.ts`,
 `src/app/app.css`, `REQUIREMENTS.md` (Bedienung auf dem Tablet)
 
@@ -47,7 +47,7 @@ Schmal (< Grenze):
 
 ## Anforderungen
 
-### 1. Navigation als eigene Komponente mit einer Liste der Einträge
+### 1. Navigation als eigene Komponente mit einer Liste der Einträge ✅ done (2026-10-31 09:12)
 
 - Neue Komponente `MainNav` unter `shared/components/main-nav/` (per `ng g c shared/components/main-nav`).
   Sie enthält Linkleiste und Menü-Button.
@@ -60,7 +60,7 @@ Schmal (< Grenze):
 
 ---
 
-### 2. Menü-Button und Aufklappliste
+### 2. Menü-Button und Aufklappliste ✅ done (2026-10-31 09:12)
 
 - Links vor dem Logo ein Icon-Button (☰, `mat-icon-button` oder eigenes SVG wie die übrigen Icons in
   `public/img/`), Tippfläche mindestens 48 × 48 px.
@@ -78,7 +78,7 @@ und schließt die Liste.
 
 ---
 
-### 3. Name der aktuellen Seite im Header
+### 3. Name der aktuellen Seite im Header ✅ done (2026-10-31 09:12)
 
 - Im schmalen Header steht hinter dem Logo der Name der aktiven Seite (`HQ-Master · Dungeon Tracker`).
 - Der Name kommt aus `MAIN_NAV_ITEMS` passend zur aktuellen Route (Router-Events per `toSignal`). Bei
@@ -87,7 +87,7 @@ und schließt die Liste.
 
 ---
 
-### 4. Umschalten per CSS
+### 4. Umschalten per CSS ✅ done (2026-10-31 09:12)
 
 - Linkleiste und Menü-Button stehen beide im Template. Eine Media Query blendet je nach Breite eine Variante
   aus (`display: none`). Kein TypeScript-Code beobachtet die Bildschirmbreite.
@@ -98,7 +98,7 @@ und schließt die Liste.
 
 ---
 
-### 5. Tests
+### 5. Tests ✅ done (2026-10-31 09:12)
 
 - `main-nav.spec.ts`:
   - Linkleiste zeigt alle Einträge aus `MAIN_NAV_ITEMS` mit richtigem Ziel, die aktive Seite ist markiert.
@@ -114,7 +114,7 @@ und schließt die Liste.
 
 ---
 
-### 6. Dokumentation
+### 6. Dokumentation ✅ done (2026-10-31 09:12)
 
 - `REQUIREMENTS.md`: Satz zur Navigation ergänzen („Auf schmalen Bildschirmen erreicht der DM alle Seiten über
   einen Menü-Button oben links; der Header zeigt die aktuelle Seite.“).
@@ -132,6 +132,9 @@ und schließt die Liste.
   linken Rand konkurrieren.
 - **Entscheidung (2026-10-31):** `MainNav` und `main-nav-items.ts` liegen unter `shared/components/main-nav/`
   (`ng g c shared/components/main-nav`), nicht in einem neuen Ordner `core/layout/`.
+- **Entscheidung (2026-10-31, Umsetzung):** `@media` kann kein `var()` auswerten. Die Grenze `48rem` steht deshalb
+  wie `sm = 40rem` als Doku-Eintrag im Breakpoint-Kommentar von `tokens.css` und als Wert nur in `main-nav.css`.
+  Gemessen braucht die einzeilige Linkleiste 666 px (≈ 41,6 rem); `48rem` bleibt damit passend.
 - Die Grenze `48rem` ist ein Startwert. Die Probe aus Punkt 5 misst, ab welcher Breite die Einträge in eine
   Zeile passen. Liegt der Wert deutlich daneben, wird das Token angepasst.
 
@@ -139,12 +142,12 @@ und schließt die Liste.
 
 ## Akzeptanzkriterien
 
-- [ ] Unter der Breitengrenze zeigt der Header nur ☰, Logo und den Namen der aktuellen Seite in einer Zeile
-- [ ] ☰ öffnet eine Liste aller fünf Seiten, die aktive Seite ist markiert; ein Tipp wechselt die Seite und schließt die Liste
-- [ ] Über der Grenze sieht die Navigation aus wie nach `responsive-app-header.md`
-- [ ] Die Einträge sind nur einmal in `MAIN_NAV_ITEMS` definiert
-- [ ] Bei 360 px ist keine Seite breiter als der Bildschirm
+- [x] Unter der Breitengrenze zeigt der Header nur ☰, Logo und den Namen der aktuellen Seite in einer Zeile
+- [x] ☰ öffnet eine Liste aller fünf Seiten, die aktive Seite ist markiert; ein Tipp wechselt die Seite und schließt die Liste
+- [x] Über der Grenze sieht die Navigation aus wie nach `responsive-app-header.md`
+- [x] Die Einträge sind nur einmal in `MAIN_NAV_ITEMS` definiert
+- [x] Bei 360 px ist keine Seite breiter als der Bildschirm
 - [ ] Auf dem Galaxy Tab S11 ist die Navigation in Chrome ohne „Desktopwebsite“ per Menü-Button bedienbar (manuelle Prüfung durch den Nutzer)
-- [ ] `REQUIREMENTS.md` und `architecture.md` sind angepasst
-- [ ] Jede Datei hat höchstens 150 Zeilen
-- [ ] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün
+- [x] `REQUIREMENTS.md` und `architecture.md` sind angepasst
+- [x] Jede Datei hat höchstens 150 Zeilen
+- [x] `npm run lint`, `npm run test -- --watch=false --coverage` (Schwellen eingehalten), `npm run build` und `npm run e2e` laufen grün

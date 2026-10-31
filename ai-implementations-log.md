@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-31 09:13) - Feature: Menü-Button für die Hauptnavigation auf schmalen Bildschirmen (main-nav-menu-button #1–#6)
+
+- **Was wurde gemacht:** Die Hauptnavigation ist jetzt die Komponente `MainNav` (`shared/components/main-nav/`), die Einträge stehen nur noch in `MAIN_NAV_ITEMS`. Unter 48rem ersetzt ein Menü-Button (☰, 48 × 48 px, `aria-label` „Hauptmenü“) die Linkleiste: Er öffnet ein `mat-menu` mit allen Seiten, die aktive ist fett mit Punkt und `aria-current="page"`. Der einzeilige Header zeigt hinter dem Logo den Namen der aktuellen Seite (auch nach Weiterleitungen, bei Platzmangel mit „…“). Darüber bleibt die Linkleiste wie nach responsive-app-header.
+- **Dateien geändert:** `shared/components/main-nav/*` (neu: `main-nav.ts/.css`, `main-nav-items.ts`, `active-nav-item.util.ts` + Specs, `main-nav-menu.spec.ts`), `shared/testing/main-nav.fixtures.ts` (neu), `public/img/menu.svg` (neu), `src/app/app.ts/.css/.spec.ts`, `src/styles/tokens.css`, `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/done/main-nav-menu-button.md`
+- **Wichtige Entscheidung:** Die Grenze steht auf Rückfrage nur als Doku-Eintrag in `tokens.css` (wie `sm = 40rem`), weil `@media` kein `var()` auswertet; gemessen braucht die einzeilige Leiste 666 px (≈ 41,6 rem). Der Menütext steckt in einem eigenen Label-Element, weil Material das Schriftgewicht auf seinem inneren Text-Span festlegt (in der Probe gefunden). Die manuelle Prüfung auf dem Galaxy Tab S11 steht noch aus. Probe (10), Lint, 864 Tests (neue Dateien 100 %), Build und e2e (30) grün.
+- **Statistik:** 13 min · 1 Runden · 1 Rückfragen · 54 Tools · Dateien 9 neu / 6 geändert · 0 Fehlschläge · Tokens 3.075.626 (Output 26.758)
+
 ### (2026-10-31 08:15) - Refactoring: Navigationsleiste von links nach rechts, umbrechend statt über den Bildschirmrand (responsive-app-header #1–#4)
 
 - **Was wurde gemacht:** Header und Navigation brechen um (`flex-wrap`, `gap`), die Menüeinträge stehen linksbündig hinter dem Logo, Links brechen nicht im Text um. Bei 360 px läuft keine Seite mehr über den Rand. `.app-shell` hat `100dvh`, `.app-main` füllt den Rest unter dem Header, Dungeon Tracker und Dungeon Builder übernehmen dessen Höhe statt `90vh`.

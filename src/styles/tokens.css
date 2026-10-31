@@ -101,5 +101,6 @@
   --transition-duration: 150ms;
   --transition-ease: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Breakpoints (nur Dokumentation; @media kann keine var() nutzen): sm = 40rem */
+  /* Breakpoints (nur Dokumentation; @media kann keine var() nutzen): sm = 40rem,
+     main-nav = 48rem (darunter Menü-Button statt Linkleiste, main-nav.css) */
 }

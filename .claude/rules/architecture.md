@@ -108,7 +108,10 @@ shared/
                          SidebarSection (auf-/zuklappbare Gruppe der Seitenleiste, `sectionId` = `<feature>.<abschnitt>`),
                          SidebarSectionToggleAll (alle Gruppen eines Features auf-/zuklappen, in `.general-sidebar__header`),
                          DamageTakenDialog, BoardZoomControl (senkrechter Zoom-Regler für zoombare Spielflächen,
-                         z. B. in der Schnellzugriffsleiste `.general-quick-access`))
+                         z. B. in der Schnellzugriffsleiste `.general-quick-access`),
+                         MainNav (Hauptnavigation im Header: Linkleiste, schmal Menü-Button mit Seitenname;
+                         main-nav-items.ts mit MAIN_NAV_ITEMS – neue Seiten nur dort ergänzen,
+                         active-nav-item.util.ts))
   directives/          → board-pan.ts (BoardPan: Ausschnitt eines Scroll-Containers per Ziehen verschieben),
                          repeat-on-hold.ts (RepeatOnHold: Schritt-Button wiederholt beim Gedrückthalten)
   models/              → confirmation-dialog-data.model.ts (Texte der Rückfrage),
@@ -123,7 +126,7 @@ shared/
                          damage.util.ts (reine Schadensberechnung),
                          xml.util.ts (XML lesen/schreiben, `requireChild` mit Dateiart in der Fehlermeldung)
   testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
-                         character-editor-dialog.fixtures.ts)
+                         character-editor-dialog.fixtures.ts, main-nav.fixtures.ts)
 ```
 
 ## E2E-Tests (`e2e/`, Projekt-Root)

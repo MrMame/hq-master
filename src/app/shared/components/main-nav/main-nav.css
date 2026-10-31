@@ -1,0 +1,101 @@
+/* Menü linksbündig hinter dem Logo; bei wenig Breite rutscht es unter das Logo statt über den Rand. */
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-2) var(--space-6);
+  padding: var(--space-2);
+}
+
+.main-nav__logo {
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-yellow-800);
+}
+
+/* Tippfläche mindestens 48 × 48 px, auch wenn das Material-Theme kompakter ist. */
+.main-nav__menu-button {
+  width: 3rem;
+  height: 3rem;
+  min-width: 3rem;
+  padding: var(--space-3);
+}
+
+.main-nav__menu-icon {
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.main-nav__page-name {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  color: var(--color-gray-900);
+}
+
+/*
+ * Aktiver Menüeintrag: fett mit Punkt davor. Eigener Label-Span, weil Material das Gewicht auf seinem
+ * inneren Text-Span festlegt, den die Kapselung dieser Komponente nicht erreicht.
+ */
+.main-nav__menu-item--active .main-nav__menu-label {
+  font-weight: var(--font-weight-bold);
+
+  &::before {
+    content: '●';
+    margin-right: var(--space-2);
+  }
+}
+
+/* Teilt sich die Zeile mit dem Logo und bricht in sich um; unter das Logo nur, wenn nicht einmal ein Eintrag daneben passt. */
+.app-nav {
+  flex: 1 1 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-4);
+}
+
+/* Bei Platzmangel wandert der ganze Eintrag in die nächste Zeile, der Text bricht nicht um. */
+.app-nav__link {
+  white-space: nowrap;
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  color: var(--color-gray-600);
+
+  &:hover {
+    color: var(--color-gray-900);
+  }
+}
+
+/* Der aktive Link ist nur fett; die Farbe bleibt wie bisher die der übrigen Links. */
+.app-nav__link--active {
+  font-weight: var(--font-weight-bold);
+}
+
+/* Breitengrenze 48rem (Token-Doku in tokens.css): darunter Menü-Button + Seitenname, darüber Linkleiste. */
+@media (min-width: 48rem) {
+  .main-nav__menu-button,
+  .main-nav__page-name {
+    display: none;
+  }
+}
+
+@media (max-width: 47.99rem) {
+  :host {
+    flex-wrap: nowrap;
+    gap: var(--space-2);
+    padding-block: 0;
+    padding-inline: var(--space-1) var(--space-2);
+  }
+
+  .app-nav {
+    display: none;
+  }
+}
