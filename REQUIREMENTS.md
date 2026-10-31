@@ -9,6 +9,7 @@
   - Alle Features greifen auf die gleiche SpieleSession Daten zu. D.h. wenn im TimeTracker eine neue Runde registriert wird, wirkt sich das auf alle anderen Features aus, wie z.b. das automatische berechnen von Gift schaden für diese Runde.
   - Alle Features beziehen sich auf den zustand der aktuellen Spielesession. Die Spielesession soll auch erhalten bleiben, wenn der Browser das Fenster schliesst und danach öffnet.
   - Die Gruppen der linken Seitenleiste lassen sich in allen Features über ihre Überschrift einzeln auf- und zuklappen, über einen Button neben dem Titel auch alle auf einmal. Welche Gruppen zugeklappt sind, bleibt im Browser erhalten, gehört aber nicht zur Spielesession.
+  - Auf schmalen Bildschirmen erreicht der DM alle Seiten über einen Menü-Button oben links; der Header zeigt die aktuelle Seite.
 
 ## 1. Time Tracker (`/timetracker`)
 

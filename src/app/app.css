@@ -11,49 +11,6 @@
   background-color: var(--color-yellow-500);
 }
 
-/* Menü linksbündig hinter dem Logo; bei wenig Breite rutscht es unter das Logo statt über den Rand. */
-.app-header__bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--space-2) var(--space-6);
-  padding: var(--space-2);
-}
-
-.app-header__logo {
-  font-size: var(--text-lg);
-  line-height: var(--text-lg--line-height);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-yellow-800);
-}
-
-/* Teilt sich die Zeile mit dem Logo und bricht in sich um; unter das Logo nur, wenn nicht einmal ein Eintrag daneben passt. */
-.app-nav {
-  flex: 1 1 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-1) var(--space-4);
-}
-
-/* Bei Platzmangel wandert der ganze Eintrag in die nächste Zeile, der Text bricht nicht um. */
-.app-nav__link {
-  white-space: nowrap;
-  font-size: var(--text-sm);
-  line-height: var(--text-sm--line-height);
-  color: var(--color-gray-600);
-
-  &:hover {
-    color: var(--color-gray-900);
-  }
-}
-
-/* Der aktive Link ist nur fett; die Farbe bleibt wie bisher die der übrigen Links. */
-.app-nav__link--active {
-  font-weight: var(--font-weight-bold);
-}
-
 /* Füllt die Höhe unter dem Header, egal wie viele Zeilen er hat; höhere Seiten scrollen hier. */
 .app-main {
   flex: 1;
