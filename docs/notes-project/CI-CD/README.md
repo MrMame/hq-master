@@ -1,6 +1,6 @@
 # CI/CD-Pipelines – hq-master
 
-Stand: 2026-10-18
+Stand: 2026-10-31
 
 ## 1. Übersicht
 
@@ -47,6 +47,7 @@ flowchart LR
 | **Playwright**                   | ^1.64.1                | E2E-Smoke-Tests (Chromium)                                   |
 | **angular-cli-ghpages**          | ^3.1.0                 | Deployment auf GitHub Pages                                  |
 | **Claude Code Hooks**            | –                      | Formatierung, Test-Gate, Aktivitätslog während der KI-Arbeit |
+| **Arbeitsstatistik-Skripte**     | – (`node --test`)      | Auswertung von Aktivitätslog, Tokens und git (Kapitel 12)    |
 
 ### Verzeichnisstruktur der Konfigurationen
 
@@ -69,17 +70,21 @@ hq-master/
 │   ├── pre-commit.mjs         # Prettier-Check + Lint
 │   ├── pre-push.mjs           # Tests + Coverage + Build
 │   └── run-with-timeout.mjs   # gemeinsames Modul: Timeout + Prozessbaum-Kill
+├── scripts/claude/
+│   ├── work-statistics.mjs    # Arbeitsstatistik am Ende eines Skill-Laufs
+│   ├── activity-log.mjs, transcript-usage.mjs, git-files.mjs, format-statistics.mjs
+│   └── *.test.mjs             # node:test-Tests der Statistik-Module
 ├── .claude/
 │   ├── settings.json          # Registrierung der Claude-Hooks + Berechtigungen
 │   ├── hooks/
 │   │   ├── format-file.mjs    # PostToolUse: Prettier
 │   │   ├── stop-run-tests.mjs # Stop: Unit-Tests
-│   │   └── log-activity.mjs   # Aktivitätslog
+│   │   └── log-activity.mjs   # Aktivitätslog (inkl. Fehlschläge)
 │   └── logs/activity.log      # (gitignored)
 ├── src/
 │   ├── test-setup.ts          # globales Vitest-Setup (localStorage leeren)
 │   └── environments/          # environment.ts / environment.prod.ts (fileReplacement)
-├── e2e/                       # Playwright-Specs + eigene tsconfig.json
+├── e2e/                       # Playwright-Specs, support/-Helfer, eigene tsconfig.json
 ├── coverage/                  # Coverage-Report (gitignored)
 ├── test-results/              # Playwright-Artefakte (gitignored)
 └── dist/                      # Build-Ausgabe (gitignored)
@@ -257,15 +262,21 @@ Nicht gelintet werden `e2e/`, `scripts/`, `.claude/hooks/` und Konfigurationsdat
 - `setupFiles: src/test-setup.ts` leert `localStorage` vor **jedem** Test (abgesichert durch
   `src/test-setup.spec.ts`).
 - `tsconfig.spec.json` bindet die `vitest/globals`-Typen ein und umfasst `src/**/*.spec.ts`.
+- `vitest.config.ts` startet die Worker mit `execArgv: ['--no-experimental-webstorage']`: Ab
+  Node 25 ist Nodes eigenes Web Storage standardmäßig aktiv und verdeckt das `localStorage` von
+  jsdom (Folge wäre `localStorage === undefined` in den Specs).
 
 **Coverage-Schwellen** (Provider v8, Report unter `coverage/`):
 
-| Metrik     | Schwelle | Stand 2026-10-17 |
-| ---------- | -------- | ---------------- |
-| Lines      | 95 %     | 98,3 %           |
-| Branches   | 90 %     | 94,0 %           |
-| Functions  | 85 %     | 89,8 %           |
-| Statements | 95 %     | 96,8 %           |
+| Metrik     | Schwelle | Stand 2026-10-17 | Stand 2026-10-31 |
+| ---------- | -------- | ---------------- | ---------------- |
+| Lines      | 95 %     | 98,3 %           | 99,6 %           |
+| Branches   | 90 %     | 94,0 %           | 97,8 %           |
+| Functions  | 85 %     | 89,8 %           | 97,9 %           |
+| Statements | 95 %     | 96,8 %           | 99,0 %           |
+
+Die Schwellen wurden seit dem 2026-10-17 nicht angehoben; der Abstand zum Ist-Stand ist
+inzwischen groß (v. a. Functions: 85 % vs. 97,9 %).
 
 Unterschreitung lässt `npm run test -- --coverage` mit Exit ≠ 0 enden → pre-push bricht ab.
 Die Schwellen werden nur im pre-push geprüft; der Claude-Stop-Hook läuft ohne Coverage.
@@ -312,14 +323,20 @@ npm run test -- --watch=false --include <pfad>
   `ng serve` auf 4200 nicht stört; `reuseExistingServer: true`, Start-Timeout 120 s).
 - Browser: nur Chromium (Desktop Chrome), `fullyParallel`, keine Retries.
 - Trace wird nur bei Fehlschlag behalten (`test-results/`).
-- Specs (Smoke-Szenarien):
+- Specs (Smoke-Szenarien); „PC + Tablet“ heißt: einmal mit Maus, einmal mit Touch (1024 × 768):
 
-  | Spec                            | Prüft                                               |
-  | ------------------------------- | --------------------------------------------------- |
-  | `routes.spec.ts`                | jede lazy Feature-Route lädt ihre Seite             |
-  | `character-persistence.spec.ts` | angelegter Charakter überlebt einen Reload          |
-  | `dungeon-drag.spec.ts`          | Drag & Drop eines Charakters auf dem Dungeon-Raster |
-  | `session-roundtrip.spec.ts`     | Session-Export/-Import aller Session-Keys           |
+  | Spec                             | Prüft                                                                                           |
+  | -------------------------------- | ----------------------------------------------------------------------------------------------- |
+  | `routes.spec.ts`                 | jede lazy Feature-Route lädt ihre Seite, Weiterleitungen auf den Dungeon-Tracker                |
+  | `character-editor.spec.ts`       | Bearbeiten per Doppelklick überlebt Reload, neuer/zufälliger Charakter, Entfernen (PC + Tablet) |
+  | `dungeon-drag.spec.ts`           | verschobener Token behält sein Feld nach einem Reload                                           |
+  | `dungeon-selection.spec.ts`      | Legende ↔ Token-Auswahl, Aktionsleiste öffnet den Editor (PC + Tablet)                          |
+  | `dungeon-damage.spec.ts`         | Schaden über Aktionsleiste bzw. Legende, bleibt nach Reload erhalten (PC + Tablet)              |
+  | `dungeon-builder.spec.ts`        | Raum bauen/bearbeiten mit Reload, Startkatalog, XML speichern/laden, JPEG-Export (PC)           |
+  | `dungeon-builder-tablet.spec.ts` | Element per Tippen platzieren, auswählen, drehen, entfernen (Tablet)                            |
+  | `session-roundtrip.spec.ts`      | Session-Export/-Import aller Session-Keys                                                       |
+
+- Gemeinsame Helfer liegen unter `e2e/support/` (`create-character.ts`, `builder-plan.ts`).
 
 - **Nicht** Teil der Git-Hooks – vor größeren Änderungen bzw. vor einem Deploy manuell ausführen.
   Die Skills `implement-feature` und `implement-refactor` führen die Suite bei UI-Änderungen
@@ -352,11 +369,11 @@ npm run test -- --watch=false --include <pfad>
 Diese Hooks greifen nur, wenn Claude Code im Projekt arbeitet. Sie ergänzen die Git-Hooks,
 damit Fehler schon während der KI-Arbeit auffallen und nicht erst beim Commit/Push.
 
-| Ereignis                                | Skript               | Verhalten                                                           |
-| --------------------------------------- | -------------------- | ------------------------------------------------------------------- |
-| PostToolUse `Edit\|Write`               | `format-file.mjs`    | formatiert die geänderte Datei mit Prettier (Timeout 30 s)          |
-| Stop                                    | `stop-run-tests.mjs` | Unit-Tests, wenn `src/` uncommittete Änderungen hat (Timeout 300 s) |
-| UserPromptSubmit, PostToolUse `*`, Stop | `log-activity.mjs`   | eine Zeile pro Ereignis nach `.claude/logs/activity.log`            |
+| Ereignis                                                        | Skript               | Verhalten                                                           |
+| --------------------------------------------------------------- | -------------------- | ------------------------------------------------------------------- |
+| PostToolUse `Edit\|Write`                                       | `format-file.mjs`    | formatiert die geänderte Datei mit Prettier (Timeout 30 s)          |
+| Stop                                                            | `stop-run-tests.mjs` | Unit-Tests, wenn `src/` uncommittete Änderungen hat (Timeout 300 s) |
+| UserPromptSubmit, PostToolUse `*`, PostToolUseFailure `*`, Stop | `log-activity.mjs`   | eine Zeile pro Ereignis nach `.claude/logs/activity.log`            |
 
 **`stop-run-tests.mjs` im Detail:**
 
@@ -369,9 +386,19 @@ damit Fehler schon während der KI-Arbeit auffallen und nicht erst beim Commit/P
 4. Beim zweiten Versuch (`stop_hook_active`) wird nicht erneut blockiert, sondern nur eine
    Warnung an den Nutzer ausgegeben – verhindert Endlosschleifen.
 
-**`log-activity.mjs`:** schreibt Zeitstempel, Ereignis und eine gekürzte Beschreibung
-(max. 120 Zeichen; Subagenten mit `[sub]` markiert). Fehler werden verschluckt – das Logging
-darf die Sitzung nie stören. Das Log ist gitignored.
+**`log-activity.mjs`:** schreibt pro Ereignis eine Zeile
+`<Zeit>  <Sitzung, 8 Zeichen>  [sub] <Art> <Detail>` (Detail max. 120 Zeichen; Subagenten mit
+`[sub]` markiert). Arten: `PROMPT` (IDE-Kontext entfernt), Tool-Name, `FAIL` (fehlgeschlagener
+Tool-Aufruf aus `PostToolUseFailure`) und `STOP`. Fehler werden verschluckt – das Logging darf
+die Sitzung nie stören. Das Log ist gitignored.
+
+**Arbeitsstatistik (`scripts/claude/work-statistics.mjs`):** Am Ende der Skills
+`implement-feature`, `implement-refactor` und `interview-me` wertet das Skript Aktivitätslog,
+Sitzungsprotokoll (Tokens) und `git diff` aus (Regeln: `.claude/rules/work-statistics.md`).
+Es ist kein Prüf-Gate, sondern reine Auswertung. Ändert sich das Zeilenformat in
+`log-activity.mjs`, muss der Parser in `scripts/claude/activity-log.mjs` mitgezogen werden.
+Tests: `node --test scripts/claude/*.test.mjs` – laufen in keinem Hook, nur manuell bei
+Änderungen an Skript oder Log-Format.
 
 ---
 
@@ -397,6 +424,7 @@ Script `npm run deploy`
 - **E2E nicht automatisiert:** Playwright läuft weder im pre-push noch beim Deploy.
 - **Lint-Umfang:** `e2e/`, `scripts/` und `.claude/hooks/` werden nicht gelintet
   (der Prettier-Check im pre-commit gilt aber für alle gestagten Dateien).
+- **Skript-Tests:** `node --test scripts/claude/*.test.mjs` hängt an keinem Hook.
 - **README:** Der Abschnitt „Running end-to-end tests“ nennt noch `ng e2e`; korrekt ist
   `npm run e2e`.
 - **`.gitignore`:** `/.vscode/` am Ende hebt die vorherigen Ausnahmen (`!.vscode/settings.json`
