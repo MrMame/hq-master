@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-10-31 08:15) - Refactoring: Navigationsleiste von links nach rechts, umbrechend statt über den Bildschirmrand (responsive-app-header #1–#4)
+
+- **Was wurde gemacht:** Header und Navigation brechen um (`flex-wrap`, `gap`), die Menüeinträge stehen linksbündig hinter dem Logo, Links brechen nicht im Text um. Bei 360 px läuft keine Seite mehr über den Rand. `.app-shell` hat `100dvh`, `.app-main` füllt den Rest unter dem Header, Dungeon Tracker und Dungeon Builder übernehmen dessen Höhe statt `90vh`.
+- **Dateien geändert:** `src/app/app.css`, `dungeon-tracker-page.css`, `dungeon-builder-page.css`, `docs/feature-requests/main-nav-menu-button.md` (Verweis), `docs/refactoring-requests/done/responsive-app-header.md`
+- **Wichtige Entscheidung:** `.app-nav` hat `flex: 1 1 0`, damit sie neben dem Logo in sich umbricht und erst bei sehr wenig Breite darunter rutscht. `.app-main` hat auf Rückfrage zusätzlich `overflow-y: auto`, damit höhere Seiten innerhalb des Inhaltsbereichs scrollen. Die manuelle Prüfung auf dem Galaxy Tab S11 steht noch aus. Probe (20), Lint, 847 Tests, Build und e2e (30) grün.
+- **Statistik:** 8 min · 2 Runden · 0 Rückfragen · 28 Tools · Dateien 0 neu / 4 geändert · 1 Fehlschläge · Tokens 1.736.458 (Output 10.579)
+
 ### (2026-10-28 17:30) - Feature: Aufklappbare Gruppen in der Seitenleiste, Suche und „Zuletzt verwendet“ (sidebar-collapsible-sections #1–#9)
 
 - **Was wurde gemacht:** Jede Gruppe der linken Seitenleiste in Dungeon Builder, Dungeon Tracker und Card Manager lässt sich über ihre Überschrift auf- und zuklappen; ein Button neben dem Titel klappt alle Gruppen eines Features auf einmal. Der Zustand bleibt per `persistedState` (`TOOL_STATE_KEYS.sidebarSections`) im Browser, gehört aber nicht zur Spielesession. Die Bibliothek des Builders hat ein Suchfeld über alle Gruppen (Treffergruppen offen, leere ausgeblendet, × und Escape leeren) und oben die Gruppe „Zuletzt verwendet“ mit den letzten 8 gestempelten oder auf den Plan gezogenen Türen und Möbeln.

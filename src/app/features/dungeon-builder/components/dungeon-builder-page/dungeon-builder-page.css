@@ -1,6 +1,6 @@
 .builder-page {
   display: flex;
-  height: 90vh;
+  height: 100%;
   background-color: var(--color-gray-900);
   color: var(--color-white);
 }
