@@ -121,7 +121,7 @@ sequenceDiagram
     CC-->>U: Abschlussbericht, Committext, Log-Eintrag
     U->>CC: "Ja, committen"
     CC->>API: Anfrage
-    API-->>CC: Edit ai-implementations-log.md, git add, git commit
+    API-->>CC: Edit docs/project-logs/ai-implementations-log.md, git add, git commit
     CC->>G: git commit
     G->>T: pre-commit: Prettier-Check + npm run lint
     G-->>CC: Ergebnis (Exit 0 / 1)
@@ -221,11 +221,11 @@ Verifikation fehl, hält Claude an und meldet den Fehler.
 
 ### Phase 6 – Abschlussbericht, Statistik, Commit-Vorschlag
 
-| #   | Was passiert                                                                                       | API                                  | Hooks / Skripte                                                                                                                                              | Lint/Test/Build         |
-| --- | -------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
-| 6.1 | `node scripts/claude/work-statistics.mjs --skill implement-feature`                                | ⇄ (nur das Ergebnis geht an die API) | `log-activity`; das Skript selbst liest **lokal** `activity.log`, das Sitzungsprotokoll `~/.claude/projects/*/<session>.jsonl` und `git diff` – keine API    | —                       |
-| 6.2 | Modell schreibt Abschlussbericht, Committext und `ai-implementations-log.md`-Eintrag (nur im Chat) | ⇄                                    | —                                                                                                                                                            | —                       |
-| 6.3 | Antwort endet                                                                                      | —                                    | **`Stop` → `stop-run-tests.mjs`**: `src/` hat uncommittete Änderungen → `npm run test -- --watch=false` (ohne Coverage, max. 240 s); `log-activity` → `STOP` | **Vitest** (durch Hook) |
+| #   | Was passiert                                                                                                         | API                                  | Hooks / Skripte                                                                                                                                              | Lint/Test/Build         |
+| --- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| 6.1 | `node scripts/claude/work-statistics.mjs --skill implement-feature`                                                  | ⇄ (nur das Ergebnis geht an die API) | `log-activity`; das Skript selbst liest **lokal** `activity.log`, das Sitzungsprotokoll `~/.claude/projects/*/<session>.jsonl` und `git diff` – keine API    | —                       |
+| 6.2 | Modell schreibt Abschlussbericht, Committext und `docs/project-logs/ai-implementations-log.md`-Eintrag (nur im Chat) | ⇄                                    | —                                                                                                                                                            | —                       |
+| 6.3 | Antwort endet                                                                                                        | —                                    | **`Stop` → `stop-run-tests.mjs`**: `src/` hat uncommittete Änderungen → `npm run test -- --watch=false` (ohne Coverage, max. 240 s); `log-activity` → `STOP` | **Vitest** (durch Hook) |
 
 **Verhalten des Stop-Hooks in 6.3:**
 
@@ -244,13 +244,13 @@ geändert ist (Phase 0–2) oder bereits committet ist (nach Phase 7), passiert 
 
 Der Nutzer bestätigt Committext und Log-Eintrag. Ab hier:
 
-| #   | Was passiert                                                          | API | Hooks / Skripte                                                             | Lint/Test/Build                     |
-| --- | --------------------------------------------------------------------- | --- | --------------------------------------------------------------------------- | ----------------------------------- |
-| 7.1 | Nutzer antwortet „ja“                                                 | ⇄   | `UserPromptSubmit` → `log-activity`                                         | —                                   |
-| 7.2 | `Edit ai-implementations-log.md` (Eintrag inkl. `- **Statistik:** …`) | ⇄   | `format-file.mjs` + `log-activity`                                          | —                                   |
-| 7.3 | `git add <dateien>`                                                   | ⇄   | `log-activity`                                                              | —                                   |
-| 7.4 | `git commit -m "feat(<scope>): …"` (per `Bash`)                       | ⇄   | **Git-Hook `pre-commit`** (siehe unten), danach `log-activity` bzw. `FAIL`  | **Prettier-Check + 2. Linter-Lauf** |
-| 7.5 | Antwort endet                                                         | —   | `Stop` → `stop-run-tests.mjs`: `src/` jetzt sauber → nichts; `log-activity` | —                                   |
+| #   | Was passiert                                                                            | API | Hooks / Skripte                                                             | Lint/Test/Build                     |
+| --- | --------------------------------------------------------------------------------------- | --- | --------------------------------------------------------------------------- | ----------------------------------- |
+| 7.1 | Nutzer antwortet „ja“                                                                   | ⇄   | `UserPromptSubmit` → `log-activity`                                         | —                                   |
+| 7.2 | `Edit docs/project-logs/ai-implementations-log.md` (Eintrag inkl. `- **Statistik:** …`) | ⇄   | `format-file.mjs` + `log-activity`                                          | —                                   |
+| 7.3 | `git add <dateien>`                                                                     | ⇄   | `log-activity`                                                              | —                                   |
+| 7.4 | `git commit -m "feat(<scope>): …"` (per `Bash`)                                         | ⇄   | **Git-Hook `pre-commit`** (siehe unten), danach `log-activity` bzw. `FAIL`  | **Prettier-Check + 2. Linter-Lauf** |
+| 7.5 | Antwort endet                                                                           | —   | `Stop` → `stop-run-tests.mjs`: `src/` jetzt sauber → nichts; `log-activity` | —                                   |
 
 ### Was `git commit` genau auslöst
 

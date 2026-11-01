@@ -21,4 +21,4 @@ Refactoring Requests beschreiben Umbauten ohne neues fachliches Verhalten (Struk
 ## Umsetzung
 
 - Umsetzung über den Skill `implement-refactor`.
-- Jede durchgeführte Umsetzung wird in `ai-implementations-log.md` eingetragen.
+- Jede durchgeführte Umsetzung wird in `docs/project-logs/ai-implementations-log.md` eingetragen.

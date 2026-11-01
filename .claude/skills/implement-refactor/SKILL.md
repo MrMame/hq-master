@@ -78,7 +78,7 @@ Gemäß `.claude/rules/refactoring-requests.md`:
 - [ ] Jeden umgesetzten Punkt markieren: `✅ done (YYYY-MM-DD HH:MM)` an der Überschrift.
 - [ ] `**Status:**`-Zeile im Kopf aktualisieren (Teilweise umgesetzt / done mit Datum und Uhrzeit).
 - [ ] Erfüllte Akzeptanzkriterien auf `[x]` setzen.
-- [ ] Ist der Request **vollständig** done: Datei per `git mv docs/refactoring-requests/<slug>.md docs/refactoring-requests/done/` archivieren. Verweise mit vollem Pfad in offenen Requests anpassen; `ai-implementations-log.md` bleibt unverändert (Historie).
+- [ ] Ist der Request **vollständig** done: Datei per `git mv docs/refactoring-requests/<slug>.md docs/refactoring-requests/done/` archivieren. Verweise mit vollem Pfad in offenen Requests anpassen; `docs/project-logs/ai-implementations-log.md` bleibt unverändert (Historie).
 - [ ] Neu entdeckte offene Punkte als eigenen nummerierten Abschnitt ergänzen (nur nach Rückfrage).
 
 ## 6. Abschlussbericht, Log-Eintrag und Commit
@@ -86,7 +86,7 @@ Gemäß `.claude/rules/refactoring-requests.md`:
 - [ ] Chat Ausgabe : was geändert wurde (mit Dateilinks), Test-/Build-Ergebnis, Coverage der geänderten Dateien (inkl. Begründung für ungetestete Stellen), was bewusst offen blieb.
 - [ ] Einen Committext für den gesamten Aufruf vorbereiten (Typ `refactor(<scope>): …`, umgesetzte Punkte im Body auflisten).
 - [ ] Arbeitsstatistik nach `.claude/rules/work-statistics.md` ermitteln (`node scripts/claude/work-statistics.mjs --skill implement-refactor`) und als `## Arbeitsstatistik` im Chat ausgeben.
-- [ ] `ai-implementations-log.md`-Eintrag vorbereiten. Der Eintrag ist **Pflicht** für jede durchgeführte Umsetzung. Neuester Eintrag oben unter „Letzte Änderungen“, Format wie die bestehenden Einträge:
+- [ ] `docs/project-logs/ai-implementations-log.md`-Eintrag vorbereiten. Der Eintrag ist **Pflicht** für jede durchgeführte Umsetzung. Neuester Eintrag oben unter „Letzte Änderungen“, Format wie die bestehenden Einträge:
 
   ```markdown
   ### (YYYY-MM-DD HH:MM) - Refactoring: <Titel> (<slug> #<punkt> bzw. #1–#n bei ganzer Datei)
@@ -97,4 +97,4 @@ Gemäß `.claude/rules/refactoring-requests.md`:
   - **Statistik:** … (Kurzzeile aus `work-statistics.mjs`)
   ```
 
-- [ ] Benutzer den Committext und den Log-Eintrag zeigen und um Freigabe bitten. Nach Freigabe den Eintrag in `ai-implementations-log.md` einfügen und im selben Commit mitcommitten.
+- [ ] Benutzer den Committext und den Log-Eintrag zeigen und um Freigabe bitten. Nach Freigabe den Eintrag in `docs/project-logs/ai-implementations-log.md` einfügen und im selben Commit mitcommitten.

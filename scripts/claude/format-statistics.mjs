@@ -1,5 +1,5 @@
 // Markdown-Ausgabe der Arbeitsstatistik: Tabelle für den Chat, Kurzzeile für
-// ai-implementations-log.md (Format siehe .claude/rules/work-statistics.md).
+// docs/project-logs/ai-implementations-log.md (Format siehe .claude/rules/work-statistics.md).
 import { totalTokens } from './transcript-usage.mjs';
 
 const FAILURE_LABELS = {

@@ -47,7 +47,7 @@ Kosten werden bewusst nicht ausgegeben.
 ## Ausgabe
 
 - **Chat:** Abschnitt `## Arbeitsstatistik` mit der Tabelle aus dem Skript, unverändert.
-- **`ai-implementations-log.md`:** die Kurzzeile `- **Statistik:** …` aus dem Skript als letzter
+- **`docs/project-logs/ai-implementations-log.md`:** die Kurzzeile `- **Statistik:** …` aus dem Skript als letzter
   Punkt des Eintrags (nur bei `implement-feature` und `implement-refactor`).
 - Auffälligkeiten (z. B. viele Fehlschläge, ungewöhnlich viele Tokens) in einem Satz unter der
   Tabelle einordnen.

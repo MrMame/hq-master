@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-01 09:17) - Refactoring: Projekt-Logs gesammelt unter docs/project-logs/ (project-logs-folder #1–#4)
+
+- **Was wurde gemacht:** `ai-implementations-log.md` per `git mv` aus dem Root nach `docs/project-logs/` verschoben (Inhalt unverändert, R100). Alle Verweise in Berechtigungen, Regeln, Skills, Skript-Kommentar und notes-project-README zeigen auf den neuen Pfad. `.claude/CLAUDE.md` legt fest, dass eingecheckte Logs unter `docs/project-logs/` liegen und `.claude/logs/` lokale Rohdaten bleibt.
+- **Dateien geändert:** `docs/project-logs/ai-implementations-log.md` (verschoben), `.claude/settings.json`, `.claude/CLAUDE.md`, `.claude/rules/work-statistics.md`, `feature-requests.md`, `refactoring-requests.md`, `.claude/skills/implement-feature/SKILL.md`, `implement-refactor/SKILL.md`, `scripts/claude/format-statistics.mjs`, `docs/notes-project/implement-feature/README.md`, `docs/refactoring-requests/harness-statistics-log.md`, `docs/refactoring-requests/done/project-logs-folder.md`
+- **Wichtige Entscheidung:** `.claude/logs/activity.log` bleibt am bisherigen Ort (gitignored, lokale Rohdaten). Die Testbeschreibung in `format-statistics.test.mjs` nennt nur den Dateinamen und bleibt unverändert. Skript-Tests (61), Lint, 898 Unit-Tests und Build grün.
+- **Statistik:** 3 min · 1 Runden · 1 Rückfragen · 15 Tools · Dateien 0 neu / 10 geändert · 1 Fehlschläge · Tokens 787.996 (Output 6.137)
+
 ### (2026-11-01 08:28) - Refactoring: Gemeinsame Schnellzugriffsleiste als Shared-Komponente (quick-access-bar #1–#6)
 
 - **Was wurde gemacht:** Die Schnellzugriffsleiste ist jetzt die Shared-Komponente `QuickAccessBar` (reiner Container per `<ng-content>`, `overflow-y: auto`) mit dem Trenner `QuickAccessDivider`. Befehle sind `QuickAccessButton` auf einem nativen `<button>` (`button[appQuickAccessButton]`, Signal-Inputs `label`, `title`, `icon`, `active`, `variant` `primary`/`toggle`). Dungeon Tracker („+“, Zoom) und `BuilderToolStrip` (Werkzeuge, Trenner, Rückgängig/Wiederholen, Zoom) nutzen beide die neue Leiste; die Button-Styles des Builders und `quick-access.css` entfallen.
