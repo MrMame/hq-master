@@ -11,6 +11,8 @@ import { DungeonBoardState } from '../../models/dungeon-board-state.model';
 import { BoardToken } from '../../models/board-token.model';
 import { CharacterSelection } from '../../models/character-selection.model';
 import { BoardZoomControl } from '../../../../shared/components/board-zoom-control/board-zoom-control';
+import { QuickAccessBar } from '../../../../shared/components/quick-access-bar/quick-access-bar';
+import { QuickAccessButton } from '../../../../shared/components/quick-access-button/quick-access-button';
 import { DungeonBoard } from '../dungeon-board/dungeon-board';
 import { DungeonLegendEntry } from '../dungeon-legend-entry/dungeon-legend-entry';
 import { GridSettings } from '../grid-settings/grid-settings';
@@ -24,6 +26,8 @@ import { GridSettings } from '../grid-settings/grid-settings';
     DungeonBoard,
     DungeonLegendEntry,
     GridSettings,
+    QuickAccessBar,
+    QuickAccessButton,
     SidebarSection,
     SidebarSectionToggleAll,
   ],

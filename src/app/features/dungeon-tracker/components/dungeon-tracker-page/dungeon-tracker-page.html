@@ -49,18 +49,12 @@
 
   <!-- Hauptbereich: Schnellzugriffsleiste im schmalen Streifen links, daneben das Spielbrett (zoombar, scrollt für sich) -->
   <div class="board-area">
-    <div class="general-quick-access">
-      <button
-        type="button"
-        class="general-quick-access__button"
-        aria-label="Neuer Charakter"
-        title="Neuer Charakter"
-        (click)="onNewCharacterClick()"
-      >
+    <app-quick-access-bar>
+      <button appQuickAccessButton label="Neuer Charakter" (click)="onNewCharacterClick()">
         +
       </button>
       <app-board-zoom-control [(zoom)]="zoom" />
-    </div>
+    </app-quick-access-bar>
     <app-dungeon-board
       [zoom]="zoom()"
       [originMode]="originMode()"

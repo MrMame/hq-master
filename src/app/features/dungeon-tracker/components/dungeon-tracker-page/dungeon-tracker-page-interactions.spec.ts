@@ -111,7 +111,7 @@ describe('DungeonTrackerPage – interactions', () => {
 
   it('opens the character editor for a new character with the "+" in the quick access bar', () => {
     host
-      .querySelector<HTMLElement>('.general-quick-access button[aria-label="Neuer Charakter"]')!
+      .querySelector<HTMLElement>('app-quick-access-bar button[aria-label="Neuer Charakter"]')!
       .click();
 
     expect(openCreate).toHaveBeenCalledExactlyOnceWith();

@@ -34,7 +34,7 @@ core/
 
 features/
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung (Startseite)
-    components/        → DungeonTrackerPage (Sidebar, Schnellzugriffsleiste mit „+“ und Zoom, Markierung für Brett und Legende),
+    components/        → DungeonTrackerPage (Sidebar, `QuickAccessBar` mit „+“ und Zoom, Markierung für Brett und Legende),
                          DungeonBoard (zoombare Spielfläche mit Foto, Raster, Tokens), DungeonToken,
                          GridSettings (Raster-Einstellungen: Schalter „Nullpunkt verschieben“, Zellgröße per Regler
                          oder Zahl, Token-Größe, Spalten über Bildbreite), GridSlider (Raster-Regler mit „−“/„+“ in feinster Stufe),
@@ -64,7 +64,7 @@ features/
                          LayoutSettings (Layoutname, Plangröße), ElementLibrary (Bibliothek: Suche, „Zuletzt verwendet“,
                          Gruppen), LibrarySearch (Suchfeld), LibraryGroupSection (aufklappbare Gruppe mit Einträgen,
                          Tipp und Ziehen), LibraryEntry (Inhalt eines Eintrags),
-                         BuilderToolStrip (Werkzeuge, Rückgängig/Wiederholen, Zoom), LayoutPlan (SVG-Plan,
+                         BuilderToolStrip (Werkzeuge, Rückgängig/Wiederholen, Zoom in einer `QuickAccessBar`), LayoutPlan (SVG-Plan,
                          Raster, Markierung), ElementActionBar (Drehen, Löschen am markierten Element)
     gestures/          → *.gesture.ts: unveränderliche Zeiger-Gesten mit Vorschau (Pinsel, Rechteck, Wand,
                          Verschieben, Platzieren); schreiben beim Loslassen einmal über LayoutCommands
@@ -109,7 +109,11 @@ shared/
                          SidebarSection (auf-/zuklappbare Gruppe der Seitenleiste, `sectionId` = `<feature>.<abschnitt>`),
                          SidebarSectionToggleAll (alle Gruppen eines Features auf-/zuklappen, in `.general-sidebar__header`),
                          DamageTakenDialog, BoardZoomControl (senkrechter Zoom-Regler für zoombare Spielflächen,
-                         z. B. in der Schnellzugriffsleiste `.general-quick-access`),
+                         z. B. in der `QuickAccessBar`),
+                         QuickAccessBar (Schnellzugriffsleiste: senkrechter Streifen links neben einer Spielfläche,
+                         reiner Container per `<ng-content>`), QuickAccessDivider (Trenner, `role="separator"`),
+                         QuickAccessButton (`button[appQuickAccessButton]`: `label`, `title`, `icon`,
+                         `variant` `primary`/`toggle`, `active` → `aria-pressed` nur bei Umschaltern mit Zustand),
                          MainNav (Hauptnavigation im Header: Linkleiste, schmal Menü-Button mit Seitenname;
                          main-nav-items.ts mit MAIN_NAV_ITEMS – neue Seiten nur dort ergänzen,
                          active-nav-item.util.ts))
@@ -281,7 +285,7 @@ lässt ihn unverändert.
 - Template/Styles inline, wenn < 100 Zeilen; sonst separate `.html`/`.css`.
 - Styling: reines CSS mit semantischen Klassen je Komponente; Farben, Abstände und Typografie
   nur über die Tokens aus `src/styles/tokens.css` (`var(--…)`).
-- Feature-übergreifende Bausteine (z. B. `.general-sidebar`, `.general-dialog`, `.general-quick-access`) liegen global unter `src/styles/components/`
+- Feature-übergreifende Bausteine (z. B. `.general-sidebar`, `.general-dialog`) liegen global unter `src/styles/components/`
   und werden in `src/styles.css` per `@import … layer(components)` eingebunden; `tokens.css` enthält nur Tokens.
 - Shared-Dialoge nutzen den dunklen Look über `host: { class: 'general-dialog' }` und die Element-Klassen
   `general-dialog__title`, `__cancel`, `__confirm`. Material setzt den Dialog-Host (ohne Layer) auf
