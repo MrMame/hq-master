@@ -45,6 +45,7 @@ Werte je umgesetztem Punkt (Median). Index: 100 = Median aller Läufe desselben 
 | 2026-11-01 12:49 | implement-feature  | game-event-log                    | 7      | +3764 / −63 | 106         | 3      | 0          | 112   | 8 (+1)                 | 69.906        | 8.097.164     | claude-opus-5-5 (medium) | 3443b517 (ändert Harness) | –          | 84    |
 | 2026-11-01 19:29 | interview-me       | dungeon-round-control             | –      | +213 / −12  | 8           | 2      | 4          | 29    | 2                      | 19.110        | 2.308.023     | claude-opus-5-5 (medium) | 961e5ba4 (ändert Harness) | –          | –     |
 | 2026-11-01 20:06 | implement-feature  | dungeon-round-control             | 7      | +651 / −35  | 34          | 2      | 1          | 100   | 4 (+1)                 | 51.598        | 10.883.784    | claude-opus-5-5 (medium) | cdcba13c (ändert Harness) | –          | 100   |
+| 2026-11-01 20:20 | interview-me       | time-tracker-sidebar-layout       | –      | +171 / −0   | 8           | 1      | 3          | 17    | 0                      | 15.060        | 1.405.207     | claude-opus-5-5 (medium) | ed60a6d0                  | –          | –     |
 
 ## Harness-Stände
 
