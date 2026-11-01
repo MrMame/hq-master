@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-01  
 **Priorität:** Mittel  
-**Status:** open  
+**Status:** done (2026-11-01 09:33)  
 **Bezug:** `scripts/claude/work-statistics.mjs`, `scripts/claude/format-statistics.mjs`,
 `scripts/claude/transcript-usage.mjs`, `scripts/claude/git-files.mjs`, `.claude/rules/work-statistics.md`,
 `.claude/skills/implement-feature/SKILL.md`, `.claude/skills/implement-refactor/SKILL.md`,
@@ -27,7 +27,7 @@
 
 ## Anforderungen
 
-### 1. Statistiklog als eigene Datei
+### 1. Statistiklog als eigene Datei ✅ done (2026-11-01 09:33)
 
 - Neue Datei `docs/project-logs/harness-statistics.md`, eingecheckt. Sie wird nur vom Skript geschrieben,
   nie von Hand.
@@ -37,7 +37,7 @@
   Rückfragen, Tools, Fehlschläge (erwartet), Output-Tokens, Tokens gesamt, Modell, Harness-Stand, Nacharbeit.
 - Kosten werden weiterhin nicht ausgegeben.
 
-### 2. Lauf-Eintrag per Skript
+### 2. Lauf-Eintrag per Skript ✅ done (2026-11-01 09:33)
 
 - `node scripts/claude/work-statistics.mjs --skill <name> --slug <slug> --points <n> --append` hängt die Zeile
   an. Die Zahlen kommen aus denselben Quellen wie die Chat-Tabelle (`work-statistics.md`), nicht aus Schätzung.
@@ -47,7 +47,7 @@
 - Aufruf nach der Freigabe von Committext und Log-Eintrag, damit die Zeile im selben Commit landet.
 - `interview-me` schreibt ebenfalls eine Zeile (Punkte leer) und zählt nicht in den Index (#5).
 
-### 3. Harness-Stand automatisch erkennen
+### 3. Harness-Stand automatisch erkennen ✅ done (2026-11-01 09:33)
 
 - **Harness** = alle Dateien, die beeinflussen, wie Claude arbeitet oder wie gemessen wird:
   `.claude/CLAUDE.md`, `.claude/settings.json`, `.claude/rules/**`, `.claude/skills/**`, `.claude/hooks/**`,
@@ -63,7 +63,7 @@
   `check-output.mjs`, `transcript-usage.mjs`, `git-files.mjs`, `format-statistics.mjs`, `log-activity.mjs`),
   wird der Stand automatisch als Messbruch markiert.
 
-### 4. Harness-Änderung einordnen
+### 4. Harness-Änderung einordnen ✅ done (2026-11-01 09:33)
 
 - Bei neuem Harness-Stand ergänzt Claude in der Zeile **eine** Beschreibung (`--harness-note "…"`) und eine
   Einordnung `wirkungsrelevant` / `nicht wirkungsrelevant` (z. B. reine Tippfehler in einer Regel), dazu die
@@ -72,7 +72,7 @@
 - Hat der Lauf selbst den Harness geändert (z. B. ein Refactoring an den Skills), wird das in der Lauf-Zeile
   vermerkt; der neue Stand gilt erst für den nächsten Lauf.
 
-### 5. Übersicht und Effizienz-Index
+### 5. Übersicht und Effizienz-Index ✅ done (2026-11-01 09:33)
 
 - `node scripts/claude/work-statistics.mjs --overview` erzeugt den Abschnitt **Übersicht** neu; `--append`
   ruft das automatisch auf.
@@ -85,14 +85,14 @@
 - **Nacharbeit:** Gibt es später einen Lauf mit demselben Slug, markiert die Übersicht den früheren Lauf mit
   „Nacharbeit“ und zählt beide gemeinsam in den Index des früheren Stands.
 
-### 6. Bisherige Läufe übernehmen
+### 6. Bisherige Läufe übernehmen ✅ done (2026-11-01 09:33)
 
 - Die vorhandenen `**Statistik:**`-Kurzzeilen aus `docs/project-logs/ai-implementations-log.md` einmalig als Läufe übernehmen
   (Punkte aus der Überschrift `#1–#n`, Diff-Zeilen aus dem jeweiligen Commit, falls ermittelbar),
   Harness-Stand `unbekannt`.
 - Läufe vor dem Refactoring work-statistics-failure-detection (2026-10-31 20:56) liegen hinter einem Messbruch.
 
-### 7. Doku und Tests
+### 7. Doku und Tests ✅ done (2026-11-01 09:33)
 
 - `.claude/rules/work-statistics.md`: Statistiklog, Harness-Definition, Messbruch, Index und Aufruf beschreiben.
 - Skills `implement-feature`, `implement-refactor`, `interview-me`: Aufruf mit `--append` am Ende ergänzen,
@@ -105,11 +105,11 @@
 
 ## Akzeptanzkriterien
 
-- [ ] Nach einem Lauf von `implement-feature` / `implement-refactor` steht eine Zeile im Statistiklog, die im
+- [x] Nach einem Lauf von `implement-feature` / `implement-refactor` steht eine Zeile im Statistiklog, die im
       selben Commit wie der Umbau eingecheckt wird.
-- [ ] Eine Änderung an einer Harness-Datei erzeugt beim nächsten Lauf einen neuen Harness-Stand mit Liste der
+- [x] Eine Änderung an einer Harness-Datei erzeugt beim nächsten Lauf einen neuen Harness-Stand mit Liste der
       geänderten Dateien; eine Änderung an einer Mess-Datei ist als Messbruch markiert.
-- [ ] Die Übersicht zeigt je Harness-Stand Mediane je Punkt und einen Effizienz-Index; Läufe hinter einem
+- [x] Die Übersicht zeigt je Harness-Stand Mediane je Punkt und einen Effizienz-Index; Läufe hinter einem
       Messbruch werden nicht mit früheren verglichen.
-- [ ] Die bisherigen 5 Läufe mit Statistik sind übernommen.
-- [ ] `node --test scripts/claude/*.test.mjs` grün; Regel und Skills beschreiben den Ablauf.
+- [x] Die bisherigen Läufe mit Statistik sind übernommen (6 statt 5: project-logs-folder kam nach dem Request dazu).
+- [x] `node --test scripts/claude/*.test.mjs` grün; Regel und Skills beschreiben den Ablauf.

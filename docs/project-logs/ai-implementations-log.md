@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-01 10:00) - Refactoring: Statistiklog zur Bewertung der Harness-Effizienz (harness-statistics-log #1–#7)
+
+- **Was wurde gemacht:** Neues Statistiklog `docs/project-logs/harness-statistics.md`, geschrieben von `work-statistics.mjs --append`: je Lauf Umfang (Punkte, Diff-Zeilen), Kennzahlen, Modell und Harness-Stand; Harness-Stand als Inhalts-Hash mit Snapshot, Liste geänderter Dateien und Messbruch-Erkennung; Übersicht mit Medianen je Punkt und Effizienz-Index je Lauf und Stand inkl. Nacharbeit; 6 Altläufe übernommen; Abschnitt Erläuterungen mit Spaltenbeschreibungen und Beispielrechnungen aus der Vorlage `statistics-guide.md`; Zeile des aktuellen Laufs wird im Chat mit ausgegeben.
+- **Dateien geändert:** `scripts/claude/` (neu: markdown-table, statistics-log, statistics-guide.md, efficiency-index, format-overview, harness-files, run-record, transcript-model, legacy-import, testing/statistics.fixtures + Tests; erweitert: git-files, format-statistics, work-statistics), `docs/project-logs/harness-statistics.md` + `.state.json`, `.claude/rules/work-statistics.md`, Skills implement-feature/implement-refactor/interview-me
+- **Wichtige Entscheidung:** Log wird bei jedem Schreiben aus den Tabellen neu erzeugt und mit Prettier formatiert; ein Lauf, der den Harness selbst ändert, zählt zum vorigen Stand; nicht wirkungsrelevante Stände werden dem vorigen Stand zugeschlagen; Interaktionsterm `max(0, R + Q − 2) + 1`, damit er logarithmierbar bleibt; Beispielrechnungen der Erläuterungen per Test gegen den Code geprüft.
+- **Statistik:** 40 min · 4 Runden · 1 Rückfragen · 86 Tools · Dateien 23 neu / 13 geändert · 0 Fehlschläge · Tokens 10.122.304 (Output 94.044)
+
 ### (2026-11-01 09:17) - Refactoring: Projekt-Logs gesammelt unter docs/project-logs/ (project-logs-folder #1–#4)
 
 - **Was wurde gemacht:** `ai-implementations-log.md` per `git mv` aus dem Root nach `docs/project-logs/` verschoben (Inhalt unverändert, R100). Alle Verweise in Berechtigungen, Regeln, Skills, Skript-Kommentar und notes-project-README zeigen auf den neuen Pfad. `.claude/CLAUDE.md` legt fest, dass eingecheckte Logs unter `docs/project-logs/` liegen und `.claude/logs/` lokale Rohdaten bleibt.

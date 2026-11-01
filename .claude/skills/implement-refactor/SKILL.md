@@ -84,8 +84,9 @@ Gemäß `.claude/rules/refactoring-requests.md`:
 ## 6. Abschlussbericht, Log-Eintrag und Commit
 
 - [ ] Chat Ausgabe : was geändert wurde (mit Dateilinks), Test-/Build-Ergebnis, Coverage der geänderten Dateien (inkl. Begründung für ungetestete Stellen), was bewusst offen blieb.
+  - [ ] Darunter die **Zeile des aktuellen Laufs im Statistiklog** als Markdown-Tabelle (Kopf + Zeile) unverändert aus der Skript-Ausgabe übernehmen: vor der Freigabe die Vorschau („Zeile für das Statistiklog (Vorschau)“), nach dem `--append` die geschriebene Zeile („Zeile im Statistiklog“) mit Nacharbeit und Index. So muss der Nutzer für den aktuellen Lauf nicht in `docs/project-logs/harness-statistics.md` wechseln.
 - [ ] Einen Committext für den gesamten Aufruf vorbereiten (Typ `refactor(<scope>): …`, umgesetzte Punkte im Body auflisten).
-- [ ] Arbeitsstatistik nach `.claude/rules/work-statistics.md` ermitteln (`node scripts/claude/work-statistics.mjs --skill implement-refactor`) und als `## Arbeitsstatistik` im Chat ausgeben.
+- [ ] Arbeitsstatistik nach `.claude/rules/work-statistics.md` ermitteln (`node scripts/claude/work-statistics.mjs --skill implement-refactor --slug <slug> --points <anzahl umgesetzter Punkte>`, damit die Vorschau der Statistiklog-Zeile vollständig ist) und als `## Arbeitsstatistik` im Chat ausgeben. Gibt das Skript einen **neuen Harness-Stand** aus, eine Einordnung vorbereiten (Beschreibung, `wirkungsrelevant` / `nicht wirkungsrelevant`, erwartete Wirkung) und mit Committext und Log-Eintrag zeigen.
 - [ ] `docs/project-logs/ai-implementations-log.md`-Eintrag vorbereiten. Der Eintrag ist **Pflicht** für jede durchgeführte Umsetzung. Neuester Eintrag oben unter „Letzte Änderungen“, Format wie die bestehenden Einträge:
 
   ```markdown
@@ -98,3 +99,4 @@ Gemäß `.claude/rules/refactoring-requests.md`:
   ```
 
 - [ ] Benutzer den Committext und den Log-Eintrag zeigen und um Freigabe bitten. Nach Freigabe den Eintrag in `docs/project-logs/ai-implementations-log.md` einfügen und im selben Commit mitcommitten.
+- [ ] Nach der Freigabe die Lauf-Zeile ins Statistiklog schreiben und im selben Commit mitcommitten: `node scripts/claude/work-statistics.mjs --skill implement-refactor --slug <slug> --points <anzahl umgesetzter Punkte> --append`, bei neuem Harness-Stand mit `--harness-impact … --harness-note "…" --harness-hypothesis "…"` (siehe `.claude/rules/work-statistics.md`).

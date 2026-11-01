@@ -20,4 +20,6 @@ Argumente: `$ARGUMENTS` — Thema des Interviews.
 ## Leistungsstatistik ausgeben
 
 - Am Ende des Interviews gib eine Statistik aus, damit ich mir ein Bild über deine Effektivität machen kann.
-- Ermittlung und Format nach `.claude/rules/work-statistics.md`: `node scripts/claude/work-statistics.mjs --skill interview-me`.
+- Ermittlung und Format nach `.claude/rules/work-statistics.md`: `node scripts/claude/work-statistics.mjs --skill interview-me --slug <thema>`.
+- Unter der Statistik die **Zeile des aktuellen Laufs im Statistiklog** als Markdown-Tabelle (Kopf + Zeile) unverändert aus der Skript-Ausgabe übernehmen („Zeile für das Statistiklog (Vorschau)“ bzw. nach dem `--append` „Zeile im Statistiklog“).
+- Danach die Zeile ins Statistiklog schreiben (ohne Punkte, zählt nicht in den Effizienz-Index): `node scripts/claude/work-statistics.mjs --skill interview-me --slug <thema> --append`, bei neuem Harness-Stand mit Einordnung (`--harness-impact`, `--harness-note`, `--harness-hypothesis`).
