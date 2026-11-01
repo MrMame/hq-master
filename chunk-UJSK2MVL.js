@@ -1,0 +1,1 @@
+import{c as e,h as f}from"./chunk-G3BDPPAS.js";import{P as r,U as n,o as t}from"./chunk-YG6SOD2G.js";var l=class o{dialog=n(e);async confirm(i={}){let a=this.dialog.open(f,{data:i});return await t(a.afterClosed())===!0}static \u0275fac=function(a){return new(a||o)};static \u0275prov=r({token:o,factory:o.\u0275fac,providedIn:"root"})};export{l as a};
