@@ -1,1 +1,2 @@
 - Statistik wird erhoben für Harnes optimierung)
+- Checksummenbeispiel in docs\project-logs\harness-statistics.state.json

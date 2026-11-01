@@ -13,7 +13,7 @@ Feature : Charakter zustände mit zeitlichem effekt
         verstreichen dieser zeit verschwinden
 
     Effekt Eigenschaft:
-            Effekt-Abklingzeit
+            Effekt-Abklingzeitpunkt-In-Runden
             Effekt-Dauer
             Effekt-Schaden-Pro-Sekunden
             Effekt-Beschreibung
