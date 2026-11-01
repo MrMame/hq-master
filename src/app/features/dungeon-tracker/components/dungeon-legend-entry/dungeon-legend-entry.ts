@@ -27,6 +27,7 @@ import { CharacterConditions } from '../character-conditions/character-condition
   imports: [CharacterStatus, CharacterActionBar, CharacterConditions],
   host: {
     '[class.legend-entry--selected]': 'selected()',
+    '[class.legend-entry--moved]': 'token().character.movedThisRound',
     '[attr.aria-current]': 'selected() ? "true" : null',
     '(click)': 'selectionToggled.emit()',
   },

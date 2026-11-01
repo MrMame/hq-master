@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-01  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** done (2026-11-01 19:47)  
 **Bezug:** `REQUIREMENTS.md` (Dungeon Tracker), `docs/feature-requests/done/quick-access-new-character.md`,
 `docs/feature-requests/done/game-event-log.md`, `docs/feature-requests/done/character-conditions.md`
 
@@ -37,7 +37,7 @@
 
 ## Anforderungen
 
-### 1. Flag `movedThisRound` am Charakter
+### 1. Flag `movedThisRound` am Charakter ✅ done (2026-11-01 19:47)
 
 - `CharacterInfo` bekommt `movedThisRound: boolean`. Es wird wie die übrigen Felder mit den
   Charakteren gespeichert und geladen.
@@ -45,7 +45,7 @@
   es dort schon bei `conditions` geschieht.
 - Neue Charaktere starten mit `false`, auch zufällig erzeugte.
 
-### 2. Flag beim Ziehen setzen
+### 2. Flag beim Ziehen setzen ✅ done (2026-11-01 19:47)
 
 - Endet ein Drag auf einem **anderen** Feld, wird `movedThisRound = true` gesetzt (mit der neuen
   Position).
@@ -56,7 +56,7 @@
 - Ein bereits gesetztes Flag bleibt gesetzt. Das gilt auch, wenn der Token in derselben Runde auf das
   Ausgangsfeld zurückgezogen wird.
 
-### 3. Grauer Ring bei gesetztem Flag
+### 3. Grauer Ring bei gesetztem Flag ✅ done (2026-11-01 19:47)
 
 - Ist das Flag gesetzt, werden Ring und Schein des Porträts grau statt gelb. Es werden nur Tokens aus
   `tokens.css` verwendet, z. B. `--color-gray-400`.
@@ -65,13 +65,13 @@
 - Der Avatar im Legenden-Eintrag wird ebenfalls grau umrandet bzw. abgedimmt.
 - Zur Prüfung in Tests: Modifier-Klasse (z. B. `dungeon-token--moved`, `legend-entry--moved`).
 
-### 4. Checkbox im Charakter-Editor
+### 4. Checkbox im Charakter-Editor ✅ done (2026-11-01 19:47)
 
 - Neue Checkbox „In dieser Runde bewegt“. Damit lässt sich das Flag setzen und entfernen.
 - Die Änderung gilt wie alle Editor-Felder erst nach „Übernehmen“. „Abbrechen“ verwirft sie.
 - Im Modus „Neuer Charakter“ ist die Checkbox nicht angehakt.
 
-### 5. Runden-Menü in der Schnellzugriffsleiste
+### 5. Runden-Menü in der Schnellzugriffsleiste ✅ done (2026-11-01 19:47)
 
 - Neuer `appQuickAccessButton` direkt unter „+“ (Neuer Charakter) und über dem Zoom-Regler:
   - Inhalt ⏳, `variant="toggle"`, `label` „Runden-Menü“
@@ -84,7 +84,7 @@
   es geschlossen.
 - Kein Tastenkürzel.
 
-### 6. Aktion „Neue Runde“
+### 6. Aktion „Neue Runde“ ✅ done (2026-11-01 19:47)
 
 - In dieser Reihenfolge:
   1. Log-Eintrag „Neue Runde“ (neuer `GameLogEntryType` `'round'`) zur aktuellen Spielzeit
@@ -97,7 +97,7 @@
 - Die Logik liegt in einem Service, nicht in der Page, z. B. `RoundService` unter `shared/services/`
   oder `core/services/`. So bleibt sie ohne den Dungeon Tracker testbar.
 
-### 7. Tests und Doku
+### 7. Tests und Doku ✅ done (2026-11-01 19:47)
 
 - Specs:
   - Codec: alter Stand ohne Feld → `false`
@@ -113,20 +113,20 @@
 
 ## Akzeptanzkriterien
 
-- [ ] Zieht der DM einen Token auf ein anderes Feld, wird dessen Ring grau. Auch der Avatar in der
+- [x] Zieht der DM einen Token auf ein anderes Feld, wird dessen Ring grau. Auch der Avatar in der
       Legende wird grau.
-- [ ] Ein Drag zurück aufs gleiche Feld, das Platzieren neuer Charaktere und das Verschieben des
+- [x] Ein Drag zurück aufs gleiche Feld, das Platzieren neuer Charaktere und das Verschieben des
       Nullpunkts setzen das Flag nicht.
-- [ ] Ein markierter, bewegter Token hat einen dicken grauen Ring.
-- [ ] Über die Checkbox im Charakter-Editor lässt sich das Flag setzen und entfernen. Es wirkt erst
+- [x] Ein markierter, bewegter Token hat einen dicken grauen Ring.
+- [x] Über die Checkbox im Charakter-Editor lässt sich das Flag setzen und entfernen. Es wirkt erst
       nach „Übernehmen“.
-- [ ] Der Button ⏳ unter „+“ öffnet und schließt das Runden-Menü (auch per Klick außerhalb oder
+- [x] Der Button ⏳ unter „+“ öffnet und schließt das Runden-Menü (auch per Klick außerhalb oder
       Escape).
-- [ ] „Neue Runde“ rückt die Spielzeit um 10 s vor und setzt alle Ringe auf Gelb zurück. Im Log stehen
+- [x] „Neue Runde“ rückt die Spielzeit um 10 s vor und setzt alle Ringe auf Gelb zurück. Im Log stehen
       danach „Neue Runde“ und „+10 s (…)“.
-- [ ] Die Zeitschritte im Zeit-Tracker lassen das Flag unverändert.
-- [ ] Alte Spielstände laden ohne Fehler, alle Charaktere mit `movedThisRound = false`.
-- [ ] Dateien bleiben unter 150 Zeilen; die Coverage-Schwellen werden eingehalten.
+- [x] Die Zeitschritte im Zeit-Tracker lassen das Flag unverändert.
+- [x] Alte Spielstände laden ohne Fehler, alle Charaktere mit `movedThisRound = false`.
+- [x] Dateien bleiben unter 150 Zeilen; die Coverage-Schwellen werden eingehalten.
 
 ---
 

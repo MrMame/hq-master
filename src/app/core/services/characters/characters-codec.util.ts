@@ -28,7 +28,7 @@ export function readConditions(stored: unknown): ActiveCondition[] {
 
 /**
  * Speichert die Charaktere unverändert. Beim Laden bekommen ältere Einträge ohne `conditions` eine leere
- * Liste, ungültige Zustände und Einträge, die kein Objekt sind, werden verworfen; keine Liste → Startwert.
+ * Liste und ohne `movedThisRound` den Wert `false`; ungültige Zustände und Einträge, die kein Objekt sind, werden verworfen; keine Liste → Startwert.
  */
 export const CHARACTERS_CODEC: StorageCodec<CharacterInfo[]> = {
   encode: (characters: CharacterInfo[]): unknown => characters,
@@ -39,6 +39,7 @@ export const CHARACTERS_CODEC: StorageCodec<CharacterInfo[]> = {
             ({
               ...character,
               conditions: readConditions(character['conditions']),
+              movedThisRound: character['movedThisRound'] === true,
             }) as unknown as CharacterInfo,
         )
       : null,

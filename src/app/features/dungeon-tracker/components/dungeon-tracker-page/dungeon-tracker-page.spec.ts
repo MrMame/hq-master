@@ -19,6 +19,7 @@ const createCharacter: (id: string) => CharacterInfo = (id: string): CharacterIn
   image: '',
   description: '',
   conditions: [],
+  movedThisRound: false,
 });
 
 describe('DungeonTrackerPage', () => {
@@ -85,7 +86,7 @@ describe('DungeonTrackerPage', () => {
     expect(sidebar.textContent).not.toContain('Neuer Charakter');
   });
 
-  it('shows "+" for a new character above the zoom slider in the quick access bar', () => {
+  it('shows "+" for a new character, then the round menu, above the zoom slider', () => {
     const quickAccess: HTMLElement = (fixture.nativeElement as HTMLElement).querySelector(
       'app-quick-access-bar',
     ) as HTMLElement;
@@ -94,7 +95,10 @@ describe('DungeonTrackerPage', () => {
     expect(button.textContent?.trim()).toBe('+');
     expect(button.getAttribute('aria-label')).toBe('Neuer Charakter');
     expect(button.title).toBe('Neuer Charakter');
-    expect(quickAccess.children[1].tagName.toLowerCase()).toBe('app-board-zoom-control');
+    expect(quickAccess.children[1].querySelector('button')?.getAttribute('aria-label')).toBe(
+      'Runden-Menü',
+    );
+    expect(quickAccess.children[2].tagName.toLowerCase()).toBe('app-board-zoom-control');
   });
 
   it('should collapse the sidebar via its handle and keep the board and legend', async () => {

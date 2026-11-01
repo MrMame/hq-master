@@ -17,13 +17,16 @@
   z-index: 20;
 }
 
+/* Gelb = in dieser Runde noch offen, grau = schon bewegt; gilt für Ring, Schein und Markierung. */
 .dungeon-token__portrait {
-  --token-glow: color-mix(in oklab, var(--color-yellow-400) 50%, transparent);
+  --token-ring: var(--color-yellow-400);
+  --token-ring-selected: var(--color-yellow-500);
+  --token-glow: color-mix(in oklab, var(--token-ring) 50%, transparent);
   width: var(--portrait-size);
   height: var(--portrait-size);
   flex-shrink: 0;
   overflow: hidden;
-  border: 2px solid var(--color-yellow-400);
+  border: 2px solid var(--token-ring);
   border-radius: 50%;
   box-shadow:
     0 4px 6px -1px var(--token-glow),
@@ -35,10 +38,15 @@
   }
 }
 
-/* Markiertes Token: stärkerer gelber Ring */
+.dungeon-token--moved .dungeon-token__portrait {
+  --token-ring: var(--color-gray-400);
+  --token-ring-selected: var(--color-gray-500);
+}
+
+/* Markiertes Token: stärkerer Ring in der Farbe des Rundenstands */
 .dungeon-token--selected .dungeon-token__portrait {
   border-width: 3px;
-  box-shadow: 0 0 0 3px var(--color-yellow-500);
+  box-shadow: 0 0 0 3px var(--token-ring-selected);
 }
 
 .dungeon-token__image {

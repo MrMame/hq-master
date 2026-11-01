@@ -44,6 +44,15 @@ describe('characters.xml-mapper', () => {
     expect(read('<characters><character id="a"/></characters>')[0].conditions).toEqual([]);
   });
 
+  it('keeps the round flag in a round trip', () => {
+    const moved: CharacterInfo = { ...createTestCharacter('a'), movedThisRound: true };
+    expect(roundTrip([moved, createTestCharacter('b')])).toEqual([moved, createTestCharacter('b')]);
+  });
+
+  it('reads older saves without the round flag as not moved', () => {
+    expect(read('<characters><character id="a"/></characters>')[0].movedThisRound).toBe(false);
+  });
+
   it('skips unknown conditions and falls back to startedAt for a missing lastTickAt', () => {
     const [character]: CharacterInfo[] = read(
       '<characters><character id="a">' +

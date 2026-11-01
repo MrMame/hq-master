@@ -8,7 +8,8 @@ export type GameLogEntryType =
   | 'condition-expired'
   | 'condition-set'
   | 'condition-removed'
-  | 'damage';
+  | 'damage'
+  | 'round';
 
 export const GAME_LOG_ENTRY_TYPES: readonly GameLogEntryType[] = [
   'time',
@@ -17,6 +18,7 @@ export const GAME_LOG_ENTRY_TYPES: readonly GameLogEntryType[] = [
   'condition-set',
   'condition-removed',
   'damage',
+  'round',
 ];
 
 /** Ein Ereignis der Spielesession mit der Spielzeit, zu der es eingetreten ist. */

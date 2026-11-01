@@ -16,6 +16,7 @@ import { QuickAccessButton } from '../../../../shared/components/quick-access-bu
 import { DungeonBoard } from '../dungeon-board/dungeon-board';
 import { DungeonLegendEntry } from '../dungeon-legend-entry/dungeon-legend-entry';
 import { GridSettings } from '../grid-settings/grid-settings';
+import { RoundMenu } from '../round-menu/round-menu';
 
 @Component({
   selector: 'app-dungeon-tracker-page',
@@ -28,6 +29,7 @@ import { GridSettings } from '../grid-settings/grid-settings';
     GridSettings,
     QuickAccessBar,
     QuickAccessButton,
+    RoundMenu,
     SidebarSection,
     SidebarSectionToggleAll,
   ],

@@ -19,5 +19,6 @@ export function createNewCharacter(): CharacterInfo {
     image: '',
     description: '',
     conditions: [],
+    movedThisRound: false,
   };
 }

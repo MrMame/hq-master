@@ -69,6 +69,20 @@
 
     <hr class="character-editor__divider" />
 
+    <!-- Rundenstand im Dungeon Tracker (Checkbox im Stil der Fähigkeiten); „Neue Runde“ hakt ihn aus -->
+    <label class="character-editor__ability">
+      <input
+        #moved
+        type="checkbox"
+        name="movedThisRound"
+        [checked]="draft().movedThisRound"
+        (change)="setField('movedThisRound', moved.checked)"
+      />
+      In dieser Runde bewegt
+    </label>
+
+    <hr class="character-editor__divider" />
+
     <!-- Zustände -->
     <app-character-conditions-editor
       [conditions]="draft().conditions"

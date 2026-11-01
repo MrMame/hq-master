@@ -38,15 +38,16 @@ core/
                     game-log-text.util.ts (Anzeigetexte der Einträge, `formatClock`; in core, weil der
                     GameTimeService sie braucht)
     storage/      → StorageService (LocalStorage-Abstraktion)
-    characters/   → CharactersDbService, characters-codec.util.ts (CHARACTERS_CODEC: ältere Charaktere ohne
-                    Zustände ergänzen, ungültige Zustände verwerfen)
+    characters/   → CharactersDbService (`markMoved`, `clearMovedThisRound` für `movedThisRound`), characters-codec.util.ts (CHARACTERS_CODEC: ältere Charaktere ohne
+                    Zustände bzw. `movedThisRound` ergänzen, ungültige Zustände verwerfen)
   testing/        → character.fixtures.ts (Testdaten für Charaktere), condition.fixtures.ts (Test-Zustände, Spielzeit
                     ab 12:00:00), game-log.fixtures.ts (Log-Einträge), nur für Specs
 
 features/
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung (Startseite)
-    components/        → DungeonTrackerPage (Sidebar, `QuickAccessBar` mit „+“ und Zoom, Markierung für Brett und Legende),
-                         DungeonBoard (zoombare Spielfläche mit Foto, Raster, Tokens), DungeonToken,
+    components/        → DungeonTrackerPage (Sidebar, `QuickAccessBar` mit „+“, Runden-Menü und Zoom, Markierung für Brett und Legende),
+                         RoundMenu (⏳ in der `QuickAccessBar`, Flyout per `cdkConnectedOverlay` mit „Neue Runde“; UI-Zustand ohne Speicherung),
+                         DungeonBoard (zoombare Spielfläche mit Foto, Raster, Tokens; Feldwechsel per Drag → `markMoved`), DungeonToken,
                          GridSettings (Raster-Einstellungen: Schalter „Nullpunkt verschieben“, Zellgröße per Regler
                          oder Zahl, Token-Größe, Spalten über Bildbreite), GridSlider (Raster-Regler mit „−“/„+“ in feinster Stufe),
                          GridOriginMarker (ziehbarer Nullpunkt-Marker, nur im Modus „Nullpunkt verschieben“),
@@ -146,7 +147,9 @@ shared/
                          → CharactersDbService; app-weit in app.config.ts gestartet, Ereignisse → GameLogService),
                          file-transfer.service.ts (Dateien herunterladen und lesen),
                          confirmation.service.ts (Rückfrage über den ConfirmationDialog als Promise<boolean>),
-                         sidebar-section-state.service.ts (zugeklappte Abschnitte per persistedState mit TOOL_STATE_KEYS)
+                         sidebar-section-state.service.ts (zugeklappte Abschnitte per persistedState mit TOOL_STATE_KEYS),
+                         round.service.ts (RoundService: „Neue Runde“ → Log `round`, +10 s, `clearMovedThisRound`; einziger
+                         Rücksetzer des Rundenstands)
   utils/               → new-character.util.ts (Startwerte für neue Charaktere),
                          random-character.util.ts (Zufallscharakter, Name passend zur Bildklasse),
                          damage.util.ts (reine Schadensberechnung),

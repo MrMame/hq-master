@@ -31,6 +31,12 @@
   object-fit: cover;
 }
 
+/* In dieser Runde bewegt: grauer Ring und abgedimmt wie das Token auf dem Spielbrett. */
+:host(.legend-entry--moved) .legend-entry__avatar {
+  box-shadow: 0 0 0 2px var(--color-gray-400);
+  opacity: 0.5;
+}
+
 /* Nur der Name wird gekürzt; Werte und Position bleiben vollständig sichtbar. */
 .legend-entry__name {
   flex: 1;

@@ -25,6 +25,22 @@ export class CharactersDbService implements SessionStateSlice<CharacterInfo[]> {
     );
   }
 
+  /** Markiert den Charakter als in dieser Runde bewegt; ein bereits gesetztes Flag bleibt. */
+  markMoved(characterId: string): void {
+    this._characters.update((characters) =>
+      characters.map((c) =>
+        c.id === characterId && !c.movedThisRound ? { ...c, movedThisRound: true } : c,
+      ),
+    );
+  }
+
+  /** „Neue Runde“: kein Charakter gilt mehr als bewegt. */
+  clearMovedThisRound(): void {
+    this._characters.update((characters) =>
+      characters.map((c) => (c.movedThisRound ? { ...c, movedThisRound: false } : c)),
+    );
+  }
+
   removeCharacter(characterInfo: CharacterInfo): void {
     this._characters.update((characters) => characters.filter((c) => c.id !== characterInfo.id));
   }
