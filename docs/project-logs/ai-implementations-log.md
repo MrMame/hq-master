@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-01 20:32) - Feature: Time Tracker im Layout von Dungeon Tracker und Dungeon Builder (time-tracker-sidebar-layout #1–#6)
+
+- **Was wurde gemacht:** Der Time Tracker ist dunkel und hat links die einklappbare Seitenleiste „Time Tracker“ mit der Gruppe „Zeit vorrücken“: „Neue Runde“ über die volle Breite (Log-Eintrag, +10 s, Rundenstand zurück), darunter +1 s/+5 s/+10 s und +1 h/+8 h, gelb, volle Namen in `aria-label`/`title`. Rechts steht oben die Spielzeit groß und gelb, darunter „Aktive Zustände“ und das Log, das in sich scrollt. Filter-Chips, „Log leeren“ und Trennlinien haben ein dunkles Schema. Gleiche Stilregeln von DT, DB und Time Tracker liegen jetzt einmal in `feature-page.css`.
+- **Dateien geändert:** `src/styles/components/feature-page.css` (neu), `sidebar.css`, `src/styles.css`, `tokens.css` (`--text-3xl`), `shared/components/sidebar-section/sidebar-section.ts`, `dungeon-tracker-page.html/.css` (+`-interactions.spec.ts`), `dungeon-builder-page.html/.ts` (`.css` entfernt), `time-tracker/models/time-step.model.ts` (neu), `time-tracker-page.ts/.html/.css/.spec.ts`, `active-conditions-list.html/.css`, `game-log-list.html/.css`, `e2e/routes.spec.ts`, `e2e/character-conditions.spec.ts`, `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/done/time-tracker-sidebar-layout.md`
+- **Wichtige Entscheidung:** `.general-sidebar__heading` ging in die neutrale `.section-heading` auf, damit im Hauptbereich keine Sidebar-Klasse steht. Die Zeit-Buttons sind datengetrieben (`TIME_STEPS` mit Spaltenbreite im 6er-Raster); `data-testid="add-seconds-n"` und `game-time-label` bleiben. Die Spielzeit bleibt im Seiten-Template, weil die Seite klein bleibt. Probe, Lint, 1094 Tests (Lines 99,55 % / Branches 97,87 %), Build und e2e (31) grün.
+- **Statistik:** 9 min · 1 Runden · 1 Rückfragen · 44 Tools · Dateien 2 neu / 21 geändert · 3 Fehlschläge (+2 erwartet) · Tokens 3.583.185 (Output 23.279)
+
 ### (2026-11-01 19:47) - Feature: Rundensteuerung im Dungeon Tracker (dungeon-round-control #1–#7)
 
 - **Was wurde gemacht:** Charaktere haben das Flag `movedThisRound` („In dieser Runde bewegt“), gespeichert mit dem Charakter und im XML-Spielstand; ältere Stände laden mit `false`. Ein Drag auf ein anderes Feld setzt es, der Ring des Tokens wird dann grau (markiert dick und grau), der Avatar in der Legende grau umrandet und gedimmt. Im Charakter-Editor lässt es sich per Checkbox setzen und entfernen. Unter „+“ öffnet ⏳ das Runden-Menü (Flyout); „Neue Runde“ schreibt den Log-Eintrag „Neue Runde“, rückt die Spielzeit um 10 s vor und setzt alle Flags zurück. Andere Zeitänderungen lassen das Flag unverändert.

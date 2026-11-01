@@ -1,6 +1,6 @@
 <section class="game-log" aria-labelledby="game-log-title">
   <header class="game-log__header">
-    <h2 id="game-log-title" class="game-log__title">Ereignisse</h2>
+    <h2 id="game-log-title" class="section-heading">Ereignisse</h2>
     <div class="game-log__filters" role="group" aria-label="Ereignisse filtern">
       @for (option of filters; track option.id) {
         <button
@@ -18,7 +18,7 @@
     </button>
   </header>
   @if (rows().length === 0) {
-    <p class="game-log__empty">Noch keine Ereignisse</p>
+    <p class="empty-hint empty-hint--sm">Noch keine Ereignisse</p>
   } @else {
     <ol class="game-log__list" data-testid="game-log-list">
       @for (row of rows(); track row.key) {

@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-01  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** ✅ done (2026-11-01 20:32)  
 **Bezug:** `REQUIREMENTS.md` (§0 Übersicht, §1 Time Tracker), `docs/feature-requests/done/dungeon-round-control.md`,
 `docs/feature-requests/done/game-event-log.md`
 
@@ -45,7 +45,7 @@
 
 ## Anforderungen
 
-### 1. Gemeinsame Stilregeln herausziehen (ohne neues Verhalten)
+### 1. Gemeinsame Stilregeln herausziehen (ohne neues Verhalten) ✅ done (2026-11-01 20:32)
 
 - Neue globale Datei unter `src/styles/components/` (z. B. `feature-page.css`), eingebunden wie
   `sidebar.css` in die Cascade-Layer `components`:
@@ -61,7 +61,7 @@
 - DT und DB stellen auf die gemeinsamen Klassen um. Sie sehen danach unverändert aus.
 - Bestehende Kommentare (z. B. „Leiste scrollt nicht mit und verdeckt kein Feld“) wandern mit.
 
-### 2. Seitenleiste im Time Tracker
+### 2. Seitenleiste im Time Tracker ✅ done (2026-11-01 20:32)
 
 - `TimeTrackerPage` nutzt `app-collapsible-sidebar` mit demselben Kopf wie DT/DB:
   `.general-sidebar__header` mit Titel „Time Tracker“ und `app-sidebar-section-toggle-all scope="time-tracker"`.
@@ -71,7 +71,7 @@
   ausgeklappt.
 - Keine Schnellzugriffsleiste: Der Time Tracker hat keine Spielfläche.
 
-### 3. Buttons der Gruppe „Zeit vorrücken“
+### 3. Buttons der Gruppe „Zeit vorrücken“ ✅ done (2026-11-01 20:32)
 
 - Alle Buttons haben den Stil `.general-sidebar__button` (gelb, schwarze Schrift). Die eigenen Farben
   `.time-button--seconds/--hour/--hours` entfallen.
@@ -85,7 +85,7 @@
 - Die Zeitschritte selbst ändern sich nicht (`GameTimeService.addTime`). Sie setzen den Rundenstand nicht
   zurück.
 
-### 4. Rechter Bereich: Spielzeit, Aktive Zustände, Ereignisse
+### 4. Rechter Bereich: Spielzeit, Aktive Zustände, Ereignisse ✅ done (2026-11-01 20:32)
 
 - Von oben nach unten: Spielzeit, „Aktive Zustände“, „Ereignisse“. Der Bereich hat einen Innenabstand
   (Vorschlag `space-4`, wie die Seitenleiste).
@@ -95,7 +95,7 @@
 - „Aktive Zustände“ und „Ereignisse“ sind nicht einklappbar und bleiben immer sichtbar.
 - Das Log füllt die Resthöhe und scrollt in sich, wie heute.
 
-### 5. Dunkles Farbschema für Log und Tabelle
+### 5. Dunkles Farbschema für Log und Tabelle ✅ done (2026-11-01 20:32)
 
 - Die Seite nutzt `.feature-page` (dunkel).
 - Filter-Chips wie Umschalter der Schnellzugriffsleiste: inaktiv `gray-700` mit heller Schrift (Hover
@@ -105,7 +105,7 @@
   Zeit- und Datumsspalte bleiben gut lesbar (gray-400 statt gray-500 prüfen).
 - Die Bestätigungsrückfrage zu „Log leeren“ bleibt unverändert (globaler Dialog-Stil).
 
-### 6. Tests und Doku
+### 6. Tests und Doku ✅ done (2026-11-01 20:32)
 
 - `time-tracker-page.spec.ts`: Seitenleiste mit Titel und Gruppe, Klick auf „Neue Runde“ (Log-Eintrag,
   +10 s, Rundenstand zurückgesetzt), alle fünf Zeit-Buttons über ihren zugänglichen Namen, Spielzeit-Anzeige
@@ -123,19 +123,19 @@
 
 ## Akzeptanzkriterien
 
-- [ ] DT und DB sehen nach der Umstellung auf die gemeinsamen Klassen unverändert aus.
-- [ ] Der Time Tracker ist dunkel, links steht die einklappbare Seitenleiste mit Titel „Time Tracker“ und
+- [x] DT und DB sehen nach der Umstellung auf die gemeinsamen Klassen unverändert aus.
+- [x] Der Time Tracker ist dunkel, links steht die einklappbare Seitenleiste mit Titel „Time Tracker“ und
       dem Button „Alle Gruppen ein-/ausklappen“.
-- [ ] Die Gruppe „Zeit vorrücken“ klappt über ihre Überschrift auf und zu; der Zustand bleibt nach einem
+- [x] Die Gruppe „Zeit vorrücken“ klappt über ihre Überschrift auf und zu; der Zustand bleibt nach einem
       Neuladen erhalten.
-- [ ] „Neue Runde“ schreibt „Neue Runde“ ins Log, rückt die Zeit um 10 s vor und setzt die bewegten
+- [x] „Neue Runde“ schreibt „Neue Runde“ ins Log, rückt die Zeit um 10 s vor und setzt die bewegten
       Charaktere zurück.
-- [ ] +1 s, +5 s, +10 s, +1 h und +8 h rücken die Zeit wie bisher vor; ihre vollen Namen stehen in
+- [x] +1 s, +5 s, +10 s, +1 h und +8 h rücken die Zeit wie bisher vor; ihre vollen Namen stehen in
       `aria-label`/`title`.
-- [ ] Oben im rechten Bereich steht die Spielzeit groß und gelb und aktualisiert sich sofort.
-- [ ] „Aktive Zustände“ steht über dem Log; das Log scrollt in sich, die Spielzeit bleibt stehen.
-- [ ] Filter-Chips, „Log leeren“ und Trennlinien sind auf dunklem Grund gut lesbar.
-- [ ] Dateien bleiben unter 150 Zeilen; die Coverage-Schwellen werden eingehalten.
+- [x] Oben im rechten Bereich steht die Spielzeit groß und gelb und aktualisiert sich sofort.
+- [x] „Aktive Zustände“ steht über dem Log; das Log scrollt in sich, die Spielzeit bleibt stehen.
+- [x] Filter-Chips, „Log leeren“ und Trennlinien sind auf dunklem Grund gut lesbar.
+- [x] Dateien bleiben unter 150 Zeilen; die Coverage-Schwellen werden eingehalten.
 
 ---
 

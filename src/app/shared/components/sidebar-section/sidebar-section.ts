@@ -23,7 +23,7 @@ let nextSectionId: number = 0;
     <h3 class="sidebar-section__heading">
       <button
         type="button"
-        class="general-sidebar__heading sidebar-section__toggle"
+        class="section-heading sidebar-section__toggle"
         [attr.aria-expanded]="expanded()"
         [attr.aria-controls]="contentId"
         [disabled]="forceExpanded()"

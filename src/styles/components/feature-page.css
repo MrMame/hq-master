@@ -1,0 +1,42 @@
+/*
+ * Gemeinsame Seitenhülle der Features mit Seitenleiste (Dungeon Tracker, Dungeon Builder, Time Tracker):
+ * `<div class="feature-page">` mit `app-collapsible-sidebar` und `.feature-page__main` daneben.
+ * Eingebunden über `src/styles.css` in die Cascade-Layer `components`.
+ */
+
+/* Deckt den weißen `app-main` ab (`height: 100%`). */
+.feature-page {
+  display: flex;
+  height: 100%;
+  background-color: var(--color-gray-900);
+  color: var(--color-white);
+}
+
+/* Hauptbereich neben der Seitenleiste, z. B. Schnellzugriffsleiste plus Spielbrett; die Leiste liegt neben dem
+   Scroll-Container, scrollt nicht mit und verdeckt kein Feld. */
+.feature-page__main {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Abschnittsüberschrift, in der Seitenleiste (Gruppen) wie im Hauptbereich */
+.section-heading {
+  color: var(--color-gray-400);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+/* Hinweis für leere Listen; `--sm` für Listen im Hauptbereich */
+.empty-hint {
+  color: var(--color-gray-500);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+}
+
+.empty-hint--sm {
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+}

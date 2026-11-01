@@ -1,4 +1,4 @@
-<div class="dungeon-page">
+<div class="feature-page">
   <!-- Linke Sidebar: Einstellungen, per Griff einklappbar -->
   <app-collapsible-sidebar>
     <div class="general-sidebar__header">
@@ -22,7 +22,7 @@
         />
       }
       @if (tokens().length === 0) {
-        <p class="legend-empty">Noch keine Charaktere angelegt.</p>
+        <p class="empty-hint">Noch keine Charaktere angelegt.</p>
       }
     </app-sidebar-section>
 
@@ -47,8 +47,8 @@
     </app-sidebar-section>
   </app-collapsible-sidebar>
 
-  <!-- Hauptbereich: Schnellzugriffsleiste im schmalen Streifen links, daneben das Spielbrett (zoombar, scrollt für sich) -->
-  <div class="board-area">
+  <!-- Hauptbereich: Schnellzugriffsleiste im schmalen Streifen links (scrollt nicht mit, verdeckt kein Feld), daneben das Spielbrett (zoombar, scrollt für sich) -->
+  <div class="feature-page__main">
     <app-quick-access-bar>
       <button appQuickAccessButton label="Neuer Charakter" (click)="onNewCharacterClick()">
         +

@@ -21,49 +21,50 @@
   gap: var(--space-3);
 }
 
-.game-log__title {
-  color: var(--color-gray-400);
-  font-size: var(--text-xs);
-  line-height: var(--text-xs--line-height);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-wider);
-}
-
 .game-log__filters {
   display: flex;
   gap: var(--space-1);
 }
 
+/* Wie die Umschalter der Schnellzugriffsleiste: inaktiv grau, aktiv gelb */
 .game-log__chip {
   padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--color-gray-400);
   border-radius: var(--radius-lg);
-  background-color: transparent;
-  color: var(--color-gray-700);
+  background-color: var(--color-gray-700);
+  color: var(--color-gray-100);
   font-size: var(--text-sm);
   cursor: pointer;
+  transition-property: color, background-color;
+  transition-duration: var(--transition-duration);
+  transition-timing-function: var(--transition-ease);
+
+  &:hover {
+    background-color: var(--color-gray-600);
+  }
 
   &[aria-pressed='true'] {
-    border-color: var(--color-blue-600);
-    background-color: var(--color-blue-600);
-    color: var(--color-white);
+    background-color: var(--color-yellow-500);
+    color: var(--color-black);
   }
 }
 
 .game-log__clear {
   margin-left: auto;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-gray-700);
+  color: var(--color-gray-100);
   font-size: var(--text-sm);
-  background-color: var(--color-gray-500);
+  cursor: pointer;
+
+  &:hover:enabled {
+    background-color: var(--color-gray-600);
+  }
 
   &:disabled {
     opacity: 0.5;
     cursor: default;
   }
-}
-
-.game-log__empty {
-  color: var(--color-gray-500);
-  font-size: var(--text-sm);
 }
 
 .game-log__list {
@@ -82,18 +83,18 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-1) 0;
-  border-top: 1px solid var(--color-gray-100);
+  border-top: 1px solid var(--color-gray-700);
 }
 
 .game-log__date {
   padding: var(--space-2) 0 var(--space-1);
-  color: var(--color-gray-500);
+  color: var(--color-gray-400);
   font-weight: var(--font-weight-bold);
 }
 
 .game-log__time {
   font-variant-numeric: tabular-nums;
-  color: var(--color-gray-500);
+  color: var(--color-gray-400);
 }
 
 .game-log__icon {
