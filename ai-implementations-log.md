@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-01 08:28) - Refactoring: Gemeinsame Schnellzugriffsleiste als Shared-Komponente (quick-access-bar #1–#6)
+
+- **Was wurde gemacht:** Die Schnellzugriffsleiste ist jetzt die Shared-Komponente `QuickAccessBar` (reiner Container per `<ng-content>`, `overflow-y: auto`) mit dem Trenner `QuickAccessDivider`. Befehle sind `QuickAccessButton` auf einem nativen `<button>` (`button[appQuickAccessButton]`, Signal-Inputs `label`, `title`, `icon`, `active`, `variant` `primary`/`toggle`). Dungeon Tracker („+“, Zoom) und `BuilderToolStrip` (Werkzeuge, Trenner, Rückgängig/Wiederholen, Zoom) nutzen beide die neue Leiste; die Button-Styles des Builders und `quick-access.css` entfallen.
+- **Dateien geändert:** `shared/components/quick-access-bar/*`, `quick-access-button/*`, `quick-access-divider/*` (neu, + Specs), `builder-tool-strip.ts`, `dungeon-tracker-page.ts/.html` (+ `dungeon-tracker-page.spec.ts`, `-interactions.spec.ts`), `src/styles.css`, `src/styles/components/quick-access.css` (gelöscht), `.claude/rules/architecture.md`, `docs/refactoring-requests/done/quick-access-bar.md`
+- **Wichtige Entscheidung:** Der Trenner ist eine eigene Komponente, weil eine Klasse der Leiste wegen der gekapselten Styles projizierte Inhalte nicht erreicht. `aria-pressed` erscheint nur bei `toggle` mit gesetztem `active`, damit Rückgängig/Wiederholen grau bleiben, aber wie bisher keinen gedrückt-Zustand melden. Der Host von `BuilderToolStrip` hat `display: contents`. Die Baseline-Probe (Screenshots beider Leisten inkl. Hover) ist vor und nach dem Umbau pixelgleich grün. Lint, 898 Tests (neue Dateien 100 %), Build und e2e (30) grün.
+- **Statistik:** 10 min · 1 Runden · 1 Rückfragen · 52 Tools · Dateien 6 neu / 7 geändert · 5 Fehlschläge · Tokens 3.803.996 (Output 28.301)
+
 ### (2026-10-31 21:33) - Feature: Tokens im Dungeon Tracker in Zellgröße (grid-sized-character-models #1–#7)
 
 - **Was wurde gemacht:** Das runde Porträt eines Tokens ist jetzt Zellgröße × Token-Größe groß statt fest 40 Einheiten. Der DM stellt die Token-Größe direkt nach der Zellgröße mit einem Regler ein (30–150 %, Standard 85 %, Schritt 5 %). Der Wert gehört zur Spielesession und steht auch im XML-Spielstand. Auf dem Spielbrett zeigt ein Token nur sein Porträt. Leben und Rüstung stehen nur am markierten Token unter dem Porträt, darunter die Menüleiste. Beide Leisten wachsen nicht mit.
