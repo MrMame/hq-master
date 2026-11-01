@@ -1,5 +1,5 @@
 {
-  "stand": "961e5ba4",
+  "stand": "cdcba13c",
   "model": "claude-opus-5-5 (medium)",
   "version": "2.1.314",
   "files": {
@@ -12,7 +12,7 @@
     ".claude/rules/feature-requests.md": "57457f573b87",
     ".claude/rules/refactoring-requests.md": "981f8e0d1c27",
     ".claude/rules/testing.md": "10f53b0bd5e5",
-    ".claude/rules/work-statistics.md": "fcffe93184e6",
+    ".claude/rules/work-statistics.md": "b33741e3b1ac",
     ".claude/settings.json": "3744ea0100a0",
     ".claude/skills/implement-feature/SKILL.md": "7ca5f867c13c",
     ".claude/skills/implement-refactor/SKILL.md": "3e2720bcab55",
@@ -27,7 +27,7 @@
     "~/.claude/projects/<projekt>/memory/test-hang-shared-session-state-9.md": "91e7538c42d7",
     "~/.claude/settings.json": "632d4c543936",
     "playwright.config.ts": "3b5bae4bd1da",
-    "scripts/claude/activity-log.mjs": "cf18aa0b402f",
+    "scripts/claude/activity-log.mjs": "79e6890797fb",
     "scripts/claude/check-output.mjs": "07d377c97adf",
     "scripts/claude/efficiency-index.mjs": "4ee49f3b52db",
     "scripts/claude/format-overview.mjs": "f60636bbbf08",

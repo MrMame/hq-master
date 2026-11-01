@@ -11,8 +11,9 @@ Arbeitsstatistik ausgegeben, damit der Nutzer die Effektivität der Arbeit einsc
   node scripts/claude/work-statistics.mjs --skill <skill-name>
   ```
 
-  Es zählt ab dem letzten Prompt `/<skill-name> …` der eigenen Sitzung (`CLAUDE_CODE_SESSION_ID`)
-  bis jetzt, inklusive Freigabe-Runden. Alternativ `--since "YYYY-MM-DD HH:MM"`; `--session <id>`
+  Es zählt ab dem letzten Prompt der eigenen Sitzung (`CLAUDE_CODE_SESSION_ID`), der den Skill
+  startet, bis jetzt, inklusive Freigabe-Runden. Als Start gilt `/<skill-name>` am Anfang oder
+  mitten im Prompt, oder ein `Skill`-Tool-Aufruf in der Antwort auf den Prompt. Alternativ `--since "YYYY-MM-DD HH:MM"`; `--session <id>`
   wertet eine andere Sitzung aus.
 
 - Aufruf **direkt vor dem Abschlussbericht** bzw. vor dem Zeigen von Committext und Log-Eintrag.

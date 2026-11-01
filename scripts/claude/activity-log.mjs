@@ -19,15 +19,24 @@ export function parseActivityLog(text, session) {
     }));
 }
 
-// Einträge ab dem letzten Prompt, der den Skill aufruft (z. B. „/implement-refactor …“).
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// Startet der Eintrag den Skill: „/skill“ irgendwo im Prompt oder ein Skill-Tool-Aufruf.
+function invokesSkill(entry, skill) {
+  if (entry.kind === 'PROMPT')
+    return new RegExp(`(^|\\s)/${escapeRegExp(skill)}(\\s|$)`).test(entry.detail);
+  return !entry.sub && entry.kind === 'Skill' && entry.detail.split(' ')[0] === skill;
+}
+
+// Einträge ab dem letzten Prompt, der den Skill aufruft („/implement-refactor …“, auch mitten im
+// Text) oder in dessen Antwort Claude ihn per Skill-Tool startet; der Prompt gehört zum Lauf.
 export function selectSkillRun(entries, skill) {
-  const command = `/${skill}`;
-  const start = entries.findLastIndex(
-    (entry) =>
-      entry.kind === 'PROMPT' &&
-      (entry.detail === command || entry.detail.startsWith(`${command} `)),
+  const invocation = entries.findLastIndex((entry) => invokesSkill(entry, skill));
+  if (invocation === -1) return [];
+  const prompt = entries.findLastIndex(
+    (entry, index) => index <= invocation && entry.kind === 'PROMPT',
   );
-  return start === -1 ? [] : entries.slice(start);
+  return entries.slice(Math.max(prompt, 0));
 }
 
 export function selectSince(entries, since) {

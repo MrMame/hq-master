@@ -66,6 +66,41 @@ describe('selectSkillRun / selectSince', () => {
     assert.deepEqual(selectSkillRun(entries, 'implement'), []);
   });
 
+  it('starts at a prompt that invokes the skill in the middle of the text', () => {
+    const mid = parseActivityLog(
+      `${LOG}\n${line('09:00:00', 'PROMPT', 'Bitte lies dich ein. Führe dann ein /interview-me durch')}\n${line('09:00:05', 'Read', 'x')}`,
+      SESSION,
+    );
+    const run = selectSkillRun(mid, 'interview-me');
+    assert.equal(run.length, 2);
+    assert.equal(run[0].kind, 'PROMPT');
+  });
+
+  it('starts at the prompt whose answer invokes the skill via the Skill tool', () => {
+    const viaTool = parseActivityLog(
+      [
+        LOG,
+        line('09:00:00', 'PROMPT', 'Ich möchte ein Feature besprechen…'),
+        line('09:00:05', 'Skill', 'interview-me Rundensteuerung'),
+        line('09:00:06', 'Bash', '(List files) ls'),
+        line('09:00:07', 'Skill', 'interview-mega x', { sub: true }),
+      ].join('\n'),
+      SESSION,
+    );
+    const run = selectSkillRun(viaTool, 'interview-me');
+    assert.equal(run.length, 4);
+    assert.equal(run[0].time.getTime(), new Date('2026-10-31T09:00:00').getTime());
+    assert.deepEqual(selectSkillRun(viaTool, 'interview-mega'), []);
+  });
+
+  it('does not match a path or word that only contains the command', () => {
+    const other = parseActivityLog(
+      `${LOG}\n${line('09:00:00', 'PROMPT', 'siehe docs/interview-me.md und x/interview-me')}`,
+      SESSION,
+    );
+    assert.deepEqual(selectSkillRun(other, 'interview-me'), []);
+  });
+
   it('returns nothing when the skill was not invoked', () => {
     assert.deepEqual(selectSkillRun(entries, 'interview-me'), []);
   });
