@@ -1,0 +1,27 @@
+@for (view of shown(); track $index) {
+  <span
+    class="character-conditions__item"
+    role="img"
+    data-testid="condition"
+    [attr.aria-label]="view.title"
+    [title]="view.title"
+  >
+    <img [src]="view.icon" alt="" class="character-conditions__icon" />
+    @if (variant() === 'selected') {
+      <span class="character-conditions__label">{{ view.label }}</span>
+    }
+    @if (variant() !== 'token') {
+      <span class="character-conditions__remaining">{{ view.remaining }}</span>
+    }
+  </span>
+}
+@if (hidden().length > 0) {
+  <span
+    class="character-conditions__more"
+    data-testid="conditions-more"
+    [attr.aria-label]="hiddenTitle()"
+    [title]="hiddenTitle()"
+  >
+    +{{ hidden().length }}
+  </span>
+}

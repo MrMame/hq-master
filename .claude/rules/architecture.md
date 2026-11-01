@@ -18,7 +18,10 @@ core/
   models/         → game-time.model.ts, game-time-span.model.ts,
                     character-info.model.ts, elemental-types.model.ts,
                     character-abilities.model.ts, character-images.model.ts (Bildlisten),
-                    damage-types.model.ts (Schadensarten)
+                    damage-types.model.ts (Schadensarten),
+                    character-condition.model.ts (ConditionId, ConditionTemplate, ActiveCondition),
+                    condition-templates.model.ts (CONDITION_TEMPLATES: Standardwerte und Symbole der Zustände),
+                    condition-event.model.ts (ConditionEvent: Schaden/Ablauf eines Zustands)
     character-names/ → <klasse>-names.model.ts (editierbare Vor-/Nachnamen je Charakterklasse,
                     vom Dateilimit ausgenommen), character-names.model.ts (CHARACTER_NAMES_BY_IMAGE)
   session-state/  → persisted-state.ts (persistedState), session-keys.ts (SESSION_KEYS),
@@ -29,8 +32,10 @@ core/
   services/
     game-time/    → GameTimeService: In-Game-Zeitlogik (app-weit)
     storage/      → StorageService (LocalStorage-Abstraktion)
-    characters/   → CharactersDbService
-  testing/        → character.fixtures.ts (Testdaten für Charaktere, nur für Specs)
+    characters/   → CharactersDbService, characters-codec.util.ts (CHARACTERS_CODEC: ältere Charaktere ohne
+                    Zustände ergänzen, ungültige Zustände verwerfen)
+  testing/        → character.fixtures.ts (Testdaten für Charaktere), condition.fixtures.ts (Test-Zustände, Spielzeit
+                    ab 12:00:00), nur für Specs
 
 features/
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung (Startseite)
@@ -40,7 +45,9 @@ features/
                          oder Zahl, Token-Größe, Spalten über Bildbreite), GridSlider (Raster-Regler mit „−“/„+“ in feinster Stufe),
                          GridOriginMarker (ziehbarer Nullpunkt-Marker, nur im Modus „Nullpunkt verschieben“),
                          DungeonLegendEntry (Legendeneintrag),
-                         CharacterStatus (Leben/Rüstung an Token und Legende, später Statuseffekte),
+                         CharacterStatus (Leben/Rüstung an Token und Legende),
+                         CharacterConditions (Zustände mit Restdauer: `token` Symbole am Porträt, „+n“ ab 4,
+                         `selected` mit Name unter dem markierten Token, `legend` zweite Zeile der Legende),
                          CharacterActionBar (Menüleiste des markierten Charakters an Token und Legende;
                          neue Befehle nur hier ergänzen)
     models/            → dungeon-board-state.model.ts, dungeon-position.model.ts, dungeon-session-state.model.ts,
@@ -87,7 +94,9 @@ features/
                          element-library.fixtures.ts (nur für Specs)
 
   time-tracker/        → In-Game-Zeiterfassung
-    components/        → TimeTrackerPage
+    components/        → TimeTrackerPage, ActiveConditionsList (aktive Zustände aller Charaktere, nur Anzeige)
+    models/            → active-condition-row.model.ts
+    utils/             → active-condition-rows.util.ts (Zeilen sortiert nach nächstem Wirkmoment, dann Restdauer)
 
   card-manager/        → Kartenverwaltung (Deck aus XML + SVG)
     components/        → CardManagerPage, CardDisplay
@@ -108,6 +117,8 @@ shared/
                          CollapsibleSidebar (einklappbare `.general-sidebar`, UI-Zustand ohne Speicherung),
                          SidebarSection (auf-/zuklappbare Gruppe der Seitenleiste, `sectionId` = `<feature>.<abschnitt>`),
                          SidebarSectionToggleAll (alle Gruppen eines Features auf-/zuklappen, in `.general-sidebar__header`),
+                         CharacterConditionsEditor (Abschnitt „Zustände“ im Editor, Felder hängen per
+                         `viewProviders` am Formular des Editors),
                          DamageTakenDialog, BoardZoomControl (senkrechter Zoom-Regler für zoombare Spielflächen,
                          z. B. in der `QuickAccessBar`),
                          QuickAccessBar (Schnellzugriffsleiste: senkrechter Streifen links neben einer Spielfläche,
@@ -123,15 +134,21 @@ shared/
                          damage-dialog-data.model.ts (Titel des Schadensauswahl-Dialogs)
   services/            → character-editor.service.ts (öffnet den Charakter-Editor systemweit),
                          character-damage.service.ts (Schadensauswahl → applyDamage → Session),
+                         condition-tick.service.ts (ConditionTickService: effect() auf die Spielzeit → advanceConditions
+                         → CharactersDbService; app-weit in app.config.ts gestartet, `lastEvents` ohne Persistenz),
                          file-transfer.service.ts (Dateien herunterladen und lesen),
                          confirmation.service.ts (Rückfrage über den ConfirmationDialog als Promise<boolean>),
                          sidebar-section-state.service.ts (zugeklappte Abschnitte per persistedState mit TOOL_STATE_KEYS)
   utils/               → new-character.util.ts (Startwerte für neue Charaktere),
                          random-character.util.ts (Zufallscharakter, Name passend zur Bildklasse),
                          damage.util.ts (reine Schadensberechnung),
+                         condition-tick.util.ts (advanceConditions: Wirkmomente nachholen, Ablauf, Ereignisse),
+                         condition-time.util.ts (Ende, Restdauer, nächster Wirkmoment, `m:ss`),
+                         condition-draft.util.ts (Vorlage kopieren, Start beim Übernehmen, Minuten/Sekunden),
                          xml.util.ts (XML lesen/schreiben, `requireChild` mit Dateiart in der Fehlermeldung)
   testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
-                         character-editor-dialog.fixtures.ts, main-nav.fixtures.ts)
+                         character-editor-dialog.fixtures.ts, character-conditions-editor.fixtures.ts,
+                         main-nav.fixtures.ts)
 ```
 
 ## E2E-Tests (`e2e/`, Projekt-Root)

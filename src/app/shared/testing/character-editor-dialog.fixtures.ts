@@ -11,7 +11,7 @@ import { CharacterEditorDialog } from '../components/character-editor-dialog/cha
 import { CharactersDbService } from '../../core/services/characters/characters-db.service';
 import { CharacterInfo } from '../../core/models/character-info.model';
 
-type EditorField = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+export type EditorField = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 export interface CharacterEditorDialogSetup {
   host: HTMLElement;
@@ -26,6 +26,8 @@ export interface CharacterEditorDialogSetup {
   button: (text: string) => Promise<MatButtonHarness>;
   /** Gibt einen Wert ein wie ein Benutzer: Select per `change`, alle anderen Felder per `input`. */
   enter: (caption: string, value: string) => Promise<void>;
+  /** Gibt einen Wert in ein bestimmtes Feld ein (z. B. per `aria-label` gefunden). */
+  fill: (field: EditorField, value: string) => Promise<void>;
   /** Klickt ein natives Element (Checkbox, Bild) und rendert neu. */
   click: (element: HTMLElement) => Promise<void>;
 }
@@ -61,7 +63,10 @@ export async function setupCharacterEditorDialog(
   const loader: HarnessLoader = TestbedHarnessEnvironment.loader(fixture);
 
   async function enter(caption: string, value: string): Promise<void> {
-    const field: EditorField = editorField(host, caption);
+    await fill(editorField(host, caption), value);
+  }
+
+  async function fill(field: EditorField, value: string): Promise<void> {
     field.value = value;
     field.dispatchEvent(new Event(field instanceof HTMLSelectElement ? 'change' : 'input'));
     await fixture.whenStable();
@@ -82,6 +87,7 @@ export async function setupCharacterEditorDialog(
     characters: charactersDb.characters,
     button: (text: string) => loader.getHarness(MatButtonHarness.with({ text })),
     enter,
+    fill,
     click,
   };
 }

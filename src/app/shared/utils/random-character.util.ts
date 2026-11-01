@@ -47,5 +47,6 @@ export function createRandomCharacter(id: string): CharacterInfo {
     abilities: abilities.slice(0, randomInt(1, abilities.length)),
     image,
     description: `Dies ist eine zufällige Beschreibung für ${name}.`,
+    conditions: [],
   };
 }

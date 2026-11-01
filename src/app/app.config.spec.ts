@@ -5,6 +5,8 @@ import { appConfig } from './app.config';
 import { CharactersDbService } from './core/services/characters/characters-db.service';
 import { DungeonPosition } from './features/dungeon-tracker/models/dungeon-position.model';
 import { createTestCharacter } from './core/testing/character.fixtures';
+import { GameTimeService } from './core/services/game-time/game-time.service';
+import { createConditionedCharacter } from './core/testing/condition.fixtures';
 
 const readStoredPositions: () => DungeonPosition[] | null = (): DungeonPosition[] | null =>
   JSON.parse(localStorage.getItem('dungeon_positions') ?? 'null') as DungeonPosition[] | null;
@@ -32,5 +34,18 @@ describe('appConfig', () => {
     TestBed.inject(CharactersDbService).removeCharacter(createTestCharacter('a'));
     TestBed.tick();
     expect(readStoredPositions()).toEqual([]);
+  });
+
+  it('should tick conditions on a time change without any page being open', () => {
+    const gameTime: GameTimeService = TestBed.inject(GameTimeService);
+    const charactersDb: CharactersDbService = TestBed.inject(CharactersDbService);
+    gameTime.restore(new Date(createConditionedCharacter('p').conditions[0].startedAt));
+    charactersDb.writeCharacter(createConditionedCharacter('p'));
+    TestBed.tick();
+
+    gameTime.addTime({ minutes: 1 });
+    TestBed.tick();
+
+    expect(charactersDb.characters().find((c) => c.id === 'p')?.health).toBe(11);
   });
 });

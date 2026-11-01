@@ -61,6 +61,13 @@
   font-weight: var(--font-weight-bold);
 }
 
+/* Zustandssymbole innen am oberen Rand des Porträts, damit sie keine Nachbarzelle verdecken. */
+.dungeon-token__conditions {
+  position: absolute;
+  top: 2px;
+  left: 0;
+}
+
 /* Werteleiste des markierten Tokens unter dem Porträt, ohne es zu verdecken; darf breiter sein. */
 .dungeon-token__status {
   margin-top: var(--space-1);

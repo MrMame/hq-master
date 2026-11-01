@@ -18,5 +18,6 @@ export function createNewCharacter(): CharacterInfo {
     abilities: [],
     image: '',
     description: '',
+    conditions: [],
   };
 }

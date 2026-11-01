@@ -8,6 +8,7 @@ import {
   setAttributes,
   textOf,
 } from '../../../shared/utils/xml.util';
+import { readConditions, writeConditions } from './conditions.xml-mapper';
 
 export function writeCharacters(doc: XMLDocument, characters: CharacterInfo[]): Element {
   const root: Element = doc.createElement('characters');
@@ -36,6 +37,7 @@ function writeCharacter(doc: XMLDocument, c: CharacterInfo): Element {
   });
   appendTextElement(el, 'description', c.description);
   c.abilities.forEach((ability) => appendTextElement(el, 'ability', ability));
+  writeConditions(el, c.conditions);
   return el;
 }
 
@@ -52,5 +54,6 @@ function readCharacter(el: Element): CharacterInfo {
     abilities: childElements(el, 'ability').map(textOf),
     image: readString(el, 'image'),
     description: textOf(firstChild(el, 'description')),
+    conditions: readConditions(el),
   };
 }

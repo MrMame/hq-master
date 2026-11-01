@@ -1,0 +1,58 @@
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+}
+
+.character-conditions__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  white-space: nowrap;
+}
+
+.character-conditions__icon {
+  width: var(--space-4);
+  height: var(--space-4);
+}
+
+.character-conditions__remaining {
+  color: var(--color-gray-400);
+}
+
+/*
+ * Am Token: Symbole ohne Text auf dunklem Grund, so breit wie das Porträt (`--portrait-size`).
+ * Sie lassen Klicks und Ziehen zum Porträt durch.
+ */
+:host(.character-conditions--token) {
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 1px;
+  width: var(--portrait-size);
+  pointer-events: none;
+}
+
+:host(.character-conditions--token) .character-conditions__item,
+:host(.character-conditions--token) .character-conditions__more {
+  justify-content: center;
+  width: calc(var(--portrait-size) * 0.24);
+  height: calc(var(--portrait-size) * 0.24);
+  border-radius: 50%;
+  background-color: color-mix(in oklab, var(--color-gray-900) 85%, transparent);
+}
+
+:host(.character-conditions--token) .character-conditions__icon {
+  width: 80%;
+  height: 80%;
+}
+
+.character-conditions__more {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-white);
+  font-size: calc(var(--portrait-size) * 0.14);
+  font-weight: var(--font-weight-bold);
+}

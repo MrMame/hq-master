@@ -3,6 +3,7 @@ import { CharacterInfo } from '../../models/character-info.model';
 import { PersistedState, persistedState } from '../../session-state/persisted-state';
 import { SESSION_KEYS } from '../../session-state/session-keys';
 import { SessionStateSlice } from '../../session-state/session-state-slice';
+import { CHARACTERS_CODEC } from './characters-codec.util';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +12,7 @@ export class CharactersDbService implements SessionStateSlice<CharacterInfo[]> {
   private readonly _characters: PersistedState<CharacterInfo[]> = persistedState<CharacterInfo[]>(
     SESSION_KEYS.characters,
     () => [],
+    CHARACTERS_CODEC,
   );
   readonly characters: Signal<CharacterInfo[]> = this._characters.value;
   readonly sessionState: Signal<CharacterInfo[]> = this.characters;

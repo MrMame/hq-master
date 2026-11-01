@@ -25,6 +25,7 @@ describe('createRandomCharacter', () => {
       abilities: ['Flammenwerfer'],
       image: CHARACTER_IMAGES[0],
       description: `Dies ist eine zufällige Beschreibung für ${name}.`,
+      conditions: [],
     });
   });
 
@@ -44,6 +45,7 @@ describe('createRandomCharacter', () => {
       abilities: ['Flammenwerfer', 'Aquatische Angriffe', 'Erdbeben', 'Windstoß'],
       image: CHARACTER_IMAGES.at(-1),
       description: `Dies ist eine zufällige Beschreibung für ${name}.`,
+      conditions: [],
     });
   });
 

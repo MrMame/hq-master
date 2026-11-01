@@ -5,7 +5,7 @@
 **Status:** offen  
 **Bezug:** `REQUIREMENTS.md` (1. Time Tracker: „Loggen aller zeitrelevanten Dinge“, „Jede Änderung oder zeitlich
 abhängige und ausgelöste Aktion soll in einem einsehbaren Log für den Dungeon Master einsehbar sein“),
-Voraussetzung `docs/feature-requests/character-conditions.md` #3/#4 (`ConditionEvent`, `ConditionTickService`),
+Voraussetzung `docs/feature-requests/done/character-conditions.md` #3/#4 (`ConditionEvent`, `ConditionTickService`),
 `.claude/rules/architecture.md` → „Session-State-Services“ (Regel 1–9)
 
 ---

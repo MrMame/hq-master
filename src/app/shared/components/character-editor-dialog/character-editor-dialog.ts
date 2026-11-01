@@ -17,6 +17,9 @@ import { createNewCharacter } from '../../utils/new-character.util';
 import { createRandomCharacter } from '../../utils/random-character.util';
 import { ConfirmationDialogData } from '../../models/confirmation-dialog-data.model';
 import { ConfirmationDialog } from '../confirmation-dialog/confirmation-dialog';
+import { CharacterConditionsEditor } from '../character-conditions-editor/character-conditions-editor';
+import { GameTimeService } from '../../../core/services/game-time/game-time.service';
+import { startConditions } from '../../utils/condition-draft.util';
 
 /** Zahlenwerte eines Charakters, die der Editor als Eingabefeld anbietet. */
 type CharacterStat = 'health' | 'armor' | 'attack' | 'defense' | 'speed';
@@ -29,7 +32,7 @@ type CharacterStat = 'health' | 'armor' | 'attack' | 'defense' | 'speed';
  */
 @Component({
   selector: 'app-character-editor-dialog',
-  imports: [FormsModule, MatDialogModule, MatButtonModule],
+  imports: [FormsModule, MatDialogModule, MatButtonModule, CharacterConditionsEditor],
   host: { class: 'general-dialog' },
   templateUrl: './character-editor-dialog.html',
   styleUrl: './character-editor-dialog.css',
@@ -40,6 +43,7 @@ export class CharacterEditorDialog {
     MatDialogRef<CharacterEditorDialog, CharacterInfo>,
   );
   private readonly dialog: MatDialog = inject(MatDialog);
+  private readonly gameTimeService: GameTimeService = inject(GameTimeService);
   private readonly character: CharacterInfo | null = inject<CharacterInfo | null>(MAT_DIALOG_DATA);
 
   protected readonly isEditMode: boolean = this.character !== null;
@@ -81,9 +85,14 @@ export class CharacterEditorDialog {
     this.draft.set(createRandomCharacter(this.draft().id));
   }
 
+  /** Neu angekreuzte Zustände starten zur aktuellen Spielzeit. */
   apply(): void {
-    this.charactersDbService.writeCharacter(this.draft());
-    this.dialogRef.close(this.draft());
+    const character: CharacterInfo = {
+      ...this.draft(),
+      conditions: startConditions(this.draft().conditions, this.gameTimeService.gameTime()),
+    };
+    this.charactersDbService.writeCharacter(character);
+    this.dialogRef.close(character);
   }
 
   cancel(): void {

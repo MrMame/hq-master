@@ -1,0 +1,75 @@
+<div class="conditions-editor" role="group" aria-labelledby="conditions-editor-caption">
+  <span id="conditions-editor-caption" class="conditions-editor__caption">Zustände</span>
+  @for (template of templates; track template.id) {
+    @let condition = active(template.id);
+    <div class="conditions-editor__entry">
+      <label class="conditions-editor__toggle">
+        <input type="checkbox" [checked]="!!condition" (change)="toggle(template)" />
+        <img [src]="template.icon" alt="" class="conditions-editor__icon" />
+        {{ template.label }}
+        @if (remaining()[template.id]; as rest) {
+          <span class="conditions-editor__remaining" data-testid="condition-remaining">
+            noch {{ rest }}
+          </span>
+        }
+      </label>
+
+      @if (condition) {
+        <div class="conditions-editor__values">
+          @for (field of durationFields; track field.key) {
+            <fieldset class="conditions-editor__time">
+              <legend class="conditions-editor__label">{{ field.label }}</legend>
+              <input
+                type="number"
+                min="0"
+                pattern="\d+"
+                required
+                class="conditions-editor__input"
+                [name]="template.id + '-' + field.key + '-minutes'"
+                [attr.aria-label]="template.label + ' ' + field.label + ' Minuten'"
+                [ngModel]="minutesOf(condition[field.key])"
+                (ngModelChange)="setMinutes(template.id, field.key, $event)"
+              />
+              <span aria-hidden="true">min</span>
+              <input
+                type="number"
+                min="0"
+                max="59"
+                pattern="\d+"
+                required
+                class="conditions-editor__input"
+                [name]="template.id + '-' + field.key + '-seconds'"
+                [attr.aria-label]="template.label + ' ' + field.label + ' Sekunden'"
+                [ngModel]="secondsOf(condition[field.key])"
+                (ngModelChange)="setSeconds(template.id, field.key, $event)"
+              />
+              <span aria-hidden="true">s</span>
+            </fieldset>
+          }
+          <label class="conditions-editor__time">
+            <span class="conditions-editor__label">Schaden je Wirkmoment</span>
+            <input
+              type="number"
+              min="0"
+              pattern="\d+"
+              required
+              class="conditions-editor__input"
+              [name]="template.id + '-damage'"
+              [attr.aria-label]="template.label + ' Schaden je Wirkmoment'"
+              [ngModel]="condition.damagePerTick"
+              (ngModelChange)="setDamage(template.id, $event)"
+            />
+          </label>
+          <textarea
+            rows="2"
+            class="conditions-editor__input conditions-editor__description"
+            [name]="template.id + '-description'"
+            [attr.aria-label]="template.label + ' Beschreibung'"
+            [ngModel]="condition.description"
+            (ngModelChange)="setDescription(template.id, $event)"
+          ></textarea>
+        </div>
+      }
+    </div>
+  }
+</div>
