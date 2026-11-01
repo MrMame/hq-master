@@ -22,12 +22,17 @@ Feature : Charakter zustände mit zeitlichem effekt
 
 Feature : Rundensteuerung in Dungeon Tracker eibinden
 
-
+    - Eine neue Eigenschaft eines Charakters soll anzeigen, ob der Charakter im Aktuellen Zeitabschnitt
+    auf dem dungeon tracker board verschoben wurde. cih möchte damit sehen, welche figr ich in der runde bereits gezogen habe.
+    Dieses Flag werde ich im weiteren Verlauf "Charakter-in-diesr-runde-bewegt" Flag nennen. Du schllägst bei der lanung aber bitte eibinden
+    passenden Namen dafür vor.
 
     - Über ein Runden-Menü im Dungeon Tracker soll eine neue Runde ausgelöst werden können
-        -> Das Runden-Menü wird beim anklicken des Runden-menü-Buttons unterhalb des "neuen Charakter" Plus buttons in der schnellleiste
+        -> Das Runden-Menü wird beim anklicken des zusätzlichen Runden-menü-Buttons (quick-access-button) unterhalb des "neuen Charakter" Plus buttons in der schnellleiste geöffnet.
+        Dort werden alle wichtigen Buttons für die Schnellsteuerung der Zeit zusammengefasst.
+        Einer der dortigen Buttons heisst "Neue Runde".
         -> Neue Runde heisst
-            + 10 InGame Sekunden im globalen inGameTimer
+            + +10sek InGame zeit im globalen inGameTimer
             + "Charakter-in-diesr-runde-bewegt" Flag wird automatisch für alle Charaktere zurückgesezt
 
     - Wenn Charaktere ihre Position innerhalb einer Runde auf dem DungeonTracker verändern,
