@@ -1,13 +1,22 @@
 Feature : Charakter zustände mit zeitlichem effekt
 
     - Zustände der Charaktere
-        Gift, Benommen, 
+        Gift, Benommen, blind 
     - Auswirkungen der Zustände
         Schaden über Zeit
         Zustandswechsel
+        Duaer des zustands in InGame Zeit
 
     - Im Editorfenster sollen die Verschiedenen Zustände per Checkboxen Ein/Auschaltbar sein
     - Zustände, die mit der InGame Zeit gekoppelt sind, sollenn zu ihren Wirkmomenten schaden automatisch
+    - Zustände können auch eine begrenzte InGame Zeit bleiben und sollen automatisch nach 
+        verstreichen dieser zeit verschwinden
+
+    Effekt Eigenschaft:
+            Effekt-Abklingzeit
+            Effekt-Dauer
+            Effekt-Schaden-Pro-Sekunden
+            Effekt-Beschreibung
 
 
 
