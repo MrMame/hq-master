@@ -26,7 +26,7 @@
                 required
                 class="conditions-editor__input"
                 [name]="template.id + '-' + field.key + '-minutes'"
-                [attr.aria-label]="template.label + ' ' + field.label + ' Minuten'"
+                [attr.aria-label]="template.label + ' ' + field.ariaLabel + ' Minuten'"
                 [ngModel]="minutesOf(condition[field.key])"
                 (ngModelChange)="setMinutes(template.id, field.key, $event)"
               />
@@ -39,7 +39,7 @@
                 required
                 class="conditions-editor__input"
                 [name]="template.id + '-' + field.key + '-seconds'"
-                [attr.aria-label]="template.label + ' ' + field.label + ' Sekunden'"
+                [attr.aria-label]="template.label + ' ' + field.ariaLabel + ' Sekunden'"
                 [ngModel]="secondsOf(condition[field.key])"
                 (ngModelChange)="setSeconds(template.id, field.key, $event)"
               />
@@ -47,7 +47,7 @@
             </fieldset>
           }
           <label class="conditions-editor__time">
-            <span class="conditions-editor__label">Schaden je Wirkmoment</span>
+            <span class="conditions-editor__label">... LP-Schaden erteilt in Höhe von</span>
             <input
               type="number"
               min="0"

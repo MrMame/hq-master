@@ -40,9 +40,13 @@ export class CharacterConditionsEditor {
   protected readonly minutesOf: (total: number) => number = minutesOf;
   protected readonly secondsOf: (total: number) => number = secondsOf;
   /** Dauer 0 = unbegrenzt, Intervall 0 = keine Wirkmomente. */
-  protected readonly durationFields: { key: ConditionDuration; label: string }[] = [
-    { key: 'intervalSeconds', label: 'Intervall' },
-    { key: 'durationSeconds', label: 'Dauer' },
+  protected readonly durationFields: {
+    key: ConditionDuration;
+    label: string;
+    ariaLabel: string;
+  }[] = [
+    { key: 'durationSeconds', label: 'Für die Dauer von', ariaLabel: 'Dauer' },
+    { key: 'intervalSeconds', label: '... wird jede', ariaLabel: 'Intervall' },
   ];
 
   /** Restdauer der schon gestarteten Zustände, z. B. „7:30“ oder „unbegrenzt“. */
