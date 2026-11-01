@@ -1,4 +1,5 @@
 import { createTestCharacter } from '../../../core/testing/character.fixtures';
+import { createTestLog } from '../../../core/testing/game-log.fixtures';
 import { DeckState } from '../../card-manager/models/deck-state.model';
 import { Card } from '../../card-manager/models/card.model';
 import { SessionSnapshot } from '../models/session-snapshot.model';
@@ -59,5 +60,6 @@ export function createSessionSnapshot(): SessionSnapshot {
       ],
     },
     deck: createDeckState(),
+    gameLog: createTestLog(),
   };
 }

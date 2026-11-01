@@ -4,8 +4,9 @@ import { readCharacters, writeCharacters } from '../xml/characters.xml-mapper';
 import { readDeck, writeDeck } from '../xml/deck.xml-mapper';
 import { readDungeonBoard, writeDungeonBoard } from '../xml/dungeon.xml-mapper';
 import { readGameTime, writeGameTime } from '../xml/game-time.xml-mapper';
+import { readGameLog, writeGameLog } from '../xml/game-log.xml-mapper';
 import { readMeta, writeMeta } from '../xml/meta.xml-mapper';
-import { indentXml, requireChild } from '../../../shared/utils/xml.util';
+import { firstChild, indentXml, requireChild } from '../../../shared/utils/xml.util';
 
 const ROOT_ELEMENT: string = 'gameSession';
 const FORMAT_VERSION: string = '1';
@@ -28,6 +29,7 @@ export class SessionXmlService {
       writeCharacters(doc, snapshot.characters),
       writeDungeonBoard(doc, snapshot.dungeon),
       writeDeck(doc, snapshot.deck),
+      writeGameLog(doc, snapshot.gameLog),
     );
     indentXml(root);
     return `${XML_DECLARATION}\n${new XMLSerializer().serializeToString(doc)}\n`;
@@ -42,6 +44,8 @@ export class SessionXmlService {
       characters: readCharacters(requireChild(root, 'characters', FILE_KIND)),
       dungeon: readDungeonBoard(requireChild(root, 'dungeonBoard', FILE_KIND)),
       deck: readDeck(requireChild(root, 'cardDeck', FILE_KIND)),
+      // Ältere Spielstände haben kein Log.
+      gameLog: readGameLog(firstChild(root, 'gameLog')),
     };
   }
 

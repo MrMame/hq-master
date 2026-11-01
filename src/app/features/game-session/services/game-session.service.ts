@@ -2,6 +2,7 @@ import { computed, inject, Injectable, Signal } from '@angular/core';
 import { GameTimeService } from '../../../core/services/game-time/game-time.service';
 import { GameTime } from '../../../core/models/game-time.model';
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
+import { GameLogService } from '../../../core/services/game-log/game-log.service';
 import {
   PersistedState,
   persistedState,
@@ -44,6 +45,7 @@ export class GameSessionService {
     characters: inject(CharactersDbService),
     dungeon: inject(DungeonBoardService),
     deck: inject(CardManagerService),
+    gameLog: inject(GameLogService),
   };
 
   // Die Meta gehört dem Orchestrator selbst und ist kein Slice.
@@ -64,6 +66,7 @@ export class GameSessionService {
     characters: this.slices.characters.sessionState(),
     dungeon: this.slices.dungeon.sessionState(),
     deck: this.slices.deck.sessionState(),
+    gameLog: this.slices.gameLog.sessionState(),
   }));
 
   // PUBLICS ===============================================================================
@@ -71,7 +74,8 @@ export class GameSessionService {
   /** Setzt alle Feature-Zustände zurück und startet eine neue Session zur gewählten Ingame-Zeit. */
   startSession({ name, startTime }: SessionStartOptions): void {
     this.sliceKeys().forEach((key) => this.slices[key].reset());
-    this.gameTimeService.setGameTime(startTime);
+    // Ohne Log-Eintrag: Das Log einer neuen Session beginnt leer.
+    this.gameTimeService.startAt(startTime);
     this._meta.set({ name, active: true, startedAt: new Date().toISOString() });
   }
 

@@ -129,7 +129,9 @@ characterId, conditionId, gameTime: string, damage? }`. `docs/feature-requests/g
     „Effect loop test hang“ und Regel 4). Für jeden Charakter ruft er `advanceConditions()` auf und
     schreibt nur geänderte Charaktere über `CharactersDbService.writeCharacter()` (Regel 7).
   - Er hat keinen eigenen Session-Zustand. Der Fortschritt steht in `lastTickAt` am Charakter.
-  - Die Ereignisse stellt er als Signal `lastEvents: Signal<ConditionEvent[]>` bereit (ohne Persistenz).
+  - Die Ereignisse übergibt er direkt an `GameLogService.append()` (seit `game-event-log.md` #3; vorher als
+    Signal `lastEvents` ohne Persistenz, das bei mehreren Ticks vor dem nächsten `effect()`-Lauf Ereignisse
+    verschluckt hätte).
     `docs/feature-requests/game-event-log.md` ersetzt das Signal später durch einen direkten Aufruf von `GameLogService.append()`.
 - Der Service wird app-weit beim Start erzeugt (z. B. `provideAppInitializer` oder Injektion in `App`),
   damit er auf jeder Seite wirkt.

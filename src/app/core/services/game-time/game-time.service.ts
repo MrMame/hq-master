@@ -1,4 +1,6 @@
-import { computed, Injectable, Signal } from '@angular/core';
+import { computed, inject, Injectable, Signal } from '@angular/core';
+import { GameLogService } from '../game-log/game-log.service';
+import { TimeChange, timeChangeText } from '../game-log/game-log-text.util';
 import { GameTime } from '../../models/game-time.model';
 import { GameTimeSpan } from '../../models/game-time-span.model';
 import { PersistedState, persistedState, StorageCodec } from '../../session-state/persisted-state';
@@ -25,6 +27,7 @@ export class GameTimeService implements SessionStateSlice<Date> {
     () => new Date(DEFAULT_GAME_TIME),
     GAME_TIME_CODEC,
   );
+  private readonly gameLog: GameLogService = inject(GameLogService);
 
   // REACTIVE INTERFACES ===============================================================================
 
@@ -49,7 +52,13 @@ export class GameTimeService implements SessionStateSlice<Date> {
 
   // PUBLICS ===============================================================================
 
+  /** Setzt die Spielzeit und schreibt den Wechsel ins Log. */
   public setGameTime(gameTime: GameTime): void {
+    this.logChange('set', () => this.startAt(gameTime));
+  }
+
+  /** Wie `setGameTime()`, aber ohne Log-Eintrag: Startzeit einer neuen Session. */
+  public startAt(gameTime: GameTime): void {
     const { year, month, day, hours = 0, minutes = 0, seconds = 0 }: GameTime = gameTime;
     this.mutateCopy((d) => {
       d.setFullYear(
@@ -61,12 +70,15 @@ export class GameTimeService implements SessionStateSlice<Date> {
     });
   }
 
+  /** Rückt die Spielzeit vor; der Log-Eintrag steht vor den Einträgen des ausgelösten Zustands-Ticks. */
   public addTime({ hours = 0, minutes = 0, seconds = 0 }: GameTimeSpan): void {
-    this.mutateCopy((d) => {
-      d.setHours(d.getHours() + hours);
-      d.setMinutes(d.getMinutes() + minutes);
-      d.setSeconds(d.getSeconds() + seconds);
-    });
+    this.logChange('add', () =>
+      this.mutateCopy((d) => {
+        d.setHours(d.getHours() + hours);
+        d.setMinutes(d.getMinutes() + minutes);
+        d.setSeconds(d.getSeconds() + seconds);
+      }),
+    );
   }
 
   public restore(gameTime: Date): void {
@@ -78,6 +90,18 @@ export class GameTimeService implements SessionStateSlice<Date> {
   }
 
   // PRIVATES ===============================================================================
+
+  private logChange(change: TimeChange, mutate: () => void): void {
+    const from: Date = this._gameTime.current();
+    mutate();
+    const to: Date = this._gameTime.current();
+    this.gameLog.append({
+      type: 'time',
+      gameTime: to.toISOString(),
+      value: Math.round((to.getTime() - from.getTime()) / 1000),
+      text: timeChangeText(from, to, change),
+    });
+  }
 
   // Das Date im Signal wird nie verändert, sonst feuern Abhängige nicht.
   private mutateCopy(mutate: (copy: Date) => void): void {
