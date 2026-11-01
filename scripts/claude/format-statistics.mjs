@@ -23,7 +23,7 @@ function listCounts(counts, labels = {}) {
   return parts.length ? parts.join(', ') : '–';
 }
 
-function minutes({ activity, end }) {
+export function minutes({ activity, end }) {
   return Math.max(0, Math.round((end - activity.start) / 60000));
 }
 
