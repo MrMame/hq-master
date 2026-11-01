@@ -1,0 +1,84 @@
+/* Gleiche Optik wie die übrigen Felder des Charakter-Editors */
+.conditions-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.conditions-editor__caption {
+  color: var(--color-gray-400);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+.conditions-editor__toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  accent-color: var(--color-yellow-400);
+}
+
+.conditions-editor__icon {
+  width: var(--space-4);
+  height: var(--space-4);
+}
+
+.conditions-editor__remaining {
+  margin-inline-start: auto;
+  color: var(--color-gray-400);
+  font-size: var(--text-xs);
+}
+
+/* Werte eingerückt unter der Checkbox */
+.conditions-editor__values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  margin-left: var(--space-6);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+}
+
+.conditions-editor__time {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.conditions-editor__label {
+  float: left;
+  margin-inline-end: var(--space-1);
+  padding: 0;
+  color: var(--color-gray-400);
+}
+
+.conditions-editor__input {
+  width: 3.5rem;
+  padding: var(--space-1);
+  border: 1px solid var(--color-gray-600);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-gray-900);
+  color: var(--color-white);
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-yellow-400);
+  }
+
+  &.ng-invalid {
+    border-color: var(--color-red-400);
+  }
+}
+
+.conditions-editor__description {
+  flex-basis: 100%;
+  width: auto;
+}

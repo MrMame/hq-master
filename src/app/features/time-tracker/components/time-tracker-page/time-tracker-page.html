@@ -1,4 +1,3 @@
-<p>time-tracker-page works!</p>
 <div class="time-tracker-page">
   <label class="game-time-label" data-testid="game-time-label">
     Spielzeit: {{ gameTimeService.gameTimeAsString() }}
@@ -16,4 +15,5 @@
   </div>
   <button class="time-button time-button--hour" (click)="addTime1Hour()">+1 Hour</button>
   <button class="time-button time-button--hours" (click)="addTime8Hour()">+8 Hours</button>
+  <app-active-conditions-list />
 </div>

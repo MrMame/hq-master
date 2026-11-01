@@ -5,7 +5,7 @@ import { DamageTypes } from '../../../../core/models/damage-types.model';
 /**
  * Zustandswerte eines Charakters (Leben rot, Rüstung blau) für Token und Legende.
  * Mit `damageable` werden die Werte zu Buttons, die die passende Schadensart melden.
- * Hintergrund und Position legt der Einbettende fest; später kommen hier die Statuseffekte hinzu.
+ * Hintergrund und Position legt der Einbettende fest; Zustände zeigt `CharacterConditions`.
  */
 @Component({
   selector: 'app-character-status',

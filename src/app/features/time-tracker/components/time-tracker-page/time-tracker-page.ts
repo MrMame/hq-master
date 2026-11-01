@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { GameTimeService } from '../../../../core/services/game-time/game-time.service';
+import { ActiveConditionsList } from '../active-conditions-list/active-conditions-list';
 
 @Component({
   selector: 'app-time-tracker-page',
-  imports: [],
+  imports: [ActiveConditionsList],
   templateUrl: './time-tracker-page.html',
   styleUrl: './time-tracker-page.css',
 })

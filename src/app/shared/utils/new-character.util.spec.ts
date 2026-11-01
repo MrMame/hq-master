@@ -19,6 +19,7 @@ describe('createNewCharacter', () => {
       abilities: [],
       image: '',
       description: '',
+      conditions: [],
     });
   });
 

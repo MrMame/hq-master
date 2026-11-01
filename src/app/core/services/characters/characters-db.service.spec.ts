@@ -4,6 +4,7 @@ import { CharactersDbService } from './characters-db.service';
 import { CharacterInfo } from '../../models/character-info.model';
 import { describePersistedState } from '../../session-state/testing/describe-persisted-state';
 import { SESSION_KEYS } from '../../session-state/session-keys';
+import { createConditionedCharacter } from '../../testing/condition.fixtures';
 
 const createCharacter: (id: string, name?: string) => CharacterInfo = (
   id: string,
@@ -20,6 +21,7 @@ const createCharacter: (id: string, name?: string) => CharacterInfo = (
   abilities: [],
   image: '',
   description: '',
+  conditions: [],
 });
 
 const readStored: () => CharacterInfo[] = (): CharacterInfo[] =>
@@ -89,5 +91,19 @@ describe('CharactersDbService', () => {
     const before: CharacterInfo[] = service.characters();
     service.writeCharacter(createCharacter('a'));
     expect(service.characters()).not.toBe(before);
+  });
+
+  it('keeps conditions of a stored character after a reload', () => {
+    localStorage.setItem('characters', JSON.stringify([createConditionedCharacter('a')]));
+    service = TestBed.inject(CharactersDbService);
+    expect(service.characters()).toEqual([createConditionedCharacter('a')]);
+  });
+
+  it('loads characters of an older session without conditions', () => {
+    const older: Partial<CharacterInfo> = createCharacter('a');
+    delete older.conditions;
+    localStorage.setItem('characters', JSON.stringify([older]));
+    service = TestBed.inject(CharactersDbService);
+    expect(service.characters()).toEqual([createCharacter('a')]);
   });
 });

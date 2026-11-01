@@ -17,11 +17,12 @@ import { scrollIntoViewIfNeeded } from '../../utils/scroll-into-view.util';
 import { fieldAt } from '../../utils/grid-origin.util';
 import { CharacterStatus } from '../character-status/character-status';
 import { CharacterActionBar } from '../character-action-bar/character-action-bar';
+import { CharacterConditions } from '../character-conditions/character-conditions';
 
 @Component({
   selector: 'app-dungeon-token',
   standalone: true,
-  imports: [CdkDrag, CdkDragHandle, CharacterStatus, CharacterActionBar],
+  imports: [CdkDrag, CdkDragHandle, CharacterStatus, CharacterActionBar, CharacterConditions],
   templateUrl: './dungeon-token.html',
   styleUrl: './dungeon-token.css',
 })

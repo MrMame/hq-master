@@ -14,5 +14,6 @@ export function createTestCharacter(id: string): CharacterInfo {
     abilities: ['Feuer', 'Gift'],
     image: 'assets/ork.png',
     description: 'Ein "gefährlicher" Ork',
+    conditions: [],
   };
 }

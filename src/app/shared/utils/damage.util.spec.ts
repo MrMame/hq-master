@@ -16,6 +16,7 @@ function makeCharacter(health: number, armor: number): CharacterInfo {
     abilities: [],
     image: '',
     description: '',
+    conditions: [],
   };
 }
 

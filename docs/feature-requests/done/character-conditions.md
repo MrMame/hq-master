@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-01 (Interview 2026-11-01)  
 **Priorität:** Hoch  
-**Status:** offen  
+**Status:** done (2026-11-01 10:55)  
 **Bezug:** `REQUIREMENTS.md` (0. Übersicht: „welche Effekte in der aktuellen Spielzeit Schaden verursachen“,
 
 1. Time Tracker: „Änderungen an der InGame-Zeit führen automatisch zur Ermittlung zeitabhängiger
@@ -66,7 +66,7 @@ GameTimeService.gameTime ──(effect)──► ConditionTickService ───�
 
 ## Anforderungen
 
-### 1. Modelle und Vorlage
+### 1. Modelle und Vorlage ✅ done (2026-11-01 10:55)
 
 - `core/models/character-condition.model.ts`:
   - `ConditionId` = `'poison' | 'dazed' | 'blind'`.
@@ -89,7 +89,7 @@ kommen später über einen Eintrag in `CONDITION_TEMPLATES` und ein Symbol dazu.
 
 ---
 
-### 2. Persistenz und Spielstand
+### 2. Persistenz und Spielstand ✅ done (2026-11-01 10:55)
 
 - `CharactersDbService` erhält einen `StorageCodec`. Gespeicherte Charaktere ohne `conditions` (ältere
   Sessions) bekommen `[]`, ungültige Einträge werden verworfen.
@@ -102,7 +102,7 @@ enthalten. Ältere Sessions und Spielstände lassen sich weiter laden.
 
 ---
 
-### 3. Zeitberechnung als reine Funktion
+### 3. Zeitberechnung als reine Funktion ✅ done (2026-11-01 10:55)
 
 - `shared/utils/condition-tick.util.ts` (neben `damage.util.ts`, das es nutzt):
   `advanceConditions(character, now: Date): { character: CharacterInfo; events: ConditionEvent[] }`.
@@ -122,7 +122,7 @@ characterId, conditionId, gameTime: string, damage? }`. `docs/feature-requests/g
 
 ---
 
-### 4. Automatischer Tick bei Zeitänderung
+### 4. Automatischer Tick bei Zeitänderung ✅ done (2026-11-01 10:55)
 
 - Neuer Service per CLI, z. B. `ng g s shared/services/condition-tick` (wie `CharacterDamageService` unter `shared/`) → `ConditionTickService`.
   - Ein `effect()` liest `GameTimeService.gameTime()`. Die Charaktere liest er untracked (siehe Memory
@@ -141,7 +141,7 @@ Token, Legende und Editor zeigen das neue Leben, auch wenn der DM gerade auf ein
 
 ---
 
-### 5. Zustände im Charakter-Editor
+### 5. Zustände im Charakter-Editor ✅ done (2026-11-01 10:55)
 
 - Neue Kindkomponente per CLI, z. B. `ng g c shared/components/character-conditions-editor`.
   `character-editor-dialog.html` hat schon 127 Zeilen.
@@ -162,7 +162,7 @@ bekommt er durch Ändern der Werte vor dem Übernehmen.
 
 ---
 
-### 6. Anzeige an Token und Legende
+### 6. Anzeige an Token und Legende ✅ done (2026-11-01 10:55)
 
 - `CharacterStatus` (oder eine neue Komponente `CharacterConditions`, die beide Stellen nutzen) zeigt die
   Zustände:
@@ -179,7 +179,7 @@ bekommt er durch Ändern der Werte vor dem Übernehmen.
 
 ---
 
-### 7. Übersicht im TimeTracker
+### 7. Übersicht im TimeTracker ✅ done (2026-11-01 10:55)
 
 - Neue Komponente per CLI, z. B. `ng g c features/time-tracker/components/active-conditions-list`.
 - Eine Zeile je aktivem Zustand aller Charaktere: Charakter, Symbol und Name des Zustands, Schaden je
@@ -191,7 +191,7 @@ bekommt er durch Ändern der Werte vor dem Übernehmen.
 
 ---
 
-### 8. Dokumentation
+### 8. Dokumentation ✅ done (2026-11-01 10:55)
 
 - `REQUIREMENTS.md`: Zustände unter 0 (Übersicht), 1 (TimeTracker) und 2 (Dungeon Tracker, Editor)
   ergänzen.
@@ -199,7 +199,7 @@ bekommt er durch Ändern der Werte vor dem Übernehmen.
 
 ---
 
-### 9. Tests
+### 9. Tests ✅ done (2026-11-01 10:55)
 
 - `condition-tick.util.spec.ts`: einzelner Wirkmoment, Zeitsprung mit Nachholen bis zum Ende, Wirkmoment
   genau zum Ende, Ablauf, unbegrenzte Dauer, Intervall 0, 0 Leben, Zeit zurück, keine Änderung ergibt
@@ -216,22 +216,31 @@ bekommt er durch Ändern der Werte vor dem Übernehmen.
 
 ---
 
+### 10. Platzhalter im TimeTracker entfernen ✅ done (2026-11-01 10:55)
+
+- Bei der Umsetzung entdeckt: `time-tracker-page.html` zeigte noch den CLI-Platzhalter
+  „time-tracker-page works!“. Er wird entfernt (Freigabe im Plan, 2026-11-01).
+
+**Erwartetes Verhalten:** Der TimeTracker zeigt nur Spielzeit, Zeitschritte und die Zustandsübersicht.
+
+---
+
 ## Akzeptanzkriterien
 
-- [ ] Im Editor lassen sich Gift, Benommen und Blind per Checkbox setzen und entfernen. Die Werte kommen
+- [x] Im Editor lassen sich Gift, Benommen und Blind per Checkbox setzen und entfernen. Die Werte kommen
       aus der Vorlage und sind pro Charakter änderbar.
-- [ ] Gift mit Standardwerten macht nach jeder vollen InGame-Minute 1 Schaden direkt aufs Leben und
+- [x] Gift mit Standardwerten macht nach jeder vollen InGame-Minute 1 Schaden direkt aufs Leben und
       verschwindet nach 10 Minuten von selbst.
-- [ ] +1 h im TimeTracker holt alle fälligen Wirkmomente nach, höchstens bis zum Ende der Dauer.
-- [ ] Benommen und Blind machen keinen Schaden und verschwinden nach ihrer Dauer. Dauer 0 bleibt, bis
+- [x] +1 h im TimeTracker holt alle fälligen Wirkmomente nach, höchstens bis zum Ende der Dauer.
+- [x] Benommen und Blind machen keinen Schaden und verschwinden nach ihrer Dauer. Dauer 0 bleibt, bis
       der DM den Zustand abwählt.
-- [ ] Bei 0 Leben entsteht kein weiterer Schaden. Zeit zurücksetzen oder einen Spielstand laden löst
+- [x] Bei 0 Leben entsteht kein weiterer Schaden. Zeit zurücksetzen oder einen Spielstand laden löst
       keine Wirkmomente aus.
-- [ ] Zustände erscheinen am Token, unter dem markierten Token, in der Legende und im TimeTracker, jeweils
+- [x] Zustände erscheinen am Token, unter dem markierten Token, in der Legende und im TimeTracker, jeweils
       mit Restdauer.
-- [ ] Zustände bleiben nach einem Reload erhalten und sind im XML-Spielstand enthalten. Ältere Daten
+- [x] Zustände bleiben nach einem Reload erhalten und sind im XML-Spielstand enthalten. Ältere Daten
       lassen sich laden.
-- [ ] Tests und Coverage-Schwellen sind grün, keine Datei über 150 Zeilen.
+- [x] Tests und Coverage-Schwellen sind grün, keine Datei über 150 Zeilen.
 
 ---
 

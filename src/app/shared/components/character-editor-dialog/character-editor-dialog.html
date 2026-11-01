@@ -69,6 +69,14 @@
 
     <hr class="character-editor__divider" />
 
+    <!-- Zustände -->
+    <app-character-conditions-editor
+      [conditions]="draft().conditions"
+      (conditionsChange)="setField('conditions', $event)"
+    />
+
+    <hr class="character-editor__divider" />
+
     <!-- Bild -->
     <div class="character-editor__field">
       <span class="character-editor__caption">Bild</span>

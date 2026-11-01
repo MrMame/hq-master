@@ -18,6 +18,7 @@ const createCharacter: (id: string) => CharacterInfo = (id: string): CharacterIn
   abilities: [],
   image: '',
   description: '',
+  conditions: [],
 });
 
 describe('DungeonTrackerPage', () => {

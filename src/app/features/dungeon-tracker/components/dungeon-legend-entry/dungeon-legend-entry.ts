@@ -13,16 +13,18 @@ import { BoardToken } from '../../models/board-token.model';
 import { scrollIntoViewIfNeeded } from '../../utils/scroll-into-view.util';
 import { CharacterStatus } from '../character-status/character-status';
 import { CharacterActionBar } from '../character-action-bar/character-action-bar';
+import { CharacterConditions } from '../character-conditions/character-conditions';
 
 /**
  * Ein Eintrag der Charakter-Legende: Bild, Name, Zustandswerte und Spielfeld-Position.
  * Ein Klick auf die Zeile schaltet die Markierung um; der markierte Eintrag zeigt die Menüleiste.
  * Ein Klick auf Leben oder Rüstung meldet die Schadensart (Schnellschaden ohne Markierung).
+ * Aktive Zustände stehen in einer zweiten Zeile mit Symbol und Restdauer.
  */
 @Component({
   selector: 'app-dungeon-legend-entry',
   standalone: true,
-  imports: [CharacterStatus, CharacterActionBar],
+  imports: [CharacterStatus, CharacterActionBar, CharacterConditions],
   host: {
     '[class.legend-entry--selected]': 'selected()',
     '[attr.aria-current]': 'selected() ? "true" : null',
@@ -48,6 +50,13 @@ import { CharacterActionBar } from '../character-action-bar/character-action-bar
         [{{ token().position.col }},{{ token().position.row }}]
       </span>
     </div>
+    @if (token().character.conditions.length > 0) {
+      <app-character-conditions
+        [conditions]="token().character.conditions"
+        variant="legend"
+        class="legend-entry__conditions"
+      />
+    }
     @if (selected()) {
       <app-character-action-bar [character]="token().character" class="legend-entry__actions" />
     }

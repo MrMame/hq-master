@@ -1,0 +1,34 @@
+<section class="active-conditions" aria-labelledby="active-conditions-title">
+  <h2 id="active-conditions-title" class="active-conditions__title">Aktive Zustände</h2>
+  @if (rows().length === 0) {
+    <p class="active-conditions__empty">Keine aktiven Zustände</p>
+  } @else {
+    <table class="active-conditions__table">
+      <thead>
+        <tr>
+          <th scope="col">Charakter</th>
+          <th scope="col">Zustand</th>
+          <th scope="col">Schaden</th>
+          <th scope="col">Nächster Wirkmoment</th>
+          <th scope="col">Restdauer</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.characterId + row.conditionId) {
+          <tr data-testid="active-condition-row">
+            <td>{{ row.characterName }}</td>
+            <td>
+              <span class="active-conditions__condition">
+                <img [src]="row.icon" alt="" class="active-conditions__icon" />
+                {{ row.label }}
+              </span>
+            </td>
+            <td>{{ row.damagePerTick }}</td>
+            <td>{{ row.nextTick }}</td>
+            <td>{{ row.remaining }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

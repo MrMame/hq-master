@@ -21,6 +21,7 @@ const orc: CharacterInfo = {
   abilities: ['Erdbeben'],
   image: './img/monster-icon-Orc.png',
   description: 'Grimmig',
+  conditions: [],
 };
 
 const STAT_CAPTIONS: string[] = ['Leben', 'Rüstung', 'Angriff', 'Abwehr', 'Tempo'];
