@@ -1,5 +1,6 @@
 import { DeckState } from '../../features/card-manager/models/deck-state.model';
 import { CharacterInfo } from '../models/character-info.model';
+import { GameLogEntry } from '../models/game-log-entry.model';
 import { DungeonSessionState } from '../../features/dungeon-tracker/models/dungeon-session-state.model';
 import { SessionStateSlice } from './session-state-slice';
 
@@ -12,6 +13,7 @@ export interface SessionSliceData {
   characters: CharacterInfo[];
   dungeon: DungeonSessionState;
   deck: DeckState | null;
+  gameLog: GameLogEntry[];
 }
 
 export type SessionSlices = {

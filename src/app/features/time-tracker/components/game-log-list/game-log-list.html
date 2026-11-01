@@ -1,0 +1,37 @@
+<section class="game-log" aria-labelledby="game-log-title">
+  <header class="game-log__header">
+    <h2 id="game-log-title" class="game-log__title">Ereignisse</h2>
+    <div class="game-log__filters" role="group" aria-label="Ereignisse filtern">
+      @for (option of filters; track option.id) {
+        <button
+          type="button"
+          class="game-log__chip"
+          [attr.aria-pressed]="filter() === option.id"
+          (click)="filter.set(option.id)"
+        >
+          {{ option.label }}
+        </button>
+      }
+    </div>
+    <button type="button" class="game-log__clear" [disabled]="isEmpty()" (click)="clear()">
+      Log leeren
+    </button>
+  </header>
+  @if (rows().length === 0) {
+    <p class="game-log__empty">Noch keine Ereignisse</p>
+  } @else {
+    <ol class="game-log__list" data-testid="game-log-list">
+      @for (row of rows(); track row.key) {
+        @if (row.kind === 'date') {
+          <li class="game-log__date" data-testid="game-log-date">{{ row.date }}</li>
+        } @else {
+          <li class="game-log__entry" data-testid="game-log-entry">
+            <span class="game-log__time">{{ row.time }}</span>
+            <img [src]="row.icon" alt="" class="game-log__icon" />
+            <span class="game-log__text">{{ row.text }}</span>
+          </li>
+        }
+      }
+    </ol>
+  }
+</section>

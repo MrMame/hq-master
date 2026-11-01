@@ -19,7 +19,9 @@ import { ConfirmationDialogData } from '../../models/confirmation-dialog-data.mo
 import { ConfirmationDialog } from '../confirmation-dialog/confirmation-dialog';
 import { CharacterConditionsEditor } from '../character-conditions-editor/character-conditions-editor';
 import { GameTimeService } from '../../../core/services/game-time/game-time.service';
+import { GameLogService } from '../../../core/services/game-log/game-log.service';
 import { startConditions } from '../../utils/condition-draft.util';
+import { conditionChangeEntries } from '../../utils/game-log-entries.util';
 
 /** Zahlenwerte eines Charakters, die der Editor als Eingabefeld anbietet. */
 type CharacterStat = 'health' | 'armor' | 'attack' | 'defense' | 'speed';
@@ -44,6 +46,7 @@ export class CharacterEditorDialog {
   );
   private readonly dialog: MatDialog = inject(MatDialog);
   private readonly gameTimeService: GameTimeService = inject(GameTimeService);
+  private readonly gameLog: GameLogService = inject(GameLogService);
   private readonly character: CharacterInfo | null = inject<CharacterInfo | null>(MAT_DIALOG_DATA);
 
   protected readonly isEditMode: boolean = this.character !== null;
@@ -85,13 +88,17 @@ export class CharacterEditorDialog {
     this.draft.set(createRandomCharacter(this.draft().id));
   }
 
-  /** Neu angekreuzte Zustände starten zur aktuellen Spielzeit. */
+  /** Neu angekreuzte Zustände starten zur aktuellen Spielzeit; Setzen und Entfernen kommen ins Log. */
   apply(): void {
+    const now: Date = this.gameTimeService.gameTime();
     const character: CharacterInfo = {
       ...this.draft(),
-      conditions: startConditions(this.draft().conditions, this.gameTimeService.gameTime()),
+      conditions: startConditions(this.draft().conditions, now),
     };
     this.charactersDbService.writeCharacter(character);
+    this.gameLog.append(
+      ...conditionChangeEntries(this.character?.conditions ?? [], character, now),
+    );
     this.dialogRef.close(character);
   }
 

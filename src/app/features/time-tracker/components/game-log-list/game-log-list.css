@@ -1,0 +1,102 @@
+/* Füllt die Resthöhe der Seite; nur die Liste scrollt. */
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+.game-log {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: var(--space-2);
+}
+
+.game-log__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.game-log__title {
+  color: var(--color-gray-400);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+.game-log__filters {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.game-log__chip {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-gray-400);
+  border-radius: var(--radius-lg);
+  background-color: transparent;
+  color: var(--color-gray-700);
+  font-size: var(--text-sm);
+  cursor: pointer;
+
+  &[aria-pressed='true'] {
+    border-color: var(--color-blue-600);
+    background-color: var(--color-blue-600);
+    color: var(--color-white);
+  }
+}
+
+.game-log__clear {
+  margin-left: auto;
+  font-size: var(--text-sm);
+  background-color: var(--color-gray-500);
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.game-log__empty {
+  color: var(--color-gray-500);
+  font-size: var(--text-sm);
+}
+
+.game-log__list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+}
+
+.game-log__entry {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  border-top: 1px solid var(--color-gray-100);
+}
+
+.game-log__date {
+  padding: var(--space-2) 0 var(--space-1);
+  color: var(--color-gray-500);
+  font-weight: var(--font-weight-bold);
+}
+
+.game-log__time {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-gray-500);
+}
+
+.game-log__icon {
+  width: var(--space-4);
+  height: var(--space-4);
+}

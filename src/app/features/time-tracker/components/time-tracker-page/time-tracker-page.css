@@ -1,8 +1,11 @@
+/* Volle Höhe des Hauptbereichs, damit nur das Ereignis-Log scrollt und der Rest stehen bleibt. */
 .time-tracker-page {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-4);
+  box-sizing: border-box;
+  height: 100%;
 }
 
 .time-steps {

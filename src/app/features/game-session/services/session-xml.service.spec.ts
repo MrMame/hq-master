@@ -60,6 +60,13 @@ describe('SessionXmlService', () => {
     expect(service.parse(xml)).toEqual(snapshot);
   });
 
+  it('should load older files without <gameLog> with an empty log', () => {
+    const snapshot: SessionSnapshot = createSessionSnapshot();
+    const xml: string = service.serialize(snapshot).replace(/<gameLog>[\s\S]*<\/gameLog>/, '');
+    expect(xml).not.toContain('<gameLog');
+    expect(service.parse(xml)).toEqual({ ...snapshot, gameLog: [] });
+  });
+
   it('should reject malformed XML', () => {
     expect(() => service.parse('<gameSession')).toThrow(/XML konnte nicht gelesen werden/);
   });

@@ -31,6 +31,10 @@ test('poison set in the editor shows at token and legend and ticks on +1 h in th
 
   await page.getByRole('button', { name: '+1 Hour' }).click();
   await expect(page.getByText('Keine aktiven Zustände')).toBeVisible();
+  const logEntries: Locator = page.getByTestId('game-log-entry');
+  await expect(logEntries.first()).toContainText('+1 h');
+  await expect(logEntries.nth(1)).toContainText('Gift bei Ork abgelaufen');
+  await expect(logEntries.filter({ hasText: 'Ork: 1 Schaden durch Gift' })).toHaveCount(10);
 
   await page.getByRole('link', { name: 'Dungeon Tracker' }).click();
   await expect(legendEntry(page).getByLabel('Leben', { exact: true })).toHaveText('10');

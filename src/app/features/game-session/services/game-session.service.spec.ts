@@ -4,6 +4,7 @@ import { MockInstance } from 'vitest';
 import { GameSessionService } from './game-session.service';
 import { GameTimeService } from '../../../core/services/game-time/game-time.service';
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
+import { GameLogService } from '../../../core/services/game-log/game-log.service';
 import { CardManagerService } from '../../card-manager/services/card-manager.service';
 import { DungeonBoardService } from '../../dungeon-tracker/services/dungeon-board.service';
 import { DEFAULT_DUNGEON_BOARD_STATE } from '../../dungeon-tracker/models/dungeon-board-state.model';
@@ -50,6 +51,7 @@ describe('GameSessionService', () => {
     characters.writeCharacter(createTestCharacter('a'));
     board.updateGridSettings({ gridColumns: 20 });
     cards.restore(createDeckState());
+    TestBed.inject(GameLogService).restore(createSessionSnapshot().gameLog);
 
     inject().startSession({
       name: 'Neue Runde',
@@ -60,6 +62,7 @@ describe('GameSessionService', () => {
     expect(board.boardState()).toEqual(DEFAULT_DUNGEON_BOARD_STATE);
     expect(board.positions()).toEqual([]);
     expect(cards.state()).toBeNull();
+    expect(TestBed.inject(GameLogService).entries()).toEqual([]);
     expect(TestBed.inject(GameTimeService).gameTime()).toEqual(new Date(2390, 4, 6, 7, 0, 0));
   });
 
@@ -101,6 +104,7 @@ describe('GameSessionService', () => {
       TestBed.inject(CharactersDbService),
       TestBed.inject(DungeonBoardService),
       TestBed.inject(CardManagerService),
+      TestBed.inject(GameLogService),
     ];
 
     it('should reset every slice on startSession', () => {
@@ -118,6 +122,7 @@ describe('GameSessionService', () => {
         snapshot.characters,
         snapshot.dungeon,
         snapshot.deck,
+        snapshot.gameLog,
       ];
       const spies: MockInstance[] = slices().map((slice) => vi.spyOn(slice, 'restore'));
       service.restoreSnapshot(snapshot);

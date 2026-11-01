@@ -21,7 +21,8 @@ core/
                     damage-types.model.ts (Schadensarten),
                     character-condition.model.ts (ConditionId, ConditionTemplate, ActiveCondition),
                     condition-templates.model.ts (CONDITION_TEMPLATES: Standardwerte und Symbole der Zustände),
-                    condition-event.model.ts (ConditionEvent: Schaden/Ablauf eines Zustands)
+                    condition-event.model.ts (ConditionEvent: Schaden/Ablauf eines Zustands),
+                    game-log-entry.model.ts (GameLogEntry, GameLogEntryType: Ereignis-Log der Session)
     character-names/ → <klasse>-names.model.ts (editierbare Vor-/Nachnamen je Charakterklasse,
                     vom Dateilimit ausgenommen), character-names.model.ts (CHARACTER_NAMES_BY_IMAGE)
   session-state/  → persisted-state.ts (persistedState), session-keys.ts (SESSION_KEYS),
@@ -30,12 +31,17 @@ core/
                     session-state-slice.ts (SessionStateSlice), session-slices.ts (SessionSliceData)
     testing/      → describe-persisted-state.ts (Vertragstest für Regel 8, nur für Specs)
   services/
-    game-time/    → GameTimeService: In-Game-Zeitlogik (app-weit)
+    game-time/    → GameTimeService: In-Game-Zeitlogik (app-weit); `addTime`/`setGameTime` loggen den Zeitschritt,
+                    `startAt` (Session-Start), `restore` und `reset` nicht
+    game-log/     → GameLogService: Ereignis-Log der Session (höchstens 1000 Einträge, Schreiben nur über `append()`),
+                    game-log-codec.util.ts (GAME_LOG_CODEC: ungültige Einträge verwerfen),
+                    game-log-text.util.ts (Anzeigetexte der Einträge, `formatClock`; in core, weil der
+                    GameTimeService sie braucht)
     storage/      → StorageService (LocalStorage-Abstraktion)
     characters/   → CharactersDbService, characters-codec.util.ts (CHARACTERS_CODEC: ältere Charaktere ohne
                     Zustände ergänzen, ungültige Zustände verwerfen)
   testing/        → character.fixtures.ts (Testdaten für Charaktere), condition.fixtures.ts (Test-Zustände, Spielzeit
-                    ab 12:00:00), nur für Specs
+                    ab 12:00:00), game-log.fixtures.ts (Log-Einträge), nur für Specs
 
 features/
   dungeon-tracker/     → Spielbrett-Overlay mit Token-Positionierung (Startseite)
@@ -94,9 +100,11 @@ features/
                          element-library.fixtures.ts (nur für Specs)
 
   time-tracker/        → In-Game-Zeiterfassung
-    components/        → TimeTrackerPage, ActiveConditionsList (aktive Zustände aller Charaktere, nur Anzeige)
-    models/            → active-condition-row.model.ts
-    utils/             → active-condition-rows.util.ts (Zeilen sortiert nach nächstem Wirkmoment, dann Restdauer)
+    components/        → TimeTrackerPage, ActiveConditionsList (aktive Zustände aller Charaktere, nur Anzeige),
+                         GameLogList (Ereignis-Log: Filter-Chips, „Log leeren“ mit Rückfrage, scrollt in sich)
+    models/            → active-condition-row.model.ts, game-log-row.model.ts (GameLogFilter, GameLogRow)
+    utils/             → active-condition-rows.util.ts (Zeilen sortiert nach nächstem Wirkmoment, dann Restdauer),
+                         game-log-rows.util.ts (Spielzeit absteigend, Datums-Trennzeile, Filter, Symbol je Eintrag)
 
   card-manager/        → Kartenverwaltung (Deck aus XML + SVG)
     components/        → CardManagerPage, CardDisplay
@@ -108,7 +116,7 @@ features/
     components/        → GameSessionPage
     models/            → session-meta.model.ts, session-snapshot.model.ts
     services/          → game-session.service.ts, session-xml.service.ts
-    xml/               → *.xml-mapper.ts (writeX/readX)
+    xml/               → *.xml-mapper.ts (writeX/readX); game-log.xml-mapper.ts: fehlendes `<gameLog>` → leeres Log
     utils/             → date-time-local.util.ts (reine Hilfsfunktionen)
     testing/           → session.fixtures.ts, game-session-page.fixtures.ts (nur für Specs)
 
@@ -135,7 +143,7 @@ shared/
   services/            → character-editor.service.ts (öffnet den Charakter-Editor systemweit),
                          character-damage.service.ts (Schadensauswahl → applyDamage → Session),
                          condition-tick.service.ts (ConditionTickService: effect() auf die Spielzeit → advanceConditions
-                         → CharactersDbService; app-weit in app.config.ts gestartet, `lastEvents` ohne Persistenz),
+                         → CharactersDbService; app-weit in app.config.ts gestartet, Ereignisse → GameLogService),
                          file-transfer.service.ts (Dateien herunterladen und lesen),
                          confirmation.service.ts (Rückfrage über den ConfirmationDialog als Promise<boolean>),
                          sidebar-section-state.service.ts (zugeklappte Abschnitte per persistedState mit TOOL_STATE_KEYS)
@@ -145,6 +153,7 @@ shared/
                          condition-tick.util.ts (advanceConditions: Wirkmomente nachholen, Ablauf, Ereignisse),
                          condition-time.util.ts (Ende, Restdauer, nächster Wirkmoment, `m:ss`),
                          condition-draft.util.ts (Vorlage kopieren, Start beim Übernehmen, Minuten/Sekunden),
+                         game-log-entries.util.ts (Log-Einträge zu Zustands-Tick, Setzen/Entfernen, manuellem Schaden),
                          xml.util.ts (XML lesen/schreiben, `requireChild` mit Dateiart in der Fehlermeldung)
   testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
                          character-editor-dialog.fixtures.ts, character-conditions-editor.fixtures.ts,

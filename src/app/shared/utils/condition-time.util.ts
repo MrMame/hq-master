@@ -41,9 +41,5 @@ export function formatRemaining(condition: ActiveCondition, now: Date): string {
   return remaining === null ? 'unbegrenzt' : formatDuration(remaining);
 }
 
-/** Uhrzeit der Spielzeit als `HH:MM:SS`. */
-export function formatClock(time: Date): string {
-  return [time.getHours(), time.getMinutes(), time.getSeconds()]
-    .map((part) => part.toString().padStart(2, '0'))
-    .join(':');
-}
+// Gemeinsam mit dem Ereignis-Log; liegt in core, weil der GameTimeService sie für Zeiteinträge braucht.
+export { formatClock } from '../../core/services/game-log/game-log-text.util';

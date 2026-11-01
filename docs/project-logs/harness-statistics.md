@@ -22,7 +22,7 @@ Werte je umgesetztem Punkt (Median). Index: 100 = Median aller Läufe desselben 
 
 | Stand    | Seit             | Läufe | Dauer (min) | Tools | Tokens gesamt | Output-Tokens | Fehlschläge + 1 | Diff-Zeilen | Index           |
 | -------- | ---------------- | ----- | ----------- | ----- | ------------- | ------------- | --------------- | ----------- | --------------- |
-| f0a6f624 | 2026-11-01 10:00 | 1     | 3,2         | 10,8  | 1.320.275     | 8.669         | 0,7             | 235         | 100 (vorläufig) |
+| f0a6f624 | 2026-11-01 10:00 | 2     | 9,2         | 13,4  | 1.238.507     | 9.328         | 0,99            | 391         | 100 (vorläufig) |
 
 ## Läufe
 
@@ -35,7 +35,8 @@ Werte je umgesetztem Punkt (Median). Index: 100 = Median aller Läufe desselben 
 | 2026-11-01 08:28 | implement-refactor | quick-access-bar                  | 6      | +366 / −136 | 10          | 1      | 1          | 52    | 5                      | 28.301        | 3.803.996     | unbekannt                | alt-2                     | –          | 119   |
 | 2026-11-01 09:17 | implement-refactor | project-logs-folder               | 4      | +42 / −36   | 3           | 1      | 1          | 15    | 1                      | 6.137         | 787.996       | unbekannt                | alt-2                     | –          | 244   |
 | 2026-11-01 10:00 | implement-refactor | harness-statistics-log            | 7      | +2186 / −85 | 40          | 4      | 1          | 86    | 0                      | 94.044        | 10.122.304    | claude-opus-5-5 (medium) | alt-2 (ändert Harness)    | –          | 75    |
-| 2026-11-01 11:02 | implement-feature  | character-conditions              | 10     | +2309 / −37 | 32          | 3      | 0          | 108   | 6 (+1)                 | 86.689        | 13.202.753    | claude-opus-5-5 (medium) | f0a6f624 (ändert Harness) | –          | 100   |
+| 2026-11-01 11:02 | implement-feature  | character-conditions              | 10     | +2309 / −37 | 32          | 3      | 0          | 108   | 6 (+1)                 | 86.689        | 13.202.753    | claude-opus-5-5 (medium) | f0a6f624 (ändert Harness) | –          | 137   |
+| 2026-11-01 12:49 | implement-feature  | game-event-log                    | 7      | +3764 / −63 | 106         | 3      | 0          | 112   | 8 (+1)                 | 69.906        | 8.097.164     | claude-opus-5-5 (medium) | 3443b517 (ändert Harness) | –          | 84    |
 
 ## Harness-Stände
 
@@ -45,6 +46,7 @@ Werte je umgesetztem Punkt (Median). Index: 100 = Median aller Läufe desselben 
 | alt-2    | 2026-10-31 20:56 | unbekannt                | unbekannt   | ja        | wirkungsrelevant       | Harness-Stand unbekannt; Fehlschläge aus Prüfausgaben (work-statistics-failure-detection) | –                                                                     | scripts/claude/activity-log.mjs, scripts/claude/check-output.mjs, .claude/hooks/log-activity.mjs |
 | f0a6f624 | 2026-11-01 10:00 | claude-opus-5-5 (medium) | 2.1.314     | ja        | wirkungsrelevant       | Statistiklog mit Harness-Stand, Effizienz-Index und --append in Skills und Regel          | Arbeitsweise unverändert; ca. +1 Tool-Aufruf je Lauf durch --append   | erster Stand (43 Dateien)                                                                        |
 | 3443b517 | 2026-11-01 11:02 | claude-opus-5-5 (medium) | 2.1.314     | –         | nicht wirkungsrelevant | architecture.md: Einträge für Zustands-Modelle, Tick-Service, Utils und Komponenten       | Keine messbare Wirkung; nur neue Einträge in der Verzeichnisstruktur. | ~ .claude/rules/architecture.md                                                                  |
+| 961e5ba4 | 2026-11-01 12:49 | claude-opus-5-5 (medium) | 2.1.314     | –         | nicht wirkungsrelevant | architecture.md: GameLog-Dateien und ConditionTick-Ereignisse dokumentiert                | Reine Strukturdoku, keine Wirkung auf Effizienz erwartet              | ~ .claude/rules/architecture.md                                                                  |
 
 ## Erläuterungen
 

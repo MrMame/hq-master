@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-01  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** done (2026-11-01 11:18)  
 **Bezug:** `REQUIREMENTS.md` (1. Time Tracker: „Loggen aller zeitrelevanten Dinge“, „Jede Änderung oder zeitlich
 abhängige und ausgelöste Aktion soll in einem einsehbaren Log für den Dungeon Master einsehbar sein“),
 Voraussetzung `docs/feature-requests/done/character-conditions.md` #3/#4 (`ConditionEvent`, `ConditionTickService`),
@@ -41,7 +41,7 @@ CharacterDamageService (Dialog) ───────► append({ type: 'damage'
 
 ## Anforderungen
 
-### 1. Modell
+### 1. Modell ✅ done (2026-11-01 11:18)
 
 - `core/models/game-log-entry.model.ts`:
   - `GameLogEntryType` = `'time' | 'condition-damage' | 'condition-expired' | 'condition-set' |
@@ -55,7 +55,7 @@ CharacterDamageService (Dialog) ───────► append({ type: 'damage'
 
 ---
 
-### 2. Session-Service `GameLogService`
+### 2. Session-Service `GameLogService` ✅ done (2026-11-01 11:18)
 
 - Per CLI: `ng g s core/services/game-log/game-log` → `GameLogService`, `SessionStateSlice<GameLogEntry[]>`.
   - `_entries = persistedState(SESSION_KEYS.gameLog, () => [], GAME_LOG_CODEC)`. Der Codec verwirft
@@ -69,7 +69,7 @@ beim Session-Start geleert und beim Laden eines Spielstands ersetzt.
 
 ---
 
-### 3. Ereignisse schreiben
+### 3. Ereignisse schreiben ✅ done (2026-11-01 11:18)
 
 - **Zustände:** `ConditionTickService` übergibt seine `ConditionEvent`s direkt an `GameLogService.append()`.
   Das Signal `lastEvents` aus `character-conditions.md` #4 fällt weg: Mehrere Ticks vor dem nächsten
@@ -86,7 +86,7 @@ beim Session-Start geleert und beim Laden eines Spielstands ersetzt.
 
 ---
 
-### 4. Anzeige im TimeTracker
+### 4. Anzeige im TimeTracker ✅ done (2026-11-01 11:18)
 
 - Neue Komponente per CLI: `ng g c features/time-tracker/components/game-log-list` → `GameLogList`.
 - Die Liste steht unter der Übersicht der aktiven Zustände. Jede Zeile zeigt die Spielzeit (`HH:mm:ss`, das
@@ -102,7 +102,7 @@ darunter 10 Gift-Einträge mit je einer Minute Abstand und „Gift abgelaufen“
 
 ---
 
-### 5. Spielstand (XML)
+### 5. Spielstand (XML) ✅ done (2026-11-01 11:18)
 
 - Neuer Mapper `features/game-session/xml/game-log.xml-mapper.ts` (`writeGameLog` / `readGameLog`):
   `<gameLog><entry id type gameTime characterId characterName conditionId value>text</entry></gameLog>`.
@@ -110,7 +110,7 @@ darunter 10 Gift-Einträge mit je einer Minute Abstand und „Gift abgelaufen“
 
 ---
 
-### 6. Dokumentation
+### 6. Dokumentation ✅ done (2026-11-01 11:18)
 
 - `REQUIREMENTS.md` 1. Time Tracker: die Log-Funktion konkretisieren (welche Ereignisse, Filter, Leeren).
 - `.claude/rules/architecture.md`: Modell, Service, Util, Mapper und Komponente eintragen.
@@ -119,7 +119,7 @@ darunter 10 Gift-Einträge mit je einer Minute Abstand und „Gift abgelaufen“
 
 ---
 
-### 7. Tests
+### 7. Tests ✅ done (2026-11-01 11:18)
 
 - `game-log.service.spec.ts`: `describePersistedState`, `append` mit Höchstgrenze, `clear`, `restore`,
   `reset`.
@@ -134,14 +134,14 @@ darunter 10 Gift-Einträge mit je einer Minute Abstand und „Gift abgelaufen“
 
 ## Akzeptanzkriterien
 
-- [ ] Zeitschritte, Schaden durch Zustände, abgelaufene, gesetzte und entfernte Zustände sowie manueller
+- [x] Zeitschritte, Schaden durch Zustände, abgelaufene, gesetzte und entfernte Zustände sowie manueller
       Schaden erscheinen im Log mit der Spielzeit des Ereignisses.
-- [ ] Bei einem Zeitsprung steht jeder nachgeholte Wirkmoment als eigener Eintrag zu seiner Minute im Log.
-- [ ] Der TimeTracker zeigt das Log mit den neuesten Einträgen oben, filterbar und nach Rückfrage leerbar.
-- [ ] Das Log übersteht einen Reload, wird beim Start einer neuen Session geleert und ist im XML-Spielstand
+- [x] Bei einem Zeitsprung steht jeder nachgeholte Wirkmoment als eigener Eintrag zu seiner Minute im Log.
+- [x] Der TimeTracker zeigt das Log mit den neuesten Einträgen oben, filterbar und nach Rückfrage leerbar.
+- [x] Das Log übersteht einen Reload, wird beim Start einer neuen Session geleert und ist im XML-Spielstand
       enthalten. Ältere Spielstände lassen sich laden.
-- [ ] Es bleiben höchstens 1000 Einträge, die ältesten fallen weg.
-- [ ] Tests und Coverage-Schwellen sind grün, keine Datei über 150 Zeilen.
+- [x] Es bleiben höchstens 1000 Einträge, die ältesten fallen weg.
+- [x] Tests und Coverage-Schwellen sind grün, keine Datei über 150 Zeilen.
 
 ---
 
@@ -154,3 +154,19 @@ darunter 10 Gift-Einträge mit je einer Minute Abstand und „Gift abgelaufen“
 - Die Grenze von 1000 Einträgen reicht für eine Session. Ältere Einträge braucht der DM nur im
   XML-Spielstand.
 - Einträge lassen sich nicht einzeln bearbeiten oder löschen, nur das ganze Log leeren.
+
+---
+
+## Umsetzungshinweise (2026-11-01 11:18)
+
+Mit dem Nutzer im Plan abgestimmte Abweichungen:
+
+- Das Text-Util liegt unter `core/services/game-log/game-log-text.util.ts` statt unter `shared/utils/`, weil der
+  `GameTimeService` (core) die Zeiteinträge schreibt und `core` nicht aus `shared` importiert. Die Entry-Builder für
+  Zustände und Schaden liegen in `shared/utils/game-log-entries.util.ts`.
+- `GameLogEntry` hat zusätzlich `damageType?` (manueller Schaden), damit die Liste `hit-normal.svg` bzw.
+  `hit-critical.svg` zeigt; das XML schreibt es als Attribut `damageType`.
+- `GameTimeService.startAt()` setzt die Startzeit einer neuen Session ohne Log-Eintrag; das Log beginnt leer.
+- Die Liste sortiert nach Spielzeit absteigend (bei gleicher Zeit der später angehängte Eintrag oben). Nach +1 h
+  steht so der Zeitschritt oben. Ein Zurückstellen der Zeit wird in die Zeitachse einsortiert.
+- „Schaden“ zeigt manuellen Schaden und Schaden durch Zustände, „Zustände“ alle Zustands-Einträge.
