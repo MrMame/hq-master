@@ -1,0 +1,30 @@
+Feature : Charakter zustände mit zeitlichem effekt
+
+    - Zustände der Charaktere
+        Gift, Benommen, 
+    - Auswirkungen der Zustände
+        Schaden über Zeit
+        Zustandswechsel
+
+    - Im Editorfenster sollen die Verschiedenen Zustände per Checkboxen Ein/Auschaltbar sein
+    - Zustände, die mit der InGame Zeit gekoppelt sind, sollenn zu ihren Wirkmomenten schaden automatisch
+
+
+
+Feature : Rundensteuerung in Dungeon Tracker eibinden
+
+
+
+    - Über ein Runden-Menü im Dungeon Tracker soll eine neue Runde ausgelöst werden können
+        -> Das Runden-Menü wird beim anklicken des Runden-menü-Buttons unterhalb des "neuen Charakter" Plus buttons in der schnellleiste
+        -> Neue Runde heisst
+            + 10 InGame Sekunden im globalen inGameTimer
+            + "Charakter-in-diesr-runde-bewegt" Flag wird automatisch für alle Charaktere zurückgesezt
+
+    - Wenn Charaktere ihre Position innerhalb einer Runde auf dem DungeonTracker verändern,
+        soll ein "Charakter-in-diesr-runde-bewegt" Flag gesetzt werden.
+    - Ist das "Charakter-in-diesr-runde-bewegt" Flag gesetzt, soll die Gelbe Charakter-Token Umrandung
+        sich in eine andere Farbe ändern um zu verdeutlichen , das der Charakter in dieser Runde bereits bewegt wurde.
+    - Das "Charakter-in-diesr-runde-bewegt" Flag kann im Charakter Editor über eine checkbox jederzeit entfernt werden.
+    - Das "Charakter-in-diesr-runde-bewegt" Flag wird automatisch zu beginn einer neuen Runde zurückgesetzt.
+
