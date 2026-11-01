@@ -29,7 +29,7 @@ test('poison set in the editor shows at token and legend and ticks on +1 h in th
   await expect(row).toContainText('Ork');
   await expect(row).toContainText('Gift');
 
-  await page.getByRole('button', { name: '+1 Hour' }).click();
+  await page.getByRole('button', { name: '1 Stunde vorrücken' }).click();
   await expect(page.getByText('Keine aktiven Zustände')).toBeVisible();
   const logEntries: Locator = page.getByTestId('game-log-entry');
   await expect(logEntries.first()).toContainText('+1 h');

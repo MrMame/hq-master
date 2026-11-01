@@ -1,20 +1,46 @@
-<div class="time-tracker-page">
-  <label class="game-time-label" data-testid="game-time-label">
-    Spielzeit: {{ gameTimeService.gameTimeAsString() }}
-  </label>
-  <div class="time-steps">
-    @for (step of secondSteps; track step) {
-      <button
-        class="time-button time-button--seconds"
-        [attr.data-testid]="'add-seconds-' + step"
-        (click)="addSeconds(step)"
-      >
-        +{{ step }} {{ step === 1 ? 'Second' : 'Seconds' }}
-      </button>
-    }
+<div class="feature-page">
+  <!-- Linke Seitenleiste: Zeit vorrücken, per Griff einklappbar -->
+  <app-collapsible-sidebar>
+    <div class="general-sidebar__header">
+      <h2 class="general-sidebar__title">Time Tracker</h2>
+      <app-sidebar-section-toggle-all scope="time-tracker" />
+    </div>
+
+    <app-sidebar-section title="Zeit vorrücken" sectionId="time-tracker.time">
+      <div class="time-steps">
+        <button
+          type="button"
+          class="general-sidebar__button time-steps__round"
+          (click)="startNewRound()"
+        >
+          Neue Runde
+        </button>
+        @for (step of timeSteps; track step.name) {
+          <button
+            type="button"
+            class="general-sidebar__button"
+            [style.grid-column]="'span ' + step.columns"
+            [attr.aria-label]="step.name"
+            [title]="step.name"
+            [attr.data-testid]="step.testId ?? null"
+            (click)="advance(step)"
+          >
+            {{ step.label }}
+          </button>
+        }
+      </div>
+    </app-sidebar-section>
+  </app-collapsible-sidebar>
+
+  <!-- Hauptbereich: Spielzeit bleibt oben stehen, nur das Ereignis-Log scrollt -->
+  <div class="feature-page__main time-tracker-main">
+    <section class="game-time" aria-labelledby="game-time-title">
+      <h2 id="game-time-title" class="section-heading">Spielzeit</h2>
+      <p class="game-time__value" data-testid="game-time-label">
+        {{ gameTimeService.gameTimeAsString() }}
+      </p>
+    </section>
+    <app-active-conditions-list />
+    <app-game-log-list />
   </div>
-  <button class="time-button time-button--hour" (click)="addTime1Hour()">+1 Hour</button>
-  <button class="time-button time-button--hours" (click)="addTime8Hour()">+8 Hours</button>
-  <app-active-conditions-list />
-  <app-game-log-list />
 </div>

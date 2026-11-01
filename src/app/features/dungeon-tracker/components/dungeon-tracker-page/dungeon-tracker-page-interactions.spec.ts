@@ -83,7 +83,7 @@ describe('DungeonTrackerPage – interactions', () => {
       (
         fixture.debugElement.query(By.directive(DungeonBoard)).componentInstance as DungeonBoard
       ).zoom();
-    const zoomControl: Element = host.querySelector('.board-area app-board-zoom-control')!;
+    const zoomControl: Element = host.querySelector('.feature-page__main app-board-zoom-control')!;
     expect(zoomControl.textContent).toContain('100 %');
     expect(boardZoom()).toBe(1);
 

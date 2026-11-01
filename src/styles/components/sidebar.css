@@ -38,14 +38,6 @@
   line-height: var(--text-xs--line-height);
 }
 
-.general-sidebar__heading {
-  color: var(--color-gray-400);
-  font-size: var(--text-xs);
-  line-height: var(--text-xs--line-height);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-wider);
-}
-
 .general-sidebar__heading--spaced {
   margin-bottom: var(--space-2);
 }

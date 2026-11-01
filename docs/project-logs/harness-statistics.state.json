@@ -1,5 +1,5 @@
 {
-  "stand": "ed60a6d0",
+  "stand": "9263c7a1",
   "model": "claude-opus-5-5 (medium)",
   "version": "2.1.314",
   "files": {
@@ -7,7 +7,7 @@
     ".claude/hooks/format-file.mjs": "31ac743d1fd0",
     ".claude/hooks/log-activity.mjs": "f6770ef25340",
     ".claude/hooks/stop-run-tests.mjs": "978fdc4764e1",
-    ".claude/rules/architecture.md": "ac05271fd323",
+    ".claude/rules/architecture.md": "c69a9e4b0bec",
     ".claude/rules/clean-code.md": "6e9340bd406d",
     ".claude/rules/feature-requests.md": "57457f573b87",
     ".claude/rules/refactoring-requests.md": "981f8e0d1c27",

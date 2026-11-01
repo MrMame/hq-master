@@ -101,9 +101,11 @@ features/
                          element-library.fixtures.ts (nur für Specs)
 
   time-tracker/        → In-Game-Zeiterfassung
-    components/        → TimeTrackerPage, ActiveConditionsList (aktive Zustände aller Charaktere, nur Anzeige),
+    components/        → TimeTrackerPage (Sidebar „Zeit vorrücken“ mit „Neue Runde“ über `RoundService`, rechts Spielzeit),
+                         ActiveConditionsList (aktive Zustände aller Charaktere, nur Anzeige),
                          GameLogList (Ereignis-Log: Filter-Chips, „Log leeren“ mit Rückfrage, scrollt in sich)
-    models/            → active-condition-row.model.ts, game-log-row.model.ts (GameLogFilter, GameLogRow)
+    models/            → active-condition-row.model.ts, game-log-row.model.ts (GameLogFilter, GameLogRow),
+                         time-step.model.ts (TIME_STEPS: Zeit-Buttons mit Beschriftung, Namen und Rasterbreite)
     utils/             → active-condition-rows.util.ts (Zeilen sortiert nach nächstem Wirkmoment, dann Restdauer),
                          game-log-rows.util.ts (Spielzeit absteigend, Datums-Trennzeile, Filter, Symbol je Eintrag)
 
@@ -316,6 +318,8 @@ lässt ihn unverändert.
   nur über die Tokens aus `src/styles/tokens.css` (`var(--…)`).
 - Feature-übergreifende Bausteine (z. B. `.general-sidebar`, `.general-dialog`) liegen global unter `src/styles/components/`
   und werden in `src/styles.css` per `@import … layer(components)` eingebunden; `tokens.css` enthält nur Tokens.
+- Seiten mit Seitenleiste nutzen `feature-page.css`: `.feature-page` (dunkle Hülle), `.feature-page__main` (Bereich neben
+  der Leiste), `.section-heading` (Abschnittsüberschrift in Leiste und Hauptbereich), `.empty-hint` (`--sm`) für leere Listen.
 - Shared-Dialoge nutzen den dunklen Look über `host: { class: 'general-dialog' }` und die Element-Klassen
   `general-dialog__title`, `__cancel`, `__confirm`. Material setzt den Dialog-Host (ohne Layer) auf
   `display: contents`; `.general-dialog` hält deshalb `display: block !important`, damit die Fläche eine Box hat.

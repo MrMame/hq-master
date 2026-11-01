@@ -1,28 +1,37 @@
 import { Component, inject } from '@angular/core';
 import { GameTimeService } from '../../../../core/services/game-time/game-time.service';
+import { CollapsibleSidebar } from '../../../../shared/components/collapsible-sidebar/collapsible-sidebar';
+import { SidebarSection } from '../../../../shared/components/sidebar-section/sidebar-section';
+import { SidebarSectionToggleAll } from '../../../../shared/components/sidebar-section-toggle-all/sidebar-section-toggle-all';
+import { RoundService } from '../../../../shared/services/round.service';
+import { TIME_STEPS, TimeStep } from '../../models/time-step.model';
 import { ActiveConditionsList } from '../active-conditions-list/active-conditions-list';
 import { GameLogList } from '../game-log-list/game-log-list';
 
+/** Time Tracker: Seitenleiste „Zeit vorrücken“, rechts Spielzeit, aktive Zustände und Ereignis-Log. */
 @Component({
   selector: 'app-time-tracker-page',
-  imports: [ActiveConditionsList, GameLogList],
+  imports: [
+    CollapsibleSidebar,
+    SidebarSection,
+    SidebarSectionToggleAll,
+    ActiveConditionsList,
+    GameLogList,
+  ],
   templateUrl: './time-tracker-page.html',
   styleUrl: './time-tracker-page.css',
 })
 export class TimeTrackerPage {
-  gameTimeService: GameTimeService = inject(GameTimeService);
+  protected readonly gameTimeService: GameTimeService = inject(GameTimeService);
+  private readonly roundService: RoundService = inject(RoundService);
 
-  readonly secondSteps: readonly number[] = [1, 5, 10];
+  protected readonly timeSteps: readonly TimeStep[] = TIME_STEPS;
 
-  addSeconds(seconds: number): void {
-    this.gameTimeService.addTime({ seconds });
+  protected startNewRound(): void {
+    this.roundService.startNewRound();
   }
 
-  addTime1Hour(): void {
-    this.gameTimeService.addTime({ hours: 1 });
-  }
-
-  addTime8Hour(): void {
-    this.gameTimeService.addTime({ hours: 8 });
+  protected advance(step: TimeStep): void {
+    this.gameTimeService.addTime(step.span);
   }
 }

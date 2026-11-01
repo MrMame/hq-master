@@ -1,4 +1,4 @@
-<div class="builder-page">
+<div class="feature-page">
   <!-- Linke Seitenleiste: Datei, Layout und Bibliothek, per Griff einklappbar -->
   <app-collapsible-sidebar>
     <div class="general-sidebar__header">
@@ -24,8 +24,8 @@
     />
   </app-collapsible-sidebar>
 
-  <!-- Hauptbereich: Werkzeugstreifen im schmalen Streifen links, daneben der Plan -->
-  <div class="builder-area">
+  <!-- Hauptbereich: Werkzeugstreifen im schmalen Streifen links (scrollt nicht mit, verdeckt keine Kachel), daneben der Plan -->
+  <div class="feature-page__main">
     <app-builder-tool-strip [(zoom)]="zoom" />
     <app-layout-plan [zoom]="zoom()" />
   </div>

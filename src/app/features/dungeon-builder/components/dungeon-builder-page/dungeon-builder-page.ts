@@ -35,7 +35,6 @@ import { LayoutSettings } from '../layout-settings/layout-settings';
   providers: [BuilderUiService],
   host: { '(document:keydown)': 'onKeydown($event)' },
   templateUrl: './dungeon-builder-page.html',
-  styleUrl: './dungeon-builder-page.css',
 })
 export class DungeonBuilderPage {
   private readonly ui: BuilderUiService = inject(BuilderUiService);

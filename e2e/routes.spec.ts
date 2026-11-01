@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 /** Eindeutiger Inhalt je Feature-Seite, an dem erkennbar ist, dass die lazy Route geladen hat. */
 const pages: { path: string; marker: string }[] = [
-  { path: '/timetracker', marker: '+1 Hour' },
+  { path: '/timetracker', marker: 'Time Tracker' },
   { path: '/dungeontracker', marker: 'Dungeon Tracker' },
   { path: '/dungeonbuilder', marker: 'Dungeon Builder' },
   { path: '/cardmanager', marker: 'Deck laden' },

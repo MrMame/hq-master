@@ -3,30 +3,9 @@
   opacity: 0.8;
 }
 
-.dungeon-page {
-  display: flex;
-  height: 100%;
-  background-color: var(--color-gray-900);
-  color: var(--color-white);
-}
-
-/* Schnellzugriffsleiste plus Spielbrett; die Leiste liegt neben dem Scroll-Container, scrollt nicht mit und verdeckt kein Feld. */
-.board-area {
-  display: flex;
-  flex: 1;
-  min-width: 0;
-}
-
 .upload-status {
   margin-top: var(--space-1);
   color: var(--color-green-400);
-  font-size: var(--text-xs);
-  line-height: var(--text-xs--line-height);
-}
-
-/* Charakter-Legende */
-.legend-empty {
-  color: var(--color-gray-500);
   font-size: var(--text-xs);
   line-height: var(--text-xs--line-height);
 }
