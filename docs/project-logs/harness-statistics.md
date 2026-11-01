@@ -26,9 +26,9 @@ Werte je umgesetztem Punkt (Median). Index: 100 = Median aller Läufe desselben 
 
 ### Messverfahren 4 (ab cdcba13c, 2026-11-01 19:29)
 
-| Stand    | Seit             | Läufe | Dauer (min) | Tools | Tokens gesamt | Output-Tokens | Fehlschläge + 1 | Diff-Zeilen | Index |
-| -------- | ---------------- | ----- | ----------- | ----- | ------------- | ------------- | --------------- | ----------- | ----- |
-| cdcba13c | 2026-11-01 19:29 | 0     | –           | –     | –             | –             | –               | –           | –     |
+| Stand    | Seit             | Läufe | Dauer (min) | Tools | Tokens gesamt | Output-Tokens | Fehlschläge + 1 | Diff-Zeilen | Index           |
+| -------- | ---------------- | ----- | ----------- | ----- | ------------- | ------------- | --------------- | ----------- | --------------- |
+| cdcba13c | 2026-11-01 19:29 | 1     | 4,9         | 14,3  | 1.554.826     | 7.371         | 0,71            | 98          | 100 (vorläufig) |
 
 ## Läufe
 
@@ -44,6 +44,7 @@ Werte je umgesetztem Punkt (Median). Index: 100 = Median aller Läufe desselben 
 | 2026-11-01 11:02 | implement-feature  | character-conditions              | 10     | +2309 / −37 | 32          | 3      | 0          | 108   | 6 (+1)                 | 86.689        | 13.202.753    | claude-opus-5-5 (medium) | f0a6f624 (ändert Harness) | –          | 137   |
 | 2026-11-01 12:49 | implement-feature  | game-event-log                    | 7      | +3764 / −63 | 106         | 3      | 0          | 112   | 8 (+1)                 | 69.906        | 8.097.164     | claude-opus-5-5 (medium) | 3443b517 (ändert Harness) | –          | 84    |
 | 2026-11-01 19:29 | interview-me       | dungeon-round-control             | –      | +213 / −12  | 8           | 2      | 4          | 29    | 2                      | 19.110        | 2.308.023     | claude-opus-5-5 (medium) | 961e5ba4 (ändert Harness) | –          | –     |
+| 2026-11-01 20:06 | implement-feature  | dungeon-round-control             | 7      | +651 / −35  | 34          | 2      | 1          | 100   | 4 (+1)                 | 51.598        | 10.883.784    | claude-opus-5-5 (medium) | cdcba13c (ändert Harness) | –          | 100   |
 
 ## Harness-Stände
 
@@ -55,6 +56,7 @@ Werte je umgesetztem Punkt (Median). Index: 100 = Median aller Läufe desselben 
 | 3443b517 | 2026-11-01 11:02 | claude-opus-5-5 (medium) | 2.1.314     | –         | nicht wirkungsrelevant | architecture.md: Einträge für Zustands-Modelle, Tick-Service, Utils und Komponenten              | Keine messbare Wirkung; nur neue Einträge in der Verzeichnisstruktur.                                            | ~ .claude/rules/architecture.md                                                                  |
 | 961e5ba4 | 2026-11-01 12:49 | claude-opus-5-5 (medium) | 2.1.314     | –         | nicht wirkungsrelevant | architecture.md: GameLog-Dateien und ConditionTick-Ereignisse dokumentiert                       | Reine Strukturdoku, keine Wirkung auf Effizienz erwartet                                                         | ~ .claude/rules/architecture.md                                                                  |
 | cdcba13c | 2026-11-01 19:29 | claude-opus-5-5 (medium) | 2.1.314     | ja        | nicht wirkungsrelevant | work-statistics: Skill-Lauf beginnt auch bei /skill mitten im Prompt oder beim Skill-Tool-Aufruf | Keine Wirkung auf die Arbeit; Läufe, deren Prompt nicht mit /skill beginnt, werden jetzt erfasst statt verworfen | ~ .claude/rules/work-statistics.md, ~ scripts/claude/activity-log.mjs                            |
+| ed60a6d0 | 2026-11-01 20:06 | claude-opus-5-5 (medium) | 2.1.314     | –         | nicht wirkungsrelevant | architecture.md: RoundMenu, RoundService, markMoved/clearMovedThisRound dokumentiert             | Reine Doku-Ergänzung zu neuen Bausteinen; keine messbare Wirkung auf Effizienz erwartet                          | ~ .claude/rules/architecture.md                                                                  |
 
 ## Erläuterungen
 

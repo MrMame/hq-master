@@ -26,6 +26,7 @@ describe('createRandomCharacter', () => {
       image: CHARACTER_IMAGES[0],
       description: `Dies ist eine zufällige Beschreibung für ${name}.`,
       conditions: [],
+      movedThisRound: false,
     });
   });
 
@@ -46,6 +47,7 @@ describe('createRandomCharacter', () => {
       image: CHARACTER_IMAGES.at(-1),
       description: `Dies ist eine zufällige Beschreibung für ${name}.`,
       conditions: [],
+      movedThisRound: false,
     });
   });
 

@@ -22,6 +22,7 @@ const orc: CharacterInfo = {
   image: './img/monster-icon-Orc.png',
   description: 'Grimmig',
   conditions: [],
+  movedThisRound: false,
 };
 
 const STAT_CAPTIONS: string[] = ['Leben', 'Rüstung', 'Angriff', 'Abwehr', 'Tempo'];

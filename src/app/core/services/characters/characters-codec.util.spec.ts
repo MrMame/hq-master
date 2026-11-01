@@ -22,6 +22,17 @@ describe('CHARACTERS_CODEC', () => {
     expect(CHARACTERS_CODEC.decode([older])).toEqual([createTestCharacter('a')]);
   });
 
+  it('loads characters of older sessions without the round flag as not moved', () => {
+    const older: Partial<CharacterInfo> = { ...createTestCharacter('a'), movedThisRound: true };
+    delete older.movedThisRound;
+    expect(CHARACTERS_CODEC.decode([older])).toEqual([createTestCharacter('a')]);
+  });
+
+  it('keeps a stored round flag', () => {
+    const moved: CharacterInfo = { ...createTestCharacter('a'), movedThisRound: true };
+    expect(CHARACTERS_CODEC.decode([moved])).toEqual([moved]);
+  });
+
   it('drops entries that are no objects', () => {
     expect(CHARACTERS_CODEC.decode([null, 'x', [1], createTestCharacter('a')])).toEqual([
       createTestCharacter('a'),

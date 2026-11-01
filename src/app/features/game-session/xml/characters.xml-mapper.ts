@@ -3,6 +3,7 @@ import {
   appendTextElement,
   childElements,
   firstChild,
+  readBoolean,
   readNumber,
   readString,
   setAttributes,
@@ -34,6 +35,7 @@ function writeCharacter(doc: XMLDocument, c: CharacterInfo): Element {
     defense: c.defense,
     speed: c.speed,
     image: c.image,
+    movedThisRound: c.movedThisRound,
   });
   appendTextElement(el, 'description', c.description);
   c.abilities.forEach((ability) => appendTextElement(el, 'ability', ability));
@@ -55,5 +57,6 @@ function readCharacter(el: Element): CharacterInfo {
     image: readString(el, 'image'),
     description: textOf(firstChild(el, 'description')),
     conditions: readConditions(el),
+    movedThisRound: readBoolean(el, 'movedThisRound'),
   };
 }

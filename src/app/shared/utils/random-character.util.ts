@@ -48,5 +48,6 @@ export function createRandomCharacter(id: string): CharacterInfo {
     image,
     description: `Dies ist eine zufällige Beschreibung für ${name}.`,
     conditions: [],
+    movedThisRound: false,
   };
 }

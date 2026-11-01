@@ -20,6 +20,7 @@ describe('createNewCharacter', () => {
       image: '',
       description: '',
       conditions: [],
+      movedThisRound: false,
     });
   });
 

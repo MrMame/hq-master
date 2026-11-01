@@ -21,6 +21,7 @@ describe('game-log-rows.util', () => {
   const log: GameLogEntry[] = [
     entry('gesetzt', { type: 'condition-set', conditionId: 'poison', gameTime: at(1, 23, 50) }),
     entry('+1 h', { type: 'time', gameTime: at(2, 0, 50) }),
+    entry('runde', { type: 'round', gameTime: at(1, 23, 50) }),
     entry('gift 1', { type: 'condition-damage', conditionId: 'poison', gameTime: at(1, 23, 51) }),
     entry('gift 2', { type: 'condition-damage', conditionId: 'poison', gameTime: at(2, 0, 0) }),
     entry('ablauf', { type: 'condition-expired', conditionId: 'poison', gameTime: at(2, 0, 0) }),
@@ -35,12 +36,13 @@ describe('game-log-rows.util', () => {
       '00:00:00 gift 2',
       '— 2381-01-01',
       '23:51:00 gift 1',
+      '23:50:00 runde',
       '23:50:00 gesetzt',
     ]);
   });
 
   it.each<[GameLogFilter, string[]]>([
-    ['time', ['+1 h']],
+    ['time', ['+1 h', 'runde']],
     ['conditions', ['ablauf', 'gift 2', 'gift 1', 'gesetzt']],
     ['damage', ['treffer', 'gift 2', 'gift 1']],
   ])('shows only matching entries for filter "%s"', (filter, texts) => {
@@ -61,6 +63,7 @@ describe('game-log-rows.util', () => {
     [{ type: 'damage', damageType: DamageTypes.Normal }, './img/hit-normal.svg'],
     [{ type: 'damage', damageType: DamageTypes.Critical }, './img/hit-critical.svg'],
     [{ type: 'time' }, './img/clock.svg'],
+    [{ type: 'round' }, './img/clock.svg'],
   ])('picks the icon for %o', (overrides, icon) => {
     expect(entryIcon(createTestLogEntry(overrides))).toBe(icon);
   });

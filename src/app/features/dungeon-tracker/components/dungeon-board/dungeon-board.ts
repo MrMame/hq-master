@@ -18,6 +18,7 @@ import {
 import { NgStyle } from '@angular/common';
 import { CharacterEditorService } from '../../../../shared/services/character-editor.service';
 import { CharacterInfo } from '../../../../core/models/character-info.model';
+import { CharactersDbService } from '../../../../core/services/characters/characters-db.service';
 import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { DungeonBoardState } from '../../models/dungeon-board-state.model';
 import { BoardToken } from '../../models/board-token.model';
@@ -43,6 +44,7 @@ import { GridOriginMarker } from '../grid-origin-marker/grid-origin-marker';
 export class DungeonBoard {
   private readonly dungeonBoardService: DungeonBoardService = inject(DungeonBoardService);
   private readonly characterEditor: CharacterEditorService = inject(CharacterEditorService);
+  private readonly charactersDb: CharactersDbService = inject(CharactersDbService);
   private readonly viewport: Signal<ElementRef<HTMLElement>> = viewChild.required('viewport');
 
   /** Zoomstufe aus der Sidebar; 1 = die ganze Spielfläche ist sichtbar. */
@@ -131,8 +133,14 @@ export class DungeonBoard {
     this.originPreview.set(null);
   }
 
-  onTokenMoved(event: { characterId: string; col: number; row: number }): void {
-    this.dungeonBoardService.updatePosition(event.characterId, event.col, event.row);
+  /** Nur ein Feldwechsel zählt als Zug; das Flag bleibt bis „Neue Runde“ gesetzt. */
+  onTokenMoved({ characterId, col, row }: { characterId: string; col: number; row: number }): void {
+    const from: BoardToken | undefined = this.tokens().find(
+      (t) => t.position.characterId === characterId,
+    );
+    if (from?.position.col === col && from.position.row === row) return;
+    this.dungeonBoardService.updatePosition(characterId, col, row);
+    this.charactersDb.markMoved(characterId);
   }
 
   /** Der Editor speichert selbst; Token und Legende folgen über `tokens` sofort. */

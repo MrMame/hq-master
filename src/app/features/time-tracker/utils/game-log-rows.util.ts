@@ -8,7 +8,7 @@ const CLOCK_ICON: string = './img/clock.svg';
 
 /** Welche Eintragsarten ein Filter zeigt; Zustands-Schaden zählt zu „Zustände“ und zu „Schaden“. */
 const FILTER_TYPES: Record<Exclude<GameLogFilter, 'all'>, readonly GameLogEntryType[]> = {
-  time: ['time'],
+  time: ['time', 'round'],
   conditions: ['condition-damage', 'condition-expired', 'condition-set', 'condition-removed'],
   damage: ['damage', 'condition-damage'],
 };

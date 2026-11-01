@@ -13,6 +13,7 @@
   [style.--portrait-size.px]="portraitSize()"
   [title]="character().name"
   [class.dungeon-token--selected]="selected()"
+  [class.dungeon-token--moved]="character().movedThisRound"
   class="dungeon-token"
 >
   <div cdkDragHandle class="dungeon-token__portrait">

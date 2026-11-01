@@ -15,5 +15,6 @@ export function createTestCharacter(id: string): CharacterInfo {
     image: 'assets/ork.png',
     description: 'Ein "gefährlicher" Ork',
     conditions: [],
+    movedThisRound: false,
   };
 }

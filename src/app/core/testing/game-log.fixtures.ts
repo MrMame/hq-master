@@ -44,5 +44,6 @@ export function createTestLog(): GameLogEntry[] {
       conditionId: 'blind',
       text: 'Blind bei Ork <&> gesetzt',
     },
+    createTestLogEntry({ id: 'log-5', type: 'round', value: undefined, text: 'Neue Runde' }),
   ];
 }

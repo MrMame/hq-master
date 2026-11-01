@@ -69,6 +69,7 @@ describe('CharacterEditorDialog – create', () => {
       image: CHARACTER_IMAGES[1],
       description: '',
       conditions: [],
+      movedThisRound: false,
     });
     expect(created.id).not.toBe(existing.id);
     expect(editor.close).toHaveBeenCalledExactlyOnceWith(created);

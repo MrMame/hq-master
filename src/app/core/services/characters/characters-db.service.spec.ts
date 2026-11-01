@@ -22,6 +22,7 @@ const createCharacter: (id: string, name?: string) => CharacterInfo = (
   image: '',
   description: '',
   conditions: [],
+  movedThisRound: false,
 });
 
 const readStored: () => CharacterInfo[] = (): CharacterInfo[] =>
