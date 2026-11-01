@@ -7,7 +7,7 @@
 `scripts/claude/transcript-usage.mjs`, `scripts/claude/git-files.mjs`, `.claude/rules/work-statistics.md`,
 `.claude/skills/implement-feature/SKILL.md`, `.claude/skills/implement-refactor/SKILL.md`,
 `.claude/skills/interview-me/SKILL.md`, `docs/project-logs/ai-implementations-log.md`  
-**Voraussetzung:** `docs/refactoring-requests/project-logs-folder.md` (Logs nach `docs/project-logs/`) ist umgesetzt.
+**Voraussetzung:** `docs/refactoring-requests/done/project-logs-folder.md` (Logs nach `docs/project-logs/`) ist umgesetzt.
 
 ---
 

@@ -75,7 +75,7 @@ Gemäß `.claude/rules/feature-requests.md`:
 - [ ] Jeden umgesetzten Punkt markieren: `✅ done (YYYY-MM-DD HH:MM)` an der Überschrift.
 - [ ] `**Status:**`-Zeile im Kopf aktualisieren (Teilweise umgesetzt / done mit Datum und Uhrzeit).
 - [ ] Erfüllte Akzeptanzkriterien auf `[x]` setzen.
-- [ ] Ist der Request **vollständig** done: Datei per `git mv docs/feature-requests/<slug>.md docs/feature-requests/done/` archivieren. Verweise mit vollem Pfad in offenen Requests anpassen; `ai-implementations-log.md` bleibt unverändert (Historie).
+- [ ] Ist der Request **vollständig** done: Datei per `git mv docs/feature-requests/<slug>.md docs/feature-requests/done/` archivieren. Verweise mit vollem Pfad in offenen Requests anpassen; `docs/project-logs/ai-implementations-log.md` bleibt unverändert (Historie).
 - [ ] Neu entdeckte offene Punkte als eigenen nummerierten Abschnitt ergänzen (nur nach Rückfrage).
 
 ## 6. Abschlussbericht und Commit
@@ -83,5 +83,5 @@ Gemäß `.claude/rules/feature-requests.md`:
 - [ ] Chat Ausgabe : was geändert wurde (mit Dateilinks), Test-/Build-Ergebnis, Coverage der geänderten Dateien (inkl. Begründung für ungetestete Stellen), was bewusst offen blieb.
 - [ ] Einen Committext für den gesamten Aufruf vorbereiten (Typ `feat(<scope>): …`, umgesetzte Punkte im Body auflisten).
 - [ ] Arbeitsstatistik nach `.claude/rules/work-statistics.md` ermitteln (`node scripts/claude/work-statistics.mjs --skill implement-feature`) und als `## Arbeitsstatistik` im Chat ausgeben.
-- [ ] Einen 'ai-implementations-log.md' Eintrag für den gesamten Aufruf vorbereiten (bei ganzer Datei `#1–#n` in der Überschrift), mit der Zeile `- **Statistik:** …` aus dem Skript als letztem Punkt.
-- [ ] Benutzer den Committext und 'ai-implementations-log.md' Eintrag zeigen und fragen, ob der commit durchgeführt und der 'ai-implementations-log.md' Eintrag hinzugefügt werden soll.
+- [ ] Einen 'docs/project-logs/ai-implementations-log.md' Eintrag für den gesamten Aufruf vorbereiten (bei ganzer Datei `#1–#n` in der Überschrift), mit der Zeile `- **Statistik:** …` aus dem Skript als letztem Punkt.
+- [ ] Benutzer den Committext und 'docs/project-logs/ai-implementations-log.md' Eintrag zeigen und fragen, ob der commit durchgeführt und der 'docs/project-logs/ai-implementations-log.md' Eintrag hinzugefügt werden soll.

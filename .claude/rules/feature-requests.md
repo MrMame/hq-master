@@ -17,4 +17,4 @@
 - Umgesetzte Punkte und die `**Status:**`-Zeile werden mit `done` inkl. Datum und Uhrzeit der Fertigstellung markiert.
 - Ist ein Request **vollständig** umgesetzt, wird er per `git mv` nach `docs/feature-requests/done/` verschoben. Teilweise umgesetzte Requests bleiben im Hauptordner.
 - Abgeschlossene Requests werden nicht gelöscht; sie dokumentieren die Begründung hinter dem Code. Verworfene Requests erhalten Status `rejected` (mit Begründung) und werden ebenfalls nach `done/` verschoben.
-- Beim Verschieben Verweise mit vollem Pfad in offenen Requests anpassen. Einträge in `ai-implementations-log.md` bleiben unverändert (Historie).
+- Beim Verschieben Verweise mit vollem Pfad in offenen Requests anpassen. Einträge in `docs/project-logs/ai-implementations-log.md` bleiben unverändert (Historie).
