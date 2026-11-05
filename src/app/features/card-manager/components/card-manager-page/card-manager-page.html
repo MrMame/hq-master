@@ -29,6 +29,7 @@
               [card]="card"
               [backImagePath]="state()!.config.backImagePath"
               (click)="$event.stopPropagation(); onDrawPileCardClick(card.id)"
+              [side]="'back'"
             />
           }
         </div>
