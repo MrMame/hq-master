@@ -26,9 +26,9 @@ Werte je umgesetztem Punkt (Median). Index: 100 = Median aller Läufe desselben 
 
 ### Messverfahren 4 (ab cdcba13c, 2026-11-01 19:29)
 
-| Stand    | Seit             | Läufe | Dauer (min) | Tools | Tokens gesamt | Output-Tokens | Fehlschläge + 1 | Diff-Zeilen | Index           |
-| -------- | ---------------- | ----- | ----------- | ----- | ------------- | ------------- | --------------- | ----------- | --------------- |
-| cdcba13c | 2026-11-01 19:29 | 2     | 3,4         | 11,1  | 1.114.282     | 6.105         | 0,69            | 92          | 100 (vorläufig) |
+| Stand    | Seit             | Läufe | Dauer (min) | Tools | Tokens gesamt | Output-Tokens | Fehlschläge + 1 | Diff-Zeilen | Index |
+| -------- | ---------------- | ----- | ----------- | ----- | ------------- | ------------- | --------------- | ----------- | ----- |
+| cdcba13c | 2026-11-01 19:29 | 3     | 2           | 7,8   | 673.737       | 4.838         | 0,67            | 86          | 100   |
 
 ## Läufe
 
@@ -44,9 +44,10 @@ Werte je umgesetztem Punkt (Median). Index: 100 = Median aller Läufe desselben 
 | 2026-11-01 11:02 | implement-feature  | character-conditions              | 10     | +2309 / −37 | 32          | 3      | 0          | 108   | 6 (+1)                 | 86.689        | 13.202.753    | claude-opus-5-5 (medium) | f0a6f624 (ändert Harness) | –          | 137   |
 | 2026-11-01 12:49 | implement-feature  | game-event-log                    | 7      | +3764 / −63 | 106         | 3      | 0          | 112   | 8 (+1)                 | 69.906        | 8.097.164     | claude-opus-5-5 (medium) | 3443b517 (ändert Harness) | –          | 84    |
 | 2026-11-01 19:29 | interview-me       | dungeon-round-control             | –      | +213 / −12  | 8           | 2      | 4          | 29    | 2                      | 19.110        | 2.308.023     | claude-opus-5-5 (medium) | 961e5ba4 (ändert Harness) | –          | –     |
-| 2026-11-01 20:06 | implement-feature  | dungeon-round-control             | 7      | +651 / −35  | 34          | 2      | 1          | 100   | 4 (+1)                 | 51.598        | 10.883.784    | claude-opus-5-5 (medium) | cdcba13c (ändert Harness) | –          | 81    |
+| 2026-11-01 20:06 | implement-feature  | dungeon-round-control             | 7      | +651 / −35  | 34          | 2      | 1          | 100   | 4 (+1)                 | 51.598        | 10.883.784    | claude-opus-5-5 (medium) | cdcba13c (ändert Harness) | –          | 59    |
 | 2026-11-01 20:20 | interview-me       | time-tracker-sidebar-layout       | –      | +171 / −0   | 8           | 1      | 3          | 17    | 0                      | 15.060        | 1.405.207     | claude-opus-5-5 (medium) | ed60a6d0                  | –          | –     |
-| 2026-11-01 20:35 | implement-feature  | time-tracker-sidebar-layout       | 6      | +305 / −210 | 12          | 2      | 1          | 47    | 3 (+2)                 | 29.030        | 4.042.421     | claude-opus-5-5 (medium) | ed60a6d0 (ändert Harness) | –          | 138   |
+| 2026-11-01 20:35 | implement-feature  | time-tracker-sidebar-layout       | 6      | +305 / −210 | 12          | 2      | 1          | 47    | 3 (+2)                 | 29.030        | 4.042.421     | claude-opus-5-5 (medium) | ed60a6d0 (ändert Harness) | –          | 100   |
+| 2026-11-05 16:57 | implement-feature  | card-manager-real-card-format     | 6      | +32 / −24   | 11          | 2      | 1          | 33    | 2 (+1)                 | 16.000        | 2.911.196     | claude-opus-5-5 (medium) | b573d305                  | –          | 126   |
 
 ## Harness-Stände
 
@@ -60,6 +61,7 @@ Werte je umgesetztem Punkt (Median). Index: 100 = Median aller Läufe desselben 
 | cdcba13c | 2026-11-01 19:29 | claude-opus-5-5 (medium) | 2.1.314     | ja        | nicht wirkungsrelevant | work-statistics: Skill-Lauf beginnt auch bei /skill mitten im Prompt oder beim Skill-Tool-Aufruf | Keine Wirkung auf die Arbeit; Läufe, deren Prompt nicht mit /skill beginnt, werden jetzt erfasst statt verworfen | ~ .claude/rules/work-statistics.md, ~ scripts/claude/activity-log.mjs                            |
 | ed60a6d0 | 2026-11-01 20:06 | claude-opus-5-5 (medium) | 2.1.314     | –         | nicht wirkungsrelevant | architecture.md: RoundMenu, RoundService, markMoved/clearMovedThisRound dokumentiert             | Reine Doku-Ergänzung zu neuen Bausteinen; keine messbare Wirkung auf Effizienz erwartet                          | ~ .claude/rules/architecture.md                                                                  |
 | 9263c7a1 | 2026-11-01 20:35 | claude-opus-5-5 (medium) | 2.1.314     | –         | nicht wirkungsrelevant | architecture.md: time-step.model und feature-page.css dokumentiert                               | Keine Wirkung auf die Effizienz; nur Doku der neuen Klassen                                                      | ~ .claude/rules/architecture.md                                                                  |
+| b573d305 | 2026-11-05 16:57 | claude-opus-5-5 (medium) | 2.1.317     | –         | nicht wirkungsrelevant | Claude-Code-Update 2.1.314 → 2.1.317                                                             | Keine messbare Wirkung, nur Versionswechsel                                                                      | Claude Code 2.1.314 → 2.1.317                                                                    |
 
 ## Erläuterungen
 

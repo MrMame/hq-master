@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-05 16:52) - Feature: Karten im Card Manager im Format echter Spielkarten (card-manager-real-card-format #1–#6)
+
+- **Was wurde gemacht:** Alle Karten im Card Manager (Nachziehstapel, Aktive Karte, Ablagestapel, Bank) stehen unabhängig von der Fenstergröße hochkant im Verhältnis 63 : 88. Die Karte hält ihr Format über `aspect-ratio` am Host, die Seite gibt nur die Höhe vor. In den Stapeln beginnen die Karten unter der Überschrift, das Motiv füllt 85 % der Kartenbreite.
+- **Dateien geändert:** `src/styles/tokens.css` (`--card-aspect-ratio`), `card-manager/components/card-display/card-display.css`, `card-manager/components/card-manager-page/card-manager-page.css`, `docs/feature-requests/done/card-manager-real-card-format.md`
+- **Wichtige Entscheidung:** Nur CSS, ohne Änderung an Templates oder TypeScript. `width: auto` ist nötig, weil der Browser `aspect-ratio` ignoriert, wenn Breite und Höhe beide fest gesetzt sind. Der Abstand unter der Überschrift ist `--space-6`, weil die Überschriften durch die Grundstile genau eine Zeile (1,5 rem) hoch sind. Probe (2 Fenstergrößen), Lint, 1094 Tests (Lines 99,55 % / Branches 97,87 %), Build und e2e (31) grün.
+- **Statistik:** 6 min · 1 Runden · 1 Rückfragen · 29 Tools · Dateien 0 neu / 3 geändert · 2 Fehlschläge (+1 erwartet) · Tokens 2.318.133 (Output 11.071)
+
 ### (2026-11-01 20:32) - Feature: Time Tracker im Layout von Dungeon Tracker und Dungeon Builder (time-tracker-sidebar-layout #1–#6)
 
 - **Was wurde gemacht:** Der Time Tracker ist dunkel und hat links die einklappbare Seitenleiste „Time Tracker“ mit der Gruppe „Zeit vorrücken“: „Neue Runde“ über die volle Breite (Log-Eintrag, +10 s, Rundenstand zurück), darunter +1 s/+5 s/+10 s und +1 h/+8 h, gelb, volle Namen in `aria-label`/`title`. Rechts steht oben die Spielzeit groß und gelb, darunter „Aktive Zustände“ und das Log, das in sich scrollt. Filter-Chips, „Log leeren“ und Trennlinien haben ein dunkles Schema. Gleiche Stilregeln von DT, DB und Time Tracker liegen jetzt einmal in `feature-page.css`.

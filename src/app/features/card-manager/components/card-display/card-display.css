@@ -1,3 +1,9 @@
+/* Die Karte hält ihr Format selbst; Einsatzorte geben nur die Höhe vor. */
+:host {
+  display: block;
+  aspect-ratio: var(--card-aspect-ratio);
+}
+
 .card-display {
   display: inline-block;
 
@@ -18,7 +24,7 @@
 }
 
 .card-image {
-  width: 33%;
+  width: 85%;
   flex: 1;
   object-fit: scale-down;
 }

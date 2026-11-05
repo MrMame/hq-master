@@ -54,19 +54,19 @@
   border: 2px dotted var(--color-black);
 }
 
-.cardInPile {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
+/* Nur die Höhe vorgeben: width: auto, damit aspect-ratio der Karte greift.
+   Karten in Stapeln liegen unter der Überschrift (eine Zeile, line-height 1.5). */
+.cardInPile,
 .cardInHand {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  top: var(--space-6);
+  height: calc(100% - var(--space-6));
+  width: auto;
 }
 .cardInBank {
-  width: 10dvw;
-  height: 10dvh;
+  height: 80%;
+  width: auto;
+  flex-shrink: 0;
 }
 
 .bankCardsContainer {
