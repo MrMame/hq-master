@@ -10,7 +10,7 @@ import { SidebarSectionToggleAll } from '../../../../shared/components/sidebar-s
   selector: 'app-card-manager-page',
   imports: [CardDisplay, CollapsibleSidebar, SidebarSection, SidebarSectionToggleAll],
   templateUrl: './card-manager-page.html',
-  styleUrl: './card-manager-page.css',
+  styleUrls: ['./card-manager-page.css', './card-manager-deck-loader.css'],
 })
 export class CardManagerPage {
   private readonly cardManagerService: CardManagerService = inject(CardManagerService);

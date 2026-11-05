@@ -7,13 +7,21 @@
 }
 
 /* Füllt den Platz neben der Sidebar; min-width: 0 erlaubt das Schrumpfen unter die Inhaltsbreite.
-   Positions- und Größenbezug der aktiven Karte (Container-Einheiten). */
+   Positions- und Größenbezug der aktiven Karte (Container-Einheiten).
+   Senkrechte Spalte: Deck-Zeile und Stapel behalten ihre Höhe, die Bank füllt den Rest. */
 .card-zone {
   --active-zone-fraction: 0.4;
   flex: 1;
   min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   position: relative;
   container-type: inline-size;
+
+  & > * {
+    flex-shrink: 0;
+  }
 }
 
 .pilesContainer {
@@ -25,13 +33,17 @@
   height: 40dvh;
   background-color: var(--color-card-manager-piles);
 }
+/* Bank bis zum unteren Rand; scrollt ab der dritten Reihe senkrecht in sich.
+   container-type: size liefert cqh für die Kartenhöhe (zwei Reihen je sichtbarer Höhe). */
 .bankContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
+  --bank-gap: var(--space-2);
+  flex: 1 1 0;
+  min-height: 0;
   width: 100%;
-  height: 30dvh;
+  padding: var(--bank-gap);
+  overflow-x: hidden;
+  overflow-y: auto;
+  container-type: size;
   background-color: var(--color-card-manager-bank);
 }
 
@@ -79,65 +91,18 @@
   height: min(60dvh, calc(var(--active-zone-fraction) * 100cqi / (var(--card-aspect-ratio))));
   width: auto;
 }
+/* Zwei Reihen plus ein Reihenabstand füllen genau die sichtbare Bankhöhe (Inhaltsbox). */
 .cardInBank {
-  height: 80%;
+  height: calc((100cqh - var(--bank-gap)) / 2);
   width: auto;
   flex-shrink: 0;
 }
 
 .bankCardsContainer {
   display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-content: flex-start;
+  gap: var(--bank-gap);
   width: 100%;
-  height: 100%;
-}
-
-/* Laden eines Decks, solange keines geladen ist */
-.deck-loader {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-8);
-}
-
-.deck-loader__hint {
-  color: var(--color-gray-400);
-}
-
-.deck-loader__form {
-  display: flex;
-  gap: var(--space-2);
-}
-
-.deck-loader__input {
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--color-gray-600);
-  border-radius: var(--radius-sm);
-  background-color: var(--color-gray-800);
-  color: var(--color-white);
-}
-
-.deck-loader__button {
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-sm);
-  background-color: var(--color-blue-500);
-  color: var(--color-white);
-  font-weight: var(--font-weight-bold);
-
-  &:hover {
-    background-color: var(--color-blue-700);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-  }
-}
-
-.deck-loader__error {
-  color: var(--color-red-400);
-  font-size: var(--text-sm);
-  line-height: var(--text-sm--line-height);
 }

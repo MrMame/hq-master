@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-05 17:30) - Feature: Bank im Card Manager mit Reihen und eigenem Scrollbereich (card-manager-bank-rows #1–#5)
+
+- **Was wurde gemacht:** Die Bank füllt den Platz unter den Stapeln bis zum unteren Fensterrand. Passen nicht mehr alle Karten nebeneinander, beginnt darunter eine neue Reihe. Jede Reihe ist halb so hoch wie die sichtbare Bank, damit immer zwei Reihen vollständig zu sehen sind; ab der dritten Reihe scrollt die Bank senkrecht in sich, die Seite nicht.
+- **Dateien geändert:** `card-manager/components/card-manager-page/card-manager-page.css`, `card-manager-deck-loader.css` (neu), `card-manager-page.ts` (`styleUrls`), `docs/feature-requests/done/card-manager-bank-rows.md`
+- **Wichtige Entscheidung:** `.card-zone` ist eine senkrechte Flex-Spalte, die Bank nimmt mit `flex: 1 1 0; min-height: 0` den Rest. Die Bank ist Größen-Container (`container-type: size`), die Kartenhöhe ist `(100cqh − Abstand) / 2` und damit immer an der sichtbaren Bankhöhe ausgerichtet, auch beim Scrollen. Die Stile des Deck-Laders liegen wegen des Dateilimits in einer eigenen Datei. Probe (3 Fenstergrößen) plus die bisherigen Card-Manager-Proben, Lint, 1094 Tests (Lines 99,55 % / Branches 97,87 %), Build und e2e (31) grün.
+- **Statistik:** 13 min · 1 Runden · 2 Rückfragen · 20 Tools · Dateien 3 neu / 7 geändert · 0 Fehlschläge (+1 erwartet) · Tokens 2.359.534 (Output 15.912)
+
 ### (2026-11-05 17:12) - Feature: Aktive Karte groß in der Mitte des Card Managers (card-manager-active-card-focus #1–#4)
 
 - **Was wurde gemacht:** Die aktive Karte steht groß in der Mitte des Kartenbereichs (`.card-zone`) über Stapeln und Bank. Sie ist höchstens 60 % der Fensterhöhe hoch und höchstens so breit wie die mittlere Zone, im Format 63 : 88. Nachziehstapel, Ablagestapel und die Bank bleiben seitlich klickbar.

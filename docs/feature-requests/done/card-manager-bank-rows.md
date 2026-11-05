@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-05  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** done (2026-11-05 17:30)  
 **Bezug:** `src/app/features/card-manager/components/card-manager-page/card-manager-page.css`,
 `docs/feature-requests/done/card-manager-real-card-format.md`, `docs/feature-requests/done/card-manager-active-card-focus.md`
 
@@ -31,20 +31,20 @@
 
 ## Anforderungen
 
-### 1. Bank bis zum unteren Fensterrand
+### 1. Bank bis zum unteren Fensterrand ✅ done (2026-11-05 17:30)
 
 - `.card-zone` als senkrechte Flex-Spalte mit der Höhe der Seite (`height: 100%`), Deck-Zeile und Stapel
   (`40dvh`) behalten ihre Höhe (`flex-shrink: 0`).
 - `.bankContainer` statt `height: 30dvh`: `flex: 1; min-height: 0;` und reicht bis zur Unterkante von `.app-main`.
 - Die Seite (`.app-main`) scrollt dadurch nicht senkrecht.
 
-### 2. Reihen mit Umbruch
+### 2. Reihen mit Umbruch ✅ done (2026-11-05 17:30)
 
 - `.bankCardsContainer`: `flex-wrap: wrap`, Reihen oben beginnend (`align-content: flex-start`), Abstand
   zwischen Karten und Reihen über ein Token (z. B. `--space-2`), Karten je Reihe zentriert.
 - Keine Karte ragt seitlich aus der Bank heraus.
 
-### 3. Zwei Reihen sichtbar, Rest scrollt
+### 3. Zwei Reihen sichtbar, Rest scrollt ✅ done (2026-11-05 17:30)
 
 - Kartenhöhe in der Bank = halbe sichtbare Bankhöhe abzüglich der Abstände, Breite über das Kartenformat
   (`--card-aspect-ratio`, `width: auto`).
@@ -53,13 +53,13 @@
 - Ab der dritten Reihe zeigt die Bank einen senkrechten Scrollbalken und scrollt in sich.
 - Ein Klick auf eine freie Stelle der Bank legt die aktive Karte weiter in die Bank, auch nach dem Scrollen.
 
-### 4. Zusammenspiel mit der aktiven Karte
+### 4. Zusammenspiel mit der aktiven Karte ✅ done (2026-11-05 17:30)
 
 - Die aktive Karte bleibt in der Mitte von `.card-zone` (Probe aus `card-manager-active-card-focus`) und
   überdeckt dabei die Mitte der Bank. Bank-Karten dahinter sind verdeckt, solange eine Karte aktiv ist; das ist
   gewollt (ein Klick auf eine Bank-Karte wirkt nur ohne aktive Karte).
 
-### 5. Tests
+### 5. Tests ✅ done (2026-11-05 17:30)
 
 - Bestehende Specs prüfen kein Layout und bleiben unverändert grün.
 - Playwright-Probe unter `e2e/probe/`, alle 10 Karten des Standarddecks über die UI in die Bank legen:
@@ -75,10 +75,10 @@
 
 ## Akzeptanzkriterien
 
-- [ ] Passen nicht mehr alle Bank-Karten in eine Reihe, beginnt eine neue Reihe darunter.
-- [ ] Die Bank reicht bis zum unteren Fensterrand; immer zwei Reihen sind vollständig sichtbar.
-- [ ] Ab der dritten Reihe scrollt die Bank senkrecht in sich, die Seite scrollt nicht.
-- [ ] Bank-Karten behalten das Format 63 : 88.
-- [ ] Klicks auf Bank-Karten und auf die Bank funktionieren wie bisher.
-- [ ] Die Playwright-Probe bestätigt Reihen, Sichtbarkeit und Scrollen bei drei Fenstergrößen.
-- [ ] Dateien bleiben unter 150 Zeilen; die Coverage-Schwellen werden eingehalten.
+- [x] Passen nicht mehr alle Bank-Karten in eine Reihe, beginnt eine neue Reihe darunter.
+- [x] Die Bank reicht bis zum unteren Fensterrand; immer zwei Reihen sind vollständig sichtbar.
+- [x] Ab der dritten Reihe scrollt die Bank senkrecht in sich, die Seite scrollt nicht.
+- [x] Bank-Karten behalten das Format 63 : 88.
+- [x] Klicks auf Bank-Karten und auf die Bank funktionieren wie bisher.
+- [x] Die Playwright-Probe bestätigt Reihen, Sichtbarkeit und Scrollen bei drei Fenstergrößen.
+- [x] Dateien bleiben unter 150 Zeilen; die Coverage-Schwellen werden eingehalten.
