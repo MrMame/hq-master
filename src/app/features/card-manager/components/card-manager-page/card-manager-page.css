@@ -6,10 +6,14 @@
   height: 100%;
 }
 
-/* Füllt den Platz neben der Sidebar; min-width: 0 erlaubt das Schrumpfen unter die Inhaltsbreite. */
+/* Füllt den Platz neben der Sidebar; min-width: 0 erlaubt das Schrumpfen unter die Inhaltsbreite.
+   Positions- und Größenbezug der aktiven Karte (Container-Einheiten). */
 .card-zone {
+  --active-zone-fraction: 0.4;
   flex: 1;
   min-width: 0;
+  position: relative;
+  container-type: inline-size;
 }
 
 .pilesContainer {
@@ -43,7 +47,9 @@
 }
 .activeCardPile {
   background-color: var(--color-card-manager-active);
-  width: 40%;
+  /* Kein eigener Positionierungskontext: die aktive Karte richtet sich an .card-zone aus. */
+  position: static;
+  width: calc(var(--active-zone-fraction) * 100%);
   height: 70%;
 }
 .discardPile {
@@ -56,11 +62,21 @@
 
 /* Nur die Höhe vorgeben: width: auto, damit aspect-ratio der Karte greift.
    Karten in Stapeln liegen unter der Überschrift (eine Zeile, line-height 1.5). */
-.cardInPile,
-.cardInHand {
+.cardInPile {
   position: absolute;
   top: var(--space-6);
   height: calc(100% - var(--space-6));
+  width: auto;
+}
+/* Aktive Karte groß in der Mitte von .card-zone: höchstens 60dvh hoch und höchstens so breit
+   wie die mittlere Zone, damit Stapel und Bank daneben klickbar bleiben. */
+.cardInHand {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  height: min(60dvh, calc(var(--active-zone-fraction) * 100cqi / (var(--card-aspect-ratio))));
   width: auto;
 }
 .cardInBank {

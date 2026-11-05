@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-05 17:12) - Feature: Aktive Karte groß in der Mitte des Card Managers (card-manager-active-card-focus #1–#4)
+
+- **Was wurde gemacht:** Die aktive Karte steht groß in der Mitte des Kartenbereichs (`.card-zone`) über Stapeln und Bank. Sie ist höchstens 60 % der Fensterhöhe hoch und höchstens so breit wie die mittlere Zone, im Format 63 : 88. Nachziehstapel, Ablagestapel und die Bank bleiben seitlich klickbar.
+- **Dateien geändert:** `card-manager/components/card-manager-page/card-manager-page.css`, `docs/feature-requests/done/card-manager-active-card-focus.md`
+- **Wichtige Entscheidung:** `.card-zone` ist Positionierungskontext und Größen-Container (`container-type: inline-size`). Die Höhe ist `min(60dvh, Zonenanteil × 100cqi / Seitenverhältnis)`, damit die Breitengrenze das Format nicht verzerrt (ein reines `max-width` hätte es verzerrt). Der Anteil der mittleren Zone (`--active-zone-fraction: 0.4`) steht nur einmal im Code und gilt für die Zone und für die Karte. Probe (2 Fenstergrößen), Lint, 1094 Tests (Lines 99,55 % / Branches 97,87 %), Build und e2e (31) grün.
+- **Statistik:** 13 min · 1 Runden · 2 Rückfragen · 17 Tools · Dateien 1 neu / 6 geändert · 1 Fehlschläge (+1 erwartet) · Tokens 2.069.972 (Output 12.595)
+
 ### (2026-11-05 16:52) - Feature: Karten im Card Manager im Format echter Spielkarten (card-manager-real-card-format #1–#6)
 
 - **Was wurde gemacht:** Alle Karten im Card Manager (Nachziehstapel, Aktive Karte, Ablagestapel, Bank) stehen unabhängig von der Fenstergröße hochkant im Verhältnis 63 : 88. Die Karte hält ihr Format über `aspect-ratio` am Host, die Seite gibt nur die Höhe vor. In den Stapeln beginnen die Karten unter der Überschrift, das Motiv füllt 85 % der Kartenbreite.

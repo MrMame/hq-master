@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-05  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** done (2026-11-05 17:12)  
 **Bezug:** `src/app/features/card-manager/components/card-manager-page/`, `docs/feature-requests/done/card-manager-real-card-format.md`
 
 ---
@@ -29,14 +29,14 @@
 
 ## Anforderungen
 
-### 1. Position: Mitte des Kartenbereichs
+### 1. Position: Mitte des Kartenbereichs ✅ done (2026-11-05 17:12)
 
 - `.cardInHand` richtet sich nicht mehr an der Zone „Aktive Karte“ aus, sondern an `.card-zone`
   (`position: relative` an `.card-zone`, die Zone „Aktive Karte“ ohne eigenen Positionierungskontext).
 - Waagrecht und senkrecht zentriert (z. B. `top: 50%; left: 50%; transform: translate(-50%, -50%)`).
 - Die Karte liegt über Stapeln und Bank (`z-index`), die Zone „Aktive Karte“ bleibt als Fläche bestehen.
 
-### 2. Größe: höchstens 60 % der Fensterhöhe, höchstens so breit wie die mittlere Zone
+### 2. Größe: höchstens 60 % der Fensterhöhe, höchstens so breit wie die mittlere Zone ✅ done (2026-11-05 17:12)
 
 - Höhe `60dvh`, aber nur so groß, dass die Breite (Höhe × 63/88) 40 % der Breite von `.card-zone` nicht
   überschreitet.
@@ -46,13 +46,13 @@
 - Die 40 % stehen nur einmal im Code (gleicher Wert wie die Breite von `.activeCardPile`, z. B. als lokale
   Custom Property der Seite).
 
-### 3. Klickbarkeit neben der Karte
+### 3. Klickbarkeit neben der Karte ✅ done (2026-11-05 17:12)
 
 - Nachziehstapel und Ablagestapel werden von der aktiven Karte nicht überdeckt.
 - Die Bank bleibt links und rechts neben der Karte klickbar.
 - Klick auf die aktive Karte legt sie wie bisher ab.
 
-### 4. Tests
+### 4. Tests ✅ done (2026-11-05 17:12)
 
 - Bestehende Specs prüfen kein Layout und bleiben unverändert grün.
 - Playwright-Probe unter `e2e/probe/` bei 1920 × 1080 und 1280 × 1024:
@@ -66,9 +66,9 @@
 
 ## Akzeptanzkriterien
 
-- [ ] Die aktive Karte steht mittig im Kartenbereich und ist deutlich größer als bisher.
-- [ ] Sie ist höchstens 60 % der Fensterhöhe hoch und höchstens 40 % des Kartenbereichs breit, im Format 63 : 88.
-- [ ] Nachziehstapel, Ablagestapel und die Bank seitlich der Karte bleiben klickbar und funktionieren wie bisher.
-- [ ] Kein horizontales Scrollen der Seite.
-- [ ] Die Playwright-Probe bestätigt Lage, Größe und Klickbarkeit bei zwei Fenstergrößen.
-- [ ] Dateien bleiben unter 150 Zeilen; die Coverage-Schwellen werden eingehalten.
+- [x] Die aktive Karte steht mittig im Kartenbereich und ist deutlich größer als bisher.
+- [x] Sie ist höchstens 60 % der Fensterhöhe hoch und höchstens 40 % des Kartenbereichs breit, im Format 63 : 88.
+- [x] Nachziehstapel, Ablagestapel und die Bank seitlich der Karte bleiben klickbar und funktionieren wie bisher.
+- [x] Kein horizontales Scrollen der Seite.
+- [x] Die Playwright-Probe bestätigt Lage, Größe und Klickbarkeit bei zwei Fenstergrößen.
+- [x] Dateien bleiben unter 150 Zeilen; die Coverage-Schwellen werden eingehalten.
