@@ -37,15 +37,13 @@
         <!--- ActiveCard ========= -->
         <div class="pile activeCardPile">
           <span>Aktive Karte</span>
-          @if (state()!.activeCard) {
-            <app-card-display
-              class="cardInHand"
-              [card]="state()!.activeCard!"
-              [backImagePath]="state()!.config.backImagePath"
-              (click)="onActiveCardClick()"
-            />
-          }
         </div>
+        <!-- Schwebt im Overlay-Container über der ganzen Seite. -->
+        <app-active-card-overlay
+          [card]="state()!.activeCard"
+          [backImagePath]="state()!.config.backImagePath"
+          (cardClick)="onActiveCardClick()"
+        />
         <!--- DiscardPile ========= -->
         <div class="pile discardPile" (click)="$event.stopPropagation(); onDiscardPileClick()">
           <h3>Ablagestapel ({{ state()!.discardPile.length }})</h3>

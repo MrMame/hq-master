@@ -74,7 +74,9 @@ describe('CardManagerPage', () => {
       expect(host.textContent).toContain('Deck: Testdeck');
       expect(host.textContent).toContain('Nachziehstapel (1)');
       expect(host.textContent).toContain('Ablagestapel (0)');
-      expect(host.querySelectorAll('app-card-display')).toHaveLength(2);
+      // Stapelkarte im Host, die aktive Karte schwebt im Overlay-Container am Dokument.
+      expect(host.querySelectorAll('app-card-display')).toHaveLength(1);
+      expect(document.querySelectorAll('.cdk-overlay-container app-card-display')).toHaveLength(1);
     });
 
     it('activates a draw pile card on click without bubbling to the discard pile', async () => {

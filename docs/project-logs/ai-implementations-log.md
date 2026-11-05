@@ -2,6 +2,34 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-05 18:42) - Feature: Aktive Karte als schwebende Ebene über dem Card Manager (card-manager-active-card-overlay #1–#6)
+
+- **Was wurde gemacht:** Die aktive Karte schwebt wie ein nicht modaler Dialog mittig im Fenster über der ganzen Seite, auch über Seitenleiste und Header. Ihre Größe hängt nur vom Fenster ab (höchstens 60 % der Höhe und 30 % der Breite, Format 63 : 88) und bleibt beim Ein- und Ausklappen der Seitenleiste gleich. Nachziehstapel, Ablagestapel und Bank bleiben daneben bedienbar; ein Klick auf die Karte legt sie ab. Sie hat einen kräftigeren Schatten und blendet kurz ein.
+- **Dateien geändert:** `card-manager/components/active-card-overlay/active-card-overlay.ts` (+spec, neu), `card-manager-page.html/.ts/.css`, `card-manager-page.spec.ts`, `card-manager-page-clicks.spec.ts`, `card-display/card-display.css` (`--card-shadow`), `src/styles/tokens.css` (`--shadow-card-floating`), `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/done/card-manager-active-card-overlay.md`
+- **Wichtige Entscheidung:** `container-type` an `.card-zone` machte den Bereich zum Bezugsrahmen für `position: fixed`, deshalb hängt die Karte über `createOverlayRef` im Overlay-Container an `body` (globale Zentrierung, ohne Backdrop; der Container lässt Klicks neben der Karte durch). Ein `effect()` hängt die Karte an, solange eine aktiv ist; ohne aktive Karte und beim Zerstören ruft er `dispose()` auf, damit keine Ebene zurückbleibt. Die Grenzen 60dvh/30vw stehen nur in der Overlay-Komponente. `cqi` und `--active-zone-fraction` sind entfallen. Probe (2 Fenstergrößen, Seitenleiste aus/ein, Routenwechsel), Lint, 1100 Tests (Lines 99,55 % / Branches 97,83 %), Build und e2e (31) grün.
+- **Statistik:** 7 min · 1 Runden · 1 Rückfragen · 39 Tools · Dateien 66 neu / 14 geändert · 4 Fehlschläge (+1 erwartet) · Tokens 3.464.402 (Output 23.228)
+
+### (2026-11-05 17:30) - Feature: Bank im Card Manager mit Reihen und eigenem Scrollbereich (card-manager-bank-rows #1–#5)
+
+- **Was wurde gemacht:** Die Bank füllt den Platz unter den Stapeln bis zum unteren Fensterrand. Passen nicht mehr alle Karten nebeneinander, beginnt darunter eine neue Reihe. Jede Reihe ist halb so hoch wie die sichtbare Bank, damit immer zwei Reihen vollständig zu sehen sind; ab der dritten Reihe scrollt die Bank senkrecht in sich, die Seite nicht.
+- **Dateien geändert:** `card-manager/components/card-manager-page/card-manager-page.css`, `card-manager-deck-loader.css` (neu), `card-manager-page.ts` (`styleUrls`), `docs/feature-requests/done/card-manager-bank-rows.md`
+- **Wichtige Entscheidung:** `.card-zone` ist eine senkrechte Flex-Spalte, die Bank nimmt mit `flex: 1 1 0; min-height: 0` den Rest. Die Bank ist Größen-Container (`container-type: size`), die Kartenhöhe ist `(100cqh − Abstand) / 2` und damit immer an der sichtbaren Bankhöhe ausgerichtet, auch beim Scrollen. Die Stile des Deck-Laders liegen wegen des Dateilimits in einer eigenen Datei. Probe (3 Fenstergrößen) plus die bisherigen Card-Manager-Proben, Lint, 1094 Tests (Lines 99,55 % / Branches 97,87 %), Build und e2e (31) grün.
+- **Statistik:** 13 min · 1 Runden · 2 Rückfragen · 20 Tools · Dateien 3 neu / 7 geändert · 0 Fehlschläge (+1 erwartet) · Tokens 2.359.534 (Output 15.912)
+
+### (2026-11-05 17:12) - Feature: Aktive Karte groß in der Mitte des Card Managers (card-manager-active-card-focus #1–#4)
+
+- **Was wurde gemacht:** Die aktive Karte steht groß in der Mitte des Kartenbereichs (`.card-zone`) über Stapeln und Bank. Sie ist höchstens 60 % der Fensterhöhe hoch und höchstens so breit wie die mittlere Zone, im Format 63 : 88. Nachziehstapel, Ablagestapel und die Bank bleiben seitlich klickbar.
+- **Dateien geändert:** `card-manager/components/card-manager-page/card-manager-page.css`, `docs/feature-requests/done/card-manager-active-card-focus.md`
+- **Wichtige Entscheidung:** `.card-zone` ist Positionierungskontext und Größen-Container (`container-type: inline-size`). Die Höhe ist `min(60dvh, Zonenanteil × 100cqi / Seitenverhältnis)`, damit die Breitengrenze das Format nicht verzerrt (ein reines `max-width` hätte es verzerrt). Der Anteil der mittleren Zone (`--active-zone-fraction: 0.4`) steht nur einmal im Code und gilt für die Zone und für die Karte. Probe (2 Fenstergrößen), Lint, 1094 Tests (Lines 99,55 % / Branches 97,87 %), Build und e2e (31) grün.
+- **Statistik:** 13 min · 1 Runden · 2 Rückfragen · 17 Tools · Dateien 1 neu / 6 geändert · 1 Fehlschläge (+1 erwartet) · Tokens 2.069.972 (Output 12.595)
+
+### (2026-11-05 16:52) - Feature: Karten im Card Manager im Format echter Spielkarten (card-manager-real-card-format #1–#6)
+
+- **Was wurde gemacht:** Alle Karten im Card Manager (Nachziehstapel, Aktive Karte, Ablagestapel, Bank) stehen unabhängig von der Fenstergröße hochkant im Verhältnis 63 : 88. Die Karte hält ihr Format über `aspect-ratio` am Host, die Seite gibt nur die Höhe vor. In den Stapeln beginnen die Karten unter der Überschrift, das Motiv füllt 85 % der Kartenbreite.
+- **Dateien geändert:** `src/styles/tokens.css` (`--card-aspect-ratio`), `card-manager/components/card-display/card-display.css`, `card-manager/components/card-manager-page/card-manager-page.css`, `docs/feature-requests/done/card-manager-real-card-format.md`
+- **Wichtige Entscheidung:** Nur CSS, ohne Änderung an Templates oder TypeScript. `width: auto` ist nötig, weil der Browser `aspect-ratio` ignoriert, wenn Breite und Höhe beide fest gesetzt sind. Der Abstand unter der Überschrift ist `--space-6`, weil die Überschriften durch die Grundstile genau eine Zeile (1,5 rem) hoch sind. Probe (2 Fenstergrößen), Lint, 1094 Tests (Lines 99,55 % / Branches 97,87 %), Build und e2e (31) grün.
+- **Statistik:** 6 min · 1 Runden · 1 Rückfragen · 29 Tools · Dateien 0 neu / 3 geändert · 2 Fehlschläge (+1 erwartet) · Tokens 2.318.133 (Output 11.071)
+
 ### (2026-11-01 20:32) - Feature: Time Tracker im Layout von Dungeon Tracker und Dungeon Builder (time-tracker-sidebar-layout #1–#6)
 
 - **Was wurde gemacht:** Der Time Tracker ist dunkel und hat links die einklappbare Seitenleiste „Time Tracker“ mit der Gruppe „Zeit vorrücken“: „Neue Runde“ über die volle Breite (Log-Eintrag, +10 s, Rundenstand zurück), darunter +1 s/+5 s/+10 s und +1 h/+8 h, gelb, volle Namen in `aria-label`/`title`. Rechts steht oben die Spielzeit groß und gelb, darunter „Aktive Zustände“ und das Log, das in sich scrollt. Filter-Chips, „Log leeren“ und Trennlinien haben ein dunkles Schema. Gleiche Stilregeln von DT, DB und Time Tracker liegen jetzt einmal in `feature-page.css`.

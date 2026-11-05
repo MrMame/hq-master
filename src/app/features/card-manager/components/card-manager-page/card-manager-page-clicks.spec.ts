@@ -54,12 +54,23 @@ describe('CardManagerPage – clicks', () => {
     ['.discardPile', 'discardActiveCard', ACTIVE, []],
     ['.bankContainer app-card-display', 'makeCardActive', cardIn('bank', false), [CARD_ID]],
     ['.bankContainer', 'dropActiveCardIntoBank', ACTIVE, []],
-    ['.activeCardPile app-card-display', 'discardActiveCard', ACTIVE, []],
     ['.drawPile h3', 'reshuffleAll', ACTIVE, []],
   ])('click on %s → %s', async (selector, expected, state, args) => {
     await click(state, selector);
 
     expect(harness.service[expected]).toHaveBeenCalledExactlyOnceWith(...args);
+  });
+
+  it('a click on the floating active card discards it', async () => {
+    await harness.render(ACTIVE);
+    // Die aktive Karte hängt im Overlay-Container am Dokument, nicht im Host.
+    const floating: HTMLElement | null = document.querySelector<HTMLElement>(
+      '.cdk-overlay-container app-card-display .card-display',
+    );
+    expect(harness.host.querySelector('.activeCardPile app-card-display')).toBeNull();
+    floating!.click();
+
+    expect(harness.service.discardActiveCard).toHaveBeenCalledExactlyOnceWith();
   });
 
   it.each<string>(['.discardPile', '.bankContainer'])(
