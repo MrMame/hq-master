@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-05  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** ✅ done (2026-11-05 18:42)  
 **Bezug:** `src/app/features/card-manager/components/card-manager-page/`, `src/app/features/card-manager/components/card-display/`, `docs/feature-requests/done/card-manager-active-card-focus.md`
 
 ---
@@ -34,7 +34,7 @@
 
 ## Anforderungen
 
-### 1. Eigene Komponente für die schwebende Karte
+### 1. Eigene Komponente für die schwebende Karte ✅ done (2026-11-05 18:42)
 
 - Neue Komponente `active-card-overlay` unter `src/app/features/card-manager/components/` (per Angular CLI:
   `ng g c features/card-manager/components/active-card-overlay`).
@@ -43,7 +43,7 @@
 - `card-manager-page.html` bindet die Komponente ein, `.cardInHand` entfällt dort; der Klick ruft wie bisher
   `onActiveCardClick()` auf.
 
-### 2. Oberste Ebene über das CDK Overlay
+### 2. Oberste Ebene über das CDK Overlay ✅ done (2026-11-05 18:42)
 
 - Die Karte wird über das CDK Overlay (`@angular/cdk/overlay`, bereits installiert) in den
   Overlay-Container an `body` gehängt, z. B. mit `cdkConnectedOverlay` bzw. `Overlay.create()` und
@@ -56,7 +56,7 @@
 - Falls die CDK-Overlay-Styles noch nicht global eingebunden sind (über das Material-Theme oder
   `@angular/cdk/overlay-prebuilt.css`), werden sie ergänzt.
 
-### 3. Größe nur aus dem Fenster
+### 3. Größe nur aus dem Fenster ✅ done (2026-11-05 18:42)
 
 - Höhe `min(60dvh, calc(30vw / var(--card-aspect-ratio)))`, Breite `auto`; das Format kommt aus
   `aspect-ratio` von `card-display`.
@@ -67,7 +67,7 @@
 - `--active-zone-fraction`, die `cqi`-Rechnung und – falls nur dafür nötig – `container-type: inline-size` an
   `.card-zone` entfallen.
 
-### 4. Dialog-Optik
+### 4. Dialog-Optik ✅ done (2026-11-05 18:42)
 
 - Kräftigerer Schatten als bei Karten in Stapeln (neuer Token, z. B. `--shadow-card-floating`, in den
   globalen Design-Tokens).
@@ -75,7 +75,7 @@
   `prefers-reduced-motion: reduce`.
 - Die Zone „Aktive Karte“ im Stapelbereich bleibt als Platzhalter-Fläche bestehen.
 
-### 5. Tests
+### 5. Tests ✅ done (2026-11-05 18:42)
 
 - Spec der neuen Komponente (Inhalt im `OverlayContainer` prüfen):
   - Mit aktiver Karte erscheint genau eine Karte im Overlay-Container, ohne aktive Karte keine.
@@ -95,7 +95,7 @@
   - Klick auf den Ablagestapel neben der Karte legt die aktive Karte ab; nach einem Routenwechsel ist keine
     schwebende Karte mehr im DOM.
 
-### 6. Anforderungen dokumentieren
+### 6. Anforderungen dokumentieren ✅ done (2026-11-05 18:42)
 
 - In `REQUIREMENTS.md` einen kurzen Abschnitt bzw. Satz zum Card Manager (`/cardmanager`) ergänzen: Die
   aktive Karte schwebt mittig über der ganzen Seite, ihre Größe richtet sich nach dem Fenster, Stapel und Bank
@@ -105,10 +105,10 @@
 
 ## Akzeptanzkriterien
 
-- [ ] Die aktive Karte schwebt mittig im Fenster über allen anderen Elementen der Seite, auch über der Seitenleiste.
-- [ ] Ihre Größe hängt nur von der Fenstergröße ab (gleich bei aus- und eingeklappter Seitenleiste), im Format 63 : 88.
-- [ ] Kein Backdrop: Nachziehstapel, Ablagestapel und Bank neben der Karte bleiben klickbar und funktionieren wie bisher.
-- [ ] Klick auf die Karte legt sie ab; ohne aktive Karte und nach dem Verlassen der Seite ist keine Ebene mehr im DOM.
-- [ ] Kein horizontales Scrollen der Seite.
-- [ ] Die Playwright-Probe bestätigt Lage, Größe, oberste Ebene und Klickbarkeit bei zwei Fenstergrößen.
-- [ ] Dateien bleiben unter 150 Zeilen; die Coverage-Schwellen werden eingehalten.
+- [x] Die aktive Karte schwebt mittig im Fenster über allen anderen Elementen der Seite, auch über der Seitenleiste.
+- [x] Ihre Größe hängt nur von der Fenstergröße ab (gleich bei aus- und eingeklappter Seitenleiste), im Format 63 : 88.
+- [x] Kein Backdrop: Nachziehstapel, Ablagestapel und Bank neben der Karte bleiben klickbar und funktionieren wie bisher.
+- [x] Klick auf die Karte legt sie ab; ohne aktive Karte und nach dem Verlassen der Seite ist keine Ebene mehr im DOM.
+- [x] Kein horizontales Scrollen der Seite.
+- [x] Die Playwright-Probe bestätigt Lage, Größe, oberste Ebene und Klickbarkeit bei zwei Fenstergrößen.
+- [x] Dateien bleiben unter 150 Zeilen; die Coverage-Schwellen werden eingehalten.

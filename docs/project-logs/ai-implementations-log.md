@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-05 18:42) - Feature: Aktive Karte als schwebende Ebene über dem Card Manager (card-manager-active-card-overlay #1–#6)
+
+- **Was wurde gemacht:** Die aktive Karte schwebt wie ein nicht modaler Dialog mittig im Fenster über der ganzen Seite, auch über Seitenleiste und Header. Ihre Größe hängt nur vom Fenster ab (höchstens 60 % der Höhe und 30 % der Breite, Format 63 : 88) und bleibt beim Ein- und Ausklappen der Seitenleiste gleich. Nachziehstapel, Ablagestapel und Bank bleiben daneben bedienbar; ein Klick auf die Karte legt sie ab. Sie hat einen kräftigeren Schatten und blendet kurz ein.
+- **Dateien geändert:** `card-manager/components/active-card-overlay/active-card-overlay.ts` (+spec, neu), `card-manager-page.html/.ts/.css`, `card-manager-page.spec.ts`, `card-manager-page-clicks.spec.ts`, `card-display/card-display.css` (`--card-shadow`), `src/styles/tokens.css` (`--shadow-card-floating`), `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/done/card-manager-active-card-overlay.md`
+- **Wichtige Entscheidung:** `container-type` an `.card-zone` machte den Bereich zum Bezugsrahmen für `position: fixed`, deshalb hängt die Karte über `createOverlayRef` im Overlay-Container an `body` (globale Zentrierung, ohne Backdrop; der Container lässt Klicks neben der Karte durch). Ein `effect()` hängt die Karte an, solange eine aktiv ist; ohne aktive Karte und beim Zerstören ruft er `dispose()` auf, damit keine Ebene zurückbleibt. Die Grenzen 60dvh/30vw stehen nur in der Overlay-Komponente. `cqi` und `--active-zone-fraction` sind entfallen. Probe (2 Fenstergrößen, Seitenleiste aus/ein, Routenwechsel), Lint, 1100 Tests (Lines 99,55 % / Branches 97,83 %), Build und e2e (31) grün.
+- **Statistik:** 7 min · 1 Runden · 1 Rückfragen · 39 Tools · Dateien 66 neu / 14 geändert · 4 Fehlschläge (+1 erwartet) · Tokens 3.464.402 (Output 23.228)
+
 ### (2026-11-05 17:30) - Feature: Bank im Card Manager mit Reihen und eigenem Scrollbereich (card-manager-bank-rows #1–#5)
 
 - **Was wurde gemacht:** Die Bank füllt den Platz unter den Stapeln bis zum unteren Fensterrand. Passen nicht mehr alle Karten nebeneinander, beginnt darunter eine neue Reihe. Jede Reihe ist halb so hoch wie die sichtbare Bank, damit immer zwei Reihen vollständig zu sehen sind; ab der dritten Reihe scrollt die Bank senkrecht in sich, die Seite nicht.

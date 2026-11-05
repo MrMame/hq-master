@@ -50,3 +50,10 @@
   - Jedes Element lässt sich markieren, verschieben, in 90°-Schritten drehen und löschen, über eine Menüleiste am Element und am PC auch per Taste. Änderungen lassen sich rückgängig machen und wiederholen.
   - Die Plangröße ist einstellbar. Das Layout wird als XML gespeichert und wieder geladen, um daran weiterzuarbeiten, und als JPEG ohne Raster exportiert.
   - Der Builder ist am PC und auf dem Tablet bedienbar.
+
+## 5. Card Manager ('/cardmanager')
+
+- **Ziel:** Der DM verwaltet ein Kartendeck mit Nachziehstapel, Ablagestapel, Bank und einer aktiven Karte.
+- **Funktionen:**
+  - Die aktive Karte schwebt mittig über der ganzen Seite, auch über Seitenleiste und Header. Ihre Größe richtet sich nur nach dem Fenster (höchstens 60 % der Höhe und 30 % der Breite, Format 63 : 88).
+  - Nachziehstapel, Ablagestapel und Bank bleiben neben der schwebenden Karte sichtbar und bedienbar; ein Klick auf die Karte legt sie ab.

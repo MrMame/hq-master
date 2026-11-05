@@ -110,7 +110,8 @@ features/
                          game-log-rows.util.ts (Spielzeit absteigend, Datums-Trennzeile, Filter, Symbol je Eintrag)
 
   card-manager/        → Kartenverwaltung (Deck aus XML + SVG)
-    components/        → CardManagerPage, CardDisplay
+    components/        → CardManagerPage, CardDisplay, ActiveCardOverlay (aktive Karte schwebend mittig im Fenster
+                         per `createOverlayRef`, ohne Backdrop; Größe nur aus dem Fenster)
     models/            → card.model.ts, deck-config.model.ts, deck-state.model.ts
     services/          → card-manager.service.ts, deck-xml-loader.service.ts
     testing/           → card-manager-page.fixtures.ts (gemockter Service, nur für Specs)

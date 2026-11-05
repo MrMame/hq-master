@@ -19,7 +19,8 @@
   height: 100%;
   border-radius: var(--radius-card);
   overflow: hidden;
-  box-shadow: var(--shadow-card);
+  /* --card-shadow: Einsatzort darf einen anderen Schatten vorgeben (z. B. schwebende Karte). */
+  box-shadow: var(--card-shadow, var(--shadow-card));
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -2,13 +2,20 @@ import { Component, inject, Signal, signal, WritableSignal } from '@angular/core
 import { CardManagerService } from '../../services/card-manager.service';
 import { DeckState } from '../../models/deck-state.model';
 import { CardDisplay } from '../card-display/card-display';
+import { ActiveCardOverlay } from '../active-card-overlay/active-card-overlay';
 import { CollapsibleSidebar } from '../../../../shared/components/collapsible-sidebar/collapsible-sidebar';
 import { SidebarSection } from '../../../../shared/components/sidebar-section/sidebar-section';
 import { SidebarSectionToggleAll } from '../../../../shared/components/sidebar-section-toggle-all/sidebar-section-toggle-all';
 
 @Component({
   selector: 'app-card-manager-page',
-  imports: [CardDisplay, CollapsibleSidebar, SidebarSection, SidebarSectionToggleAll],
+  imports: [
+    CardDisplay,
+    ActiveCardOverlay,
+    CollapsibleSidebar,
+    SidebarSection,
+    SidebarSectionToggleAll,
+  ],
   templateUrl: './card-manager-page.html',
   styleUrls: ['./card-manager-page.css', './card-manager-deck-loader.css'],
 })
