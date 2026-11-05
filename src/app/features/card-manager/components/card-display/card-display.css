@@ -1,7 +1,10 @@
-/* Die Karte hält ihr Format selbst; Einsatzorte geben nur die Höhe vor. */
+/* Die Karte hält ihr Format selbst; Einsatzorte geben nur die Höhe vor.
+   min-width: 0, weil min-width: auto bei aspect-ratio die Inhaltsbreite (einzeiliger Name)
+   als Mindestbreite nimmt und kleine Karten sonst verbreitert. */
 :host {
   display: block;
   aspect-ratio: var(--card-aspect-ratio);
+  min-width: 0;
 }
 
 .card-display {
@@ -29,7 +32,10 @@
   object-fit: scale-down;
 }
 
+/* Auf Kartenbreite begrenzt, damit lange Namen mit „…“ gekürzt werden. */
 .card-info {
+  max-width: 100%;
+  min-width: 0;
   padding: 6px 8px;
   display: flex;
   flex-direction: column;
