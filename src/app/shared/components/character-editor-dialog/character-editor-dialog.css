@@ -42,9 +42,10 @@
   border-color: var(--color-gray-600);
 }
 
+/* Oben Leben und Rüstung je mit Maximum, darunter Angriff, Abwehr, Tempo */
 .character-editor__stats {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-2);
 }
 

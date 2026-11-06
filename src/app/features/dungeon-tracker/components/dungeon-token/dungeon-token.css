@@ -22,6 +22,7 @@
   --token-ring: var(--color-yellow-400);
   --token-ring-selected: var(--color-yellow-500);
   --token-glow: color-mix(in oklab, var(--token-ring) 50%, transparent);
+  position: relative;
   width: var(--portrait-size);
   height: var(--portrait-size);
   flex-shrink: 0;

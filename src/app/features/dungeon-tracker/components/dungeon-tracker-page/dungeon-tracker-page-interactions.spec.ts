@@ -139,8 +139,8 @@ describe('DungeonTrackerPage – interactions', () => {
 
     for (const selector of ['.dungeon-token', 'app-dungeon-legend-entry']) {
       const scope: Element | null = host.querySelector(selector);
-      expect(scope?.querySelector('[aria-label="Leben"]')?.textContent?.trim()).toBe('3');
-      expect(scope?.querySelector('[aria-label="Rüstung"]')?.textContent?.trim()).toBe('0');
+      expect(scope?.querySelector('[aria-label="Leben"]')?.textContent?.trim()).toBe('3/12');
+      expect(scope?.querySelector('[aria-label="Rüstung"]')?.textContent?.trim()).toBe('0/4');
     }
   });
 });

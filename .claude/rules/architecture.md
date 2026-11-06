@@ -39,7 +39,9 @@ core/
                     GameTimeService sie braucht)
     storage/      → StorageService (LocalStorage-Abstraktion)
     characters/   → CharactersDbService (`markMoved`, `clearMovedThisRound` für `movedThisRound`), characters-codec.util.ts (CHARACTERS_CODEC: ältere Charaktere ohne
-                    Zustände bzw. `movedThisRound` ergänzen, ungültige Zustände verwerfen)
+                    Zustände, `movedThisRound` bzw. Maximalwerte ergänzen, ungültige Zustände verwerfen),
+                    character-limits.util.ts (`withinLimits`: Leben/Rüstung auf 0…`maxHealth`/`maxArmor` begrenzen,
+                    `readLimit`: fehlendes/ungültiges Maximum → aktueller Wert; für Codec, XML und Editor)
   testing/        → character.fixtures.ts (Testdaten für Charaktere), condition.fixtures.ts (Test-Zustände, Spielzeit
                     ab 12:00:00), game-log.fixtures.ts (Log-Einträge), nur für Specs
 
@@ -52,7 +54,8 @@ features/
                          oder Zahl, Token-Größe, Spalten über Bildbreite), GridSlider (Raster-Regler mit „−“/„+“ in feinster Stufe),
                          GridOriginMarker (ziehbarer Nullpunkt-Marker, nur im Modus „Nullpunkt verschieben“),
                          DungeonLegendEntry (Legendeneintrag),
-                         CharacterStatus (Leben/Rüstung an Token und Legende),
+                         CharacterStatus (Leben/Rüstung als `aktuell/max` an Token und Legende),
+                         DeadMarker (rotes Kreuz „Tot“ bei 0 Leben über Porträt und Legendenbild, lässt Klicks durch),
                          CharacterConditions (Zustände mit Restdauer: `token` Symbole am Porträt, „+n“ ab 4,
                          `selected` mit Name unter dem markierten Token, `legend` zweite Zeile der Legende),
                          CharacterActionBar (Menüleiste des markierten Charakters an Token und Legende;
@@ -154,6 +157,8 @@ shared/
                          round.service.ts (RoundService: „Neue Runde“ → Log `round`, +10 s, `clearMovedThisRound`; einziger
                          Rücksetzer des Rundenstands)
   utils/               → new-character.util.ts (Startwerte für neue Charaktere),
+                         character-stat.util.ts (CharacterStat, `withStat`: Zahlenwert im Editor setzen, beim Anlegen
+                         folgt das Maximum dem Startwert),
                          random-character.util.ts (Zufallscharakter, Name passend zur Bildklasse),
                          damage.util.ts (reine Schadensberechnung),
                          condition-tick.util.ts (advanceConditions: Wirkmomente nachholen, Ablauf, Ereignisse),

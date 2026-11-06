@@ -14,17 +14,18 @@ import { scrollIntoViewIfNeeded } from '../../utils/scroll-into-view.util';
 import { CharacterStatus } from '../character-status/character-status';
 import { CharacterActionBar } from '../character-action-bar/character-action-bar';
 import { CharacterConditions } from '../character-conditions/character-conditions';
+import { DeadMarker } from '../dead-marker/dead-marker';
 
 /**
  * Ein Eintrag der Charakter-Legende: Bild, Name, Zustandswerte und Spielfeld-Position.
  * Ein Klick auf die Zeile schaltet die Markierung um; der markierte Eintrag zeigt die Menüleiste.
  * Ein Klick auf Leben oder Rüstung meldet die Schadensart (Schnellschaden ohne Markierung).
- * Aktive Zustände stehen in einer zweiten Zeile mit Symbol und Restdauer.
+ * Aktive Zustände stehen in einer zweiten Zeile mit Symbol und Restdauer; bei 0 Leben liegt ein Kreuz auf dem Bild.
  */
 @Component({
   selector: 'app-dungeon-legend-entry',
   standalone: true,
-  imports: [CharacterStatus, CharacterActionBar, CharacterConditions],
+  imports: [CharacterStatus, CharacterActionBar, CharacterConditions, DeadMarker],
   host: {
     '[class.legend-entry--selected]': 'selected()',
     '[class.legend-entry--moved]': 'token().character.movedThisRound',
@@ -33,11 +34,16 @@ import { CharacterConditions } from '../character-conditions/character-condition
   },
   template: `
     <div class="legend-entry__row">
-      <img
-        [src]="token().character.image"
-        [alt]="token().character.name"
-        class="legend-entry__avatar"
-      />
+      <span class="legend-entry__avatar-frame">
+        <img
+          [src]="token().character.image"
+          [alt]="token().character.name"
+          class="legend-entry__avatar"
+        />
+        @if (token().character.health === 0) {
+          <app-dead-marker data-testid="legend-dead-marker" />
+        }
+      </span>
       <span class="legend-entry__name">{{ token().character.name }}</span>
       <!-- Schnellschaden: der Klick auf einen Wert schaltet die Markierung nicht um. -->
       <app-character-status

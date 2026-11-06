@@ -33,6 +33,29 @@ describe('CHARACTERS_CODEC', () => {
     expect(CHARACTERS_CODEC.decode([moved])).toEqual([moved]);
   });
 
+  it('uses the stored current values as maxima for characters of older sessions', () => {
+    const older: Partial<CharacterInfo> = createTestCharacter('a');
+    delete older.maxHealth;
+    delete older.maxArmor;
+    expect(CHARACTERS_CODEC.decode([older])).toEqual([
+      { ...createTestCharacter('a'), maxHealth: 12, maxArmor: 2 },
+    ]);
+  });
+
+  it('replaces invalid maxima with the current value', () => {
+    const invalid: unknown = { ...createTestCharacter('a'), maxHealth: '20', maxArmor: -1 };
+    expect(CHARACTERS_CODEC.decode([invalid])).toEqual([
+      { ...createTestCharacter('a'), maxHealth: 12, maxArmor: 2 },
+    ]);
+  });
+
+  it('lowers stored current values above their maximum to the maximum', () => {
+    const above: CharacterInfo = { ...createTestCharacter('a'), health: 30, armor: 9 };
+    expect(CHARACTERS_CODEC.decode([above])).toEqual([
+      { ...createTestCharacter('a'), health: 12, armor: 4 },
+    ]);
+  });
+
   it('drops entries that are no objects', () => {
     expect(CHARACTERS_CODEC.decode([null, 'x', [1], createTestCharacter('a')])).toEqual([
       createTestCharacter('a'),

@@ -29,6 +29,10 @@
         {{ initials() }}
       </div>
     }
+    <!-- Tot (0 Leben): Kreuz über dem ganzen Porträt; Ziehen und Markieren gehen durch. -->
+    @if (character().health === 0) {
+      <app-dead-marker data-testid="token-dead-marker" />
+    }
   </div>
 
   <!-- Zustände immer als Symbole am oberen Rand des Porträts -->

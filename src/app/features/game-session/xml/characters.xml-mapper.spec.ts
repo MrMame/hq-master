@@ -53,6 +53,25 @@ describe('characters.xml-mapper', () => {
     expect(read('<characters><character id="a"/></characters>')[0].movedThisRound).toBe(false);
   });
 
+  it('keeps the maxima of health and armor in a round trip', () => {
+    const hurt: CharacterInfo = { ...createTestCharacter('a'), health: 3, maxHealth: 10, armor: 0 };
+    expect(roundTrip([hurt])).toEqual([hurt]);
+  });
+
+  it('reads older saves without maxima with the current values as maxima', () => {
+    const [character]: CharacterInfo[] = read(
+      '<characters><character id="a" health="7" armor="3"/></characters>',
+    );
+    expect(character).toMatchObject({ health: 7, maxHealth: 7, armor: 3, maxArmor: 3 });
+  });
+
+  it('lowers current values above their maximum to the maximum', () => {
+    const [character]: CharacterInfo[] = read(
+      '<characters><character id="a" health="9" maxHealth="5" armor="4" maxArmor="2"/></characters>',
+    );
+    expect(character).toMatchObject({ health: 5, maxHealth: 5, armor: 2, maxArmor: 2 });
+  });
+
   it('skips unknown conditions and falls back to startedAt for a missing lastTickAt', () => {
     const [character]: CharacterInfo[] = read(
       '<characters><character id="a">' +

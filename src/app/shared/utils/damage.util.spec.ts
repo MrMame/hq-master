@@ -9,7 +9,9 @@ function makeCharacter(health: number, armor: number): CharacterInfo {
     name: 'Test Hero',
     type: ElementalTypes.FEUER,
     health,
+    maxHealth: health,
     armor,
+    maxArmor: armor,
     attack: 10,
     defense: 5,
     speed: 5,
@@ -56,6 +58,16 @@ describe('applyDamage', () => {
       expect(applyDamage(makeCharacter(10, 50), DamageTypes.Critical, 100).health).toBe(0);
     });
   });
+
+  it.each([DamageTypes.Normal, DamageTypes.Critical])(
+    'lowers only the current values and keeps the maxima (%s)',
+    (damageType) => {
+      const result: CharacterInfo = applyDamage(makeCharacter(100, 5), damageType, 15);
+      expect(result.health).toBeLessThan(100);
+      expect(result.maxHealth).toBe(100);
+      expect(result.maxArmor).toBe(5);
+    },
+  );
 
   it.each([DamageTypes.Normal, DamageTypes.Critical])(
     'returns a new object and leaves the original unchanged (%s)',

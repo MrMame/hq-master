@@ -22,9 +22,9 @@ describe('CharacterStatus', () => {
   });
 
   it.each<[string, string, string]>([
-    ['Leben', 'character-status__health', '12'],
-    ['Rüstung', 'character-status__armor', '2'],
-  ])('shows %s with its class, title and value', (label, className, expected) => {
+    ['Leben', 'character-status__health', '12/12'],
+    ['Rüstung', 'character-status__armor', '2/4'],
+  ])('shows %s as current/max with its class and title', (label, className, expected) => {
     render(createTestCharacter('a'));
 
     expect(value(label).classList).toContain(className);
@@ -34,10 +34,10 @@ describe('CharacterStatus', () => {
 
   it('updates when the character input changes', () => {
     render(createTestCharacter('a'));
-    render({ ...createTestCharacter('a'), health: 5, armor: 7 });
+    render({ ...createTestCharacter('a'), health: 5, armor: 3 });
 
-    expect(value('Leben').textContent?.trim()).toBe('5');
-    expect(value('Rüstung').textContent?.trim()).toBe('7');
+    expect(value('Leben').textContent?.trim()).toBe('5/12');
+    expect(value('Rüstung').textContent?.trim()).toBe('3/4');
   });
 
   it('shows the values without buttons by default', () => {
@@ -64,10 +64,17 @@ describe('CharacterStatus', () => {
     expect(requested).toHaveBeenCalledExactlyOnceWith(damageType);
   });
 
-  it('shows the value 0', () => {
+  it('shows the value 0 and the maximum', () => {
     render({ ...createTestCharacter('a'), health: 0, armor: 0 });
 
-    expect(value('Leben').textContent?.trim()).toBe('0');
-    expect(value('Rüstung').textContent?.trim()).toBe('0');
+    expect(value('Leben').textContent?.trim()).toBe('0/12');
+    expect(value('Rüstung').textContent?.trim()).toBe('0/4');
+  });
+
+  it('shows current/max inside the damage buttons as well', () => {
+    fixture.componentRef.setInput('damageable', true);
+    render({ ...createTestCharacter('a'), health: 7, maxHealth: 10 });
+
+    expect(value('Leben').textContent?.trim()).toBe('7/10');
   });
 });
