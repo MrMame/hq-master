@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-06  
 **Priorität:** Hoch  
-**Status:** offen  
+**Status:** done (2026-11-06 18:34)  
 **Voraussetzung:** `docs/feature-requests/done/character-max-values.md` muss vorher umgesetzt sein (done 2026-11-06).  
 **Bezug:** `src/app/features/card-manager/`, `public/decks/default/default-deck.xml`, `src/app/core/models/`,
 `src/app/shared/components/character-editor-dialog/`, `src/app/features/dungeon-tracker/components/character-status/`,
@@ -42,14 +42,14 @@
 
 ## Anforderungen
 
-### 1. Modifikatoren und Slots (Modell)
+### 1. Modifikatoren und Slots (Modell) ✅ done (2026-11-06 18:34)
 
 - `StatModifier { stat: ModifiableStat; value: number }`, additiv, negative Werte erlaubt.
 - `ModifiableStat` = `attack` | `defense` | `speed` | `maxHealth` | `maxArmor`.
 - `EquipmentSlot` = `head` | `body` | `leftHand` | `rightHand` | `amulet` (Anzeige: Kopf, Körper, linke Hand,
   rechte Hand, Amulett). Jeder Slot nimmt höchstens eine Karte.
 
-### 2. Ausrüstungskarten im Deck
+### 2. Ausrüstungskarten im Deck ✅ done (2026-11-06 18:34)
 
 - Neuer Kartentyp `equipment` mit `slot` und `modifiers: StatModifier[]`.
 - Deck-XML, z. B.:
@@ -67,7 +67,7 @@
   `basic` (siehe „Nicht Teil dieses Requests“).
 - `CardDisplay` zeigt bei Ausrüstungskarten Slot und Modifikatoren (z. B. `Rüstung +2 · Tempo −1`).
 
-### 3. Besitz im Deck-Zustand
+### 3. Besitz im Deck-Zustand ✅ done (2026-11-06 18:34)
 
 - `DeckState` erhält `assigned: AssignedCard[]` mit `{ card, characterId, slot }`.
 - Eine zugewiesene Karte liegt in keinem anderen Bereich (Nachziehstapel, Ablage, aktive Karte, Bank).
@@ -76,7 +76,7 @@
 - Auf der Karte steht „Im Besitz von <Name>“; der Name wird über `characterId` nachgeschlagen, damit Umbenennungen
   sofort sichtbar sind.
 
-### 4. Zuweisen beim Ziehen
+### 4. Zuweisen beim Ziehen ✅ done (2026-11-06 18:34)
 
 - Ist die aktive Karte eine Ausrüstungskarte, zeigt die schwebende Karte einen Button „Charakter zuweisen“.
 - Ein Dialog listet die Charaktere der Session (Bild und Name). Der Slot ist durch die Karte vorgegeben; bei Händen
@@ -85,7 +85,7 @@
 - Nach dem Zuweisen ist keine Karte mehr aktiv.
 - Ohne Charaktere in der Session ist der Button deaktiviert (Tooltip mit Grund).
 
-### 5. Ausrüstung im Charakter-Editor
+### 5. Ausrüstung im Charakter-Editor ✅ done (2026-11-06 18:34)
 
 - Neuer Abschnitt „Ausrüstung“: alle Slots mit Kartenname und kleinem Kartenbild, leere Slots als „frei“.
 - Je belegtem Slot ein Button „Ablegen“: Die Karte kommt in den Ablagestapel. Wie die übrigen Änderungen im Editor
@@ -94,32 +94,32 @@
   wirksame Wert, z. B. `Verteidigung 4  +2  = 6`. Ein Tooltip nennt die Quellen (`Turmschild +2`).
   Bonus positiv grün, negativ rot.
 
-### 6. Aktuelle Werte von Leben und Rüstung
+### 6. Aktuelle Werte von Leben und Rüstung ✅ done (2026-11-06 18:34)
 
 - Wird eine Karte mit `maxHealth`/`maxArmor`-Bonus zugewiesen, steigt der aktuelle Wert um denselben Betrag.
 - Wird sie abgelegt, sinkt das wirksame Maximum; der aktuelle Wert wird auf das neue Maximum begrenzt (nie unter 0).
 - Beispiel: Rüstung 4/4, Runenrüstung +2 → 6/6; 3 Schaden → 3/6; Karte ablegen → 3/4.
 
-### 7. Anzeige im Dungeon Tracker
+### 7. Anzeige im Dungeon Tracker ✅ done (2026-11-06 18:34)
 
 - Legende und markiertes Token zeigen die wirksamen Maximalwerte (`aktuell/wirksames Maximum`).
 
-### 8. Charakter entfernen
+### 8. Charakter entfernen ✅ done (2026-11-06 18:34)
 
 - Wird ein Charakter gelöscht, kommen alle seine Karten in den Ablagestapel.
 
-### 9. Ereignis-Log
+### 9. Ereignis-Log ✅ done (2026-11-06 18:34)
 
 - Zuweisen und Ablegen erzeugen je einen Eintrag im Log (z. B. „Barbar der Rote erhält Runenrüstung (Körper)“,
   „Barbar der Rote legt Runenrüstung ab“), Filter „Alle“.
 
-### 10. Speichern und Laden
+### 10. Speichern und Laden ✅ done (2026-11-06 18:34)
 
 - `assigned` gehört zum Deck-Zustand in der Spielesession und im XML-Spielstand.
 - Ältere Spielstände ohne `assigned` laden mit leerer Liste. Zuweisungen auf nicht mehr vorhandene Charaktere landen
   beim Laden im Ablagestapel.
 
-### 11. Tests
+### 11. Tests ✅ done (2026-11-06 18:34)
 
 - `effectiveStats`: ohne Karten, mehrere Karten, negative Werte, Grundwerte bleiben unverändert.
 - XML-Loader: Ausrüstungskarte, fehlerhafte Einträge.
@@ -142,12 +142,12 @@
 
 ## Akzeptanzkriterien
 
-- [ ] Eine gezogene Ausrüstungskarte lässt sich einem Charakter zuweisen und ist danach in keinem Stapel und nicht in
+- [x] Eine gezogene Ausrüstungskarte lässt sich einem Charakter zuweisen und ist danach in keinem Stapel und nicht in
       der Bank.
-- [ ] Die Karte zeigt „Im Besitz von <Name>“.
-- [ ] Der Charakter-Editor zeigt Grundwert, Bonus mit Quellen und wirksamen Wert; die Grundwerte bleiben unverändert.
-- [ ] Nach dem Ablegen gelten wieder die vorherigen Werte, und die Karte liegt im Ablagestapel.
-- [ ] Leben/Rüstung verhalten sich wie in 6. beschrieben.
-- [ ] Zuweisungen bleiben nach Neuladen und im XML-Spielstand erhalten; alte Spielstände laden ohne Fehler.
-- [ ] `REQUIREMENTS.md` (Card Manager, Charakter-Editor) beschreibt das Verhalten.
-- [ ] Dateien bleiben unter 150 Zeilen; die Coverage-Schwellen werden eingehalten.
+- [x] Die Karte zeigt „Im Besitz von <Name>“.
+- [x] Der Charakter-Editor zeigt Grundwert, Bonus mit Quellen und wirksamen Wert; die Grundwerte bleiben unverändert.
+- [x] Nach dem Ablegen gelten wieder die vorherigen Werte, und die Karte liegt im Ablagestapel.
+- [x] Leben/Rüstung verhalten sich wie in 6. beschrieben.
+- [x] Zuweisungen bleiben nach Neuladen und im XML-Spielstand erhalten; alte Spielstände laden ohne Fehler.
+- [x] `REQUIREMENTS.md` (Card Manager, Charakter-Editor) beschreibt das Verhalten.
+- [x] Dateien bleiben unter 150 Zeilen; die Coverage-Schwellen werden eingehalten.

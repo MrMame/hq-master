@@ -1,0 +1,58 @@
+<h2 mat-dialog-title class="general-dialog__title">Charakter zuweisen</h2>
+
+<mat-dialog-content class="assign-equipment">
+  <p class="assign-equipment__card">{{ data.card.name }} · {{ cardSlotLabel }}</p>
+
+  <fieldset class="assign-equipment__group">
+    <legend class="assign-equipment__caption">Charakter</legend>
+    @for (character of data.characters; track character.id) {
+      <label class="assign-equipment__option">
+        <input
+          type="radio"
+          name="character"
+          [value]="character.id"
+          [checked]="character.id === characterId()"
+          (change)="selectCharacter(character.id)"
+        />
+        <img [src]="character.image" alt="" class="assign-equipment__portrait" />
+        <span>{{ character.name }}</span>
+      </label>
+    }
+  </fieldset>
+
+  @if (handSlots.length > 0 && characterId()) {
+    <fieldset class="assign-equipment__group">
+      <legend class="assign-equipment__caption">Hand</legend>
+      @for (hand of handSlots; track hand) {
+        <label class="assign-equipment__option">
+          <input
+            type="radio"
+            name="hand"
+            [value]="hand"
+            [checked]="hand === slot()"
+            (change)="selectHand(hand)"
+          />
+          <span>{{ slotLabels[hand] }}</span>
+        </label>
+      }
+    </fieldset>
+  }
+
+  @if (occupant(); as previous) {
+    <p class="assign-equipment__occupied" data-testid="slot-occupied">
+      {{ slotLabels[previous.slot] }} ist belegt: {{ previous.card.name }}
+    </p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button class="general-dialog__cancel" (click)="cancel()">Abbrechen</button>
+  <button
+    mat-flat-button
+    class="general-dialog__confirm"
+    [disabled]="!characterId()"
+    (click)="confirm()"
+  >
+    Zuweisen
+  </button>
+</mat-dialog-actions>

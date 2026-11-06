@@ -50,6 +50,14 @@ describe('game-log-rows.util', () => {
     expect(rows.map((row) => (row.kind === 'entry' ? row.text : ''))).toEqual(texts);
   });
 
+  it('shows equipment entries only under "all"', () => {
+    const equipment: GameLogEntry[] = [entry('erhält', { type: 'equipment-assigned' })];
+    expect(gameLogRows(equipment, 'all')).toHaveLength(1);
+    (['time', 'conditions', 'damage'] as GameLogFilter[]).forEach((filter) =>
+      expect(gameLogRows(equipment, filter)).toEqual([]),
+    );
+  });
+
   it('returns no rows for an empty log', () => {
     expect(gameLogRows([], 'all')).toEqual([]);
   });
@@ -64,6 +72,8 @@ describe('game-log-rows.util', () => {
     [{ type: 'damage', damageType: DamageTypes.Critical }, './img/hit-critical.svg'],
     [{ type: 'time' }, './img/clock.svg'],
     [{ type: 'round' }, './img/clock.svg'],
+    [{ type: 'equipment-assigned' }, './img/equipment.svg'],
+    [{ type: 'equipment-removed' }, './img/equipment.svg'],
   ])('picks the icon for %o', (overrides, icon) => {
     expect(entryIcon(createTestLogEntry(overrides))).toBe(icon);
   });

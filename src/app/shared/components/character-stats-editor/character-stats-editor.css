@@ -1,0 +1,58 @@
+/* Gleiche Optik wie die übrigen Felder des Charakter-Editors.
+   Oben Leben und Rüstung je mit Maximum, darunter Angriff, Abwehr, Tempo. */
+.character-editor__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.character-editor__stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.character-editor__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.character-editor__caption {
+  color: var(--color-gray-400);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+.character-editor__input {
+  min-width: 0;
+  padding: var(--space-2);
+  border: 1px solid var(--color-gray-600);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-gray-900);
+  color: var(--color-white);
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-yellow-400);
+  }
+
+  &.ng-invalid {
+    border-color: var(--color-red-400);
+  }
+}
+
+/* Bonus durch Ausrüstung: positiv grün, negativ rot */
+.character-editor__bonus {
+  color: var(--color-green-400);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  font-weight: 600;
+  cursor: help;
+}
+
+.character-editor__bonus--negative {
+  color: var(--color-red-400);
+}

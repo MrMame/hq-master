@@ -7,8 +7,8 @@ import {
 } from '@angular/common/http/testing';
 
 import { DeckXmlLoaderService } from './deck-xml-loader.service';
-import { DeckConfig } from '../models/deck-config.model';
-import { Card } from '../models/card.model';
+import { DeckConfig } from '../../models/deck-config.model';
+import { Card } from '../../models/card.model';
 
 const DECK_XML: string = `
   <deck id="d1" name="Testdeck" backImage="back.svg" type="combat">

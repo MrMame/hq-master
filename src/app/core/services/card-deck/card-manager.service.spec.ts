@@ -3,12 +3,12 @@ import { Mock } from 'vitest';
 
 import { CardManagerService } from './card-manager.service';
 import { DeckXmlLoaderService } from './deck-xml-loader.service';
-import { Card } from '../models/card.model';
-import { DeckConfig } from '../models/deck-config.model';
-import { DeckState } from '../models/deck-state.model';
-import { createDeckState } from '../../game-session/testing/session.fixtures';
-import { describePersistedState } from '../../../core/session-state/testing/describe-persisted-state';
-import { SESSION_KEYS } from '../../../core/session-state/session-keys';
+import { Card } from '../../models/card.model';
+import { DeckConfig } from '../../models/deck-config.model';
+import { DeckState } from '../../models/deck-state.model';
+import { createDeckState } from '../../testing/deck.fixtures';
+import { describePersistedState } from '../../session-state/testing/describe-persisted-state';
+import { SESSION_KEYS } from '../../session-state/session-keys';
 
 const KEY: string = SESSION_KEYS.deckState;
 

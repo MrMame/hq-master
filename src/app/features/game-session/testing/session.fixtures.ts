@@ -1,42 +1,7 @@
 import { createTestCharacter } from '../../../core/testing/character.fixtures';
 import { createTestLog } from '../../../core/testing/game-log.fixtures';
-import { DeckState } from '../../card-manager/models/deck-state.model';
-import { Card } from '../../card-manager/models/card.model';
+import { createDeckState } from '../../../core/testing/deck.fixtures';
 import { SessionSnapshot } from '../models/session-snapshot.model';
-
-const combatCard: Card = {
-  id: 'c1',
-  name: 'Schwert',
-  imagePath: 'cards/sword.svg',
-  description: 'Scharf',
-  cardType: 'combat',
-  attack: 3,
-  defense: 1,
-};
-
-const basicCard: Card = {
-  id: 'b1',
-  name: 'Fackel',
-  imagePath: 'cards/torch.svg',
-  description: '',
-  cardType: 'basic',
-};
-
-export function createDeckState(): DeckState {
-  return {
-    config: {
-      id: 'deck-1',
-      name: 'Testdeck',
-      backImagePath: 'cards/back.svg',
-      defaultCardType: 'basic',
-      cards: [combatCard, basicCard],
-    },
-    drawPile: [basicCard],
-    discardPile: [],
-    activeCard: combatCard,
-    bank: [],
-  };
-}
 
 export function createSessionSnapshot(): SessionSnapshot {
   return {

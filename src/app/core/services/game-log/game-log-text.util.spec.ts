@@ -1,6 +1,7 @@
 import {
   conditionText,
   damageText,
+  equipmentText,
   formatClock,
   formatSpan,
   timeChangeText,
@@ -58,5 +59,12 @@ describe('game-log-text.util', () => {
   it('describes manual damage on armor and on health', () => {
     expect(damageText('Lyra', 3, DamageTypes.Normal)).toBe('Lyra: 3 Schaden auf Rüstung');
     expect(damageText(undefined, 2, DamageTypes.Critical)).toBe('Unbenannt: 2 Schaden auf Leben');
+  });
+
+  it('describes assigning and discarding equipment', () => {
+    expect(equipmentText('Barbar der Rote', 'Runenrüstung', 'Körper')).toBe(
+      'Barbar der Rote erhält Runenrüstung (Körper)',
+    );
+    expect(equipmentText(undefined, 'Runenrüstung', null)).toBe('Unbenannt legt Runenrüstung ab');
   });
 });

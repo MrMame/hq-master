@@ -5,6 +5,7 @@ import { formatClock } from '../../../shared/utils/condition-time.util';
 import { GameLogFilter, GameLogRow } from '../models/game-log-row.model';
 
 const CLOCK_ICON: string = './img/clock.svg';
+const EQUIPMENT_ICON: string = './img/equipment.svg';
 
 /** Welche Eintragsarten ein Filter zeigt; Zustands-Schaden zählt zu „Zustände“ und zu „Schaden“. */
 const FILTER_TYPES: Record<Exclude<GameLogFilter, 'all'>, readonly GameLogEntryType[]> = {
@@ -48,9 +49,12 @@ export function formatDate(time: Date): string {
   return `${time.getFullYear()}-${month}-${day}`;
 }
 
-/** Zustandssymbol, sonst Uhr (Zeit) bzw. Treffer auf Rüstung/Leben (manueller Schaden). */
+/** Zustandssymbol, Schild (Ausrüstung), sonst Uhr (Zeit) bzw. Treffer auf Rüstung/Leben (manueller Schaden). */
 export function entryIcon(entry: GameLogEntry): string {
   if (entry.conditionId) return conditionTemplate(entry.conditionId).icon;
+  if (entry.type === 'equipment-assigned' || entry.type === 'equipment-removed') {
+    return EQUIPMENT_ICON;
+  }
   if (entry.type === 'damage') {
     return entry.damageType === DamageTypes.Normal
       ? './img/hit-normal.svg'

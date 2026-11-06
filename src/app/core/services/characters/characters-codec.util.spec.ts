@@ -49,11 +49,10 @@ describe('CHARACTERS_CODEC', () => {
     ]);
   });
 
-  it('lowers stored current values above their maximum to the maximum', () => {
-    const above: CharacterInfo = { ...createTestCharacter('a'), health: 30, armor: 9 };
-    expect(CHARACTERS_CODEC.decode([above])).toEqual([
-      { ...createTestCharacter('a'), health: 12, armor: 4 },
-    ]);
+  // Über dem Grundmaximum ist erlaubt (Ausrüstungsbonus); begrenzt wird mit den Modifikatoren im EquipmentSyncService.
+  it('keeps stored current values above the base maximum and raises negative ones to 0', () => {
+    const above: CharacterInfo = { ...createTestCharacter('a'), health: 30, armor: -2 };
+    expect(CHARACTERS_CODEC.decode([above])).toEqual([{ ...above, armor: 0 }]);
   });
 
   it('drops entries that are no objects', () => {

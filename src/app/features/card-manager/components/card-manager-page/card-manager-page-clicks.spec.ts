@@ -1,7 +1,7 @@
 import { clickButton } from '../../../../shared/testing/click-button';
-import { DeckState } from '../../models/deck-state.model';
-import { Card } from '../../models/card.model';
-import { createDeckState } from '../../../game-session/testing/session.fixtures';
+import { DeckState } from '../../../../core/models/deck-state.model';
+import { Card } from '../../../../core/models/card.model';
+import { createDeckState } from '../../../../core/testing/deck.fixtures';
 import {
   CardManagerAction,
   CardManagerPageHarness,

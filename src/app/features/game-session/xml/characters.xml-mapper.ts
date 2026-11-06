@@ -9,7 +9,7 @@ import {
   setAttributes,
   textOf,
 } from '../../../shared/utils/xml.util';
-import { withinLimits } from '../../../core/services/characters/character-limits.util';
+import { normalizedLimits } from '../../../core/services/characters/character-limits.util';
 import { readConditions, writeConditions } from './conditions.xml-mapper';
 
 export function writeCharacters(doc: XMLDocument, characters: CharacterInfo[]): Element {
@@ -50,7 +50,7 @@ function writeCharacter(doc: XMLDocument, c: CharacterInfo): Element {
 function readCharacter(el: Element): CharacterInfo {
   const health: number = readNumber(el, 'health');
   const armor: number = readNumber(el, 'armor');
-  return withinLimits({
+  return normalizedLimits({
     id: readString(el, 'id'),
     name: readString(el, 'name'),
     type: readString(el, 'type'),

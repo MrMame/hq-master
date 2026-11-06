@@ -22,7 +22,10 @@ core/
                     character-condition.model.ts (ConditionId, ConditionTemplate, ActiveCondition),
                     condition-templates.model.ts (CONDITION_TEMPLATES: Standardwerte und Symbole der Zustände),
                     condition-event.model.ts (ConditionEvent: Schaden/Ablauf eines Zustands),
-                    game-log-entry.model.ts (GameLogEntry, GameLogEntryType: Ereignis-Log der Session)
+                    game-log-entry.model.ts (GameLogEntry, GameLogEntryType: Ereignis-Log der Session),
+                    card.model.ts, deck-config.model.ts, deck-state.model.ts (Kartendeck inkl. `AssignedCard`;
+                    in core, weil der Charakter-Editor die Ausrüstung bearbeitet),
+                    equipment.model.ts (ModifiableStat, StatModifier, EquipmentSlot, CardSlot, Beschriftungen)
     character-names/ → <klasse>-names.model.ts (editierbare Vor-/Nachnamen je Charakterklasse,
                     vom Dateilimit ausgenommen), character-names.model.ts (CHARACTER_NAMES_BY_IMAGE)
   session-state/  → persisted-state.ts (persistedState), session-keys.ts (SESSION_KEYS),
@@ -41,8 +44,20 @@ core/
     characters/   → CharactersDbService (`markMoved`, `clearMovedThisRound` für `movedThisRound`), characters-codec.util.ts (CHARACTERS_CODEC: ältere Charaktere ohne
                     Zustände, `movedThisRound` bzw. Maximalwerte ergänzen, ungültige Zustände verwerfen),
                     character-limits.util.ts (`withinLimits`: Leben/Rüstung auf 0…`maxHealth`/`maxArmor` begrenzen,
-                    `readLimit`: fehlendes/ungültiges Maximum → aktueller Wert; für Codec, XML und Editor)
-  testing/        → character.fixtures.ts (Testdaten für Charaktere), condition.fixtures.ts (Test-Zustände, Spielzeit
+                    `readLimit`: fehlendes/ungültiges Maximum → aktueller Wert; für Codec, XML und Editor;
+                    `withinLimits(c, modifiers)` begrenzt auf das wirksame Maximum, `normalizedLimits` für Codec/XML
+                    nur nach unten, `withAddedEquipment`)
+    card-deck/    → CardManagerService (Deck-Zustand der Session inkl. `assigned`), DeckXmlLoaderService,
+                    deck-assignment.util.ts (zuweisen, ablegen, verwaiste Zuweisungen), deck-state-codec.util.ts
+                    (DECK_STATE_CODEC: ältere Zustände ohne `assigned`), equipment-card-xml.util.ts (Slot und
+                    `<modifier>` lesen/schreiben für Deck-XML und Spielstand)
+    equipment/    → effective-stats.util.ts (`effectiveStats`: einzige Berechnung der wirksamen Werte),
+                    equipment-text.util.ts, equipment-slots.util.ts, equipment-log.util.ts,
+                    EquipmentService (Zuweisen/Ablegen inkl. Leben/Rüstung und Log, kein eigener Zustand),
+                    EquipmentSyncService (effect(): Karten fehlender Charaktere ablegen, Leben/Rüstung auf das
+                    wirksame Maximum begrenzen; app-weit in app.config.ts gestartet)
+  testing/        → character.fixtures.ts (Testdaten für Charaktere), deck.fixtures.ts (Deck, Ausrüstungskarten),
+                    condition.fixtures.ts (Test-Zustände, Spielzeit
                     ab 12:00:00), game-log.fixtures.ts (Log-Einträge), nur für Specs
 
 features/
@@ -113,17 +128,21 @@ features/
                          game-log-rows.util.ts (Spielzeit absteigend, Datums-Trennzeile, Filter, Symbol je Eintrag)
 
   card-manager/        → Kartenverwaltung (Deck aus XML + SVG)
-    components/        → CardManagerPage, CardDisplay, ActiveCardOverlay (aktive Karte schwebend mittig im Fenster
-                         per `createOverlayRef`, ohne Backdrop; Größe nur aus dem Fenster)
-    models/            → card.model.ts, deck-config.model.ts, deck-state.model.ts
-    services/          → card-manager.service.ts, deck-xml-loader.service.ts
-    testing/           → card-manager-page.fixtures.ts (gemockter Service, nur für Specs)
+    components/        → CardManagerPage (Bereich „Ausgerüstet“), CardDisplay (Slot, Modifikatoren, „Im Besitz von“),
+                         ActiveCardOverlay (aktive Karte schwebend mittig im Fenster per `createOverlayRef`, ohne
+                         Backdrop; Größe nur aus dem Fenster; bei Ausrüstung „Charakter zuweisen“),
+                         AssignEquipmentDialog (Charakter und Hand wählen, schreibt nichts)
+    models/            → assign-equipment.model.ts (Daten und Ergebnis des Zuweisungsdialogs)
+    services/          → card-assignment.service.ts (Zuweisungsdialog, Rückfragen bei belegtem Slot und neuem Deck);
+                         Deck-Zustand und Loader liegen in core/services/card-deck/
+    testing/           → card-manager-page.fixtures.ts (gemockte Services, nur für Specs)
 
   game-session/        → Session starten/beenden, Speichern/Laden als XML
     components/        → GameSessionPage
     models/            → session-meta.model.ts, session-snapshot.model.ts
     services/          → game-session.service.ts, session-xml.service.ts
-    xml/               → *.xml-mapper.ts (writeX/readX); game-log.xml-mapper.ts: fehlendes `<gameLog>` → leeres Log
+    xml/               → *.xml-mapper.ts (writeX/readX); game-log.xml-mapper.ts: fehlendes `<gameLog>` → leeres Log;
+                         card.xml-mapper.ts (Karten), assigned-cards.xml-mapper.ts (fehlendes `<assigned>` → leer)
     utils/             → date-time-local.util.ts (reine Hilfsfunktionen)
     testing/           → session.fixtures.ts, game-session-page.fixtures.ts (nur für Specs)
 
@@ -134,6 +153,8 @@ shared/
                          SidebarSectionToggleAll (alle Gruppen eines Features auf-/zuklappen, in `.general-sidebar__header`),
                          CharacterConditionsEditor (Abschnitt „Zustände“ im Editor, Felder hängen per
                          `viewProviders` am Formular des Editors),
+                         CharacterStatsEditor (Zahlenwerte im Editor mit Bonus `+2 = 6`, ebenfalls per `viewProviders`),
+                         CharacterEquipmentEditor (Abschnitt „Ausrüstung“: Slots, „Ablegen“ erst mit „Übernehmen“),
                          DamageTakenDialog, BoardZoomControl (senkrechter Zoom-Regler für zoombare Spielflächen,
                          z. B. in der `QuickAccessBar`),
                          QuickAccessBar (Schnellzugriffsleiste: senkrechter Streifen links neben einer Spielfläche,
@@ -161,6 +182,7 @@ shared/
                          folgt das Maximum dem Startwert),
                          random-character.util.ts (Zufallscharakter, Name passend zur Bildklasse),
                          damage.util.ts (reine Schadensberechnung),
+                         stat-bonus.util.ts (Bonus, wirksamer Wert und Quellen je Zahlenwert im Editor),
                          condition-tick.util.ts (advanceConditions: Wirkmomente nachholen, Ablauf, Ereignisse),
                          condition-time.util.ts (Ende, Restdauer, nächster Wirkmoment, `m:ss`),
                          condition-draft.util.ts (Vorlage kopieren, Start beim Übernehmen, Minuten/Sekunden),
@@ -168,6 +190,7 @@ shared/
                          xml.util.ts (XML lesen/schreiben, `requireChild` mit Dateiart in der Fehlermeldung)
   testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
                          character-editor-dialog.fixtures.ts, character-conditions-editor.fixtures.ts,
+                         character-equipment.fixtures.ts,
                          main-nav.fixtures.ts)
 ```
 

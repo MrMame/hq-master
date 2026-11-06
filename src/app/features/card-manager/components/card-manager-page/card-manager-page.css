@@ -91,3 +91,21 @@
   gap: var(--bank-gap);
   width: 100%;
 }
+
+/* Zugewiesene Ausrüstung: eine waagerecht scrollende Reihe zwischen Stapeln und Bank. */
+.equippedContainer {
+  padding: var(--space-2);
+  background-color: var(--color-card-manager-piles);
+}
+
+.equippedCards {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+}
+
+.cardEquipped {
+  height: 12rem;
+  width: auto;
+  flex-shrink: 0;
+}

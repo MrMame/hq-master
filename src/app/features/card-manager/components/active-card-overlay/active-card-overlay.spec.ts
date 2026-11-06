@@ -4,8 +4,8 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { vi } from 'vitest';
 
 import { ActiveCardOverlay } from './active-card-overlay';
-import { Card } from '../../models/card.model';
-import { createDeckState } from '../../../game-session/testing/session.fixtures';
+import { Card } from '../../../../core/models/card.model';
+import { createDeckState, RUNE_ARMOR } from '../../../../core/testing/deck.fixtures';
 
 const [FIRST, SECOND]: Card[] = createDeckState().config.cards;
 
@@ -14,12 +14,16 @@ const [FIRST, SECOND]: Card[] = createDeckState().config.cards;
   template: `<app-active-card-overlay
     [card]="card()"
     backImagePath="cards/back.svg"
+    [assignDisabledReason]="reason()"
     (cardClick)="clicked()"
+    (assignClick)="assigned()"
   />`,
 })
 class OverlayHost {
   readonly card: WritableSignal<Card | null> = signal<Card | null>(null);
+  readonly reason: WritableSignal<string | null> = signal<string | null>(null);
   readonly clicked: () => void = vi.fn();
+  readonly assigned: () => void = vi.fn();
 }
 
 describe('ActiveCardOverlay', () => {
@@ -32,6 +36,9 @@ describe('ActiveCardOverlay', () => {
   };
   const floatingCards: () => HTMLElement[] = (): HTMLElement[] =>
     Array.from(container.querySelectorAll<HTMLElement>('app-card-display'));
+
+  const assignButton: () => HTMLButtonElement | null = () =>
+    container.querySelector<HTMLButtonElement>('.floating-card__assign');
 
   beforeEach(async () => {
     TestBed.configureTestingModule({ imports: [OverlayHost] });
@@ -76,6 +83,24 @@ describe('ActiveCardOverlay', () => {
     floatingCards()[0].querySelector<HTMLElement>('.card-display')!.click();
 
     expect(fixture.componentInstance.clicked).toHaveBeenCalledOnce();
+  });
+
+  it('offers "Charakter zuweisen" only for equipment cards', async () => {
+    await show(FIRST);
+    expect(assignButton()).toBeNull();
+
+    await show(RUNE_ARMOR);
+    assignButton()!.click();
+    expect(fixture.componentInstance.assigned).toHaveBeenCalledOnce();
+    expect(fixture.componentInstance.clicked).not.toHaveBeenCalled();
+  });
+
+  it('disables "Charakter zuweisen" and names the reason in the tooltip', async () => {
+    fixture.componentInstance.reason.set('Keine Charaktere in der Session');
+    await show(RUNE_ARMOR);
+
+    expect(assignButton()!.disabled).toBe(true);
+    expect(assignButton()!.parentElement!.title).toBe('Keine Charaktere in der Session');
   });
 
   it('leaves an empty overlay container after the component is destroyed', async () => {

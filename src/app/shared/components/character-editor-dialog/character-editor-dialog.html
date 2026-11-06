@@ -30,23 +30,12 @@
 
     <hr class="character-editor__divider" />
 
-    <!-- Zahlenwerte -->
-    <div class="character-editor__stats">
-      @for (stat of stats; track stat.key) {
-        <label class="character-editor__field">
-          <span class="character-editor__caption">{{ stat.label }}</span>
-          <input
-            type="number"
-            min="0"
-            required
-            class="character-editor__input"
-            [name]="stat.key"
-            [ngModel]="draft()[stat.key]"
-            (ngModelChange)="setStat(stat.key, $event)"
-          />
-        </label>
-      }
-    </div>
+    <!-- Zahlenwerte (Grundwerte, mit Bonus durch Ausrüstung) -->
+    <app-character-stats-editor
+      [character]="draft()"
+      [cards]="equippedCards()"
+      (statChange)="setStat($event)"
+    />
 
     <hr class="character-editor__divider" />
 
@@ -80,6 +69,11 @@
       />
       In dieser Runde bewegt
     </label>
+
+    <hr class="character-editor__divider" />
+
+    <!-- Ausrüstung -->
+    <app-character-equipment-editor [cards]="equippedCards()" (discard)="discardCard($event)" />
 
     <hr class="character-editor__divider" />
 

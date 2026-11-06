@@ -2,7 +2,7 @@ import { ActiveCondition, ConditionId } from '../../models/character-condition.m
 import { CharacterInfo } from '../../models/character-info.model';
 import { CONDITION_TEMPLATES } from '../../models/condition-templates.model';
 import { StorageCodec } from '../../session-state/persisted-state';
-import { readLimit, withinLimits } from './character-limits.util';
+import { normalizedLimits, readLimit } from './character-limits.util';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -33,7 +33,7 @@ function readCharacter(character: Record<string, unknown>): CharacterInfo {
     conditions: readConditions(character['conditions']),
     movedThisRound: character['movedThisRound'] === true,
   } as unknown as CharacterInfo;
-  return withinLimits({
+  return normalizedLimits({
     ...decoded,
     maxHealth: readLimit(character['maxHealth'], decoded.health),
     maxArmor: readLimit(character['maxArmor'], decoded.armor),

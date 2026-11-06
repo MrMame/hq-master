@@ -1,0 +1,62 @@
+import { TestBed } from '@angular/core/testing';
+
+import { CardManagerService } from '../../../core/services/card-deck/card-manager.service';
+import { GameLogService } from '../../../core/services/game-log/game-log.service';
+import { DeckState } from '../../../core/models/deck-state.model';
+import { RUNE_ARMOR } from '../../../core/testing/deck.fixtures';
+import {
+  CharacterEditorDialogSetup,
+  editorField,
+} from '../../testing/character-editor-dialog.fixtures';
+import {
+  discardButton,
+  EQUIPPED_BARBARIAN,
+  setupEquippedEditor,
+} from '../../testing/character-equipment.fixtures';
+
+describe('CharacterEditorDialog – equipment', () => {
+  const deck: () => DeckState = () => TestBed.inject(CardManagerService).state() as DeckState;
+  const logTexts: () => string[] = () =>
+    TestBed.inject(GameLogService)
+      .entries()
+      .map((entry) => entry.text);
+
+  it('discards the card on apply, lowers armor to the new maximum and logs it (6/6 → 4/4)', async () => {
+    const { host, click, button, characters, close }: CharacterEditorDialogSetup =
+      await setupEquippedEditor();
+
+    await click(discardButton(host, 'Runenrüstung'));
+    await (await button('Übernehmen')).click();
+
+    expect(deck().discardPile).toEqual([RUNE_ARMOR]);
+    expect(deck().assigned.map((entry) => entry.card.name)).toEqual(['Turmschild']);
+    expect(characters()[0]).toMatchObject({ armor: 4, maxArmor: 4, speed: 5, defense: 4 });
+    expect(logTexts()).toEqual(['Barbar legt Runenrüstung ab']);
+    expect(close).toHaveBeenCalledWith(characters()[0]);
+  });
+
+  it('keeps the card on cancel', async () => {
+    const { host, click, button, characters }: CharacterEditorDialogSetup =
+      await setupEquippedEditor();
+
+    await click(discardButton(host, 'Runenrüstung'));
+    await (await button('Abbrechen')).click();
+
+    expect(deck().assigned).toHaveLength(2);
+    expect(deck().discardPile).toEqual([]);
+    expect(characters()[0]).toEqual(EQUIPPED_BARBARIAN);
+  });
+
+  it('keeps armor above the base maximum on apply while the card stays', async () => {
+    const { host, enter, button, characters }: CharacterEditorDialogSetup =
+      await setupEquippedEditor();
+
+    await enter('Rüstung', '9');
+    expect((editorField(host, 'Rüstung') as HTMLInputElement).value).toBe('9');
+    await (await button('Übernehmen')).click();
+
+    // Grundmaximum 4 + Runenrüstung 2 = 6
+    expect(characters()[0]).toMatchObject({ armor: 6, maxArmor: 4 });
+    expect(logTexts()).toEqual([]);
+  });
+});

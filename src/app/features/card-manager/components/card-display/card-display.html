@@ -8,6 +8,13 @@
         @if (combat) {
           <span class="card-stats">ATK {{ combat.attack }} / DEF {{ combat.defense }}</span>
         }
+        @if (equipment(); as info) {
+          <span class="card-stats card-stats--slot">{{ info.slot }}</span>
+          <span class="card-stats">{{ info.modifiers }}</span>
+        }
+        @if (owner()) {
+          <span class="card-owner">Im Besitz von {{ owner() }}</span>
+        }
       </div>
     </div>
   } @else {

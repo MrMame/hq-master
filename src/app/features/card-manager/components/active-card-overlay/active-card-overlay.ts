@@ -16,12 +16,13 @@ import {
 } from '@angular/core';
 import { createGlobalPositionStrategy, createOverlayRef, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { Card } from '../../models/card.model';
+import { Card } from '../../../../core/models/card.model';
 import { CardDisplay } from '../card-display/card-display';
 
 /**
  * Zeigt die aktive Karte als schwebende Ebene mittig im Fenster über der ganzen Seite.
- * Nicht modal: ohne Backdrop, nur die Karte selbst nimmt Klicks an.
+ * Nicht modal: ohne Backdrop, nur die Karte selbst nimmt Klicks an. Unter Ausrüstungskarten steht
+ * „Charakter zuweisen“.
  */
 @Component({
   selector: 'app-active-card-overlay',
@@ -29,46 +30,31 @@ import { CardDisplay } from '../card-display/card-display';
   template: `
     <ng-template #floatingCard>
       @if (card(); as activeCard) {
-        <app-card-display
-          class="floating-card"
-          [card]="activeCard"
-          [backImagePath]="backImagePath()"
-          (cardClick)="cardClick.emit()"
-        />
+        <div class="floating-card-stack">
+          <app-card-display
+            class="floating-card"
+            [card]="activeCard"
+            [backImagePath]="backImagePath()"
+            (cardClick)="cardClick.emit()"
+          />
+          @if (activeCard.cardType === 'equipment') {
+            <!-- Der Tooltip hängt am Wrapper, weil deaktivierte Buttons in manchen Browsern keinen zeigen. -->
+            <span [title]="assignDisabledReason() ?? 'Karte einem Charakter zuweisen'">
+              <button
+                type="button"
+                class="floating-card__assign"
+                [disabled]="assignDisabledReason() !== null"
+                (click)="assignClick.emit()"
+              >
+                Charakter zuweisen
+              </button>
+            </span>
+          }
+        </div>
       }
     </ng-template>
   `,
-  styles: `
-    :host {
-      display: contents;
-    }
-
-    /* Größe nur aus dem Fenster; die Breite folgt aus aspect-ratio von card-display. */
-    .floating-card {
-      --floating-card-max-height: 60dvh;
-      --floating-card-max-width: 30vw;
-      --card-shadow: var(--shadow-card-floating);
-      height: min(
-        var(--floating-card-max-height),
-        calc(var(--floating-card-max-width) / (var(--card-aspect-ratio)))
-      );
-      width: auto;
-      animation: floating-card-in var(--transition-duration) var(--transition-ease);
-    }
-
-    @keyframes floating-card-in {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .floating-card {
-        animation: none;
-      }
-    }
-  `,
+  styleUrl: './active-card-overlay.css',
 })
 export class ActiveCardOverlay {
   private readonly injector: Injector = inject(Injector);
@@ -79,7 +65,11 @@ export class ActiveCardOverlay {
 
   readonly card: InputSignal<Card | null> = input.required<Card | null>();
   readonly backImagePath: InputSignal<string> = input.required<string>();
+  /** Grund, warum nicht zugewiesen werden kann (z. B. keine Charaktere); `null` = Button aktiv. */
+  readonly assignDisabledReason: InputSignal<string | null> = input<string | null>(null);
   readonly cardClick: OutputEmitterRef<void> = output<void>();
+  /** Nur bei Ausrüstungskarten: „Charakter zuweisen“ wurde geklickt. */
+  readonly assignClick: OutputEmitterRef<void> = output<void>();
 
   private readonly syncOverlay: EffectRef = effect(() => {
     if (this.card()) {

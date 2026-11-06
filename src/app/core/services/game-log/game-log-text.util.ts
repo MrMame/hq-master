@@ -70,3 +70,15 @@ export function damageText(
   const target: string = damageType === DamageTypes.Normal ? 'Rüstung' : 'Leben';
   return `${characterName || UNNAMED}: ${damage} Schaden auf ${target}`;
 }
+
+/** z. B. „Barbar der Rote erhält Runenrüstung (Körper)“ bzw. „Barbar der Rote legt Runenrüstung ab“. */
+export function equipmentText(
+  characterName: string | undefined,
+  cardName: string,
+  slotLabel: string | null,
+): string {
+  const name: string = characterName || UNNAMED;
+  return slotLabel === null
+    ? `${name} legt ${cardName} ab`
+    : `${name} erhält ${cardName} (${slotLabel})`;
+}

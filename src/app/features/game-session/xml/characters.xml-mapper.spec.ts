@@ -65,11 +65,12 @@ describe('characters.xml-mapper', () => {
     expect(character).toMatchObject({ health: 7, maxHealth: 7, armor: 3, maxArmor: 3 });
   });
 
-  it('lowers current values above their maximum to the maximum', () => {
+  // Über dem Grundmaximum ist erlaubt (Ausrüstungsbonus); begrenzt wird mit den Modifikatoren im EquipmentSyncService.
+  it('keeps current values above the base maximum and raises negative ones to 0', () => {
     const [character]: CharacterInfo[] = read(
-      '<characters><character id="a" health="9" maxHealth="5" armor="4" maxArmor="2"/></characters>',
+      '<characters><character id="a" health="9" maxHealth="5" armor="-1" maxArmor="2"/></characters>',
     );
-    expect(character).toMatchObject({ health: 5, maxHealth: 5, armor: 2, maxArmor: 2 });
+    expect(character).toMatchObject({ health: 9, maxHealth: 5, armor: 0, maxArmor: 2 });
   });
 
   it('skips unknown conditions and falls back to startedAt for a missing lastTickAt', () => {
