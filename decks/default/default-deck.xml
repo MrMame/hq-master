@@ -56,8 +56,10 @@
     <description>Ein goldenes Elixier aus seltenen Kräutern destilliert. Schließt alle Wunden und erneuert die Lebenskraft.</description>
   </card>
 
-  <card id="card-010" name="Magischer Schild" image="decks/default/card-magic-shield.svg" type="basic">
+  <card id="card-010" name="Magischer Schild" image="decks/default/card-magic-shield.svg" type="equipment" slot="hand">
     <description>Ein verzauberter Schild, der Magie absorbiert und in Schutzenergie umwandelt. Ideal gegen Zauberangriffe.</description>
+    <modifier stat="maxArmor" value="1"/>
+    <modifier stat="defense" value="1"/>
   </card>
 
   <card id="card-011" name="Flammenimp" image="decks/default/card-flame-imp.svg" type="combat">
@@ -348,16 +350,21 @@
     <description>Einfache Heilkräuter, die kleine Wunden versorgen.</description>
   </card>
 
-  <card id="card-063" name="Turmschild" image="decks/default/card-tower-shield.svg" type="basic">
+  <card id="card-063" name="Turmschild" image="decks/default/card-tower-shield.svg" type="equipment" slot="hand">
     <description>Ein mannshoher Schild, hinter dem sich eine ganze Gruppe verbergen kann.</description>
+    <modifier stat="defense" value="2"/>
+    <modifier stat="speed" value="-1"/>
   </card>
 
-  <card id="card-064" name="Schutzamulett" image="decks/default/card-ward-amulet.svg" type="basic">
+  <card id="card-064" name="Schutzamulett" image="decks/default/card-ward-amulet.svg" type="equipment" slot="amulet">
     <description>Wehrt den ersten Fluch ab, der seinen Träger trifft.</description>
+    <modifier stat="defense" value="1"/>
   </card>
 
-  <card id="card-065" name="Runenrüstung" image="decks/default/card-rune-armor.svg" type="basic">
+  <card id="card-065" name="Runenrüstung" image="decks/default/card-rune-armor.svg" type="equipment" slot="body">
     <description>Eine leichte Rüstung, deren Runen heranfliegende Pfeile ablenken.</description>
+    <modifier stat="maxArmor" value="2"/>
+    <modifier stat="speed" value="-1"/>
   </card>
 
   <card id="card-066" name="Heilige Reliquie" image="decks/default/card-holy-relic.svg" type="basic">
