@@ -30,6 +30,8 @@
 .card-image {
   width: 85%;
   flex: 1;
+  /* Darf schrumpfen, damit Slot, Werte und Besitzer unter dem Bild Platz haben. */
+  min-height: 0;
   object-fit: scale-down;
 }
 
@@ -55,4 +57,18 @@
 .card-stats {
   font-size: 0.65rem;
   color: var(--color-card-muted);
+}
+
+.card-stats--slot {
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+.card-owner {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--color-card-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

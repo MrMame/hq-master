@@ -1,6 +1,7 @@
 import { Component, inject, Signal, signal, WritableSignal } from '@angular/core';
-import { CardManagerService } from '../../services/card-manager.service';
-import { DeckState } from '../../models/deck-state.model';
+import { CardManagerService } from '../../../../core/services/card-deck/card-manager.service';
+import { CardAssignmentService } from '../../services/card-assignment.service';
+import { DeckState } from '../../../../core/models/deck-state.model';
 import { CardDisplay } from '../card-display/card-display';
 import { ActiveCardOverlay } from '../active-card-overlay/active-card-overlay';
 import { CollapsibleSidebar } from '../../../../shared/components/collapsible-sidebar/collapsible-sidebar';
@@ -22,7 +23,11 @@ import { SidebarSectionToggleAll } from '../../../../shared/components/sidebar-s
 export class CardManagerPage {
   private readonly cardManagerService: CardManagerService = inject(CardManagerService);
 
+  private readonly cardAssignment: CardAssignmentService = inject(CardAssignmentService);
+
   readonly state: Signal<DeckState | null> = this.cardManagerService.state;
+  readonly assignDisabledReason: Signal<string | null> = this.cardAssignment.assignDisabledReason;
+  readonly ownerNames: Signal<ReadonlyMap<string, string>> = this.cardAssignment.ownerNames;
 
   private readonly _isLoading: WritableSignal<boolean> = signal(false);
   readonly isLoading: Signal<boolean> = this._isLoading.asReadonly();
@@ -33,6 +38,9 @@ export class CardManagerPage {
   async onLoadDeck(url: string): Promise<void> {
     const trimmed: string = url.trim();
     if (!trimmed) return;
+    // Rückfrage nur bei Zuweisungen; ohne startet das Laden sofort.
+    const hasAssignments: boolean = (this.state()?.assigned.length ?? 0) > 0;
+    if (hasAssignments && !(await this.cardAssignment.confirmNewDeck())) return;
     this._isLoading.set(true);
     this._loadError.set(null);
     try {
@@ -62,6 +70,9 @@ export class CardManagerPage {
     } else {
       this.cardManagerService.discardActiveCard();
     }
+  }
+  onAssignClick(): void {
+    this.cardAssignment.assignActiveCard();
   }
   onActiveCardClick(): void {
     this.cardManagerService.discardActiveCard();

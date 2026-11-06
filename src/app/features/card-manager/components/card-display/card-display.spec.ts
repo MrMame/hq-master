@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CardDisplay } from './card-display';
-import { BasicCard, CombatCard } from '../../models/card.model';
+import { BasicCard, Card, CombatCard } from '../../../../core/models/card.model';
+import { RUNE_ARMOR } from '../../../../core/testing/deck.fixtures';
 
 const BASIC: BasicCard = {
   id: 'b1',
@@ -25,8 +26,8 @@ describe('CardDisplay', () => {
   let fixture: ComponentFixture<CardDisplay>;
   let host: HTMLElement;
 
-  const render: (card: BasicCard | CombatCard, side?: 'front' | 'back') => Promise<void> = async (
-    card: BasicCard | CombatCard,
+  const render: (card: Card, side?: 'front' | 'back') => Promise<void> = async (
+    card: Card,
     side?: 'front' | 'back',
   ): Promise<void> => {
     fixture.componentRef.setInput('card', card);
@@ -87,5 +88,23 @@ describe('CardDisplay', () => {
   it('asCombat returns the card only for combat cards', () => {
     expect(fixture.componentInstance.asCombat(COMBAT)).toBe(COMBAT);
     expect(fixture.componentInstance.asCombat(BASIC)).toBeNull();
+  });
+
+  it('shows slot and modifiers for equipment cards', async () => {
+    await render(RUNE_ARMOR);
+
+    const stats: string[] = Array.from(host.querySelectorAll('.card-stats')).map(
+      (el) => el.textContent ?? '',
+    );
+    expect(stats).toEqual(['Körper', 'Rüstung +2 · Tempo −1']);
+  });
+
+  it('shows the owner of an assigned card', async () => {
+    await render(RUNE_ARMOR);
+    expect(host.querySelector('.card-owner')).toBeNull();
+
+    fixture.componentRef.setInput('owner', 'Barbar');
+    await fixture.whenStable();
+    expect(host.querySelector('.card-owner')?.textContent).toBe('Im Besitz von Barbar');
   });
 });

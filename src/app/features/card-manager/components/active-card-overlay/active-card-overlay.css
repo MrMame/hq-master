@@ -1,0 +1,53 @@
+:host {
+  display: contents;
+}
+
+/* Karte und (bei Ausrüstung) der Zuweisen-Button untereinander; nur diese Fläche nimmt Klicks an. */
+.floating-card-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Größe nur aus dem Fenster; die Breite folgt aus aspect-ratio von card-display. */
+.floating-card {
+  --floating-card-max-height: 60dvh;
+  --floating-card-max-width: 30vw;
+  --card-shadow: var(--shadow-card-floating);
+  height: min(
+    var(--floating-card-max-height),
+    calc(var(--floating-card-max-width) / (var(--card-aspect-ratio)))
+  );
+  width: auto;
+  animation: floating-card-in var(--transition-duration) var(--transition-ease);
+}
+
+.floating-card__assign {
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-yellow-400);
+  color: var(--color-gray-900);
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    background-color: var(--color-gray-600);
+    color: var(--color-gray-400);
+    cursor: not-allowed;
+  }
+}
+
+@keyframes floating-card-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-card {
+    animation: none;
+  }
+}

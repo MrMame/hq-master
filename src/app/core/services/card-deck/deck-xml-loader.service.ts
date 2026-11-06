@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { BaseCard, Card, CardType } from '../models/card.model';
-import { DeckConfig } from '../models/deck-config.model';
+import { BaseCard, Card, CardType, EquipmentCard } from '../../models/card.model';
+import { DeckConfig } from '../../models/deck-config.model';
+import { readEquipmentCard } from './equipment-card-xml.util';
 
 @Injectable({ providedIn: 'root' })
 export class DeckXmlLoaderService {
@@ -50,6 +51,14 @@ export class DeckXmlLoaderService {
         attack: Number(el.querySelector('attack')?.textContent ?? 0),
         defense: Number(el.querySelector('defense')?.textContent ?? 0),
       };
+    }
+
+    if (cardType === 'equipment') {
+      const equipment: EquipmentCard | null = readEquipmentCard(el, base);
+      if (equipment) return equipment;
+      console.warn(
+        `Ausrüstungskarte „${base.name}“ ist ungültig und wird als einfache Karte geladen.`,
+      );
     }
 
     return { ...base, cardType: 'basic' };

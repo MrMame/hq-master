@@ -10,7 +10,7 @@ import {
 } from '../../../core/session-state/persisted-state';
 import { SESSION_KEYS } from '../../../core/session-state/session-keys';
 import { SessionSliceData, SessionSlices } from '../../../core/session-state/session-slices';
-import { CardManagerService } from '../../card-manager/services/card-manager.service';
+import { CardManagerService } from '../../../core/services/card-deck/card-manager.service';
 import { DungeonBoardService } from '../../dungeon-tracker/services/dungeon-board.service';
 import { DEFAULT_SESSION_META, SessionMeta } from '../models/session-meta.model';
 import { SessionSnapshot } from '../models/session-snapshot.model';

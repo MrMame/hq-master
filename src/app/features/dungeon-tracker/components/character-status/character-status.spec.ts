@@ -4,6 +4,12 @@ import { CharacterStatus } from './character-status';
 import { CharacterInfo } from '../../../../core/models/character-info.model';
 import { DamageTypes } from '../../../../core/models/damage-types.model';
 import { createTestCharacter } from '../../../../core/testing/character.fixtures';
+import { CardManagerService } from '../../../../core/services/card-deck/card-manager.service';
+import {
+  assignedCard,
+  createEquipmentDeckState,
+  RUNE_ARMOR,
+} from '../../../../core/testing/deck.fixtures';
 
 describe('CharacterStatus', () => {
   let fixture: ComponentFixture<CharacterStatus>;
@@ -30,6 +36,21 @@ describe('CharacterStatus', () => {
     expect(value(label).classList).toContain(className);
     expect(value(label).title).toBe(label);
     expect(value(label).textContent?.trim()).toBe(expected);
+  });
+
+  it('shows the effective maximum including equipment and follows assignment changes', () => {
+    const cardManager: CardManagerService = TestBed.inject(CardManagerService);
+    cardManager.restore({
+      ...createEquipmentDeckState('a'),
+      assigned: [assignedCard(RUNE_ARMOR, 'a', 'body')],
+    });
+    render({ ...createTestCharacter('a'), armor: 6 });
+    expect(value('Rüstung').textContent?.trim()).toBe('6/6');
+    expect(value('Leben').textContent?.trim()).toBe('12/12');
+
+    cardManager.discardAssignedCards(['e1']);
+    fixture.detectChanges();
+    expect(value('Rüstung').textContent?.trim()).toBe('6/4');
   });
 
   it('updates when the character input changes', () => {

@@ -1,6 +1,6 @@
 import { readDeck, writeDeck } from './deck.xml-mapper';
-import { DeckState } from '../../card-manager/models/deck-state.model';
-import { Card } from '../../card-manager/models/card.model';
+import { DeckState } from '../../../core/models/deck-state.model';
+import { Card } from '../../../core/models/card.model';
 
 function parse(xml: string): Element {
   return new DOMParser().parseFromString(xml, 'application/xml').documentElement;
@@ -30,6 +30,7 @@ describe('deck.xml-mapper – fallbacks for old or hand-edited files', () => {
       discardPile: [],
       activeCard: null,
       bank: [],
+      assigned: [],
     });
   });
 
@@ -103,6 +104,7 @@ describe('deck.xml-mapper – writing', () => {
       discardPile: [],
       activeCard: null,
       bank: [],
+      assigned: [],
     };
     const el: Element = writeDeck(doc, deck);
     expect(el.querySelector('activeCard')?.children).toHaveLength(0);

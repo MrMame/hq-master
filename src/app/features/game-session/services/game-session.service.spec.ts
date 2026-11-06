@@ -5,7 +5,7 @@ import { GameSessionService } from './game-session.service';
 import { GameTimeService } from '../../../core/services/game-time/game-time.service';
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
 import { GameLogService } from '../../../core/services/game-log/game-log.service';
-import { CardManagerService } from '../../card-manager/services/card-manager.service';
+import { CardManagerService } from '../../../core/services/card-deck/card-manager.service';
 import { DungeonBoardService } from '../../dungeon-tracker/services/dungeon-board.service';
 import { DEFAULT_DUNGEON_BOARD_STATE } from '../../dungeon-tracker/models/dungeon-board-state.model';
 import { SessionMeta } from '../models/session-meta.model';
@@ -13,7 +13,8 @@ import { describePersistedState } from '../../../core/session-state/testing/desc
 import { SESSION_KEYS } from '../../../core/session-state/session-keys';
 import { SessionStateSlice } from '../../../core/session-state/session-state-slice';
 import { SessionSnapshot } from '../models/session-snapshot.model';
-import { createDeckState, createSessionSnapshot } from '../testing/session.fixtures';
+import { createSessionSnapshot } from '../testing/session.fixtures';
+import { createDeckState } from '../../../core/testing/deck.fixtures';
 import { createTestCharacter } from '../../../core/testing/character.fixtures';
 
 const readStoredMeta: () => SessionMeta | null = (): SessionMeta | null =>

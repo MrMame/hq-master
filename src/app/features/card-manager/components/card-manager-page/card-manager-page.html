@@ -42,7 +42,9 @@
         <app-active-card-overlay
           [card]="state()!.activeCard"
           [backImagePath]="state()!.config.backImagePath"
+          [assignDisabledReason]="assignDisabledReason()"
           (cardClick)="onActiveCardClick()"
+          (assignClick)="onAssignClick()"
         />
         <!--- DiscardPile ========= -->
         <div class="pile discardPile" (click)="$event.stopPropagation(); onDiscardPileClick()">
@@ -57,6 +59,23 @@
           }
         </div>
       </div>
+
+      <!-- AUSGERÜSTET: Karten in den Slots der Charaktere ===== -->
+      @if (state()!.assigned.length > 0) {
+        <section class="equippedContainer" aria-label="Ausgerüstet">
+          <h3>Ausgerüstet ({{ state()!.assigned.length }})</h3>
+          <div class="equippedCards">
+            @for (entry of state()!.assigned; track entry.card.id) {
+              <app-card-display
+                class="cardEquipped"
+                [card]="entry.card"
+                [backImagePath]="state()!.config.backImagePath"
+                [owner]="ownerNames().get(entry.characterId) ?? null"
+              />
+            }
+          </div>
+        </section>
+      }
 
       <!-- BANK BEREICH ======================================== -->
 

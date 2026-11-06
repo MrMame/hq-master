@@ -1,13 +1,7 @@
-import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
-import { firstValueFrom } from 'rxjs';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
 import { CharacterInfo } from '../../../core/models/character-info.model';
 import { ElementalTypes } from '../../../core/models/elemental-types.model';
@@ -15,26 +9,38 @@ import { CharacterAbilities } from '../../../core/models/character-abilities.mod
 import { CHARACTER_IMAGES } from '../../../core/models/character-images.model';
 import { createNewCharacter } from '../../utils/new-character.util';
 import { createRandomCharacter } from '../../utils/random-character.util';
-import { ConfirmationDialogData } from '../../models/confirmation-dialog-data.model';
-import { ConfirmationDialog } from '../confirmation-dialog/confirmation-dialog';
+import { ConfirmationService } from '../../services/confirmation.service';
 import { CharacterConditionsEditor } from '../character-conditions-editor/character-conditions-editor';
 import { GameTimeService } from '../../../core/services/game-time/game-time.service';
 import { GameLogService } from '../../../core/services/game-log/game-log.service';
 import { startConditions } from '../../utils/condition-draft.util';
 import { conditionChangeEntries } from '../../utils/game-log-entries.util';
-import { CharacterStat, withStat } from '../../utils/character-stat.util';
+import { withStat } from '../../utils/character-stat.util';
 import { withinLimits } from '../../../core/services/characters/character-limits.util';
+import { AssignedCard } from '../../../core/models/deck-state.model';
+import { EquipmentService } from '../../../core/services/equipment/equipment.service';
+import { cardsOf, modifiersOf } from '../../../core/services/equipment/effective-stats.util';
+import { CharacterStatsEditor, StatChange } from '../character-stats-editor/character-stats-editor';
+import { CharacterEquipmentEditor } from '../character-equipment-editor/character-equipment-editor';
 
 /**
  * Systemweiter Charakter-Editor: Ohne Daten geöffnet legt er einen neuen Charakter an, sonst bearbeitet
  * er den übergebenen. „Übernehmen“ schreibt sofort in die Session, „Abbrechen“ verwirft die Arbeitskopie.
  * „Entfernen“ (nur beim Bearbeiten) löscht den Charakter nach einer Rückfrage aus der Session.
  * „Zufälliger Charakter erstellen“ (nur beim Anlegen) füllt die Arbeitskopie mit Zufallswerten.
- * Beim Übernehmen werden Leben und Rüstung auf ihr Maximum begrenzt.
+ * Beim Übernehmen werden Leben und Rüstung auf ihr wirksames Maximum begrenzt; „Ablegen“ unter „Ausrüstung“
+ * legt die Karte erst dann in den Ablagestapel.
  */
 @Component({
   selector: 'app-character-editor-dialog',
-  imports: [FormsModule, MatDialogModule, MatButtonModule, CharacterConditionsEditor],
+  imports: [
+    FormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    CharacterConditionsEditor,
+    CharacterStatsEditor,
+    CharacterEquipmentEditor,
+  ],
   host: { class: 'general-dialog' },
   templateUrl: './character-editor-dialog.html',
   styleUrl: './character-editor-dialog.css',
@@ -44,9 +50,10 @@ export class CharacterEditorDialog {
   private readonly dialogRef: MatDialogRef<CharacterEditorDialog, CharacterInfo> = inject(
     MatDialogRef<CharacterEditorDialog, CharacterInfo>,
   );
-  private readonly dialog: MatDialog = inject(MatDialog);
+  private readonly confirmation: ConfirmationService = inject(ConfirmationService);
   private readonly gameTimeService: GameTimeService = inject(GameTimeService);
   private readonly gameLog: GameLogService = inject(GameLogService);
+  private readonly equipment: EquipmentService = inject(EquipmentService);
   private readonly character: CharacterInfo | null = inject<CharacterInfo | null>(MAT_DIALOG_DATA);
 
   protected readonly isEditMode: boolean = this.character !== null;
@@ -58,15 +65,14 @@ export class CharacterEditorDialog {
     this.character ? { ...this.character } : createNewCharacter(),
   );
 
-  protected readonly stats: { key: CharacterStat; label: string }[] = [
-    { key: 'health', label: 'Leben' },
-    { key: 'maxHealth', label: 'Max. Leben' },
-    { key: 'armor', label: 'Rüstung' },
-    { key: 'maxArmor', label: 'Max. Rüstung' },
-    { key: 'attack', label: 'Angriff' },
-    { key: 'defense', label: 'Abwehr' },
-    { key: 'speed', label: 'Tempo' },
-  ];
+  /** Abgelegte, aber noch nicht übernommene Karten. */
+  private readonly discardedCardIds: WritableSignal<string[]> = signal<string[]>([]);
+  /** Karten, die nach dem Übernehmen am Charakter bleiben. */
+  protected readonly equippedCards: Signal<AssignedCard[]> = computed(() =>
+    cardsOf(this.equipment.assigned(), this.draft().id).filter(
+      (entry) => !this.discardedCardIds().includes(entry.card.id),
+    ),
+  );
   protected readonly types: string[] = Object.values(ElementalTypes);
   protected readonly abilities: string[] = Object.values(CharacterAbilities);
   protected readonly images: string[] = CHARACTER_IMAGES;
@@ -76,8 +82,12 @@ export class CharacterEditorDialog {
   }
 
   /** Beim Anlegen folgt das Maximum dem eingegebenen Startwert. */
-  setStat(stat: CharacterStat, value: number): void {
+  setStat({ stat, value }: StatChange): void {
     this.draft.update((character) => withStat(character, stat, value, !this.isEditMode));
+  }
+
+  discardCard(cardId: string): void {
+    this.discardedCardIds.update((ids) => [...ids, cardId]);
   }
 
   toggleAbility(ability: string): void {
@@ -95,14 +105,15 @@ export class CharacterEditorDialog {
     this.draft.set(createRandomCharacter(this.draft().id));
   }
 
-  /** Neu angekreuzte Zustände starten zur aktuellen Spielzeit; Setzen und Entfernen kommen ins Log. */
+  /** Neu angekreuzte Zustände starten zur aktuellen Spielzeit; Zustände und abgelegte Karten kommen ins Log. */
   apply(): void {
     const now: Date = this.gameTimeService.gameTime();
     const character: CharacterInfo = {
-      ...withinLimits(this.draft()),
+      ...withinLimits(this.draft(), modifiersOf(this.equippedCards())),
       conditions: startConditions(this.draft().conditions, now),
     };
     this.charactersDbService.writeCharacter(character);
+    this.equipment.discardCards(character, this.discardedCardIds());
     this.gameLog.append(
       ...conditionChangeEntries(this.character?.conditions ?? [], character, now),
     );
@@ -115,23 +126,13 @@ export class CharacterEditorDialog {
 
   /** Löscht anhand der ID; ungespeicherte Änderungen der Arbeitskopie werden nicht geschrieben. */
   async remove(): Promise<void> {
-    if (!(await this.confirmRemoval())) return;
+    const confirmed: boolean = await this.confirmation.confirm({
+      title: 'Charakter entfernen',
+      message: `„${this.storedName}“ wirklich entfernen?`,
+      confirmLabel: 'Entfernen',
+    });
+    if (!confirmed) return;
     this.charactersDbService.removeCharacter(this.draft());
     this.dialogRef.close();
-  }
-
-  private async confirmRemoval(): Promise<boolean> {
-    const confirmation: MatDialogRef<ConfirmationDialog, boolean> = this.dialog.open<
-      ConfirmationDialog,
-      ConfirmationDialogData,
-      boolean
-    >(ConfirmationDialog, {
-      data: {
-        title: 'Charakter entfernen',
-        message: `„${this.storedName}“ wirklich entfernen?`,
-        confirmLabel: 'Entfernen',
-      },
-    });
-    return (await firstValueFrom(confirmation.afterClosed())) === true;
   }
 }

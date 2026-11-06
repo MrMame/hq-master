@@ -1,5 +1,5 @@
 import { CardManagerPage } from './card-manager-page';
-import { createDeckState } from '../../../game-session/testing/session.fixtures';
+import { createDeckState } from '../../../../core/testing/deck.fixtures';
 import {
   CardManagerPageHarness,
   CardManagerServiceMock,

@@ -1,0 +1,63 @@
+/* Gleiche Optik wie die übrigen Abschnitte des Charakter-Editors */
+.equipment-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.equipment-editor__caption {
+  margin-bottom: var(--space-1);
+  color: var(--color-gray-400);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+.equipment-editor__slot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--space-8);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+}
+
+.equipment-editor__label {
+  flex: 0 0 7rem;
+  color: var(--color-gray-400);
+}
+
+/* Kleines Kartenbild im Kartenformat */
+.equipment-editor__image {
+  height: var(--space-8);
+  aspect-ratio: var(--card-aspect-ratio);
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-card-surface);
+}
+
+.equipment-editor__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.equipment-editor__free {
+  color: var(--color-gray-400);
+  font-style: italic;
+}
+
+.equipment-editor__discard {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-gray-600);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-red-400);
+  cursor: pointer;
+}

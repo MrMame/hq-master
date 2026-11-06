@@ -3,8 +3,9 @@ import { signal, WritableSignal } from '@angular/core';
 import { Mock, vi } from 'vitest';
 
 import { CardManagerPage } from '../components/card-manager-page/card-manager-page';
-import { CardManagerService } from '../services/card-manager.service';
-import { DeckState } from '../models/deck-state.model';
+import { CardManagerService } from '../../../core/services/card-deck/card-manager.service';
+import { DeckState } from '../../../core/models/deck-state.model';
+import { CardAssignmentService } from '../services/card-assignment.service';
 
 export type CardManagerAction =
   | 'shuffle'
@@ -19,15 +20,23 @@ export type CardManagerServiceMock = {
   loadDeck: Mock<(url: string) => Promise<void>>;
 } & Record<CardManagerAction, Mock>;
 
+export interface CardAssignmentServiceMock {
+  assignDisabledReason: WritableSignal<string | null>;
+  ownerNames: WritableSignal<ReadonlyMap<string, string>>;
+  assignActiveCard: Mock<() => Promise<void>>;
+  confirmNewDeck: Mock<() => Promise<boolean>>;
+}
+
 export interface CardManagerPageHarness {
   fixture: ComponentFixture<CardManagerPage>;
   page: CardManagerPage;
   service: CardManagerServiceMock;
+  assignment: CardAssignmentServiceMock;
   host: HTMLElement;
   render: (state: DeckState | null) => Promise<void>;
 }
 
-/** Erzeugt die CardManagerPage mit vollständig gemocktem CardManagerService. */
+/** Erzeugt die CardManagerPage mit vollständig gemocktem CardManagerService und CardAssignmentService. */
 export async function setupCardManagerPage(): Promise<CardManagerPageHarness> {
   const service: CardManagerServiceMock = {
     state: signal<DeckState | null>(null),
@@ -39,9 +48,18 @@ export async function setupCardManagerPage(): Promise<CardManagerPageHarness> {
     shuffleActiveCardIntoDrawPile: vi.fn(),
     dropActiveCardIntoBank: vi.fn(),
   };
+  const assignment: CardAssignmentServiceMock = {
+    assignDisabledReason: signal<string | null>(null),
+    ownerNames: signal<ReadonlyMap<string, string>>(new Map()),
+    assignActiveCard: vi.fn().mockResolvedValue(undefined),
+    confirmNewDeck: vi.fn().mockResolvedValue(true),
+  };
   await TestBed.configureTestingModule({
     imports: [CardManagerPage],
-    providers: [{ provide: CardManagerService, useValue: service }],
+    providers: [
+      { provide: CardManagerService, useValue: service },
+      { provide: CardAssignmentService, useValue: assignment },
+    ],
   }).compileComponents();
 
   const fixture: ComponentFixture<CardManagerPage> = TestBed.createComponent(CardManagerPage);
@@ -56,6 +74,7 @@ export async function setupCardManagerPage(): Promise<CardManagerPageHarness> {
     fixture,
     page: fixture.componentInstance,
     service,
+    assignment,
     host: fixture.nativeElement as HTMLElement,
     render,
   };
