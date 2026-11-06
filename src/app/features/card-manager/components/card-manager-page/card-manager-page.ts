@@ -70,8 +70,8 @@ export class CardManagerPage {
     this.cardManagerService.reshuffleAll();
   }
   onLoadDeckClick(): void {
-    // const url: string = prompt('Deck URL eingeben:') ?? '/decks/default/default-deck.xml';
-    const url: string = '/decks/default/default-deck.xml';
+    // const url: string = prompt('Deck URL eingeben:') ?? 'decks/default/default-deck.xml';
+    const url: string = 'decks/default/default-deck.xml';
     this.onLoadDeck(url);
   }
   onShuffleClick(): void {
