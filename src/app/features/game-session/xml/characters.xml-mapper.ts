@@ -9,6 +9,7 @@ import {
   setAttributes,
   textOf,
 } from '../../../shared/utils/xml.util';
+import { withinLimits } from '../../../core/services/characters/character-limits.util';
 import { readConditions, writeConditions } from './conditions.xml-mapper';
 
 export function writeCharacters(doc: XMLDocument, characters: CharacterInfo[]): Element {
@@ -30,7 +31,9 @@ function writeCharacter(doc: XMLDocument, c: CharacterInfo): Element {
     name: c.name,
     type: c.type,
     health: c.health,
+    maxHealth: c.maxHealth,
     armor: c.armor,
+    maxArmor: c.maxArmor,
     attack: c.attack,
     defense: c.defense,
     speed: c.speed,
@@ -43,13 +46,18 @@ function writeCharacter(doc: XMLDocument, c: CharacterInfo): Element {
   return el;
 }
 
+/** Ältere Spielstände ohne Maximum: Maximum = gespeicherter aktueller Wert. */
 function readCharacter(el: Element): CharacterInfo {
-  return {
+  const health: number = readNumber(el, 'health');
+  const armor: number = readNumber(el, 'armor');
+  return withinLimits({
     id: readString(el, 'id'),
     name: readString(el, 'name'),
     type: readString(el, 'type'),
-    health: readNumber(el, 'health'),
-    armor: readNumber(el, 'armor'),
+    health,
+    maxHealth: readNumber(el, 'maxHealth', health),
+    armor,
+    maxArmor: readNumber(el, 'maxArmor', armor),
     attack: readNumber(el, 'attack'),
     defense: readNumber(el, 'defense'),
     speed: readNumber(el, 'speed'),
@@ -58,5 +66,5 @@ function readCharacter(el: Element): CharacterInfo {
     description: textOf(firstChild(el, 'description')),
     conditions: readConditions(el),
     movedThisRound: readBoolean(el, 'movedThisRound'),
-  };
+  });
 }

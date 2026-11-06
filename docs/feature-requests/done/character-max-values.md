@@ -3,7 +3,7 @@
 **Datum:** 2026-11-06  
 **Priorität:** Hoch – **muss vor allen anderen offenen Feature Requests umgesetzt werden**
 (Voraussetzung für `docs/feature-requests/character-equipment-cards.md`)  
-**Status:** offen  
+**Status:** done (2026-11-06 17:46)  
 **Bezug:** `src/app/core/models/character-info.model.ts`, `src/app/core/services/characters/`,
 `src/app/shared/components/character-editor-dialog/`, `src/app/shared/components/damage-taken-dialog/`,
 `src/app/features/dungeon-tracker/components/character-status/`, `src/app/features/game-session/xml/characters.xml-mapper.ts`
@@ -29,12 +29,12 @@
 
 ## Anforderungen
 
-### 1. Datenmodell
+### 1. Datenmodell ✅ done (2026-11-06 17:46)
 
 - `CharacterInfo` erhält `maxHealth: number` und `maxArmor: number` (ganze Zahlen ≥ 0).
 - `health` bleibt der aktuelle Wert und gilt als `0 ≤ health ≤ maxHealth`, ebenso `armor` zu `maxArmor`.
 
-### 2. Charakter-Editor
+### 2. Charakter-Editor ✅ done (2026-11-06 17:46)
 
 - Zu Leben und Rüstung je ein Feld „Maximum“ neben dem aktuellen Wert.
 - Wird das Maximum unter den aktuellen Wert gesenkt, wird der aktuelle Wert beim Übernehmen auf das Maximum gesenkt.
@@ -43,17 +43,17 @@
 - Neuer Charakter: Maximum = eingegebener Startwert. „Zufälliger Charakter erstellen“ setzt Maximum und aktuellen
   Wert gleich.
 
-### 3. Anzeige
+### 3. Anzeige ✅ done (2026-11-06 17:46)
 
 - Legende und Anzeige unter dem markierten Token (`CharacterStatus`) zeigen Leben und Rüstung als `aktuell/max`
   (z. B. `7/10`), Farben wie bisher (rot/blau).
 
-### 4. Schaden
+### 4. Schaden ✅ done (2026-11-06 17:46)
 
 - Schaden auf Leben oder Rüstung verringert wie bisher nur den aktuellen Wert; der Maximalwert bleibt unverändert.
 - Zustände (Gift usw.) verhalten sich unverändert.
 
-### 5. Tote Charaktere am Token kennzeichnen
+### 5. Tote Charaktere am Token kennzeichnen ✅ done (2026-11-06 17:46)
 
 - Ist `health` 0, liegt auf dem Charaktersymbol im Dungeon Tracker (`DungeonToken`) ein großes rotes Kreuz über das
   ganze Porträt. Bild, Zustandssymbole und Ring bleiben darunter erkennbar.
@@ -66,13 +66,13 @@
   Es verschwindet wie am Token sofort, sobald das Leben über 0 steigt. Das Kreuz wird als gemeinsame Komponente
   oder gemeinsames Stil-Element für Token und Legende umgesetzt, nicht doppelt.
 
-### 6. Speichern und Laden
+### 6. Speichern und Laden ✅ done (2026-11-06 17:46)
 
 - `maxHealth`/`maxArmor` gehören zur Spielesession (`CHARACTERS_CODEC`) und zum XML-Spielstand
   (`characters.xml-mapper.ts`).
 - Ältere Daten ohne Maximalwerte: Maximum = gespeicherter aktueller Wert.
 
-### 7. Tests
+### 7. Tests ✅ done (2026-11-06 17:46)
 
 - Codec: Altdaten ohne Maximum, ungültige Werte, aktueller Wert über Maximum.
 - XML-Mapper: Hin- und Rückweg, Altdaten.
@@ -86,11 +86,11 @@
 
 ## Akzeptanzkriterien
 
-- [ ] Im Charakter-Editor lassen sich Maximum für Leben und Rüstung eingeben und übernehmen.
-- [ ] Der aktuelle Wert liegt nach jedem Übernehmen und jedem Schaden zwischen 0 und dem Maximum.
-- [ ] Legende und markiertes Token zeigen `aktuell/max`.
-- [ ] Bei 0 Leben zeigen das Token und der Eintrag in der Charakterliste (Legende) ein rotes Kreuz, bei Leben > 0
+- [x] Im Charakter-Editor lassen sich Maximum für Leben und Rüstung eingeben und übernehmen.
+- [x] Der aktuelle Wert liegt nach jedem Übernehmen und jedem Schaden zwischen 0 und dem Maximum.
+- [x] Legende und markiertes Token zeigen `aktuell/max`.
+- [x] Bei 0 Leben zeigen das Token und der Eintrag in der Charakterliste (Legende) ein rotes Kreuz, bei Leben > 0
       nicht.
-- [ ] Maximalwerte bleiben nach Neuladen des Browsers und im XML-Spielstand erhalten; alte Spielstände laden ohne Fehler.
-- [ ] `REQUIREMENTS.md` beschreibt die Maximalwerte.
-- [ ] Dateien bleiben unter 150 Zeilen; die Coverage-Schwellen werden eingehalten.
+- [x] Maximalwerte bleiben nach Neuladen des Browsers und im XML-Spielstand erhalten; alte Spielstände laden ohne Fehler.
+- [x] `REQUIREMENTS.md` beschreibt die Maximalwerte.
+- [x] Dateien bleiben unter 150 Zeilen; die Coverage-Schwellen werden eingehalten.

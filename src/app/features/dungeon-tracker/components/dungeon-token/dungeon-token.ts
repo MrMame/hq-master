@@ -18,11 +18,19 @@ import { fieldAt } from '../../utils/grid-origin.util';
 import { CharacterStatus } from '../character-status/character-status';
 import { CharacterActionBar } from '../character-action-bar/character-action-bar';
 import { CharacterConditions } from '../character-conditions/character-conditions';
+import { DeadMarker } from '../dead-marker/dead-marker';
 
 @Component({
   selector: 'app-dungeon-token',
   standalone: true,
-  imports: [CdkDrag, CdkDragHandle, CharacterStatus, CharacterActionBar, CharacterConditions],
+  imports: [
+    CdkDrag,
+    CdkDragHandle,
+    CharacterStatus,
+    CharacterActionBar,
+    CharacterConditions,
+    DeadMarker,
+  ],
   templateUrl: './dungeon-token.html',
   styleUrl: './dungeon-token.css',
 })

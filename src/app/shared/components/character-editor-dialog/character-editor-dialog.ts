@@ -22,15 +22,15 @@ import { GameTimeService } from '../../../core/services/game-time/game-time.serv
 import { GameLogService } from '../../../core/services/game-log/game-log.service';
 import { startConditions } from '../../utils/condition-draft.util';
 import { conditionChangeEntries } from '../../utils/game-log-entries.util';
-
-/** Zahlenwerte eines Charakters, die der Editor als Eingabefeld anbietet. */
-type CharacterStat = 'health' | 'armor' | 'attack' | 'defense' | 'speed';
+import { CharacterStat, withStat } from '../../utils/character-stat.util';
+import { withinLimits } from '../../../core/services/characters/character-limits.util';
 
 /**
  * Systemweiter Charakter-Editor: Ohne Daten geöffnet legt er einen neuen Charakter an, sonst bearbeitet
  * er den übergebenen. „Übernehmen“ schreibt sofort in die Session, „Abbrechen“ verwirft die Arbeitskopie.
  * „Entfernen“ (nur beim Bearbeiten) löscht den Charakter nach einer Rückfrage aus der Session.
  * „Zufälliger Charakter erstellen“ (nur beim Anlegen) füllt die Arbeitskopie mit Zufallswerten.
+ * Beim Übernehmen werden Leben und Rüstung auf ihr Maximum begrenzt.
  */
 @Component({
   selector: 'app-character-editor-dialog',
@@ -60,7 +60,9 @@ export class CharacterEditorDialog {
 
   protected readonly stats: { key: CharacterStat; label: string }[] = [
     { key: 'health', label: 'Leben' },
+    { key: 'maxHealth', label: 'Max. Leben' },
     { key: 'armor', label: 'Rüstung' },
+    { key: 'maxArmor', label: 'Max. Rüstung' },
     { key: 'attack', label: 'Angriff' },
     { key: 'defense', label: 'Abwehr' },
     { key: 'speed', label: 'Tempo' },
@@ -71,6 +73,11 @@ export class CharacterEditorDialog {
 
   setField<K extends keyof CharacterInfo>(key: K, value: CharacterInfo[K]): void {
     this.draft.update((character) => ({ ...character, [key]: value }));
+  }
+
+  /** Beim Anlegen folgt das Maximum dem eingegebenen Startwert. */
+  setStat(stat: CharacterStat, value: number): void {
+    this.draft.update((character) => withStat(character, stat, value, !this.isEditMode));
   }
 
   toggleAbility(ability: string): void {
@@ -92,7 +99,7 @@ export class CharacterEditorDialog {
   apply(): void {
     const now: Date = this.gameTimeService.gameTime();
     const character: CharacterInfo = {
-      ...this.draft(),
+      ...withinLimits(this.draft()),
       conditions: startConditions(this.draft().conditions, now),
     };
     this.charactersDbService.writeCharacter(character);

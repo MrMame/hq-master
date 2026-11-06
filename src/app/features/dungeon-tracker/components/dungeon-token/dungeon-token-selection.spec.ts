@@ -39,11 +39,7 @@ describe('DungeonToken – status and selection', () => {
     fixture.componentRef.setInput('position', { characterId: 'a', col: 0, row: 0 });
     fixture.componentRef.setInput('cellSize', 60);
     fixture.componentRef.setInput('tokenScale', 0.85);
-    fixture.componentRef.setInput('character', {
-      ...createTestCharacter('a'),
-      health: 20,
-      armor: 5,
-    });
+    fixture.componentRef.setInput('character', createTestCharacter('a'));
   });
 
   afterEach(() => vi.useRealTimers());
@@ -51,8 +47,8 @@ describe('DungeonToken – status and selection', () => {
   it('shows health and armor below the portrait, above the action bar, when selected', () => {
     render(true);
 
-    expect(host.querySelector('[aria-label="Leben"]')?.textContent?.trim()).toBe('20');
-    expect(host.querySelector('[aria-label="Rüstung"]')?.textContent?.trim()).toBe('5');
+    expect(host.querySelector('[aria-label="Leben"]')?.textContent?.trim()).toBe('12/12');
+    expect(host.querySelector('[aria-label="Rüstung"]')?.textContent?.trim()).toBe('2/4');
     const parts: string[] = Array.from(token().children).map((c) => c.tagName.toLowerCase());
     expect(parts.slice(1)).toEqual(['app-character-status', 'app-character-action-bar']);
   });

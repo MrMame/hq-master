@@ -3,7 +3,7 @@
 **Datum:** 2026-11-06  
 **Priorität:** Hoch  
 **Status:** offen  
-**Voraussetzung:** `docs/feature-requests/character-max-values.md` muss vorher umgesetzt sein.  
+**Voraussetzung:** `docs/feature-requests/done/character-max-values.md` muss vorher umgesetzt sein (done 2026-11-06).  
 **Bezug:** `src/app/features/card-manager/`, `public/decks/default/default-deck.xml`, `src/app/core/models/`,
 `src/app/shared/components/character-editor-dialog/`, `src/app/features/dungeon-tracker/components/character-status/`,
 `src/app/features/game-session/`

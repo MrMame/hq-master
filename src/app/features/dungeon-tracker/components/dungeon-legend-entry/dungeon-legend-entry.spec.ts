@@ -8,7 +8,14 @@ import { spyOnScrollIntoView } from '../../testing/scroll-into-view.fixtures';
 
 const token: BoardToken = {
   position: { characterId: 'a', col: 3, row: 4 },
-  character: { ...createTestCharacter('a'), name: 'Ork', health: 20, armor: 5 },
+  character: {
+    ...createTestCharacter('a'),
+    name: 'Ork',
+    health: 20,
+    maxHealth: 20,
+    armor: 5,
+    maxArmor: 5,
+  },
 };
 
 describe('DungeonLegendEntry', () => {
@@ -49,8 +56,8 @@ describe('DungeonLegendEntry', () => {
   });
 
   it('shows health and armor of the character', () => {
-    expect(text('[aria-label="Leben"]')).toBe('20');
-    expect(text('[aria-label="Rüstung"]')).toBe('5');
+    expect(text('[aria-label="Leben"]')).toBe('20/20');
+    expect(text('[aria-label="Rüstung"]')).toBe('5/5');
   });
 
   it.each<[string, DamageTypes]>([

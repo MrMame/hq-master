@@ -42,7 +42,7 @@
             class="character-editor__input"
             [name]="stat.key"
             [ngModel]="draft()[stat.key]"
-            (ngModelChange)="setField(stat.key, $event)"
+            (ngModelChange)="setStat(stat.key, $event)"
           />
         </label>
       }

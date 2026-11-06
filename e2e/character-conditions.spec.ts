@@ -37,9 +37,9 @@ test('poison set in the editor shows at token and legend and ticks on +1 h in th
   await expect(logEntries.filter({ hasText: 'Ork: 1 Schaden durch Gift' })).toHaveCount(10);
 
   await page.getByRole('link', { name: 'Dungeon Tracker' }).click();
-  await expect(legendEntry(page).getByLabel('Leben', { exact: true })).toHaveText('10');
+  await expect(legendEntry(page).getByLabel('Leben', { exact: true })).toHaveText('10/20');
   await expect(token.getByRole('img', { name: /Gift/ })).toHaveCount(0);
 
   await page.reload();
-  await expect(legendEntry(page).getByLabel('Leben', { exact: true })).toHaveText('10');
+  await expect(legendEntry(page).getByLabel('Leben', { exact: true })).toHaveText('10/20');
 });

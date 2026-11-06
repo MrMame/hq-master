@@ -4,8 +4,14 @@ export interface CharacterInfo {
   id: string;
   name: string;
   type: string;
+  /** Aktuelles Leben, immer zwischen 0 und `maxHealth`. */
   health: number;
+  /** Maximales Leben (ganze Zahl ≥ 0); Schaden ändert es nicht. */
+  maxHealth: number;
+  /** Aktuelle Rüstung, immer zwischen 0 und `maxArmor`. */
   armor: number;
+  /** Maximale Rüstung (ganze Zahl ≥ 0); Schaden ändert sie nicht. */
+  maxArmor: number;
   attack: number;
   defense: number;
   speed: number;
