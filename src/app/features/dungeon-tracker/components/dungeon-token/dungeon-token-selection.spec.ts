@@ -5,7 +5,7 @@ import { CdkDrag, CdkDragEnd } from '@angular/cdk/drag-drop';
 
 import { DungeonToken } from './dungeon-token';
 import { createTestCharacter } from '../../../../core/testing/character.fixtures';
-import { spyOnScrollIntoView } from '../../testing/scroll-into-view.fixtures';
+import { spyOnScrollIntoView } from '../../../../shared/testing/scroll-into-view.fixtures';
 
 /** Drag-Ende ohne Versatz (Stub, s. dungeon-token.spec.ts). */
 const dragEnd: () => CdkDragEnd = (): CdkDragEnd =>

@@ -5,28 +5,31 @@ import { CardManagerService } from './card-manager.service';
 import { DeckXmlLoaderService } from './deck-xml-loader.service';
 import { Card } from '../../models/card.model';
 import { DeckConfig } from '../../models/deck-config.model';
-import { DeckState } from '../../models/deck-state.model';
-import { createDeckState } from '../../testing/deck.fixtures';
+import { DeckInstance, DeckState } from '../../models/deck-state.model';
+import {
+  createDeckInstance,
+  createDeckState,
+  createTwoDeckState,
+} from '../../testing/deck.fixtures';
 import { describePersistedState } from '../../session-state/testing/describe-persisted-state';
 import { SESSION_KEYS } from '../../session-state/session-keys';
 
 const KEY: string = SESSION_KEYS.deckState;
+const EMPTY: DeckState = { decks: [], activeCard: null, assigned: [] };
 
-const readStored: () => DeckState | null = (): DeckState | null =>
-  JSON.parse(localStorage.getItem(KEY) ?? 'null') as DeckState | null;
+const readStored: () => DeckState = (): DeckState =>
+  JSON.parse(localStorage.getItem(KEY) ?? 'null') as DeckState;
 
 const ids: (cards: Card[]) => string[] = (cards: Card[]): string[] => cards.map((c) => c.id).sort();
 
 describe('CardManagerService', () => {
   let service: CardManagerService;
   let loadFromUrl: Mock<(url: string) => Promise<DeckConfig>>;
-  // Fixture: Karten c1 + b1, Ziehstapel [b1], aktive Karte c1.
-  const deck: DeckState = createDeckState();
+  const config: DeckConfig = createDeckInstance().config;
 
   const createService: () => CardManagerService = (): CardManagerService =>
     TestBed.inject(CardManagerService);
-
-  const state: () => DeckState = (): DeckState => service.state() as DeckState;
+  const deck: (index: number) => DeckInstance = (index) => service.decks()[index];
 
   beforeEach(() => {
     loadFromUrl = vi.fn();
@@ -35,115 +38,97 @@ describe('CardManagerService', () => {
     });
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   describePersistedState('state', {
     key: SESSION_KEYS.deckState,
     create: createService,
     read: (s: CardManagerService) => s.state(),
-    fallback: null,
-    stored: { raw: deck, expected: deck },
-    mutate: (s: CardManagerService) => s.loadDeckConfig(deck.config),
+    fallback: EMPTY,
+    stored: { raw: createDeckState(), expected: createDeckState() },
+    mutate: (s: CardManagerService) => s.addDeckConfig(config, 'decks/test.xml'),
   });
 
-  describe('mutations', () => {
+  describe('deck management', () => {
     beforeEach(() => {
       service = createService();
-      service.restore(deck);
     });
 
-    it('should load a deck config with all cards on the draw pile', () => {
-      service.loadDeckConfig(deck.config);
-      expect(ids(state().drawPile)).toEqual(['b1', 'c1']);
-      expect(state().activeCard).toBeNull();
-      expect(readStored()).toEqual(state());
-    });
-
-    it('should load a deck from url via the loader', async () => {
-      loadFromUrl.mockResolvedValue(deck.config);
-      await service.loadDeck('decks/test.xml');
+    it('should add a loaded deck file as a new deck and keep the existing ones', async () => {
+      service.restore(createDeckState());
+      loadFromUrl.mockResolvedValue(config);
+      await service.addDeck('decks/test.xml');
       expect(loadFromUrl).toHaveBeenCalledWith('decks/test.xml');
-      expect(state().config).toEqual(deck.config);
-      expect(readStored()).toEqual(state());
+      expect(service.decks().map((d) => d.name)).toEqual(['Testdeck', 'Testdeck (2)']);
+      expect(deck(1).source).toBe('decks/test.xml');
+      expect(ids(deck(1).drawPile)).toEqual(['b1', 'c1']);
+      expect(deck(0)).toEqual(createDeckState().decks[0]);
+      expect(readStored()).toEqual(service.state());
     });
 
-    it('should shuffle the draw pile without losing cards', () => {
-      service.shuffle();
-      expect(ids(state().drawPile)).toEqual(['b1']);
-      expect(readStored()).toEqual(state());
+    it('should give every added deck its own id', () => {
+      service.addDeckConfig(config, '');
+      service.addDeckConfig(config, '');
+      expect(new Set(service.decks().map((d) => d.id)).size).toBe(2);
     });
 
-    it('should draw the top card as active card', () => {
-      service.restore({ ...deck, activeCard: null });
-      service.draw();
-      expect(state().activeCard?.id).toBe('b1');
-      expect(state().drawPile).toEqual([]);
-      expect(readStored()).toEqual(state());
+    it('should rename, reorder and remove a deck', () => {
+      service.restore(createTwoDeckState());
+      service.renameDeck('deck-2', 'Monster');
+      service.moveDeck('deck-2', -1);
+      expect(service.decks().map((d) => d.name)).toEqual(['Monster', 'Testdeck']);
+      service.removeDeck('deck-1');
+      expect(service.decks().map((d) => d.id)).toEqual(['deck-2']);
+      expect(readStored()).toEqual(service.state());
     });
 
-    it('should discard the active card', () => {
-      service.discardActiveCard();
-      expect(ids(state().discardPile)).toEqual(['c1']);
-      expect(state().activeCard).toBeNull();
-      expect(readStored()).toEqual(state());
+    it('should shuffle and reset only the chosen deck', () => {
+      service.restore(createTwoDeckState());
+      service.draw('deck-2');
+      service.dropActiveCardIntoBank();
+      service.shuffle('deck-2');
+      service.resetDeck('deck-2');
+      expect(ids(deck(1).drawPile)).toEqual(['b1', 'c1']);
+      expect(deck(1).bank).toEqual([]);
+      expect(deck(0)).toEqual(createTwoDeckState().decks[0]);
+    });
+  });
+
+  describe('active card', () => {
+    beforeEach(() => {
+      service = createService();
+      service.restore(createTwoDeckState());
     });
 
-    it('should shuffle the active card into the draw pile', () => {
+    it('should draw from any deck and discard the previous active card into its own deck', () => {
+      service.draw('deck-1');
+      expect(service.state().activeCard).toEqual({
+        deckId: 'deck-1',
+        card: deck(0).config.cards[1],
+      });
+      service.draw('deck-2');
+      expect(service.state().activeCard?.deckId).toBe('deck-2');
+      expect(ids(deck(0).discardPile)).toEqual(['b1']);
+      expect(deck(1).discardPile).toEqual([]);
+      expect(readStored()).toEqual(service.state());
+    });
+
+    it('should make a card active, shuffle it back and drop it into the bank of its deck', () => {
+      service.makeCardActive('deck-2', 'c1');
       service.shuffleActiveCardIntoDrawPile();
-      expect(ids(state().drawPile)).toEqual(['b1', 'c1']);
-      expect(state().activeCard).toBeNull();
-      expect(readStored()).toEqual(state());
-    });
-
-    it('should drop the active card into the bank', () => {
+      expect(ids(deck(1).drawPile)).toEqual(['b1', 'c1']);
+      service.makeCardActive('deck-2', 'c1');
       service.dropActiveCardIntoBank();
-      expect(ids(state().bank)).toEqual(['c1']);
-      expect(state().activeCard).toBeNull();
-      expect(readStored()).toEqual(state());
-    });
-
-    it('should make a card active and discard the previous one', () => {
-      service.makeCardActive('b1');
-      expect(state().activeCard?.id).toBe('b1');
-      expect(state().drawPile).toEqual([]);
-      expect(ids(state().discardPile)).toEqual(['c1']);
-      expect(readStored()).toEqual(state());
-    });
-
-    it('should reshuffle all cards back onto the draw pile', () => {
-      service.dropActiveCardIntoBank();
-      service.reshuffleAll();
-      expect(ids(state().drawPile)).toEqual(['b1', 'c1']);
-      expect(state().bank).toEqual([]);
-      expect(state().activeCard).toBeNull();
-      expect(readStored()).toEqual(state());
-    });
-
-    it('should ignore deck operations without a deck', () => {
-      service.restore(null);
-      service.shuffle();
-      service.draw();
+      expect(ids(deck(1).bank)).toEqual(['c1']);
+      service.makeCardActive('deck-2', 'c1');
       service.discardActiveCard();
-      service.reshuffleAll();
-      service.makeCardActive('c1');
-      expect(service.state()).toBeNull();
-      expect(readStored()).toBeNull();
+      expect(ids(deck(1).discardPile)).toEqual(['c1']);
+      expect(service.state().activeCard).toBeNull();
     });
 
-    it('should restore the deck state in signal, sessionState and storage', () => {
-      expect(service.sessionState()).toEqual(deck);
-      expect(readStored()).toEqual(deck);
-      service.restore(null);
-      expect(service.state()).toBeNull();
-      expect(readStored()).toBeNull();
-    });
-
-    it('should drop the deck on reset (new session)', () => {
-      service.reset();
-      expect(service.sessionState()).toBeNull();
-      expect(readStored()).toBeNull();
+    it('should not write when nothing changes', () => {
+      const before: DeckState = service.state();
+      service.discardActiveCard();
+      service.draw('unknown');
+      expect(service.state()).toBe(before);
     });
   });
 });

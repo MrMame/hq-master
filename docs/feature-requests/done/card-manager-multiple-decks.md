@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-06  
 **Priorität:** Hoch  
-**Status:** offen  
+**Status:** done (2026-11-06 19:54)  
 **Bezug:** `src/app/features/card-manager/`, `src/app/core/services/card-deck/`, `src/app/core/models/card.model.ts`,
 `src/app/features/game-session/xml/`, `src/styles/components/feature-page.css`, `src/styles/tokens.css`,
 `REQUIREMENTS.md` (Abschnitt 5)
@@ -45,7 +45,7 @@
 
 ## Anforderungen
 
-### 1. Datenmodell: Liste von Deck-Instanzen
+### 1. Datenmodell: Liste von Deck-Instanzen ✅ done (2026-11-06 19:54)
 
 - Der Deck-Zustand der Spielesession wird zu einer geordneten Liste von Deck-Instanzen
   (`id`, `name`, Deck-Konfiguration/Quelle, `drawPile`, `discardPile`, `bank`).
@@ -53,14 +53,14 @@
 - Der Bereich „Ausgerüstet“ bleibt gemeinsam für alle Decks. Jeder Eintrag verweist auf Instanz und Karte.
 - Die Reihenfolge der Liste ist die Anzeigereihenfolge.
 
-### 2. Deck hinzufügen
+### 2. Deck hinzufügen ✅ done (2026-11-06 19:54)
 
 - „Deck hinzufügen“ in der Seitenleiste lädt eine Deck-XML-Datei als **neue** Instanz; bestehende Decks bleiben
   unverändert.
 - Der Name kommt aus dem Deck. Gibt es den Namen schon, wird automatisch durchnummeriert, z. B. „Monster (2)“.
 - Ohne Decks zeigt der Hauptbereich einen Hinweis („Noch keine Decks“) mit „Deck hinzufügen“.
 
-### 3. Deck-Reihen im Hauptbereich
+### 3. Deck-Reihen im Hauptbereich ✅ done (2026-11-06 19:54)
 
 - Jede Instanz erscheint als kompakte Reihe: Name, Nachziehstapel (Rückseite mit Anzahl), oberste Karte des
   Ablagestapels mit Anzahl, Anzahl der Bank-Karten, Menü ⋮.
@@ -70,7 +70,7 @@
   bisherige zu. Neue Decks starten eingeklappt.
 - Leere Stapel zeigen einen Platzhalter statt einer Karte.
 
-### 4. Aktionen je Deck
+### 4. Aktionen je Deck ✅ done (2026-11-06 19:54)
 
 - Das Menü ⋮ jeder Reihe bietet: **Mischen** (Nachziehstapel dieses Decks), **Zurücksetzen** (nur dieses Deck),
   **Umbenennen**, **Entfernen**.
@@ -83,7 +83,7 @@
   echten Tisch.
 - Die Gruppe „Deck Aktionen“ in der Seitenleiste mit Aktionen für ein einzelnes Deck entfällt.
 
-### 5. Eine aktive Karte
+### 5. Eine aktive Karte ✅ done (2026-11-06 19:54)
 
 - Es gibt immer höchstens eine aktive Karte. Sie schwebt wie heute über der Seite und zeigt zusätzlich den Namen
   ihres Decks.
@@ -93,21 +93,21 @@
 - „Charakter zuweisen“ funktioniert wie bisher für Ausrüstungskarten aus jedem Deck. Muss ein belegter Slot geräumt
   werden, kommt die bisherige Karte in den Ablagestapel **ihres** Decks.
 
-### 6. Ausgerüstet
+### 6. Ausgerüstet ✅ done (2026-11-06 19:54)
 
 - Der Bereich „Ausgerüstet“ bleibt ein gemeinsamer Bereich für alle Decks, mit „Im Besitz von <Name>“ und einem
   Hinweis auf das Herkunftsdeck.
 - Legt der DM eine Karte im Charakter-Editor ab oder wird ein Charakter gelöscht, kommt die Karte in den
   Ablagestapel ihres Decks.
 
-### 7. Seitenleiste „Decks“
+### 7. Seitenleiste „Decks“ ✅ done (2026-11-06 19:54)
 
 - Die Gruppe „Decks“ listet alle Instanzen in Tischreihenfolge mit Name und Anzahl im Nachziehstapel.
 - Ein Klick auf einen Eintrag klappt die Reihe des Decks auf und scrollt zu ihr.
 - Ein Suchfeld filtert die Liste nach Namen (wie die Suche im Dungeon Builder).
 - „Deck hinzufügen“ steht in dieser Gruppe.
 
-### 8. Spielesession und XML-Spielstand
+### 8. Spielesession und XML-Spielstand ✅ done (2026-11-06 19:54)
 
 - Alle Instanzen (Name, Reihenfolge, Quelle, Stapel, Bank), die aktive Karte und die Zuweisungen gehören zur
   Spielesession und zum XML-Spielstand.
@@ -115,7 +115,7 @@
 - Zuweisungen an fehlende Charaktere landen beim Laden wie bisher im Ablagestapel ihres Decks; Zuweisungen auf
   fehlende Deck-Instanzen werden verworfen.
 
-### 9. Erscheinungsbild wie Dungeon Tracker und Dungeon Builder
+### 9. Erscheinungsbild wie Dungeon Tracker und Dungeon Builder ✅ done (2026-11-06 19:54)
 
 - Der Card Manager nutzt die gemeinsame Seitenhülle aus `src/styles/components/feature-page.css`
   (`feature-page`, `feature-page__main`, dunkle Seite `--color-gray-900`, weiße Schrift).
@@ -127,29 +127,50 @@
 - Der Card Manager ist am PC und auf dem Tablet bedienbar; auf schmalen Bildschirmen gibt es keinen waagerechten
   Seitenscroll.
 
-### 10. Dokumentation
+### 10. Dokumentation ✅ done (2026-11-06 19:54)
 
 - `REQUIREMENTS.md`, Abschnitt 5 (Card Manager), beschreibt das neue Verhalten.
+
+### 11. Gruppe „Deck Management“ über der Deckliste ✅ done (2026-11-06 20:18)
+
+- Nachtrag nach Rückmeldung: Pfadangabe und „Deck hinzufügen“ stehen in einer eigenen Gruppe „Deck Management“ ganz
+  oben in der Seitenleiste; die Gruppe „Decks“ darunter enthält Suche und Deckliste. So kann die Liste beliebig
+  wachsen, ohne dass sich die Bedienung ändert.
+
+### 12. „Ausgerüstet“ über dem Spieltisch, höchstens zwei Reihen ✅ done (2026-11-06 20:18)
+
+- Nachtrag nach Rückmeldung: Der Bereich „Ausgerüstet“ steht im Hauptbereich über der Gruppe „Spieltisch“.
+- Er zeigt höchstens zwei Kartenreihen gleichzeitig; weitere Reihen erreicht man über eine Scrollbar im Bereich.
+  Ohne zugewiesene Karten ist er ausgeblendet.
+
+### 13. Deckwahl in der Seitenleiste legt die aktive Karte ab ✅ done (2026-11-06 20:33)
+
+- Nachtrag nach Rückmeldung: Ist eine Karte aktiv und klickt der DM in der Seitenleiste „Decks“ auf ein anderes Deck,
+  kommt die aktive Karte in den Ablagestapel ihres eigenen Decks; danach klappt das gewählte Deck auf. Ein Klick auf
+  das Deck der aktiven Karte lässt sie aktiv.
 
 ---
 
 ## Akzeptanzkriterien
 
-- [ ] Der DM kann mindestens 10 Decks hinzufügen, auch dieselbe Deck-Datei mehrfach; doppelte Namen werden
+- [x] Der DM kann mindestens 10 Decks hinzufügen, auch dieselbe Deck-Datei mehrfach; doppelte Namen werden
       durchnummeriert, Decks lassen sich umbenennen und umsortieren.
-- [ ] Mischen, Zurücksetzen und Entfernen wirken nur auf das gewählte Deck; die anderen bleiben unverändert.
-- [ ] Ein Klick auf den Nachziehstapel einer eingeklappten Reihe zieht eine Karte dieses Decks.
-- [ ] Höchstens eine Deck-Reihe ist aufgeklappt.
-- [ ] Es gibt höchstens eine aktive Karte. Wer zieht, während eine aktiv ist, legt sie automatisch in den
+- [x] Mischen, Zurücksetzen und Entfernen wirken nur auf das gewählte Deck; die anderen bleiben unverändert.
+- [x] Ein Klick auf den Nachziehstapel einer eingeklappten Reihe zieht eine Karte dieses Decks.
+- [x] Höchstens eine Deck-Reihe ist aufgeklappt.
+- [x] Es gibt höchstens eine aktive Karte. Wer zieht, während eine aktiv ist, legt sie automatisch in den
       Ablagestapel ihres Decks.
-- [ ] Ablegen bringt jede Karte in den Ablagestapel ihres eigenen Decks, auch aus „Ausgerüstet“ und beim
+- [x] Ablegen bringt jede Karte in den Ablagestapel ihres eigenen Decks, auch aus „Ausgerüstet“ und beim
       Löschen eines Charakters.
-- [ ] Karten mit gleicher ID aus zwei Instanzen derselben Deck-Datei werden nie verwechselt (Ziehen, Zuweisen,
+- [x] Karten mit gleicher ID aus zwei Instanzen derselben Deck-Datei werden nie verwechselt (Ziehen, Zuweisen,
       Ablegen, Speichern/Laden).
-- [ ] Entfernen eines Decks fragt nach und entfernt auch seine ausgerüsteten Karten samt Boni.
-- [ ] Die Suche in der Seitenleiste filtert die Deckliste; ein Klick klappt das Deck auf und scrollt zu ihm.
-- [ ] Spielesession und XML-Spielstand enthalten alle Decks; ein alter Spielstand mit einem Deck lädt als ein Deck.
-- [ ] Der Card Manager nutzt `feature-page` und sieht dunkel aus wie Dungeon Tracker und Builder; die
+- [x] Entfernen eines Decks fragt nach und entfernt auch seine ausgerüsteten Karten samt Boni.
+- [x] Die Suche in der Seitenleiste filtert die Deckliste; ein Klick klappt das Deck auf und scrollt zu ihm.
+- [x] Spielesession und XML-Spielstand enthalten alle Decks; ein alter Spielstand mit einem Deck lädt als ein Deck.
+- [x] Der Card Manager nutzt `feature-page` und sieht dunkel aus wie Dungeon Tracker und Builder; die
       `--color-card-manager-*`-Tokens sind entfernt.
-- [ ] Specs decken die Deck-Verwaltung, Zuweisungen über mehrere Instanzen und die XML-Migration ab; ein
+- [x] Specs decken die Deck-Verwaltung, Zuweisungen über mehrere Instanzen und die XML-Migration ab; ein
       Playwright-Smoke-Test zieht aus zwei Decks nacheinander.
+- [x] „Deck hinzufügen“ mit Pfadangabe steht in der Gruppe „Deck Management“ über der Gruppe „Decks“.
+- [x] „Ausgerüstet“ steht über dem Spieltisch und zeigt höchstens zwei Reihen, weitere scrollen in sich.
+- [x] Ein Klick auf ein anderes Deck in der Seitenleiste legt die aktive Karte in den Ablagestapel ihres Decks.

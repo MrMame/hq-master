@@ -53,11 +53,6 @@
   --color-card-surface: #1e1e2e;
   --color-card-text: #e2e8f0;
   --color-card-muted: #94a3b8;
-  --color-card-manager-bank: rgb(213, 107, 237);
-  --color-card-manager-active: rgb(255, 251, 0);
-  --color-card-manager-piles: red;
-  --color-card-manager-draw: blue;
-  --color-card-manager-discard: green;
   --color-overlay-backdrop: rgba(0, 0, 0, 0.32);
 
   /* Shared Colors between feature UI components */

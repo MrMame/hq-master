@@ -5,7 +5,7 @@
 }
 
 @if (catalog()) {
-  <app-library-search [(term)]="search" />
+  <app-search-field label="Element suchen" [(term)]="search" />
 
   @if (recent(); as recent) {
     <app-library-group-section

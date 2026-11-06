@@ -1,12 +1,6 @@
-import { Card } from '../../models/card.model';
-import { AssignedCard, DeckState } from '../../models/deck-state.model';
+import { ActiveCard, AssignedCard, CardRef, DeckState } from '../../models/deck-state.model';
 import { EquipmentSlot } from '../../models/equipment.model';
-
-/** Alle Karten außer den zugewiesenen: Stapel, Ablage, aktive Karte, Bank. */
-export function unassignedCards(s: DeckState): Card[] {
-  const active: Card[] = s.activeCard ? [s.activeCard] : [];
-  return [...s.drawPile, ...s.discardPile, ...active, ...s.bank];
-}
+import { isSameCard, toCardRef, withDiscarded } from './deck-state.util';
 
 /** Karte im Slot eines Charakters, falls belegt. */
 export function slotOccupant(
@@ -18,42 +12,43 @@ export function slotOccupant(
 }
 
 /**
- * Legt die aktive Ausrüstungskarte in den Slot; eine dort liegende Karte kommt in den Ablagestapel.
- * Danach ist keine Karte aktiv. Ohne aktive Ausrüstungskarte bleibt der Zustand unverändert.
+ * Legt die aktive Ausrüstungskarte in den Slot; eine dort liegende Karte kommt in den Ablagestapel ihrer
+ * Instanz. Danach ist keine Karte aktiv. Ohne aktive Ausrüstungskarte bleibt der Zustand unverändert.
  */
 export function assignActiveCard(
   s: DeckState,
   characterId: string,
   slot: EquipmentSlot,
 ): DeckState {
-  const card: Card | null = s.activeCard;
-  if (card?.cardType !== 'equipment') return s;
+  const active: ActiveCard | null = s.activeCard;
+  if (!active || active.card.cardType !== 'equipment') return s;
   const previous: AssignedCard | undefined = slotOccupant(s.assigned, characterId, slot);
   return {
-    ...s,
+    ...withDiscarded(s, previous ? [previous] : []),
     activeCard: null,
-    discardPile: previous ? [...s.discardPile, previous.card] : s.discardPile,
-    assigned: [...s.assigned.filter((entry) => entry !== previous), { card, characterId, slot }],
+    assigned: [
+      ...s.assigned.filter((entry) => entry !== previous),
+      { deckId: active.deckId, card: active.card, characterId, slot },
+    ],
   };
 }
 
-/** Nimmt die Karten aus ihren Slots und legt sie in den Ablagestapel; unbekannte IDs werden ignoriert. */
-export function discardAssigned(s: DeckState, cardIds: readonly string[]): DeckState {
-  const removed: AssignedCard[] = s.assigned.filter((entry) => cardIds.includes(entry.card.id));
+/** Nimmt Karten aus ihren Slots in den Ablagestapel ihrer Instanz; unbekannte werden ignoriert. */
+export function discardAssigned(s: DeckState, refs: readonly CardRef[]): DeckState {
+  const removed: AssignedCard[] = s.assigned.filter((entry) =>
+    refs.some((ref) => isSameCard(entry, ref)),
+  );
   if (removed.length === 0) return s;
   return {
-    ...s,
+    ...withDiscarded(s, removed),
     assigned: s.assigned.filter((entry) => !removed.includes(entry)),
-    discardPile: [...s.discardPile, ...removed.map((entry) => entry.card)],
   };
 }
 
 /** Karten, deren Besitzer nicht (mehr) in der Session ist. */
-export function orphanedCardIds(
+export function orphanedCards(
   assigned: readonly AssignedCard[],
   characterIds: readonly string[],
-): string[] {
-  return assigned
-    .filter((entry) => !characterIds.includes(entry.characterId))
-    .map((entry) => entry.card.id);
+): CardRef[] {
+  return assigned.filter((entry) => !characterIds.includes(entry.characterId)).map(toCardRef);
 }

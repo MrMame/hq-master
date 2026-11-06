@@ -1,12 +1,14 @@
-import { AssignedCard, DeckState } from '../../models/deck-state.model';
+import { ActiveCard, AssignedCard, DeckInstance, DeckState } from '../../models/deck-state.model';
 import { EQUIPMENT_SLOTS } from '../../models/equipment.model';
 import { StorageCodec } from '../../session-state/persisted-state';
+import { LegacyDeckState, migrateLegacyDeck } from './deck-state-migration.util';
+import { withoutDanglingRefs } from './deck-state.util';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function isAssignedCard(value: unknown): value is AssignedCard {
+function isAssignment(value: unknown): value is Omit<AssignedCard, 'deckId'> {
   return (
     isRecord(value) &&
     typeof value['characterId'] === 'string' &&
@@ -17,18 +19,53 @@ function isAssignedCard(value: unknown): value is AssignedCard {
   );
 }
 
+function isAssignedCard(value: unknown): value is AssignedCard {
+  return isAssignment(value) && typeof (value as Record<string, unknown>)['deckId'] === 'string';
+}
+
+function isDeckInstance(value: unknown): value is DeckInstance {
+  return (
+    isRecord(value) &&
+    typeof value['id'] === 'string' &&
+    typeof value['name'] === 'string' &&
+    isRecord(value['config']) &&
+    ['drawPile', 'discardPile', 'bank'].every((pile) => Array.isArray(value[pile]))
+  );
+}
+
+function isActiveCard(value: unknown): value is ActiveCard {
+  return isRecord(value) && typeof value['deckId'] === 'string' && isRecord(value['card']);
+}
+
+function list<T>(value: unknown, guard: (item: unknown) => item is T): T[] {
+  return Array.isArray(value) ? value.filter(guard) : [];
+}
+
+/** Älterer Zustand mit genau einem Deck (`config` statt `decks`). */
+function decodeLegacy(stored: Record<string, unknown>): DeckState {
+  return migrateLegacyDeck({
+    ...(stored as unknown as LegacyDeckState),
+    assigned: list(stored['assigned'], isAssignment),
+  });
+}
+
 /**
- * Speichert den Deck-Zustand unverändert. Beim Laden bekommt ein älterer Zustand ohne `assigned` eine leere
- * Liste; ungültige Zuweisungen werden verworfen. Kein Objekt → Startwert (kein Deck).
+ * Speichert den Deck-Zustand unverändert. Beim Laden wird ein älterer Zustand mit einem Deck zu einer
+ * Instanz; ungültige Instanzen und Zuweisungen sowie Verweise auf fehlende Instanzen werden verworfen.
+ * Kein Objekt → Startwert (keine Decks).
  */
-export const DECK_STATE_CODEC: StorageCodec<DeckState | null> = {
-  encode: (state: DeckState | null): unknown => state,
+export const DECK_STATE_CODEC: StorageCodec<DeckState> = {
+  encode: (state: DeckState): unknown => state,
   decode: (stored: unknown): DeckState | null => {
     if (!isRecord(stored)) return null;
-    const assigned: unknown = stored['assigned'];
-    return {
-      ...stored,
-      assigned: Array.isArray(assigned) ? assigned.filter(isAssignedCard) : [],
-    } as unknown as DeckState;
+    if (isRecord(stored['config'])) return decodeLegacy(stored);
+    return withoutDanglingRefs({
+      decks: list(stored['decks'], isDeckInstance).map((deck) => ({
+        ...deck,
+        source: typeof deck.source === 'string' ? deck.source : '',
+      })),
+      activeCard: isActiveCard(stored['activeCard']) ? stored['activeCard'] : null,
+      assigned: list(stored['assigned'], isAssignedCard),
+    });
   },
 };

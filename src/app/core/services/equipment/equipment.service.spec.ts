@@ -5,9 +5,11 @@ import { CardManagerService } from '../card-deck/card-manager.service';
 import { CharactersDbService } from '../characters/characters-db.service';
 import { GameLogService } from '../game-log/game-log.service';
 import { CharacterInfo } from '../../models/character-info.model';
+import { Card } from '../../models/card.model';
 import { DeckState } from '../../models/deck-state.model';
 import { createTestCharacter } from '../../testing/character.fixtures';
 import {
+  assignedCard,
   createEquipmentCard,
   createEquipmentDeckState,
   RUNE_ARMOR,
@@ -22,7 +24,8 @@ describe('EquipmentService', () => {
   const barbarian: CharacterInfo = { ...createTestCharacter('a'), name: 'Barbar', armor: 4 };
 
   const character: () => CharacterInfo = () => charactersDb.characters()[0];
-  const deck: () => DeckState = () => cardManager.state() as DeckState;
+  const deck: () => DeckState = () => cardManager.state();
+  const discardPile: () => Card[] = () => deck().decks[0].discardPile;
   const logTexts: () => string[] = () =>
     TestBed.inject(GameLogService)
       .entries()
@@ -50,15 +53,18 @@ describe('EquipmentService', () => {
     charactersDb.writeCharacter(armor);
     cardManager.restore({
       ...createEquipmentDeckState('a'),
-      assigned: [{ card: RUNE_ARMOR, characterId: 'a', slot: 'body' }],
-      activeCard: createEquipmentCard('e5', 'Kettenhemd', 'body', [{ stat: 'maxArmor', value: 1 }]),
+      assigned: [assignedCard(RUNE_ARMOR, 'a', 'body')],
+      activeCard: {
+        deckId: 'deck-1',
+        card: createEquipmentCard('e5', 'Kettenhemd', 'body', [{ stat: 'maxArmor', value: 1 }]),
+      },
     });
 
     service.assignActiveCard('a', 'body');
 
     // 6/6 → Runenrüstung ab → 4/4 → Kettenhemd +1 → 5/5
     expect(character().armor).toBe(5);
-    expect(deck().discardPile).toEqual([RUNE_ARMOR]);
+    expect(discardPile()).toEqual([RUNE_ARMOR]);
     expect(logTexts()).toEqual([
       'Barbar legt Runenrüstung ab',
       'Barbar erhält Kettenhemd (Körper)',
@@ -75,15 +81,19 @@ describe('EquipmentService', () => {
   });
 
   it('discards cards of a character onto the discard pile and logs it', () => {
-    service.discardCards(barbarian, ['e2', 'e1']);
+    service.discardCards(barbarian, [
+      { deckId: 'deck-1', cardId: 'e2' },
+      { deckId: 'deck-1', cardId: 'e1' },
+      { deckId: 'deck-2', cardId: 'e2' },
+    ]);
 
     expect(service.assigned()).toEqual([]);
-    expect(deck().discardPile).toEqual([TOWER_SHIELD]);
+    expect(discardPile()).toEqual([TOWER_SHIELD]);
     expect(logTexts()).toEqual(['Barbar legt Turmschild ab']);
   });
 
   it('does not discard cards of other characters', () => {
-    service.discardCards({ ...barbarian, id: 'b' }, ['e2']);
+    service.discardCards({ ...barbarian, id: 'b' }, [{ deckId: 'deck-1', cardId: 'e2' }]);
     expect(service.assigned()).toHaveLength(1);
     expect(logTexts()).toEqual([]);
   });

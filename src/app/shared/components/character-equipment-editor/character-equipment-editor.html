@@ -10,7 +10,7 @@
           type="button"
           class="equipment-editor__discard"
           [attr.aria-label]="entry.card.name + ' ablegen'"
-          (click)="discard.emit(entry.card.id)"
+          (click)="discard.emit({ deckId: entry.deckId, cardId: entry.card.id })"
         >
           Ablegen
         </button>

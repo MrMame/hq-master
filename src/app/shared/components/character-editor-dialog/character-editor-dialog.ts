@@ -17,7 +17,8 @@ import { startConditions } from '../../utils/condition-draft.util';
 import { conditionChangeEntries } from '../../utils/game-log-entries.util';
 import { withStat } from '../../utils/character-stat.util';
 import { withinLimits } from '../../../core/services/characters/character-limits.util';
-import { AssignedCard } from '../../../core/models/deck-state.model';
+import { AssignedCard, CardRef } from '../../../core/models/deck-state.model';
+import { isSameCard } from '../../../core/services/card-deck/deck-state.util';
 import { EquipmentService } from '../../../core/services/equipment/equipment.service';
 import { cardsOf, modifiersOf } from '../../../core/services/equipment/effective-stats.util';
 import { CharacterStatsEditor, StatChange } from '../character-stats-editor/character-stats-editor';
@@ -66,11 +67,11 @@ export class CharacterEditorDialog {
   );
 
   /** Abgelegte, aber noch nicht übernommene Karten. */
-  private readonly discardedCardIds: WritableSignal<string[]> = signal<string[]>([]);
+  private readonly discardedCards: WritableSignal<CardRef[]> = signal<CardRef[]>([]);
   /** Karten, die nach dem Übernehmen am Charakter bleiben. */
   protected readonly equippedCards: Signal<AssignedCard[]> = computed(() =>
     cardsOf(this.equipment.assigned(), this.draft().id).filter(
-      (entry) => !this.discardedCardIds().includes(entry.card.id),
+      (entry) => !this.discardedCards().some((ref) => isSameCard(entry, ref)),
     ),
   );
   protected readonly types: string[] = Object.values(ElementalTypes);
@@ -86,8 +87,8 @@ export class CharacterEditorDialog {
     this.draft.update((character) => withStat(character, stat, value, !this.isEditMode));
   }
 
-  discardCard(cardId: string): void {
-    this.discardedCardIds.update((ids) => [...ids, cardId]);
+  discardCard(ref: CardRef): void {
+    this.discardedCards.update((refs) => [...refs, ref]);
   }
 
   toggleAbility(ability: string): void {
@@ -113,7 +114,7 @@ export class CharacterEditorDialog {
       conditions: startConditions(this.draft().conditions, now),
     };
     this.charactersDbService.writeCharacter(character);
-    this.equipment.discardCards(character, this.discardedCardIds());
+    this.equipment.discardCards(character, this.discardedCards());
     this.gameLog.append(
       ...conditionChangeEntries(this.character?.conditions ?? [], character, now),
     );

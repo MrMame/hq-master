@@ -1,123 +1,51 @@
-<div class="cardManagerPageContainer">
-  @if (state()) {
-    <app-collapsible-sidebar>
-      <div class="general-sidebar__header">
-        <h2 class="general-sidebar__title">Card Manager</h2>
-        <app-sidebar-section-toggle-all scope="card-manager" />
-      </div>
-      <app-sidebar-section title="Deck Aktionen" sectionId="card-manager.deck-actions">
-        <button class="general-sidebar__button" (click)="onLoadDeckClick()">Deck Laden</button>
-        <button class="general-sidebar__button" (click)="onShuffleClick()">
-          Nachziehstapel Mischen
-        </button>
-        <button class="general-sidebar__button" (click)="onResetClick()">Zurücksetzen</button>
-      </app-sidebar-section>
-      <hr class="general-sidebar__divider" />
-    </app-collapsible-sidebar>
+<div class="feature-page">
+  <app-collapsible-sidebar>
+    <div class="general-sidebar__header">
+      <h2 class="general-sidebar__title">Card Manager</h2>
+      <app-sidebar-section-toggle-all scope="card-manager" />
+    </div>
+    <!-- Steht über der Deckliste, damit die Liste beliebig wachsen kann. -->
+    <app-sidebar-section title="Deck Management" sectionId="card-manager.deck-management">
+      <app-add-deck-form />
+    </app-sidebar-section>
+    <hr class="general-sidebar__divider" />
+    <app-sidebar-section title="Decks" sectionId="card-manager.decks" [count]="decks().length">
+      <app-deck-list [decks]="decks()" (selected)="onReveal($event)" />
+    </app-sidebar-section>
+  </app-collapsible-sidebar>
 
-    <div class="card-zone">
-      <p>Deck: {{ state()!.config.name }}</p>
+  <div class="feature-page__main">
+    <div class="card-table">
+      <app-equipped-cards />
 
-      <!--- PILES ============================== -->
-      <div class="pilesContainer">
-        <!--- DrawPile ========= -->
-        <div class="pile drawPile">
-          <h3 (click)="onDrawPileZoneClick()">Nachziehstapel ({{ state()!.drawPile.length }})</h3>
-          @for (card of state()!.drawPile; track card.id) {
-            <app-card-display
-              class="cardInPile"
-              [card]="card"
-              [backImagePath]="state()!.config.backImagePath"
-              (click)="$event.stopPropagation(); onDrawPileCardClick(card.id)"
-              [side]="'back'"
-            />
-          }
-        </div>
-
-        <!--- ActiveCard ========= -->
-        <div class="pile activeCardPile">
-          <span>Aktive Karte</span>
-        </div>
-        <!-- Schwebt im Overlay-Container über der ganzen Seite. -->
-        <app-active-card-overlay
-          [card]="state()!.activeCard"
-          [backImagePath]="state()!.config.backImagePath"
-          [assignDisabledReason]="assignDisabledReason()"
-          (cardClick)="onActiveCardClick()"
-          (assignClick)="onAssignClick()"
-        />
-        <!--- DiscardPile ========= -->
-        <div class="pile discardPile" (click)="$event.stopPropagation(); onDiscardPileClick()">
-          <h3>Ablagestapel ({{ state()!.discardPile.length }})</h3>
-          @for (card of state()!.discardPile; track card.id) {
-            <app-card-display
-              class="cardInPile"
-              [card]="card"
-              [backImagePath]="state()!.config.backImagePath"
-              (click)="$event.stopPropagation(); onDiscardPileCardClick(card.id)"
-            />
-          }
-        </div>
-      </div>
-
-      <!-- AUSGERÜSTET: Karten in den Slots der Charaktere ===== -->
-      @if (state()!.assigned.length > 0) {
-        <section class="equippedContainer" aria-label="Ausgerüstet">
-          <h3>Ausgerüstet ({{ state()!.assigned.length }})</h3>
-          <div class="equippedCards">
-            @for (entry of state()!.assigned; track entry.card.id) {
-              <app-card-display
-                class="cardEquipped"
-                [card]="entry.card"
-                [backImagePath]="state()!.config.backImagePath"
-                [owner]="ownerNames().get(entry.characterId) ?? null"
-              />
-            }
+      <section class="card-table__decks" aria-label="Spieltisch">
+        <h2 class="section-heading">Spieltisch</h2>
+        @for (deck of decks(); track deck.id) {
+          <app-deck-row
+            [deck]="deck"
+            [expanded]="expandedDeckId() === deck.id"
+            [activeCard]="activeCard()"
+            [first]="$first"
+            [last]="$last"
+            (toggled)="onToggle(deck.id)"
+          />
+        } @empty {
+          <div class="card-table__empty">
+            <p class="empty-hint empty-hint--sm">Noch keine Decks auf dem Tisch.</p>
+            <app-add-deck-form />
           </div>
-        </section>
-      }
-
-      <!-- BANK BEREICH ======================================== -->
-
-      <div class="bankContainer" (click)="onBankContainerClick()">
-        <div class="bankCardsContainer">
-          @for (card of state()!.bank; track card.id) {
-            <app-card-display
-              class="cardInBank"
-              [card]="card"
-              [backImagePath]="state()!.config.backImagePath"
-              (click)="$event.stopPropagation(); onBankCardClick(card.id)"
-            />
-          }
-        </div>
-      </div>
+        }
+      </section>
     </div>
-  } @else {
-    <div class="deck-loader">
-      <p class="deck-loader__hint">Kein Deck geladen.</p>
-      <div class="deck-loader__form">
-        <input
-          #urlInput
-          type="text"
-          placeholder="decks/default/default-deck.xml"
-          value="decks/default/default-deck.xml"
-          class="deck-loader__input"
-        />
-        <button
-          (click)="onLoadDeck(urlInput.value)"
-          [disabled]="isLoading()"
-          class="deck-loader__button"
-        >
-          @if (isLoading()) {
-            Lade...
-          } @else {
-            Deck laden
-          }
-        </button>
-      </div>
-      @if (loadError()) {
-        <p class="deck-loader__error" data-testid="deck-load-error">{{ loadError() }}</p>
-      }
-    </div>
-  }
+  </div>
+
+  <!-- Schwebt im Overlay-Container über der ganzen Seite. -->
+  <app-active-card-overlay
+    [card]="activeCard()?.card ?? null"
+    [backImagePath]="activeDeck()?.config?.backImagePath ?? ''"
+    [deckName]="activeDeck()?.name ?? ''"
+    [assignDisabledReason]="assignDisabledReason()"
+    (cardClick)="onActiveCardClick()"
+    (assignClick)="onAssignClick()"
+  />
 </div>

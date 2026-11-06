@@ -1,6 +1,26 @@
-import { DeckState } from '../../models/deck-state.model';
-import { createDeckState, createEquipmentDeckState } from '../../testing/deck.fixtures';
+import { AssignedCard, DeckInstance, DeckState } from '../../models/deck-state.model';
+import {
+  assignedCard,
+  BASIC_CARD,
+  COMBAT_CARD,
+  createDeckInstance,
+  createEquipmentDeckState,
+  TOWER_SHIELD,
+} from '../../testing/deck.fixtures';
 import { DECK_STATE_CODEC } from './deck-state-codec.util';
+
+/** Gespeicherter Zustand vor mehreren Decks (ein Deck, Zuweisungen ohne `deckId`). */
+function legacyStored(): Record<string, unknown> {
+  const { config } = createDeckInstance();
+  return {
+    config,
+    drawPile: [BASIC_CARD],
+    discardPile: [],
+    activeCard: COMBAT_CARD,
+    bank: [],
+    assigned: [{ card: TOWER_SHIELD, characterId: 'a', slot: 'leftHand' }, { slot: 'tail' }],
+  };
+}
 
 describe('DECK_STATE_CODEC', () => {
   it('stores and reads the deck state unchanged', () => {
@@ -9,25 +29,54 @@ describe('DECK_STATE_CODEC', () => {
     expect(DECK_STATE_CODEC.decode(stored)).toEqual(deck);
   });
 
-  it('gives older states without assignments an empty list', () => {
-    const older: Partial<DeckState> = createDeckState();
-    delete older.assigned;
-    expect(DECK_STATE_CODEC.decode(older)).toEqual(createDeckState());
+  it('reads an older state with one deck as one deck owning active card and assignments', () => {
+    const state: DeckState | null = DECK_STATE_CODEC.decode(legacyStored());
+    expect(state?.decks).toEqual([
+      {
+        id: 'test-deck',
+        name: 'Testdeck',
+        source: '',
+        config: createDeckInstance().config,
+        drawPile: [BASIC_CARD],
+        discardPile: [],
+        bank: [],
+      },
+    ]);
+    expect(state?.activeCard).toEqual({ deckId: 'test-deck', card: COMBAT_CARD });
+    expect(state?.assigned).toEqual([assignedCard(TOWER_SHIELD, 'a', 'leftHand', 'test-deck')]);
   });
 
-  it('drops invalid assignments', () => {
+  it('drops invalid decks and assignments and references to missing decks', () => {
     const deck: DeckState = createEquipmentDeckState('a');
-    const invalid: unknown[] = [
-      null,
-      { ...deck.assigned[0], slot: 'tail' },
-      { ...deck.assigned[0], characterId: 3 },
-      { ...deck.assigned[0], card: { ...deck.assigned[0].card, cardType: 'basic' } },
-      deck.assigned[0],
-    ];
-    expect(DECK_STATE_CODEC.decode({ ...deck, assigned: invalid })).toEqual(deck);
+    const valid: AssignedCard = deck.assigned[0];
+    const stored: unknown = {
+      decks: [...deck.decks, null, { id: 'x', name: 'X' }],
+      activeCard: deck.activeCard,
+      assigned: [
+        null,
+        { ...valid, slot: 'tail' },
+        { ...valid, characterId: 3 },
+        { ...valid, card: { ...valid.card, cardType: 'basic' } },
+        { ...valid, deckId: undefined },
+        { ...valid, deckId: 'gone' },
+        valid,
+      ],
+    };
+    expect(DECK_STATE_CODEC.decode(stored)).toEqual(deck);
   });
 
-  it('falls back to no deck for stored values that are no object', () => {
+  it('reads missing lists and sources as empty and an invalid active card as none', () => {
+    const withoutSource: Partial<DeckInstance> = createDeckInstance();
+    delete withoutSource.source;
+    expect(DECK_STATE_CODEC.decode({ decks: [withoutSource], activeCard: { card: 1 } })).toEqual({
+      decks: [createDeckInstance('deck-1', { source: '' })],
+      activeCard: null,
+      assigned: [],
+    });
+    expect(DECK_STATE_CODEC.decode({})).toEqual({ decks: [], activeCard: null, assigned: [] });
+  });
+
+  it('falls back to no decks for stored values that are no object', () => {
     expect(DECK_STATE_CODEC.decode('x')).toBeNull();
     expect(DECK_STATE_CODEC.decode([])).toBeNull();
   });

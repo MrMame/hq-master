@@ -13,8 +13,7 @@ import { AssignEquipmentDialog } from '../components/assign-equipment-dialog/ass
 import { AssignEquipmentChoice, AssignEquipmentDialogData } from '../models/assign-equipment.model';
 
 /**
- * Ablauf im Card Manager rund um Ausrüstung: Zuweisungsdialog, Rückfrage bei belegtem Slot und vor einem
- * neuen Deck. Geschrieben wird über den `EquipmentService` bzw. den `CardManagerService`.
+ * Ablauf im Card Manager rund um Ausrüstung: Zuweisungsdialog und Rückfrage bei belegtem Slot. Geschrieben wird über den `EquipmentService` bzw. den `CardManagerService`.
  */
 @Injectable({
   providedIn: 'root',
@@ -38,7 +37,7 @@ export class CardAssignmentService {
 
   /** Öffnet den Dialog für die aktive Ausrüstungskarte und weist sie nach der Auswahl zu. */
   async assignActiveCard(): Promise<void> {
-    const card: Card | null = this.cardManager.state()?.activeCard ?? null;
+    const card: Card | undefined = this.cardManager.state().activeCard?.card;
     if (card?.cardType !== 'equipment' || this.assignDisabledReason() !== null) return;
     const assigned: AssignedCard[] = this.cardManager.assigned();
     const choice: AssignEquipmentChoice | undefined = await firstValueFrom(
@@ -51,15 +50,6 @@ export class CardAssignmentService {
     );
     if (!choice || !(await this.confirmReplace(assigned, choice))) return;
     this.equipment.assignActiveCard(choice.characterId, choice.slot);
-  }
-
-  /** Rückfrage vor dem Laden eines neuen Decks, wenn Karten zugewiesen sind (verwirft alle Zuweisungen). */
-  confirmNewDeck(): Promise<boolean> {
-    return this.confirmation.confirm({
-      title: 'Neues Deck laden',
-      message: 'Alle zugewiesenen Ausrüstungskarten werden verworfen. Neues Deck laden?',
-      confirmLabel: 'Deck laden',
-    });
   }
 
   private async confirmReplace(

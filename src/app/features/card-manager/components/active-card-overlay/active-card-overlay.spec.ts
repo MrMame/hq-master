@@ -5,15 +5,16 @@ import { vi } from 'vitest';
 
 import { ActiveCardOverlay } from './active-card-overlay';
 import { Card } from '../../../../core/models/card.model';
-import { createDeckState, RUNE_ARMOR } from '../../../../core/testing/deck.fixtures';
+import { createDeckInstance, RUNE_ARMOR } from '../../../../core/testing/deck.fixtures';
 
-const [FIRST, SECOND]: Card[] = createDeckState().config.cards;
+const [FIRST, SECOND]: Card[] = createDeckInstance().config.cards;
 
 @Component({
   imports: [ActiveCardOverlay],
   template: `<app-active-card-overlay
     [card]="card()"
     backImagePath="cards/back.svg"
+    [deckName]="deckName()"
     [assignDisabledReason]="reason()"
     (cardClick)="clicked()"
     (assignClick)="assigned()"
@@ -22,6 +23,7 @@ const [FIRST, SECOND]: Card[] = createDeckState().config.cards;
 class OverlayHost {
   readonly card: WritableSignal<Card | null> = signal<Card | null>(null);
   readonly reason: WritableSignal<string | null> = signal<string | null>(null);
+  readonly deckName: WritableSignal<string> = signal<string>('');
   readonly clicked: () => void = vi.fn();
   readonly assigned: () => void = vi.fn();
 }
@@ -109,5 +111,16 @@ describe('ActiveCardOverlay', () => {
 
     expect(container.querySelector('.cdk-overlay-pane')).toBeNull();
     expect(container.childElementCount).toBe(0);
+  });
+
+  it('shows the name of the deck above the card only when given', async () => {
+    await show(FIRST);
+    const deckLabel: () => Element | null = () =>
+      container.querySelector('[data-testid="active-card-deck"]');
+    expect(deckLabel()).toBeNull();
+
+    fixture.componentInstance.deckName.set('Monster (2)');
+    await fixture.whenStable();
+    expect(deckLabel()?.textContent).toBe('Monster (2)');
   });
 });

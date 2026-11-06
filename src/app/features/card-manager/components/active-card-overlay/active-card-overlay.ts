@@ -21,8 +21,8 @@ import { CardDisplay } from '../card-display/card-display';
 
 /**
  * Zeigt die aktive Karte als schwebende Ebene mittig im Fenster über der ganzen Seite.
- * Nicht modal: ohne Backdrop, nur die Karte selbst nimmt Klicks an. Unter Ausrüstungskarten steht
- * „Charakter zuweisen“.
+ * Nicht modal: ohne Backdrop, nur die Karte selbst nimmt Klicks an. Darüber steht der Name ihres Decks,
+ * unter Ausrüstungskarten „Charakter zuweisen“.
  */
 @Component({
   selector: 'app-active-card-overlay',
@@ -31,6 +31,9 @@ import { CardDisplay } from '../card-display/card-display';
     <ng-template #floatingCard>
       @if (card(); as activeCard) {
         <div class="floating-card-stack">
+          @if (deckName()) {
+            <span class="floating-card__deck" data-testid="active-card-deck">{{ deckName() }}</span>
+          }
           <app-card-display
             class="floating-card"
             [card]="activeCard"
@@ -65,6 +68,8 @@ export class ActiveCardOverlay {
 
   readonly card: InputSignal<Card | null> = input.required<Card | null>();
   readonly backImagePath: InputSignal<string> = input.required<string>();
+  /** Name des Decks, aus dem die Karte stammt. */
+  readonly deckName: InputSignal<string> = input<string>('');
   /** Grund, warum nicht zugewiesen werden kann (z. B. keine Charaktere); `null` = Button aktiv. */
   readonly assignDisabledReason: InputSignal<string | null> = input<string | null>(null);
   readonly cardClick: OutputEmitterRef<void> = output<void>();

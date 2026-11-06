@@ -1,18 +1,20 @@
 import { Component, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LibrarySearch } from './library-search';
+import { SearchField } from './search-field';
 
 @Component({
-  imports: [LibrarySearch],
-  template: `<div (keydown)="bubbled.set(true)"><app-library-search [(term)]="term" /></div>`,
+  imports: [SearchField],
+  template: `<div (keydown)="bubbled.set(true)">
+    <app-search-field label="Element suchen" [(term)]="term" />
+  </div>`,
 })
 class TestHost {
   readonly term: WritableSignal<string> = signal<string>('');
   readonly bubbled: WritableSignal<boolean> = signal<boolean>(false);
 }
 
-describe('LibrarySearch', () => {
+describe('SearchField', () => {
   let fixture: ComponentFixture<TestHost>;
   let host: HTMLElement;
 
@@ -47,6 +49,7 @@ describe('LibrarySearch', () => {
   it('should report the typed term and offer a clear button only while filled', async () => {
     expect(field().type).toBe('search');
     expect(field().getAttribute('aria-label')).toBe('Element suchen');
+    expect(field().placeholder).toBe('Element suchen …');
     expect(clear()).toBeNull();
 
     await type('tisch');

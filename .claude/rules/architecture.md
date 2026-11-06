@@ -23,8 +23,9 @@ core/
                     condition-templates.model.ts (CONDITION_TEMPLATES: Standardwerte und Symbole der Zustände),
                     condition-event.model.ts (ConditionEvent: Schaden/Ablauf eines Zustands),
                     game-log-entry.model.ts (GameLogEntry, GameLogEntryType: Ereignis-Log der Session),
-                    card.model.ts, deck-config.model.ts, deck-state.model.ts (Kartendeck inkl. `AssignedCard`;
-                    in core, weil der Charakter-Editor die Ausrüstung bearbeitet),
+                    card.model.ts, deck-config.model.ts, deck-state.model.ts (Deck-Instanzen `DeckInstance`, eine
+                    `ActiveCard`, `AssignedCard` und `CardRef` mit `deckId`; in core, weil der Charakter-Editor die
+                    Ausrüstung bearbeitet),
                     equipment.model.ts (ModifiableStat, StatModifier, EquipmentSlot, CardSlot, Beschriftungen)
     character-names/ → <klasse>-names.model.ts (editierbare Vor-/Nachnamen je Charakterklasse,
                     vom Dateilimit ausgenommen), character-names.model.ts (CHARACTER_NAMES_BY_IMAGE)
@@ -47,10 +48,14 @@ core/
                     `readLimit`: fehlendes/ungültiges Maximum → aktueller Wert; für Codec, XML und Editor;
                     `withinLimits(c, modifiers)` begrenzt auf das wirksame Maximum, `normalizedLimits` für Codec/XML
                     nur nach unten, `withAddedEquipment`)
-    card-deck/    → CardManagerService (Deck-Zustand der Session inkl. `assigned`), DeckXmlLoaderService,
-                    deck-assignment.util.ts (zuweisen, ablegen, verwaiste Zuweisungen), deck-state-codec.util.ts
-                    (DECK_STATE_CODEC: ältere Zustände ohne `assigned`), equipment-card-xml.util.ts (Slot und
-                    `<modifier>` lesen/schreiben für Deck-XML und Spielstand)
+    card-deck/    → CardManagerService (beliebig viele Deck-Instanzen, eine aktive Karte, `assigned`),
+                    DeckXmlLoaderService, deck-state.util.ts (Instanz finden/ändern, `withDiscarded` in den Ablagestapel
+                    der eigenen Instanz, `withoutDanglingRefs`), deck-instance.util.ts (hinzufügen mit Durchnummerieren,
+                    umbenennen, entfernen, verschieben, mischen, zurücksetzen), deck-draw.util.ts (ziehen, aktiv machen,
+                    aktive Karte ablegen/zurückmischen/in die Bank), deck-assignment.util.ts (zuweisen, ablegen und
+                    verwaiste Zuweisungen per `CardRef`), shuffle.util.ts, deck-state-codec.util.ts (DECK_STATE_CODEC),
+                    deck-state-migration.util.ts (älterer Zustand mit einem Deck → eine Instanz; Codec und XML),
+                    equipment-card-xml.util.ts (Slot und `<modifier>` lesen/schreiben für Deck-XML und Spielstand)
     equipment/    → effective-stats.util.ts (`effectiveStats`: einzige Berechnung der wirksamen Werte),
                     equipment-text.util.ts, equipment-slots.util.ts, equipment-log.util.ts,
                     EquipmentService (Zuweisen/Ablegen inkl. Leben/Rüstung und Log, kein eigener Zustand),
@@ -87,14 +92,13 @@ features/
                          grid-origin.util.ts (Zugstrecke des Markers → Nullpunkt, Feld unter der Porträtmitte),
                          scroll-into-view.util.ts (nur bei Bedarf ins Bild scrollen)
     testing/           → resize-observer.fixtures.ts (steuerbarer ResizeObserver),
-                         scroll-into-view.fixtures.ts (Spy für das in jsdom fehlende scrollIntoView),
                          drag-end.fixtures.ts (Stub für das Ende eines CDK-Drags), nur für Specs
 
   dungeon-builder/     → Dungeon-Layouts bauen, als XML speichern, als JPEG exportieren (kein Session-Zustand)
     components/        → DungeonBuilderPage (stellt BuilderUiService bereit, Tastenkürzel, Ziehen aus der Bibliothek),
                          BuilderFilePanel (Neu, Laden, Als XML speichern, Als JPEG exportieren),
-                         LayoutSettings (Layoutname, Plangröße), ElementLibrary (Bibliothek: Suche, „Zuletzt verwendet“,
-                         Gruppen), LibrarySearch (Suchfeld), LibraryGroupSection (aufklappbare Gruppe mit Einträgen,
+                         LayoutSettings (Layoutname, Plangröße), ElementLibrary (Bibliothek: Suche per `SearchField`,
+                         „Zuletzt verwendet“, Gruppen), LibraryGroupSection (aufklappbare Gruppe mit Einträgen,
                          Tipp und Ziehen), LibraryEntry (Inhalt eines Eintrags),
                          BuilderToolStrip (Werkzeuge, Rückgängig/Wiederholen, Zoom in einer `QuickAccessBar`), LayoutPlan (SVG-Plan,
                          Raster, Markierung), ElementActionBar (Drehen, Löschen am markierten Element)
@@ -112,7 +116,7 @@ features/
                          wall-geometry, door-geometry, layout-edit, layout-resize, hit-test, element-placement),
                          layout-render/element-steps (Zeichenschritte), canvas-draw, layout-history, layout-codec,
                          plan-scale, builder-shortcut, file-name, library-groups (Gruppen der Bibliothek aus dem Katalog),
-                         library-search (Bibliothek nach Namen filtern)
+                         library-search (Bibliothek nach Namen filtern, nutzt `text-search.util.ts`)
     xml/               → catalog.xml-mapper.ts (readCatalog), layout.xml-mapper.ts (writeLayout/readLayout)
     testing/           → builder.fixtures.ts (TEST_CATALOG, createTestLayout), builder-services.fixtures.ts,
                          builder-file-panel.fixtures.ts, layout-plan.fixtures.ts, canvas.fixtures.ts,
@@ -127,22 +131,36 @@ features/
     utils/             → active-condition-rows.util.ts (Zeilen sortiert nach nächstem Wirkmoment, dann Restdauer),
                          game-log-rows.util.ts (Spielzeit absteigend, Datums-Trennzeile, Filter, Symbol je Eintrag)
 
-  card-manager/        → Kartenverwaltung (Deck aus XML + SVG)
-    components/        → CardManagerPage (Bereich „Ausgerüstet“), CardDisplay (Slot, Modifikatoren, „Im Besitz von“),
+  card-manager/        → Kartenverwaltung: beliebig viele Decks (XML + SVG) auf dem Spieltisch
+    components/        → CardManagerPage (`feature-page`, Spieltisch mit Deck-Reihen, höchstens eine aufgeklappt als
+                         UI-Zustand; Klick in der Deckliste legt eine aktive Karte eines anderen Decks ab, klappt auf und scrollt), DeckRow (kompakte Reihe: Name,
+                         Nachziehstapel zieht per Klick, oberste Ablagekarte, Bank-Anzahl, ⋮), DeckPiles (aufgeklappte
+                         Stapel und Bank; fremde aktive Karte wird beim Klick abgelegt), DeckMenu (`MatMenu`: Mischen,
+                         Zurücksetzen, Umbenennen, Nach oben/unten, Entfernen), DeckList (Seitenleiste „Decks“: Suche und Liste; „Deck hinzufügen“ steht in der Gruppe
+                         „Deck Management“ darüber),
+                         AddDeckForm (Deck-Datei als neue Instanz laden), RenameDeckDialog, EquippedCards (gemeinsamer
+                         Bereich „Ausgerüstet“ über dem Spieltisch mit Besitzer und Herkunftsdeck, höchstens zwei
+                         Reihen sichtbar, weitere scrollen in sich; ohne Karten ausgeblendet),
+                         CardDisplay (Slot, Modifikatoren, „Im Besitz von“, Herkunftsdeck),
                          ActiveCardOverlay (aktive Karte schwebend mittig im Fenster per `createOverlayRef`, ohne
-                         Backdrop; Größe nur aus dem Fenster; bei Ausrüstung „Charakter zuweisen“),
+                         Backdrop; Größe nur aus dem Fenster; Deckname darüber; bei Ausrüstung „Charakter zuweisen“),
                          AssignEquipmentDialog (Charakter und Hand wählen, schreibt nichts)
     models/            → assign-equipment.model.ts (Daten und Ergebnis des Zuweisungsdialogs)
-    services/          → card-assignment.service.ts (Zuweisungsdialog, Rückfragen bei belegtem Slot und neuem Deck);
+    services/          → card-assignment.service.ts (Zuweisungsdialog, Rückfrage bei belegtem Slot),
+                         deck-actions.service.ts (Umbenennen per Dialog, Entfernen nach Rückfrage);
                          Deck-Zustand und Loader liegen in core/services/card-deck/
-    testing/           → card-manager-page.fixtures.ts (gemockte Services, nur für Specs)
+    testing/           → card-manager-page.fixtures.ts (echter Deck-Zustand, gemockter Loader und Zuweisungsablauf;
+                         nur für Specs)
 
   game-session/        → Session starten/beenden, Speichern/Laden als XML
     components/        → GameSessionPage
     models/            → session-meta.model.ts, session-snapshot.model.ts
     services/          → game-session.service.ts, session-xml.service.ts
     xml/               → *.xml-mapper.ts (writeX/readX); game-log.xml-mapper.ts: fehlendes `<gameLog>` → leeres Log;
-                         card.xml-mapper.ts (Karten), assigned-cards.xml-mapper.ts (fehlendes `<assigned>` → leer)
+                         card.xml-mapper.ts (Karten), deck.xml-mapper.ts (`<cardDeck>` mit `<deck>`-Instanzen, aktiver
+                         Karte und Zuweisungen; älteres `<config>` direkt in `<cardDeck>` → eine Instanz),
+                         deck-instance.xml-mapper.ts (eine Instanz), assigned-cards.xml-mapper.ts (fehlendes `<assigned>`
+                         → leer)
     utils/             → date-time-local.util.ts (reine Hilfsfunktionen)
     testing/           → session.fixtures.ts, game-session-page.fixtures.ts (nur für Specs)
 
@@ -155,6 +173,7 @@ shared/
                          `viewProviders` am Formular des Editors),
                          CharacterStatsEditor (Zahlenwerte im Editor mit Bonus `+2 = 6`, ebenfalls per `viewProviders`),
                          CharacterEquipmentEditor (Abschnitt „Ausrüstung“: Slots, „Ablegen“ erst mit „Übernehmen“),
+                         SearchField (Suchfeld mit `label`, × und Escape leeren es; Builder-Bibliothek, Deckliste),
                          DamageTakenDialog, BoardZoomControl (senkrechter Zoom-Regler für zoombare Spielflächen,
                          z. B. in der `QuickAccessBar`),
                          QuickAccessBar (Schnellzugriffsleiste: senkrechter Streifen links neben einer Spielfläche,
@@ -187,8 +206,10 @@ shared/
                          condition-time.util.ts (Ende, Restdauer, nächster Wirkmoment, `m:ss`),
                          condition-draft.util.ts (Vorlage kopieren, Start beim Übernehmen, Minuten/Sekunden),
                          game-log-entries.util.ts (Log-Einträge zu Zustands-Tick, Setzen/Entfernen, manuellem Schaden),
-                         xml.util.ts (XML lesen/schreiben, `requireChild` mit Dateiart in der Fehlermeldung)
+                         xml.util.ts (XML lesen/schreiben, `requireChild` mit Dateiart in der Fehlermeldung),
+                         text-search.util.ts (`isSearching`, `matchesSearch`: Namenssuche ohne Groß-/Kleinschreibung)
   testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
+                         scroll-into-view.fixtures.ts (Spy für das in jsdom fehlende scrollIntoView),
                          character-editor-dialog.fixtures.ts, character-conditions-editor.fixtures.ts,
                          character-equipment.fixtures.ts,
                          main-nav.fixtures.ts)

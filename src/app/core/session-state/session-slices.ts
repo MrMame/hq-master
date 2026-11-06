@@ -12,7 +12,7 @@ export interface SessionSliceData {
   gameTime: Date;
   characters: CharacterInfo[];
   dungeon: DungeonSessionState;
-  deck: DeckState | null;
+  deck: DeckState;
   gameLog: GameLogEntry[];
 }
 

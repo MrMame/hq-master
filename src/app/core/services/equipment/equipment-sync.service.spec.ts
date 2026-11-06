@@ -4,6 +4,7 @@ import { EquipmentSyncService } from './equipment-sync.service';
 import { CardManagerService } from '../card-deck/card-manager.service';
 import { CharactersDbService } from '../characters/characters-db.service';
 import { CharacterInfo } from '../../models/character-info.model';
+import { Card } from '../../models/card.model';
 import { DeckState } from '../../models/deck-state.model';
 import { createTestCharacter } from '../../testing/character.fixtures';
 import {
@@ -19,7 +20,8 @@ describe('EquipmentSyncService', () => {
   // Grundmaximum Rüstung 4; mit Runenrüstung 6.
   const owner: CharacterInfo = { ...createTestCharacter('a'), armor: 6 };
 
-  const deck: () => DeckState = () => cardManager.state() as DeckState;
+  const deck: () => DeckState = () => cardManager.state();
+  const discardPile: () => Card[] = () => deck().decks[0].discardPile;
   const sync: () => void = () => TestBed.tick();
 
   beforeEach(() => {
@@ -39,7 +41,7 @@ describe('EquipmentSyncService', () => {
 
   it('moves cards of characters missing from the session onto the discard pile', () => {
     expect(deck().assigned.map((entry) => entry.card)).toEqual([RUNE_ARMOR]);
-    expect(deck().discardPile).toEqual([TOWER_SHIELD]);
+    expect(discardPile()).toEqual([TOWER_SHIELD]);
   });
 
   it('keeps current values within the effective maximum', () => {
@@ -50,11 +52,11 @@ describe('EquipmentSyncService', () => {
     charactersDb.removeCharacter(owner);
     sync();
     expect(deck().assigned).toEqual([]);
-    expect(deck().discardPile).toEqual([TOWER_SHIELD, RUNE_ARMOR]);
+    expect(discardPile()).toEqual([TOWER_SHIELD, RUNE_ARMOR]);
   });
 
-  it('lowers armor to the base maximum when a new deck drops the assignments', () => {
-    cardManager.loadDeckConfig(deck().config);
+  it('lowers armor to the base maximum when the deck of the equipment is removed', () => {
+    cardManager.removeDeck('deck-1');
     sync();
     expect(charactersDb.characters()[0].armor).toBe(4);
   });

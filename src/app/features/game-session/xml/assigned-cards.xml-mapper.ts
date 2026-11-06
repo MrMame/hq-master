@@ -10,18 +10,19 @@ import {
 } from '../../../shared/utils/xml.util';
 import { readCard, writeCard } from './card.xml-mapper';
 
-/** `<assigned><assignment characterId slot><card …/></assignment></assigned>` */
+/** `<assigned><assignment deckId characterId slot><card …/></assignment></assigned>` */
 export function writeAssignedCards(parent: Element, assigned: AssignedCard[]): void {
   const list: Element = appendElement(parent, 'assigned');
-  assigned.forEach(({ card, characterId, slot }) => {
+  assigned.forEach(({ deckId, card, characterId, slot }) => {
     const el: Element = appendElement(list, 'assignment');
-    setAttributes(el, { characterId, slot });
+    setAttributes(el, { deckId, characterId, slot });
     writeCard(el, card);
   });
 }
 
 /**
- * Ältere Spielstände ohne `<assigned>` → leere Liste. Einträge ohne gültigen Slot oder ohne
+ * Ältere Spielstände ohne `<assigned>` → leere Liste; ohne `deckId` ist die Deck-Instanz leer (der
+ * Aufrufer ordnet sie zu oder verwirft sie). Einträge ohne gültigen Slot oder ohne
  * Ausrüstungskarte werden verworfen. Verwaiste Besitzer räumt der `EquipmentSyncService` ab.
  */
 export function readAssignedCards(parent: Element): AssignedCard[] {
@@ -34,7 +35,9 @@ function readAssignment(el: Element): AssignedCard[] {
   const cardEl: Element | null = firstChild(el, 'card');
   const card: Card | null = cardEl ? readCard(cardEl) : null;
   if (!isEquipmentSlot(slot) || card?.cardType !== 'equipment') return [];
-  return [{ card, characterId: readString(el, 'characterId'), slot }];
+  return [
+    { deckId: readString(el, 'deckId'), card, characterId: readString(el, 'characterId'), slot },
+  ];
 }
 
 function isEquipmentSlot(value: string): value is EquipmentSlot {

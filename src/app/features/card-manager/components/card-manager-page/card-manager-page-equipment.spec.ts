@@ -1,14 +1,19 @@
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { TestBed } from '@angular/core/testing';
 
-import { clickButton } from '../../../../shared/testing/click-button';
-import { createDeckState, createEquipmentDeckState } from '../../../../core/testing/deck.fixtures';
+import {
+  assignedCard,
+  createEquipmentDeckState,
+  createTwoDeckState,
+  TOWER_SHIELD,
+} from '../../../../core/testing/deck.fixtures';
+import { DeckState } from '../../../../core/models/deck-state.model';
 import {
   CardManagerPageHarness,
   setupCardManagerPage,
 } from '../../testing/card-manager-page.fixtures';
 
-describe('CardManagerPage – equipment', () => {
+describe('CardManagerPage – active card and equipment', () => {
   let harness: CardManagerPageHarness;
   let host: HTMLElement;
 
@@ -21,17 +26,45 @@ describe('CardManagerPage – equipment', () => {
     host = harness.host;
   });
 
-  it('shows assigned cards with the current owner name', async () => {
-    harness.assignment.ownerNames.set(new Map([['a', 'Barbar']]));
-    await harness.render(createEquipmentDeckState('a'));
+  it('shows the active card with the name and card back of its deck', async () => {
+    await harness.render({
+      ...createTwoDeckState(),
+      activeCard: { deckId: 'deck-2', card: TOWER_SHIELD },
+    });
+    expect(overlay().querySelector('[data-testid="active-card-deck"]')?.textContent).toBe(
+      'Testdeck (2)',
+    );
+    expect(overlay().textContent).toContain('Turmschild');
+  });
 
-    expect(equipped()?.querySelector('h3')?.textContent).toBe('Ausgerüstet (1)');
-    expect(equipped()?.textContent).toContain('Turmschild');
+  it('discards the active card into its own deck when clicked', async () => {
+    await harness.render({
+      ...createTwoDeckState(),
+      activeCard: { deckId: 'deck-2', card: TOWER_SHIELD },
+    });
+    overlay().querySelector<HTMLElement>('.card-display')!.click();
+    await harness.fixture.whenStable();
+
+    expect(harness.cardManager.state().activeCard).toBeNull();
+    expect(harness.cardManager.decks()[1].discardPile).toEqual([TOWER_SHIELD]);
+    expect(overlay().querySelector('app-card-display')).toBeNull();
+  });
+
+  it('shows equipped cards of all decks with owner and origin deck', async () => {
+    harness.assignment.ownerNames.set(new Map([['a', 'Barbar']]));
+    const state: DeckState = {
+      ...createTwoDeckState(),
+      assigned: [assignedCard(TOWER_SHIELD, 'a', 'leftHand', 'deck-2')],
+    };
+    await harness.render(state);
+
+    expect(equipped()?.querySelector('h2')?.textContent).toBe('Ausgerüstet (1)');
     expect(equipped()?.querySelector('.card-owner')?.textContent).toBe('Im Besitz von Barbar');
+    expect(equipped()?.querySelector('.card-origin')?.textContent).toBe('aus Testdeck (2)');
   });
 
   it('hides the equipped area without assignments', async () => {
-    await harness.render(createDeckState());
+    await harness.render(createTwoDeckState());
     expect(equipped()).toBeNull();
   });
 
@@ -40,7 +73,7 @@ describe('CardManagerPage – equipment', () => {
     overlay().querySelector<HTMLButtonElement>('.floating-card__assign')!.click();
 
     expect(harness.assignment.assignActiveCard).toHaveBeenCalledOnce();
-    expect(harness.service.discardActiveCard).not.toHaveBeenCalled();
+    expect(harness.cardManager.state().activeCard).not.toBeNull();
   });
 
   it('passes the reason for a disabled assignment to the floating card', async () => {
@@ -52,26 +85,14 @@ describe('CardManagerPage – equipment', () => {
     expect(button.parentElement?.title).toBe('Keine Charaktere in der Session');
   });
 
-  it('keeps the deck when the DM declines replacing assigned cards', async () => {
-    harness.assignment.confirmNewDeck.mockResolvedValue(false);
-    await harness.render(createEquipmentDeckState('a'));
-    clickButton(host, 'Deck Laden');
-    await harness.fixture.whenStable();
-
-    expect(harness.assignment.confirmNewDeck).toHaveBeenCalledOnce();
-    expect(harness.service.loadDeck).not.toHaveBeenCalled();
-  });
-
-  it('loads a new deck after confirming, and without asking when nothing is assigned', async () => {
-    await harness.render(createEquipmentDeckState('a'));
-    clickButton(host, 'Deck Laden');
-    await harness.fixture.whenStable();
-    expect(harness.service.loadDeck).toHaveBeenCalledOnce();
-
-    await harness.render(createDeckState());
-    clickButton(host, 'Deck Laden');
-    await harness.fixture.whenStable();
-    expect(harness.assignment.confirmNewDeck).toHaveBeenCalledOnce();
-    expect(harness.service.loadDeck).toHaveBeenCalledTimes(2);
+  it('places the equipped area above the card table', async () => {
+    await harness.render({
+      ...createTwoDeckState(),
+      assigned: [assignedCard(TOWER_SHIELD, 'a', 'leftHand')],
+    });
+    const table: Element = host.querySelector('section[aria-label="Spieltisch"]')!;
+    expect(
+      equipped()!.compareDocumentPosition(table) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 });
