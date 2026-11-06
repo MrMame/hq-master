@@ -105,7 +105,7 @@ describe('CardManagerPage – clicks', () => {
     clickButton(harness.host, 'Deck Laden');
 
     expect(harness.service.loadDeck).toHaveBeenCalledExactlyOnceWith(
-      '/decks/default/default-deck.xml',
+      'decks/default/default-deck.xml',
     );
   });
 });
