@@ -1,5 +1,7 @@
-import { DeckConfig } from '../../../core/models/deck-config.model';
-import { DeckState } from '../../../core/models/deck-state.model';
+import { Card } from '../../../core/models/card.model';
+import { ActiveCard, DeckState } from '../../../core/models/deck-state.model';
+import { migrateLegacyDeck } from '../../../core/services/card-deck/deck-state-migration.util';
+import { withoutDanglingRefs } from '../../../core/services/card-deck/deck-state.util';
 import {
   appendElement,
   childElements,
@@ -8,45 +10,50 @@ import {
   setAttributes,
 } from '../../../shared/utils/xml.util';
 import { readAssignedCards, writeAssignedCards } from './assigned-cards.xml-mapper';
-import { readCard, readCardList, readCardType, writeCard, writeCardList } from './card.xml-mapper';
+import { readCard, readCardList, writeCard } from './card.xml-mapper';
+import {
+  readDeckConfig,
+  readDeckInstance,
+  readDeckPiles,
+  writeDeckInstance,
+} from './deck-instance.xml-mapper';
 
-/** Ein leeres `<cardDeck/>` steht für "kein Deck geladen". */
-export function writeDeck(doc: XMLDocument, deck: DeckState | null): Element {
+/** `<cardDeck>` mit allen Decks in Tischreihenfolge, der aktiven Karte und den Zuweisungen. */
+export function writeDeck(doc: XMLDocument, state: DeckState): Element {
   const el: Element = doc.createElement('cardDeck');
-  if (!deck) return el;
-  const { config }: DeckState = deck;
-  const configEl: Element = appendElement(el, 'config');
-  setAttributes(configEl, {
-    id: config.id,
-    name: config.name,
-    backImage: config.backImagePath,
-    defaultCardType: config.defaultCardType,
-  });
-  config.cards.forEach((card) => writeCard(configEl, card));
-  writeCardList(el, 'drawPile', deck.drawPile);
-  writeCardList(el, 'discardPile', deck.discardPile);
-  writeCardList(el, 'activeCard', deck.activeCard ? [deck.activeCard] : []);
-  writeCardList(el, 'bank', deck.bank);
-  writeAssignedCards(el, deck.assigned);
+  state.decks.forEach((deck) => writeDeckInstance(el, deck));
+  const activeEl: Element = appendElement(el, 'activeCard');
+  if (state.activeCard) {
+    setAttributes(activeEl, { deckId: state.activeCard.deckId });
+    writeCard(activeEl, state.activeCard.card);
+  }
+  writeAssignedCards(el, state.assigned);
   return el;
 }
 
-export function readDeck(el: Element): DeckState | null {
-  const configEl: Element | null = firstChild(el, 'config');
-  if (!configEl) return null;
-  const config: DeckConfig = {
-    id: readString(configEl, 'id'),
-    name: readString(configEl, 'name'),
-    backImagePath: readString(configEl, 'backImage'),
-    defaultCardType: readCardType(configEl, 'defaultCardType'),
-    cards: childElements(configEl, 'card').map(readCard),
-  };
-  return {
-    config,
-    drawPile: readCardList(el, 'drawPile'),
-    discardPile: readCardList(el, 'discardPile'),
-    activeCard: readCardList(el, 'activeCard')[0] ?? null,
-    bank: readCardList(el, 'bank'),
+/**
+ * Ältere Spielstände mit einem Deck (`<config>` direkt in `<cardDeck>`) laden als eine Instanz.
+ * Aktive Karte und Zuweisungen auf fehlende Instanzen werden verworfen.
+ */
+export function readDeck(el: Element): DeckState {
+  if (firstChild(el, 'config')) return readLegacyDeck(el);
+  return withoutDanglingRefs({
+    decks: childElements(el, 'deck').map(readDeckInstance),
+    activeCard: readActiveCard(firstChild(el, 'activeCard')),
     assigned: readAssignedCards(el),
-  };
+  });
+}
+
+function readActiveCard(el: Element | null): ActiveCard | null {
+  const card: Card | undefined = el ? childElements(el, 'card').map(readCard)[0] : undefined;
+  return el && card ? { deckId: readString(el, 'deckId'), card } : null;
+}
+
+function readLegacyDeck(el: Element): DeckState {
+  return migrateLegacyDeck({
+    config: readDeckConfig(firstChild(el, 'config')),
+    ...readDeckPiles(el),
+    activeCard: readCardList(el, 'activeCard')[0] ?? null,
+    assigned: readAssignedCards(el),
+  });
 }

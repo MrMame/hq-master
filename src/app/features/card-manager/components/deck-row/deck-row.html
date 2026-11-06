@@ -1,0 +1,57 @@
+@let current = deck();
+<article
+  class="deck-row"
+  data-testid="deck-row"
+  [id]="'deck-row-' + current.id"
+  [class.deck-row--expanded]="expanded()"
+>
+  <div class="deck-row__summary" (click)="toggled.emit()">
+    <button
+      type="button"
+      class="deck-row__name"
+      [attr.aria-expanded]="expanded()"
+      (click)="$event.stopPropagation(); toggled.emit()"
+    >
+      <span class="deck-row__chevron" aria-hidden="true">{{ expanded() ? '▾' : '▸' }}</span>
+      <span class="deck-row__title">{{ current.name }}</span>
+    </button>
+
+    <button
+      type="button"
+      class="deck-row__pile deck-row__pile--draw"
+      [attr.aria-label]="'Karte ziehen aus ' + current.name"
+      [title]="'Karte ziehen aus ' + current.name"
+      [disabled]="current.drawPile.length === 0"
+      (click)="$event.stopPropagation(); draw()"
+    >
+      @if (current.drawPile.length > 0) {
+        <img class="deck-row__thumb" [src]="current.config.backImagePath" alt="" />
+      } @else {
+        <span class="deck-row__thumb deck-row__thumb--empty" aria-hidden="true"></span>
+      }
+      <span class="deck-row__count" data-testid="draw-count">{{ current.drawPile.length }}</span>
+    </button>
+
+    <div class="deck-row__pile" title="Ablagestapel">
+      @if (topDiscard(); as top) {
+        <img class="deck-row__thumb" [src]="top.imagePath" [alt]="top.name" />
+      } @else {
+        <span class="deck-row__thumb deck-row__thumb--empty" aria-hidden="true"></span>
+      }
+      <span class="deck-row__count" data-testid="discard-count">{{
+        current.discardPile.length
+      }}</span>
+    </div>
+
+    <div class="deck-row__bank" title="Karten in der Bank">
+      <span class="deck-row__label">Bank</span>
+      <span class="deck-row__count" data-testid="bank-count">{{ current.bank.length }}</span>
+    </div>
+
+    <app-deck-menu [deck]="current" [first]="first()" [last]="last()" />
+  </div>
+
+  @if (expanded()) {
+    <app-deck-piles [deck]="current" [activeCard]="activeCard()" />
+  }
+</article>

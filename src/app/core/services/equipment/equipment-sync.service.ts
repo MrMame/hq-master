@@ -1,8 +1,8 @@
 import { effect, inject, Injectable, untracked } from '@angular/core';
 import { CharacterInfo } from '../../models/character-info.model';
-import { AssignedCard } from '../../models/deck-state.model';
+import { AssignedCard, CardRef } from '../../models/deck-state.model';
 import { CardManagerService } from '../card-deck/card-manager.service';
-import { orphanedCardIds } from '../card-deck/deck-assignment.util';
+import { orphanedCards } from '../card-deck/deck-assignment.util';
 import { CharactersDbService } from '../characters/characters-db.service';
 import { withinLimits } from '../characters/character-limits.util';
 import { cardsOf, modifiersOf } from './effective-stats.util';
@@ -30,7 +30,7 @@ export class EquipmentSyncService {
   }
 
   private sync(characters: CharacterInfo[], assigned: AssignedCard[]): void {
-    const orphans: string[] = orphanedCardIds(
+    const orphans: CardRef[] = orphanedCards(
       assigned,
       characters.map((character) => character.id),
     );

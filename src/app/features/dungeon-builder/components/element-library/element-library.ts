@@ -20,9 +20,10 @@ import { BuilderUiService } from '../../services/builder-ui.service';
 import { ElementCatalogService } from '../../services/element-catalog.service';
 import { RecentElementsService } from '../../services/recent-elements.service';
 import { floorGroup, pieceGroups, recentGroup } from '../../utils/library-groups.util';
-import { filterGroups, isSearching } from '../../utils/library-search.util';
+import { filterGroups } from '../../utils/library-search.util';
+import { isSearching } from '../../../../shared/utils/text-search.util';
 import { LibraryGroupSection } from '../library-group-section/library-group-section';
-import { LibrarySearch } from '../library-search/library-search';
+import { SearchField } from '../../../../shared/components/search-field/search-field';
 
 /**
  * Bibliothek in der Seitenleiste: Suche, „Zuletzt verwendet“, Bodenarten zum Malen sowie Türen und Möbel
@@ -30,7 +31,7 @@ import { LibrarySearch } from '../library-search/library-search';
  */
 @Component({
   selector: 'app-element-library',
-  imports: [LibraryGroupSection, LibrarySearch],
+  imports: [LibraryGroupSection, SearchField],
   templateUrl: './element-library.html',
   styleUrl: './element-library.css',
 })

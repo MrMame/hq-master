@@ -8,7 +8,7 @@ import { CharacterEditorService } from '../../../../shared/services/character-ed
 import { DungeonBoardService } from '../../services/dungeon-board.service';
 import { CharacterSelection } from '../../models/character-selection.model';
 import { createTestCharacter } from '../../../../core/testing/character.fixtures';
-import { spyOnScrollIntoView } from '../../testing/scroll-into-view.fixtures';
+import { spyOnScrollIntoView } from '../../../../shared/testing/scroll-into-view.fixtures';
 
 describe('DungeonBoard – tokens and selection', () => {
   let fixture: ComponentFixture<DungeonBoard>;

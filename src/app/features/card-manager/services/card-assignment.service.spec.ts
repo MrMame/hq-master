@@ -12,6 +12,7 @@ import { CharacterInfo } from '../../../core/models/character-info.model';
 import { DeckState } from '../../../core/models/deck-state.model';
 import { createTestCharacter } from '../../../core/testing/character.fixtures';
 import {
+  assignedCard,
   createDeckState,
   createEquipmentDeckState,
   RUNE_ARMOR,
@@ -27,7 +28,7 @@ describe('CardAssignmentService', () => {
   let choice: AssignEquipmentChoice | undefined;
   const barbarian: CharacterInfo = { ...createTestCharacter('a'), name: 'Barbar' };
 
-  const deck: () => DeckState = () => cardManager.state() as DeckState;
+  const deck: () => DeckState = () => cardManager.state();
 
   beforeEach(() => {
     choice = { characterId: 'a', slot: 'body' };
@@ -55,7 +56,7 @@ describe('CardAssignmentService', () => {
     expect(open.mock.calls[0][1].data).toEqual({
       card: RUNE_ARMOR,
       characters: [barbarian],
-      assigned: [{ card: TOWER_SHIELD, characterId: 'a', slot: 'leftHand' }],
+      assigned: [assignedCard(TOWER_SHIELD, 'a', 'leftHand')],
     });
     expect(confirm).not.toHaveBeenCalled();
     expect(deck().activeCard).toBeNull();
@@ -65,7 +66,7 @@ describe('CardAssignmentService', () => {
   it('assigns nothing when the dialog is cancelled', async () => {
     choice = undefined;
     await service.assignActiveCard();
-    expect(deck().activeCard).toBe(RUNE_ARMOR);
+    expect(deck().activeCard?.card).toBe(RUNE_ARMOR);
   });
 
   it('asks before an occupied slot is replaced', async () => {
@@ -76,11 +77,11 @@ describe('CardAssignmentService', () => {
     expect(confirm).toHaveBeenCalledWith(
       expect.objectContaining({ message: '„Turmschild“ in den Ablagestapel legen?' }),
     );
-    expect(deck().activeCard).toBe(RUNE_ARMOR);
+    expect(deck().activeCard?.card).toBe(RUNE_ARMOR);
 
     confirm.mockResolvedValue(true);
     await service.assignActiveCard();
-    expect(deck().discardPile).toEqual([TOWER_SHIELD]);
+    expect(deck().decks[0].discardPile).toEqual([TOWER_SHIELD]);
   });
 
   it('offers no assignment without characters or without an active equipment card', async () => {
@@ -92,7 +93,7 @@ describe('CardAssignmentService', () => {
     charactersDb.writeCharacter(barbarian);
     cardManager.restore(createDeckState());
     await service.assignActiveCard();
-    cardManager.restore(null);
+    cardManager.reset();
     await service.assignActiveCard();
     expect(open).not.toHaveBeenCalled();
   });
@@ -101,11 +102,5 @@ describe('CardAssignmentService', () => {
     expect(service.ownerNames().get('a')).toBe('Barbar');
     charactersDb.writeCharacter({ ...barbarian, name: 'Barbar der Rote' });
     expect(service.ownerNames().get('a')).toBe('Barbar der Rote');
-  });
-
-  it('asks before a new deck and reports the answer', async () => {
-    confirm.mockResolvedValue(false);
-    expect(await service.confirmNewDeck()).toBe(false);
-    expect(confirm).toHaveBeenCalledWith(expect.objectContaining({ title: 'Neues Deck laden' }));
   });
 });

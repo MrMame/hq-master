@@ -7,7 +7,7 @@ import {
   OutputEmitterRef,
   Signal,
 } from '@angular/core';
-import { AssignedCard } from '../../../core/models/deck-state.model';
+import { AssignedCard, CardRef } from '../../../core/models/deck-state.model';
 import {
   EQUIPMENT_SLOT_LABELS,
   EQUIPMENT_SLOTS,
@@ -33,7 +33,7 @@ interface SlotRow {
 export class CharacterEquipmentEditor {
   /** Karten, die nach dem Übernehmen noch am Charakter liegen. */
   readonly cards: InputSignal<readonly AssignedCard[]> = input<readonly AssignedCard[]>([]);
-  readonly discard: OutputEmitterRef<string> = output<string>();
+  readonly discard: OutputEmitterRef<CardRef> = output<CardRef>();
 
   protected readonly rows: Signal<SlotRow[]> = computed(() =>
     EQUIPMENT_SLOTS.map((slot) => ({

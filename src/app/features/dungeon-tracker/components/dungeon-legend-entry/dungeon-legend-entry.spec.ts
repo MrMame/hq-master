@@ -4,7 +4,7 @@ import { DungeonLegendEntry } from './dungeon-legend-entry';
 import { BoardToken } from '../../models/board-token.model';
 import { DamageTypes } from '../../../../core/models/damage-types.model';
 import { createTestCharacter } from '../../../../core/testing/character.fixtures';
-import { spyOnScrollIntoView } from '../../testing/scroll-into-view.fixtures';
+import { spyOnScrollIntoView } from '../../../../shared/testing/scroll-into-view.fixtures';
 
 const token: BoardToken = {
   position: { characterId: 'a', col: 3, row: 4 },

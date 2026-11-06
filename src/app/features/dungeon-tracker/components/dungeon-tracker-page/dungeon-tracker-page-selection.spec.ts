@@ -6,7 +6,7 @@ import { CharacterDamageService } from '../../../../shared/services/character-da
 import { CharacterEditorService } from '../../../../shared/services/character-editor.service';
 import { DamageTypes } from '../../../../core/models/damage-types.model';
 import { createTestCharacter } from '../../../../core/testing/character.fixtures';
-import { spyOnScrollIntoView } from '../../testing/scroll-into-view.fixtures';
+import { spyOnScrollIntoView } from '../../../../shared/testing/scroll-into-view.fixtures';
 
 describe('DungeonTrackerPage – selection', () => {
   let fixture: ComponentFixture<DungeonTrackerPage>;

@@ -107,4 +107,13 @@ describe('CardDisplay', () => {
     await fixture.whenStable();
     expect(host.querySelector('.card-owner')?.textContent).toBe('Im Besitz von Barbar');
   });
+
+  it('shows the origin deck only when given', async () => {
+    await render(RUNE_ARMOR);
+    expect(host.querySelector('.card-origin')).toBeNull();
+
+    fixture.componentRef.setInput('origin', 'Monster (2)');
+    await fixture.whenStable();
+    expect(host.querySelector('.card-origin')?.textContent).toBe('aus Monster (2)');
+  });
 });

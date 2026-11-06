@@ -1,22 +1,10 @@
 import { LibraryGroup } from '../models/library-entry.model';
 import { TEST_CATALOG } from '../testing/builder.fixtures';
 import { floorGroup, pieceGroups } from './library-groups.util';
-import { filterGroups, isSearching, matchesSearch } from './library-search.util';
+import { filterGroups } from './library-search.util';
 
 describe('library search', () => {
   const groups: LibraryGroup[] = [floorGroup(TEST_CATALOG), ...pieceGroups(TEST_CATALOG)];
-
-  it('should not count an empty or blank term as a search', () => {
-    expect(isSearching('')).toBe(false);
-    expect(isSearching('   ')).toBe(false);
-    expect(isSearching(' t ')).toBe(true);
-  });
-
-  it('should match names regardless of case and surrounding blanks', () => {
-    expect(matchesSearch('Alchemistentisch', 'TISCH')).toBe(true);
-    expect(matchesSearch('Tür', ' tü ')).toBe(true);
-    expect(matchesSearch('Truhe', 'tisch')).toBe(false);
-  });
 
   it('should return all groups unchanged without a search term', () => {
     expect(filterGroups(groups, ' ')).toBe(groups);

@@ -31,6 +31,8 @@ export class CardDisplay {
   side: InputSignal<CardSide> = input<CardSide>('front');
   /** Name des Charakters, dem die Karte zugewiesen ist; `null` = frei. */
   owner: InputSignal<string | null> = input<string | null>(null);
+  /** Name des Herkunftsdecks, z. B. im Bereich „Ausgerüstet“; `null` = ohne Hinweis. */
+  origin: InputSignal<string | null> = input<string | null>(null);
   cardClick: OutputEmitterRef<string> = output<string>();
 
   showFront: Signal<boolean> = computed(() => this.side() === 'front');

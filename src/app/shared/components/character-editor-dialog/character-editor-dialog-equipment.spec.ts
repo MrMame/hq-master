@@ -15,7 +15,7 @@ import {
 } from '../../testing/character-equipment.fixtures';
 
 describe('CharacterEditorDialog – equipment', () => {
-  const deck: () => DeckState = () => TestBed.inject(CardManagerService).state() as DeckState;
+  const deck: () => DeckState = () => TestBed.inject(CardManagerService).state();
   const logTexts: () => string[] = () =>
     TestBed.inject(GameLogService)
       .entries()
@@ -28,7 +28,7 @@ describe('CharacterEditorDialog – equipment', () => {
     await click(discardButton(host, 'Runenrüstung'));
     await (await button('Übernehmen')).click();
 
-    expect(deck().discardPile).toEqual([RUNE_ARMOR]);
+    expect(deck().decks[0].discardPile).toEqual([RUNE_ARMOR]);
     expect(deck().assigned.map((entry) => entry.card.name)).toEqual(['Turmschild']);
     expect(characters()[0]).toMatchObject({ armor: 4, maxArmor: 4, speed: 5, defense: 4 });
     expect(logTexts()).toEqual(['Barbar legt Runenrüstung ab']);
@@ -43,7 +43,7 @@ describe('CharacterEditorDialog – equipment', () => {
     await (await button('Abbrechen')).click();
 
     expect(deck().assigned).toHaveLength(2);
-    expect(deck().discardPile).toEqual([]);
+    expect(deck().decks[0].discardPile).toEqual([]);
     expect(characters()[0]).toEqual(EQUIPPED_BARBARIAN);
   });
 

@@ -1,10 +1,11 @@
 import { inject, Injectable, Signal } from '@angular/core';
 import { Card } from '../../models/card.model';
 import { CharacterInfo } from '../../models/character-info.model';
-import { AssignedCard } from '../../models/deck-state.model';
+import { ActiveCard, AssignedCard, CardRef } from '../../models/deck-state.model';
 import { EquipmentSlot } from '../../models/equipment.model';
 import { CardManagerService } from '../card-deck/card-manager.service';
 import { slotOccupant } from '../card-deck/deck-assignment.util';
+import { isSameCard, toCardRef } from '../card-deck/deck-state.util';
 import { CharactersDbService } from '../characters/characters-db.service';
 import { withAddedEquipment, withinLimits } from '../characters/character-limits.util';
 import { GameLogService } from '../game-log/game-log.service';
@@ -34,7 +35,8 @@ export class EquipmentService {
    * neue Maximum begrenzt), dann steigen Leben/Rüstung um den Bonus der neuen Karte.
    */
   assignActiveCard(characterId: string, slot: EquipmentSlot): void {
-    const card: Card | null = this.cardManager.state()?.activeCard ?? null;
+    const active: ActiveCard | null = this.cardManager.state().activeCard;
+    const card: Card | undefined = active?.card;
     const character: CharacterInfo | undefined = this.findCharacter(characterId);
     if (card?.cardType !== 'equipment' || !character) return;
     const own: AssignedCard[] = cardsOf(this.assigned(), characterId);
@@ -56,12 +58,12 @@ export class EquipmentService {
    * Legt Karten eines Charakters in den Ablagestapel. `character` ist der schon geschriebene Stand
    * (der Editor hat Leben/Rüstung mit den verbleibenden Karten begrenzt); er liefert den Namen fürs Log.
    */
-  discardCards(character: CharacterInfo, cardIds: readonly string[]): void {
+  discardCards(character: CharacterInfo, refs: readonly CardRef[]): void {
     const discarded: AssignedCard[] = cardsOf(this.assigned(), character.id).filter((entry) =>
-      cardIds.includes(entry.card.id),
+      refs.some((ref) => isSameCard(entry, ref)),
     );
     if (discarded.length === 0) return;
-    this.cardManager.discardAssignedCards(discarded.map((entry) => entry.card.id));
+    this.cardManager.discardAssignedCards(discarded.map(toCardRef));
     const now: Date = this.gameTime.gameTime();
     this.gameLog.append(
       ...discarded.map((entry) => equipmentEntry(character, entry.card, null, now)),

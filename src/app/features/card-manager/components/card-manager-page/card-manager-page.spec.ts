@@ -1,103 +1,114 @@
-import { CardManagerPage } from './card-manager-page';
-import { createDeckState } from '../../../../core/testing/deck.fixtures';
+import { createTwoDeckState } from '../../../../core/testing/deck.fixtures';
+import { clickButton } from '../../../../shared/testing/click-button';
+import { spyOnScrollIntoView } from '../../../../shared/testing/scroll-into-view.fixtures';
 import {
   CardManagerPageHarness,
-  CardManagerServiceMock,
   setupCardManagerPage,
 } from '../../testing/card-manager-page.fixtures';
 
 describe('CardManagerPage', () => {
   let harness: CardManagerPageHarness;
-  let page: CardManagerPage;
-  let service: CardManagerServiceMock;
   let host: HTMLElement;
+  const scrolled: () => Element[] = spyOnScrollIntoView();
+
+  const rows: () => HTMLElement[] = () =>
+    Array.from(host.querySelectorAll<HTMLElement>('[data-testid="deck-row"]'));
+  const expandedRows: () => HTMLElement[] = () =>
+    rows().filter((row) => row.querySelector('app-deck-piles'));
+  const toggle: (index: number) => Promise<void> = async (index) => {
+    rows()[index].querySelector<HTMLButtonElement>('.deck-row__name')!.click();
+    await harness.fixture.whenStable();
+  };
 
   beforeEach(async () => {
     harness = await setupCardManagerPage();
-    ({ page, service, host } = harness);
+    host = harness.host;
   });
 
-  describe('without deck', () => {
-    beforeEach(() => harness.render(null));
-
-    it('shows the empty state with the default deck url', () => {
-      expect(host.textContent).toContain('Kein Deck geladen.');
-      expect(host.querySelector('input')?.value).toBe('decks/default/default-deck.xml');
-    });
-
-    it('loads the deck from the entered url, trimmed', async () => {
-      (host.querySelector('input') as HTMLInputElement).value = '  decks/x.xml ';
-      (host.querySelector('button') as HTMLButtonElement).click();
-      await harness.fixture.whenStable();
-
-      expect(service.loadDeck).toHaveBeenCalledExactlyOnceWith('decks/x.xml');
-      expect(page.isLoading()).toBe(false);
-    });
-
-    it('ignores an empty url', async () => {
-      await page.onLoadDeck('   ');
-
-      expect(service.loadDeck).not.toHaveBeenCalled();
-    });
-
-    it('shows the loading state while the deck loads', async () => {
-      service.loadDeck.mockReturnValue(new Promise<void>(() => undefined));
-      void page.onLoadDeck('decks/x.xml');
-      await harness.fixture.whenStable();
-
-      const button: HTMLButtonElement = host.querySelector('button') as HTMLButtonElement;
-      expect(button.disabled).toBe(true);
-      expect(button.textContent?.trim()).toBe('Lade...');
-    });
-
-    it('shows the error message when loading fails', async () => {
-      service.loadDeck.mockRejectedValue(new Error('404'));
-      await page.onLoadDeck('decks/x.xml');
-      await harness.fixture.whenStable();
-
-      expect(host.querySelector('[data-testid="deck-load-error"]')?.textContent).toBe('404');
-      expect(page.isLoading()).toBe(false);
-    });
-
-    it('shows a generic message for non-Error failures', async () => {
-      service.loadDeck.mockRejectedValue('kaputt');
-      await page.onLoadDeck('decks/x.xml');
-
-      expect(page.loadError()).toBe('Deck konnte nicht geladen werden.');
-    });
+  it('uses the dark feature page with sidebar title and deck group', () => {
+    expect(host.querySelector('.feature-page .feature-page__main')).not.toBeNull();
+    expect(host.querySelector('.general-sidebar__title')?.textContent).toBe('Card Manager');
+    expect(host.textContent).toContain('Decks');
+    expect(host.textContent).not.toContain('Deck Aktionen');
   });
 
-  describe('with deck', () => {
-    it('renders deck name, pile counts and all cards', async () => {
-      await harness.render(createDeckState());
+  it('puts path and "Deck hinzufügen" in "Deck Management" above the deck list group', () => {
+    const sections: HTMLElement[] = Array.from(host.querySelectorAll('app-sidebar-section'));
+    expect(sections.map((section) => section.getAttribute('sectionid'))).toEqual([
+      'card-manager.deck-management',
+      'card-manager.decks',
+    ]);
+    expect(sections[0].querySelector('app-add-deck-form')).not.toBeNull();
+    expect(sections[1].querySelector('app-deck-list')).not.toBeNull();
+    expect(sections[1].querySelector('app-add-deck-form')).toBeNull();
+  });
 
-      expect(host.textContent).toContain('Deck: Testdeck');
-      expect(host.textContent).toContain('Nachziehstapel (1)');
-      expect(host.textContent).toContain('Ablagestapel (0)');
-      // Stapelkarte im Host, die aktive Karte schwebt im Overlay-Container am Dokument.
-      expect(host.querySelectorAll('app-card-display')).toHaveLength(1);
-      expect(document.querySelectorAll('.cdk-overlay-container app-card-display')).toHaveLength(1);
-    });
+  it('shows a hint with "Deck hinzufügen" without decks and adds a deck from there', async () => {
+    const main: HTMLElement = host.querySelector('.feature-page__main')!;
+    expect(main.textContent).toContain('Noch keine Decks auf dem Tisch.');
 
-    it('activates a draw pile card on click without bubbling to the discard pile', async () => {
-      await harness.render({ ...createDeckState(), activeCard: null });
+    clickButton(main, 'Deck hinzufügen');
+    await harness.fixture.whenStable();
 
-      (host.querySelector('.drawPile app-card-display') as HTMLElement).click();
+    expect(harness.loadFromUrl).toHaveBeenCalledWith('decks/default/default-deck.xml');
+    expect(rows()).toHaveLength(1);
+    expect(expandedRows()).toEqual([]);
+  });
 
-      expect(service.makeCardActive).toHaveBeenCalledExactlyOnceWith('b1');
-      expect(service.discardActiveCard).not.toHaveBeenCalled();
-    });
+  it('shows every deck as a row in table order', async () => {
+    await harness.render(createTwoDeckState());
+    expect(rows().map((row) => row.querySelector('.deck-row__title')?.textContent)).toEqual([
+      'Testdeck',
+      'Testdeck (2)',
+    ]);
+  });
 
-    it('shows the deck actions as a collapsible sidebar section', async () => {
-      await harness.render(createDeckState());
-      const toggle: HTMLButtonElement = host.querySelector('aside h3 button') as HTMLButtonElement;
-      expect(toggle.textContent?.trim()).toBe('Deck Aktionen');
+  it('expands at most one row at a time and collapses it again', async () => {
+    await harness.render(createTwoDeckState());
+    await toggle(0);
+    expect(expandedRows()).toEqual([rows()[0]]);
+    await toggle(1);
+    expect(expandedRows()).toEqual([rows()[1]]);
+    await toggle(1);
+    expect(expandedRows()).toEqual([]);
+  });
 
-      toggle.click();
+  it('expands and scrolls to a deck chosen in the sidebar', async () => {
+    await harness.render(createTwoDeckState());
+    const entries: HTMLButtonElement[] = Array.from(
+      host.querySelectorAll<HTMLButtonElement>('[data-testid="deck-list-entry"]'),
+    );
+    entries[1].click();
+    await harness.fixture.whenStable();
+
+    expect(expandedRows()).toEqual([rows()[1]]);
+    expect(scrolled()).toEqual([rows()[1]]);
+  });
+
+  describe('choosing a deck in the sidebar with an active card', () => {
+    const choose: (index: number) => Promise<void> = async (index) => {
+      host.querySelectorAll<HTMLButtonElement>('[data-testid="deck-list-entry"]')[index].click();
       await harness.fixture.whenStable();
+    };
 
-      expect(toggle.getAttribute('aria-expanded')).toBe('false');
-      expect(host.querySelector('[aria-label="Alle Gruppen ausklappen"]')).not.toBeNull();
+    beforeEach(async () => {
+      await harness.render(createTwoDeckState());
+      harness.cardManager.draw('deck-1');
+      await harness.fixture.whenStable();
+    });
+
+    it('discards the active card into its own deck when another deck is chosen', async () => {
+      await choose(1);
+      expect(harness.cardManager.state().activeCard).toBeNull();
+      expect(harness.cardManager.decks()[0].discardPile.map((card) => card.id)).toEqual(['b1']);
+      expect(harness.cardManager.decks()[1].discardPile).toEqual([]);
+      expect(expandedRows()).toEqual([rows()[1]]);
+    });
+
+    it('keeps the active card when its own deck is chosen', async () => {
+      await choose(0);
+      expect(harness.cardManager.state().activeCard?.deckId).toBe('deck-1');
+      expect(expandedRows()).toEqual([rows()[0]]);
     });
   });
 });

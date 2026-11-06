@@ -15,6 +15,9 @@
         @if (owner()) {
           <span class="card-owner">Im Besitz von {{ owner() }}</span>
         }
+        @if (origin()) {
+          <span class="card-stats card-origin">aus {{ origin() }}</span>
+        }
       </div>
     </div>
   } @else {

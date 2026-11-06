@@ -1,111 +1,30 @@
-.cardManagerPageContainer {
+/* Spieltisch neben der Seitenleiste; scrollt senkrecht in sich, nie waagerecht. */
+.card-table {
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  width: 100%;
-  height: 100%;
-}
-
-/* Füllt den Platz neben der Sidebar; min-width: 0 erlaubt das Schrumpfen unter die Inhaltsbreite.
-   Senkrechte Spalte: Deck-Zeile und Stapel behalten ihre Höhe, die Bank füllt den Rest. */
-.card-zone {
   flex: 1;
-  min-width: 0;
-  height: 100%;
-  display: flex;
   flex-direction: column;
-  position: relative;
-
-  & > * {
-    flex-shrink: 0;
-  }
-}
-
-.pilesContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  /* align-items: center; */
-  width: 100%;
-  height: 40dvh;
-  background-color: var(--color-card-manager-piles);
-}
-/* Bank bis zum unteren Rand; scrollt ab der dritten Reihe senkrecht in sich.
-   container-type: size liefert cqh für die Kartenhöhe (zwei Reihen je sichtbarer Höhe). */
-.bankContainer {
-  --bank-gap: var(--space-2);
-  flex: 1 1 0;
-  min-height: 0;
-  width: 100%;
-  padding: var(--bank-gap);
+  gap: var(--space-6);
+  min-width: 0;
+  padding: var(--space-4);
   overflow-x: hidden;
   overflow-y: auto;
-  container-type: size;
-  background-color: var(--color-card-manager-bank);
 }
 
-.pile {
+.card-table__decks {
   display: flex;
-  justify-content: center;
-  position: relative;
-  height: 50%;
-  width: 30%;
-}
-.drawPile {
-  background-color: var(--color-card-manager-draw);
-}
-.activeCardPile {
-  background-color: var(--color-card-manager-active);
-  /* Platzhalter-Fläche; die aktive Karte schwebt im Overlay (ActiveCardOverlay). */
-  width: 40%;
-  height: 70%;
-}
-.discardPile {
-  background-color: var(--color-card-manager-discard);
-}
-
-.noCardsPlaceholder {
-  border: 2px dotted var(--color-black);
-}
-
-/* Nur die Höhe vorgeben: width: auto, damit aspect-ratio der Karte greift.
-   Karten in Stapeln liegen unter der Überschrift (eine Zeile, line-height 1.5). */
-.cardInPile {
-  position: absolute;
-  top: var(--space-6);
-  height: calc(100% - var(--space-6));
-  width: auto;
-}
-/* Zwei Reihen plus ein Reihenabstand füllen genau die sichtbare Bankhöhe (Inhaltsbox). */
-.cardInBank {
-  height: calc((100cqh - var(--bank-gap)) / 2);
-  width: auto;
-  flex-shrink: 0;
-}
-
-.bankCardsContainer {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-  align-content: flex-start;
-  gap: var(--bank-gap);
-  width: 100%;
-}
-
-/* Zugewiesene Ausrüstung: eine waagerecht scrollende Reihe zwischen Stapeln und Bank. */
-.equippedContainer {
-  padding: var(--space-2);
-  background-color: var(--color-card-manager-piles);
-}
-
-.equippedCards {
-  display: flex;
+  flex-direction: column;
   gap: var(--space-2);
-  overflow-x: auto;
 }
 
-.cardEquipped {
-  height: 12rem;
-  width: auto;
-  flex-shrink: 0;
+.card-table__empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 20rem;
+}
+
+@media (max-width: 600px) {
+  .card-table {
+    padding: var(--space-2);
+  }
 }

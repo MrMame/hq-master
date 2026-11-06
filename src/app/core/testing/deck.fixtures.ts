@@ -1,5 +1,5 @@
 import { Card, EquipmentCard } from '../models/card.model';
-import { AssignedCard, DeckState } from '../models/deck-state.model';
+import { AssignedCard, DeckInstance, DeckState } from '../models/deck-state.model';
 import { CardSlot, EquipmentSlot, StatModifier } from '../models/equipment.model';
 
 /** Testdaten für Specs (wird nicht in den App-Code importiert). */
@@ -53,36 +53,66 @@ export function assignedCard(
   card: EquipmentCard,
   characterId: string,
   slot: EquipmentSlot,
+  deckId: string = 'deck-1',
 ): AssignedCard {
-  return { card, characterId, slot };
+  return { deckId, card, characterId, slot };
 }
 
-/** Karten c1 + b1, Ziehstapel [b1], aktive Karte c1, keine Zuweisungen. */
-export function createDeckState(): DeckState {
+/** Instanz mit den Karten c1 + b1, alle Stapel leer; `overrides` setzt z. B. Stapel oder Namen. */
+export function createDeckInstance(
+  id: string = 'deck-1',
+  overrides: Partial<DeckInstance> = {},
+): DeckInstance {
   return {
+    id,
+    name: 'Testdeck',
+    source: 'decks/test.xml',
     config: {
-      id: 'deck-1',
+      id: 'test-deck',
       name: 'Testdeck',
       backImagePath: 'cards/back.svg',
       defaultCardType: 'basic',
       cards: [COMBAT_CARD, BASIC_CARD],
     },
-    drawPile: [BASIC_CARD],
+    drawPile: [],
     discardPile: [],
-    activeCard: COMBAT_CARD,
     bank: [],
+    ...overrides,
+  };
+}
+
+/** Ein Deck `deck-1` mit Karten c1 + b1, Ziehstapel [b1], aktive Karte c1, keine Zuweisungen. */
+export function createDeckState(): DeckState {
+  return {
+    decks: [createDeckInstance('deck-1', { drawPile: [BASIC_CARD] })],
+    activeCard: { deckId: 'deck-1', card: COMBAT_CARD },
     assigned: [],
   };
 }
 
 /** Deck mit Runenrüstung als aktiver Karte und dem Turmschild in der linken Hand von `characterId`. */
 export function createEquipmentDeckState(characterId: string): DeckState {
-  const deck: DeckState = createDeckState();
+  const deck: DeckInstance = createDeckInstance('deck-1', { drawPile: [BASIC_CARD, COMBAT_CARD] });
   return {
-    ...deck,
-    config: { ...deck.config, cards: [...deck.config.cards, RUNE_ARMOR, TOWER_SHIELD] },
-    drawPile: [BASIC_CARD, COMBAT_CARD],
-    activeCard: RUNE_ARMOR,
+    decks: [
+      {
+        ...deck,
+        config: { ...deck.config, cards: [...deck.config.cards, RUNE_ARMOR, TOWER_SHIELD] },
+      },
+    ],
+    activeCard: { deckId: 'deck-1', card: RUNE_ARMOR },
     assigned: [assignedCard(TOWER_SHIELD, characterId, 'leftHand')],
+  };
+}
+
+/** Zwei Instanzen derselben Deck-Datei (gleiche Karten-IDs): deck-1 zieht [b1], deck-2 zieht [b1, c1]. */
+export function createTwoDeckState(): DeckState {
+  return {
+    decks: [
+      createDeckInstance('deck-1', { drawPile: [BASIC_CARD] }),
+      createDeckInstance('deck-2', { name: 'Testdeck (2)', drawPile: [BASIC_CARD, COMBAT_CARD] }),
+    ],
+    activeCard: null,
+    assigned: [],
   };
 }

@@ -1,14 +1,14 @@
-import { Component, model, ModelSignal } from '@angular/core';
+import { Component, input, InputSignal, model, ModelSignal } from '@angular/core';
 
-/** Suchfeld der Bibliothek; × und Escape leeren es. Der Begriff wird nicht gespeichert. */
+/** Suchfeld (z. B. Bibliothek, Deckliste); × und Escape leeren es. Der Begriff wird nicht gespeichert. */
 @Component({
-  selector: 'app-library-search',
+  selector: 'app-search-field',
   template: `
     <input
       type="search"
-      class="library-search__input"
-      aria-label="Element suchen"
-      placeholder="Element suchen …"
+      class="search-field__input"
+      [attr.aria-label]="label()"
+      [placeholder]="label() + ' …'"
       [value]="term()"
       (input)="onInput($event)"
       (keydown.escape)="onEscape($event)"
@@ -16,7 +16,7 @@ import { Component, model, ModelSignal } from '@angular/core';
     @if (term()) {
       <button
         type="button"
-        class="library-search__clear"
+        class="search-field__clear"
         aria-label="Suche leeren"
         (click)="term.set('')"
       >
@@ -30,7 +30,7 @@ import { Component, model, ModelSignal } from '@angular/core';
       display: flex;
     }
 
-    .library-search__input {
+    .search-field__input {
       width: 100%;
       height: var(--space-10);
       padding: 0 var(--space-8) 0 var(--space-2);
@@ -56,7 +56,7 @@ import { Component, model, ModelSignal } from '@angular/core';
       }
     }
 
-    .library-search__clear {
+    .search-field__clear {
       position: absolute;
       top: 0;
       right: 0;
@@ -73,7 +73,9 @@ import { Component, model, ModelSignal } from '@angular/core';
     }
   `,
 })
-export class LibrarySearch {
+export class SearchField {
+  /** Beschriftung und Platzhalter, z. B. „Element suchen“. */
+  readonly label: InputSignal<string> = input.required<string>();
   readonly term: ModelSignal<string> = model<string>('');
 
   protected onInput(event: Event): void {
