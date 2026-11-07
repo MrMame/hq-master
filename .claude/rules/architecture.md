@@ -180,7 +180,7 @@ features/
 
 shared/
   components/          → Feature-unabhängige UI (z. B. ConfirmationDialog, CharacterEditorDialog,
-                         CollapsibleSidebar (einklappbare `.general-sidebar`, UI-Zustand ohne Speicherung),
+                         CollapsibleSidebar (einklappbare `.general-sidebar`, Zustand je `stateId` = Feature gespeichert),
                          SidebarSection (auf-/zuklappbare Gruppe der Seitenleiste, `sectionId` = `<feature>.<abschnitt>`),
                          SidebarSectionToggleAll (alle Gruppen eines Features auf-/zuklappen, in `.general-sidebar__header`),
                          CharacterConditionsEditor (Abschnitt „Zustände“ im Editor, Felder hängen per
@@ -234,6 +234,7 @@ shared/
                          file-transfer.service.ts (Dateien herunterladen und lesen),
                          confirmation.service.ts (Rückfrage über den ConfirmationDialog als Promise<boolean>),
                          sidebar-section-state.service.ts (zugeklappte Abschnitte per persistedState mit TOOL_STATE_KEYS),
+                         collapsible-sidebar-state.service.ts (eingeklappte Seitenleisten je Feature per persistedState mit TOOL_STATE_KEYS),
                          round.service.ts (RoundService: „Neue Runde“ → Log `round`, +10 s, `clearMovedThisRound`; einziger
                          Rücksetzer des Rundenstands)
   utils/               → new-character.util.ts (Startwerte für neue Charaktere),

@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-07 18:16) - Feature: Ein-/Ausklapp-Zustand der Seitenleiste je Feature (sidebar-collapsed-state #1–#4)
+
+- **Was wurde gemacht:** Die Seitenleiste merkt sich je Feature, ob sie ein- oder ausgeklappt ist, beim Feature-Wechsel und nach dem Neuladen. Ohne gespeicherten Zustand startet sie ausgeklappt; die Features sind unabhängig.
+- **Dateien geändert:** `core/session-state/tool-state-keys.ts`, `shared/services/collapsible-sidebar-state.service.ts` (+spec, neu), `shared/components/collapsible-sidebar/` (+spec), Page-Templates von Dungeon Tracker, Dungeon Builder, Card Manager und Time Tracker, `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/done/sidebar-collapsed-state.md`
+- **Wichtige Entscheidung:** Eigener Key und Service statt `SidebarSectionStateService`, damit „alle auf-/zuklappen“ der Abschnitte die Leiste nicht mitschaltet. Gespeichert werden nur eingeklappte IDs; die ID kommt als Pflicht-Input `stateId`, damit keine Seite ihn vergisst. Ersetzt die Entscheidung „Zustand nicht speichern“ aus collapsible-sidebar #2. Probe, Lint, 1545 Tests (Lines 99,62 % / Branches 98,02 %), Build und e2e (32) grün.
+- **Statistik:** 7 min · 1 Runden · 2 Rückfragen · 25 Tools · Dateien 3 neu / 9 geändert · 1 Fehlschläge (+2 erwartet) · Tokens 1.926.330 (Output 13.864)
+
 ### (2026-11-07 18:04) - Feature: Auswahlliste der verfügbaren Decks (deck-catalog #1–#5)
 
 - **Was wurde gemacht:** Der DM wählt im Card Manager ein Deck aus einer Auswahlliste aller unter `public/decks/` bereitgestellten Decks statt einen Pfad einzutippen. Ein Node-Skript erzeugt die Liste `public/decks/index.json` vor Start, Build, Watch, Deploy und dem Playwright-Server; ein fehlerhaftes Deck-XML bricht mit Datei und Grund ab. Vorausgewählt ist das erste Deck, die Auswahl bleibt nach dem Hinzufügen stehen; Lade-, Fehler- und Leerzustand der Liste deaktivieren „Deck hinzufügen“.
