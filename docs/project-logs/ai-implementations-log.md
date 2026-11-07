@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-07 18:04) - Feature: Auswahlliste der verfügbaren Decks (deck-catalog #1–#5)
+
+- **Was wurde gemacht:** Der DM wählt im Card Manager ein Deck aus einer Auswahlliste aller unter `public/decks/` bereitgestellten Decks statt einen Pfad einzutippen. Ein Node-Skript erzeugt die Liste `public/decks/index.json` vor Start, Build, Watch, Deploy und dem Playwright-Server; ein fehlerhaftes Deck-XML bricht mit Datei und Grund ab. Vorausgewählt ist das erste Deck, die Auswahl bleibt nach dem Hinzufügen stehen; Lade-, Fehler- und Leerzustand der Liste deaktivieren „Deck hinzufügen“.
+- **Dateien geändert:** `scripts/build-deck-index.mjs` (+test, neu), `package.json`, `playwright.config.ts`, `.gitignore`, `core/models/deck-catalog-entry.model.ts` (neu), `core/services/card-deck/deck-catalog.service.ts`, `deck-catalog.util.ts` (+specs, neu), `features/card-manager/components/add-deck-form/` (+spec), `card-manager-page.spec.ts`, `card-manager-page.fixtures.ts`, `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/done/deck-catalog.md`
+- **Wichtige Entscheidung:** Die Deckliste ist ein Build-Ergebnis, weil die statische App `public/` nicht auflisten kann. Das Skript liest `id`/`name` per Regex ohne neue Abhängigkeit und löscht bei einem Fehler eine alte `index.json`, damit kein veralteter Katalog ausgeliefert wird. Zusätzlich `prewatch`, da `npm run watch` ebenfalls baut. Wert der Auswahlliste ist die `url` (eindeutig); die Auswahl hält ein `linkedSignal`. Die Page-Fixtures liefern eine feste Deckliste, die Spec von `AddDeckForm` nutzt den echten Service mit `HttpTestingController`. Probe (2), Lint, 1536 Tests (Lines 99,19 % / Branches 98,01 %), Build und e2e (32) grün.
+- **Statistik:** 9 min · 1 Runden · 1 Rückfragen · 42 Tools · Dateien 7 neu / 9 geändert · 2 Fehlschläge (+1 erwartet) · Tokens 4.056.799 (Output 28.078)
+
 ### (2026-11-07 13:57) - Feature: Komfortfunktionen für den Card Viewer (card-viewer-comfort #1–#6)
 
 - **Was wurde gemacht:** „Einem Charakter anlegen“ und „ins Inventar geben“ öffnen Untermenüs statt Dialogen (Charakter → bei Handkarten Linke/Rechte Hand, freie zuerst, „– ersetzt …“ bei belegtem Slot). Nach jeder Aktion im Modus live erscheint 5 s ein Hinweis mit „Rückgängig“, das alle bewegten Karten (auch eine verdrängte) mit Werten und Log zurückbringt. Der Viewer blättert per Pfeilen durch die Karten eines Ortes („3 / 12“) und zeigt nach einer Aktion die nachrückende Karte. Neue Aktion „Oben auf den Nachziehstapel legen“. Im Dungeon Tracker zeigen Legende und markiertes Token die ausgerüsteten Karten als kleine Bilder und die Inventaranzahl; ein Klick öffnet den Viewer.

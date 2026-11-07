@@ -20,7 +20,8 @@ export default defineConfig({
     { name: 'probe', testMatch: 'probe/**/*.spec.ts', use: { ...devices['Desktop Chrome'] } },
   ],
   webServer: {
-    command: `npx ng serve --port ${PORT}`,
+    // Deck-Katalog vorher erzeugen: ng serve startet hier direkt, ohne `prestart`.
+    command: `node scripts/build-deck-index.mjs && npx ng serve --port ${PORT}`,
     url: `http://localhost:${PORT}`,
     reuseExistingServer: true,
     timeout: 120_000,
