@@ -3,8 +3,10 @@ import { Card } from '../../models/card.model';
 import { DeckState } from '../../models/deck-state.model';
 import {
   assignedCard,
+  BASIC_CARD,
   createDeckInstance,
   createTwoDeckState,
+  inventoryCard,
   TOWER_SHIELD,
 } from '../../testing/deck.fixtures';
 import { drawCard } from './deck-draw.util';
@@ -60,14 +62,14 @@ describe('deck instances', () => {
     };
     const next: DeckState = removeDeck(s, 'deck-2');
     expect(next.decks.map((d) => d.id)).toEqual(['deck-1']);
-    expect(next.activeCard).toBeNull();
+    expect(next.hand).toEqual([]);
     expect(next.assigned).toEqual([assignedCard(TOWER_SHIELD, 'a', 'leftHand')]);
     expect(removeDeck(next, 'deck-2')).toBe(next);
   });
 
-  it('keeps the active card of another deck when removing', () => {
-    const s: DeckState = drawCard(createTwoDeckState(), 'deck-1');
-    expect(removeDeck(s, 'deck-2').activeCard?.deckId).toBe('deck-1');
+  it('keeps the hand cards of another deck when removing', () => {
+    const s: DeckState = drawCard(drawCard(createTwoDeckState(), 'deck-1'), 'deck-2');
+    expect(removeDeck(s, 'deck-2').hand.map((entry) => entry.deckId)).toEqual(['deck-1']);
   });
 
   it('moves a deck up and down, but not beyond the edges', () => {
@@ -87,13 +89,24 @@ describe('deck instances', () => {
     expect(next.decks[0]).toBe(s.decks[0]);
   });
 
-  it('resets only the chosen deck including its active card', () => {
+  it('resets only the chosen deck including its hand cards', () => {
     const active: DeckState = drawCard(drawCard(createTwoDeckState(), 'deck-1'), 'deck-2');
     const next: DeckState = resetDeck(active, 'deck-2');
     expect(ids(next.decks[1].drawPile)).toEqual(['b1', 'c1']);
-    expect(next.activeCard).toBeNull();
+    expect(next.hand.map((entry) => entry.deckId)).toEqual(['deck-1']);
     expect(next.decks[0]).toEqual(active.decks[0]);
-    expect(resetDeck(active, 'deck-1').activeCard?.deckId).toBe('deck-2');
+    expect(resetDeck(active, 'deck-1').hand.map((entry) => entry.deckId)).toEqual(['deck-2']);
     expect(resetDeck(active, 'unknown')).toBe(active);
+  });
+
+  it('drops the inventory cards of a removed deck, but a reset leaves them with their owner', () => {
+    const s: DeckState = {
+      ...createTwoDeckState(),
+      inventory: [inventoryCard(BASIC_CARD, 'a'), inventoryCard(BASIC_CARD, 'b', 'deck-2')],
+    };
+    expect(removeDeck(s, 'deck-2').inventory).toEqual([inventoryCard(BASIC_CARD, 'a')]);
+    const reset: DeckState = resetDeck(s, 'deck-2');
+    expect(reset.inventory).toEqual(s.inventory);
+    expect(ids(reset.decks[1].drawPile)).toEqual(['b1', 'c1']);
   });
 });

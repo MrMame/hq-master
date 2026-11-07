@@ -1,7 +1,7 @@
 import { Card } from '../../models/card.model';
 import { CardRef, DeckInstance, DeckState } from '../../models/deck-state.model';
 
-/** Eine Karte mit ihrer Deck-Instanz, z. B. die aktive oder eine zugewiesene Karte. */
+/** Eine Karte mit ihrer Deck-Instanz, z. B. eine Handkarte oder eine zugewiesene Karte. */
 export interface CardInDeck {
   deckId: string;
   card: Card;
@@ -9,12 +9,17 @@ export interface CardInDeck {
 
 /** Startzustand: keine Decks auf dem Tisch. */
 export function emptyDeckState(): DeckState {
-  return { decks: [], activeCard: null, assigned: [] };
+  return { decks: [], hand: [], assigned: [], inventory: [] };
 }
 
 /** Gleiche Karte, wenn Deck-Instanz und Karten-ID übereinstimmen. */
 export function isSameCard(entry: CardInDeck, ref: CardRef): boolean {
   return entry.deckId === ref.deckId && entry.card.id === ref.cardId;
+}
+
+/** Gleiche Adresse: gleiche Deck-Instanz und Karten-ID. */
+export function isSameRef(a: CardRef, b: CardRef): boolean {
+  return a.deckId === b.deckId && a.cardId === b.cardId;
 }
 
 export function toCardRef(entry: CardInDeck): CardRef {
@@ -37,12 +42,12 @@ export function updateDeck(
   return next === deck ? s : { ...s, decks: s.decks.map((d) => (d === deck ? next : d)) };
 }
 
-/** Karten einer Instanz außer den zugewiesenen: Stapel, Ablage, Bank und ihre aktive Karte. */
+/** Karten einer Instanz außer denen der Charaktere (Slots, Inventar): Stapel, Ablage, Bank und Handkarten. */
 export function unassignedCards(s: DeckState, deckId: string): Card[] {
   const deck: DeckInstance | undefined = findDeck(s, deckId);
   if (!deck) return [];
-  const active: Card[] = s.activeCard?.deckId === deckId ? [s.activeCard.card] : [];
-  return [...deck.drawPile, ...deck.discardPile, ...active, ...deck.bank];
+  const hand: Card[] = s.hand.filter((entry) => entry.deckId === deckId).map(({ card }) => card);
+  return [...deck.drawPile, ...deck.discardPile, ...hand, ...deck.bank];
 }
 
 /** Legt jede Karte in den Ablagestapel ihrer Instanz; Karten fehlender Instanzen fallen weg. */
@@ -54,12 +59,13 @@ export function withDiscarded(s: DeckState, entries: readonly CardInDeck[]): Dec
   );
 }
 
-/** Verwirft aktive Karte und Zuweisungen, deren Instanz nicht (mehr) auf dem Tisch liegt. */
+/** Verwirft Hand-, Slot- und Inventarkarten, deren Instanz nicht (mehr) auf dem Tisch liegt. */
 export function withoutDanglingRefs(s: DeckState): DeckState {
   const exists: (deckId: string) => boolean = (deckId) => !!findDeck(s, deckId);
   return {
     ...s,
-    activeCard: s.activeCard && exists(s.activeCard.deckId) ? s.activeCard : null,
+    hand: s.hand.filter((entry) => exists(entry.deckId)),
     assigned: s.assigned.filter((entry) => exists(entry.deckId)),
+    inventory: s.inventory.filter((entry) => exists(entry.deckId)),
   };
 }

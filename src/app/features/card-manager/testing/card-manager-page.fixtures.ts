@@ -5,15 +5,19 @@ import { Mock, vi } from 'vitest';
 import { CardManagerPage } from '../components/card-manager-page/card-manager-page';
 import { CardManagerService } from '../../../core/services/card-deck/card-manager.service';
 import { DeckXmlLoaderService } from '../../../core/services/card-deck/deck-xml-loader.service';
+import { CharacterInfo } from '../../../core/models/character-info.model';
 import { DeckConfig } from '../../../core/models/deck-config.model';
-import { DeckState } from '../../../core/models/deck-state.model';
+import { CardRef, DeckState } from '../../../core/models/deck-state.model';
 import { createDeckInstance } from '../../../core/testing/deck.fixtures';
-import { CardAssignmentService } from '../services/card-assignment.service';
+import { CardAssignmentService } from '../../../shared/services/card-assignment.service';
 
 export interface CardAssignmentServiceMock {
   assignDisabledReason: WritableSignal<string | null>;
   ownerNames: WritableSignal<ReadonlyMap<string, string>>;
-  assignActiveCard: Mock<() => Promise<void>>;
+  assignCard: Mock<(ref: CardRef) => Promise<void>>;
+  characters: WritableSignal<CharacterInfo[]>;
+  inventoryTargets: Mock<() => CharacterInfo[]>;
+  giveToInventory: Mock<(ref: CardRef) => Promise<void>>;
 }
 
 /** Echter Deck-Zustand; nur das Laden der Deck-Datei und der Zuweisungsablauf sind gemockt. */
@@ -31,7 +35,10 @@ export function configureCardManagerTestbed(extraProviders: Provider[] = []): Ca
   const assignment: CardAssignmentServiceMock = {
     assignDisabledReason: signal<string | null>(null),
     ownerNames: signal<ReadonlyMap<string, string>>(new Map()),
-    assignActiveCard: vi.fn().mockResolvedValue(undefined),
+    assignCard: vi.fn<(ref: CardRef) => Promise<void>>().mockResolvedValue(undefined),
+    characters: signal<CharacterInfo[]>([]),
+    inventoryTargets: vi.fn<() => CharacterInfo[]>(() => []),
+    giveToInventory: vi.fn<(ref: CardRef) => Promise<void>>().mockResolvedValue(undefined),
   };
   TestBed.configureTestingModule({
     providers: [

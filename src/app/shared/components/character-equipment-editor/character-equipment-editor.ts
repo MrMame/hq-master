@@ -22,7 +22,7 @@ interface SlotRow {
 
 /**
  * Abschnitt „Ausrüstung“ des Charakter-Editors: alle Slots mit Kartenbild und Name, leere als „frei“.
- * „Ablegen“ meldet nur die Karte; der Editor legt sie erst mit „Übernehmen“ in den Ablagestapel.
+ * Ein Klick auf Bild oder Name meldet die Karte; der Editor öffnet sie im Card Viewer (Entwurf).
  */
 @Component({
   selector: 'app-character-equipment-editor',
@@ -33,7 +33,8 @@ interface SlotRow {
 export class CharacterEquipmentEditor {
   /** Karten, die nach dem Übernehmen noch am Charakter liegen. */
   readonly cards: InputSignal<readonly AssignedCard[]> = input<readonly AssignedCard[]>([]);
-  readonly discard: OutputEmitterRef<CardRef> = output<CardRef>();
+  /** Bild oder Name einer Karte wurde angeklickt. */
+  readonly view: OutputEmitterRef<CardRef> = output<CardRef>();
 
   protected readonly rows: Signal<SlotRow[]> = computed(() =>
     EQUIPMENT_SLOTS.map((slot) => ({

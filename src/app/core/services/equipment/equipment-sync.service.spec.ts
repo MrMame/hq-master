@@ -9,7 +9,10 @@ import { DeckState } from '../../models/deck-state.model';
 import { createTestCharacter } from '../../testing/character.fixtures';
 import {
   assignedCard,
+  BASIC_CARD,
+  COMBAT_CARD,
   createEquipmentDeckState,
+  inventoryCard,
   RUNE_ARMOR,
   TOWER_SHIELD,
 } from '../../testing/deck.fixtures';
@@ -46,6 +49,19 @@ describe('EquipmentSyncService', () => {
 
   it('keeps current values within the effective maximum', () => {
     expect(charactersDb.characters()[0].armor).toBe(6);
+  });
+
+  it('discards the inventory cards of a removed or missing character', () => {
+    cardManager.restore({
+      ...deck(),
+      inventory: [inventoryCard(BASIC_CARD, 'a'), inventoryCard(COMBAT_CARD, 'x')],
+    });
+    sync();
+    expect(deck().inventory).toEqual([inventoryCard(BASIC_CARD, 'a')]);
+    charactersDb.removeCharacter(owner);
+    sync();
+    expect(deck().inventory).toEqual([]);
+    expect(discardPile()).toEqual(expect.arrayContaining([BASIC_CARD, COMBAT_CARD]));
   });
 
   it('discards all cards of a removed character', () => {

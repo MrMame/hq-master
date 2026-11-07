@@ -2,6 +2,8 @@ import {
   conditionText,
   damageText,
   equipmentText,
+  inventoryAddedText,
+  inventoryRemovedText,
   formatClock,
   formatSpan,
   timeChangeText,
@@ -66,5 +68,18 @@ describe('game-log-text.util', () => {
       'Barbar der Rote erhält Runenrüstung (Körper)',
     );
     expect(equipmentText(undefined, 'Runenrüstung', null)).toBe('Unbenannt legt Runenrüstung ab');
+  });
+
+  it('describes moves into and out of an inventory', () => {
+    expect(inventoryAddedText('Heiltrank', 'Zwerg', null)).toBe('Heiltrank ins Inventar von Zwerg');
+    expect(inventoryAddedText('Heiltrank', undefined, '')).toBe(
+      'Heiltrank von Unbenannt ins Inventar von Unbenannt',
+    );
+    expect(inventoryRemovedText('Runenrüstung', 'Barbar', null)).toBe(
+      'Runenrüstung von Barbar aus dem Inventar angelegt',
+    );
+    expect(inventoryRemovedText('Heiltrank', undefined, 'in die Hand')).toBe(
+      'Heiltrank aus dem Inventar von Unbenannt in die Hand',
+    );
   });
 });

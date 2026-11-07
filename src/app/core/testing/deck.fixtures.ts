@@ -1,5 +1,5 @@
 import { Card, EquipmentCard } from '../models/card.model';
-import { AssignedCard, DeckInstance, DeckState } from '../models/deck-state.model';
+import { AssignedCard, DeckInstance, DeckState, InventoryCard } from '../models/deck-state.model';
 import { CardSlot, EquipmentSlot, StatModifier } from '../models/equipment.model';
 
 /** Testdaten für Specs (wird nicht in den App-Code importiert). */
@@ -49,6 +49,11 @@ export const TOWER_SHIELD: EquipmentCard = createEquipmentCard('e2', 'Turmschild
   { stat: 'defense', value: 2 },
 ]);
 
+/** Buckler: Hand, Abwehr +1; als aktive Handkarte für belegte Hand-Slots. */
+export const BUCKLER: EquipmentCard = createEquipmentCard('e3', 'Buckler', 'hand', [
+  { stat: 'defense', value: 1 },
+]);
+
 export function assignedCard(
   card: EquipmentCard,
   characterId: string,
@@ -56,6 +61,14 @@ export function assignedCard(
   deckId: string = 'deck-1',
 ): AssignedCard {
   return { deckId, card, characterId, slot };
+}
+
+export function inventoryCard(
+  card: Card,
+  characterId: string,
+  deckId: string = 'deck-1',
+): InventoryCard {
+  return { deckId, card, characterId };
 }
 
 /** Instanz mit den Karten c1 + b1, alle Stapel leer; `overrides` setzt z. B. Stapel oder Namen. */
@@ -81,16 +94,17 @@ export function createDeckInstance(
   };
 }
 
-/** Ein Deck `deck-1` mit Karten c1 + b1, Ziehstapel [b1], aktive Karte c1, keine Zuweisungen. */
+/** Ein Deck `deck-1` mit Karten c1 + b1, Ziehstapel [b1], c1 in der Hand, keine Zuweisungen. */
 export function createDeckState(): DeckState {
   return {
     decks: [createDeckInstance('deck-1', { drawPile: [BASIC_CARD] })],
-    activeCard: { deckId: 'deck-1', card: COMBAT_CARD },
+    hand: [{ deckId: 'deck-1', card: COMBAT_CARD }],
     assigned: [],
+    inventory: [],
   };
 }
 
-/** Deck mit Runenrüstung als aktiver Karte und dem Turmschild in der linken Hand von `characterId`. */
+/** Deck mit Runenrüstung in der Hand und dem Turmschild in der linken Hand von `characterId`. */
 export function createEquipmentDeckState(characterId: string): DeckState {
   const deck: DeckInstance = createDeckInstance('deck-1', { drawPile: [BASIC_CARD, COMBAT_CARD] });
   return {
@@ -100,8 +114,9 @@ export function createEquipmentDeckState(characterId: string): DeckState {
         config: { ...deck.config, cards: [...deck.config.cards, RUNE_ARMOR, TOWER_SHIELD] },
       },
     ],
-    activeCard: { deckId: 'deck-1', card: RUNE_ARMOR },
+    hand: [{ deckId: 'deck-1', card: RUNE_ARMOR }],
     assigned: [assignedCard(TOWER_SHIELD, characterId, 'leftHand')],
+    inventory: [],
   };
 }
 
@@ -112,7 +127,8 @@ export function createTwoDeckState(): DeckState {
       createDeckInstance('deck-1', { drawPile: [BASIC_CARD] }),
       createDeckInstance('deck-2', { name: 'Testdeck (2)', drawPile: [BASIC_CARD, COMBAT_CARD] }),
     ],
-    activeCard: null,
+    hand: [],
     assigned: [],
+    inventory: [],
   };
 }

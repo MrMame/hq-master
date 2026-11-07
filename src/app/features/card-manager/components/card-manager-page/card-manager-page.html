@@ -16,7 +16,9 @@
 
   <div class="feature-page__main">
     <div class="card-table">
+      <app-dm-hand />
       <app-equipped-cards />
+      <app-inventory-cards />
 
       <section class="card-table__decks" aria-label="Spieltisch">
         <h2 class="section-heading">Spieltisch</h2>
@@ -24,7 +26,6 @@
           <app-deck-row
             [deck]="deck"
             [expanded]="expandedDeckId() === deck.id"
-            [activeCard]="activeCard()"
             [first]="$first"
             [last]="$last"
             (toggled)="onToggle(deck.id)"
@@ -38,14 +39,4 @@
       </section>
     </div>
   </div>
-
-  <!-- Schwebt im Overlay-Container über der ganzen Seite. -->
-  <app-active-card-overlay
-    [card]="activeCard()?.card ?? null"
-    [backImagePath]="activeDeck()?.config?.backImagePath ?? ''"
-    [deckName]="activeDeck()?.name ?? ''"
-    [assignDisabledReason]="assignDisabledReason()"
-    (cardClick)="onActiveCardClick()"
-    (assignClick)="onAssignClick()"
-  />
 </div>

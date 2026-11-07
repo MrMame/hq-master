@@ -1,0 +1,90 @@
+:host {
+  display: contents;
+}
+
+.card-viewer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 95vw;
+  max-height: 95dvh;
+}
+
+.card-viewer__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.card-viewer__location {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-gray-900);
+  color: var(--color-white);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--text-sm--line-height);
+}
+
+.card-viewer__close {
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-gray-900);
+  color: var(--color-white);
+  font-size: var(--text-lg);
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--color-gray-700);
+  }
+}
+
+/* Menü neben der Karte; auf schmalen Bildschirmen darunter. */
+.card-viewer__body {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+/* Größe nur aus dem Fenster; die Breite folgt aus aspect-ratio von card-display. */
+.card-viewer__card {
+  --card-viewer-max-height: 60dvh;
+  --card-viewer-max-width: 30vw;
+  --card-shadow: var(--shadow-card-floating);
+  height: min(
+    var(--card-viewer-max-height),
+    calc(var(--card-viewer-max-width) / (var(--card-aspect-ratio)))
+  );
+  width: auto;
+  flex-shrink: 0;
+  animation: card-viewer-in var(--transition-duration) var(--transition-ease);
+}
+
+@keyframes card-viewer-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+@media (max-width: 600px) {
+  .card-viewer__body {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Untereinander ist Platz für eine breitere Karte. */
+  .card-viewer__card {
+    --card-viewer-max-height: 50dvh;
+    --card-viewer-max-width: 70vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-viewer__card {
+    animation: none;
+  }
+}

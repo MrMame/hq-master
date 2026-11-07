@@ -4,18 +4,19 @@ import { SESSION_KEYS } from '../../session-state/session-keys';
 import { SessionStateSlice } from '../../session-state/session-state-slice';
 import { DeckXmlLoaderService } from './deck-xml-loader.service';
 import { DeckConfig } from '../../models/deck-config.model';
-import { AssignedCard, CardRef, DeckInstance, DeckState } from '../../models/deck-state.model';
-import { EquipmentSlot } from '../../models/equipment.model';
-import { DECK_STATE_CODEC } from './deck-state-codec.util';
-import { assignActiveCard, discardAssigned } from './deck-assignment.util';
-import { emptyDeckState } from './deck-state.util';
+import { CardLocation } from '../../models/card-location.model';
 import {
-  activateCard,
-  discardActive,
-  drawCard,
-  dropActiveIntoBank,
-  shuffleActiveIntoDrawPile,
-} from './deck-draw.util';
+  AssignedCard,
+  CardRef,
+  DeckInstance,
+  DeckState,
+  HandCard,
+  InventoryCard,
+} from '../../models/deck-state.model';
+import { DECK_STATE_CODEC } from './deck-state-codec.util';
+import { discardOwned, moveCard } from './card-move.util';
+import { emptyDeckState } from './deck-state.util';
+import { drawCard } from './deck-draw.util';
 import {
   addDeck,
   moveDeck,
@@ -27,7 +28,7 @@ import {
 
 /**
  * Deck-Zustand der Session: beliebig viele Deck-Instanzen mit eigenem Nachziehstapel, Ablage und Bank, die
- * eine aktive Karte und die Ausrüstungskarten in den Slots der Charaktere. Liegt in `core`, weil der
+ * Hand des Dungeon Masters und die Ausrüstungskarten in den Slots der Charaktere. Liegt in `core`, weil der
  * Charakter-Editor die Ausrüstung bearbeitet.
  */
 @Injectable({ providedIn: 'root' })
@@ -43,8 +44,12 @@ export class CardManagerService implements SessionStateSlice<DeckState> {
   public readonly state: Signal<DeckState> = this._state.value;
   public readonly sessionState: Signal<DeckState> = this.state;
   public readonly decks: Signal<DeckInstance[]> = computed(() => this.state().decks);
+  /** Hand des Dungeon Masters über alle Decks; neueste Karte am Ende. */
+  public readonly hand: Signal<HandCard[]> = computed(() => this.state().hand);
   /** Zugewiesene Ausrüstungskarten aller Decks. */
   public readonly assigned: Signal<AssignedCard[]> = computed(() => this.state().assigned);
+  /** Inventarkarten aller Charaktere. */
+  public readonly inventory: Signal<InventoryCard[]> = computed(() => this.state().inventory);
 
   /** Lädt eine Deck-XML-Datei als neue Instanz am Ende des Tischs. */
   async addDeck(url: string): Promise<void> {
@@ -59,7 +64,7 @@ export class CardManagerService implements SessionStateSlice<DeckState> {
     this.change((s) => renameDeck(s, deckId, name));
   }
 
-  /** Entfernt das Deck mit Stapeln, Bank, aktiver Karte und seinen zugewiesenen Karten. */
+  /** Entfernt das Deck mit Stapeln, Bank, Handkarten und seinen Slot- und Inventarkarten. */
   removeDeck(deckId: string): void {
     this.change((s) => removeDeck(s, deckId));
   }
@@ -72,41 +77,27 @@ export class CardManagerService implements SessionStateSlice<DeckState> {
     this.change((s) => shuffleDrawPile(s, deckId));
   }
 
-  /** Mischt Stapel, Ablage, Bank und die aktive Karte des Decks zurück; Zuweisungen bleiben. */
+  /** Mischt Stapel, Ablage, Bank und die Handkarten des Decks zurück; Slots und Inventar bleiben. */
   resetDeck(deckId: string): void {
     this.change((s) => resetDeck(s, deckId));
   }
 
-  /** Oberste Karte wird aktiv; eine bisher aktive kommt in den Ablagestapel ihres Decks. */
+  /** Oberste Karte kommt in die Hand; die übrigen Handkarten bleiben. */
   draw(deckId: string): void {
     this.change((s) => drawCard(s, deckId));
   }
 
-  /** Eine Karte aus Stapel, Ablage oder Bank wird aktiv; die bisherige kommt in ihren Ablagestapel. */
-  makeCardActive(deckId: string, cardId: string): void {
-    this.change((s) => activateCard(s, deckId, cardId));
+  /**
+   * Bewegt eine Karte von ihrem Ort ans Ziel (Hand, Stapel oder Bank ihres Decks, Slot oder Inventar eines Charakters);
+   * eine verdrängte Slot-Karte kommt in ihren Ablagestapel. Ungültige Bewegung → keine Änderung.
+   */
+  moveCard(ref: CardRef, target: CardLocation): void {
+    this.change((s) => moveCard(s, ref, target));
   }
 
-  discardActiveCard(): void {
-    this.change(discardActive);
-  }
-
-  shuffleActiveCardIntoDrawPile(): void {
-    this.change(shuffleActiveIntoDrawPile);
-  }
-
-  dropActiveCardIntoBank(): void {
-    this.change(dropActiveIntoBank);
-  }
-
-  /** Aktive Ausrüstungskarte in den Slot; eine dort liegende Karte kommt in ihren Ablagestapel. */
-  assignActiveCard(characterId: string, slot: EquipmentSlot): void {
-    this.change((s) => assignActiveCard(s, characterId, slot));
-  }
-
-  /** Zugewiesene Karten aus ihren Slots in den Ablagestapel ihres Decks. */
-  discardAssignedCards(refs: readonly CardRef[]): void {
-    this.change((s) => discardAssigned(s, refs));
+  /** Karten der Charaktere aus Slots und Inventar in den Ablagestapel ihres Decks. */
+  discardOwnedCards(refs: readonly CardRef[]): void {
+    this.change((s) => discardOwned(s, refs));
   }
 
   /** Ersetzt den Deck-Zustand vollständig, z. B. beim Laden einer Session. */

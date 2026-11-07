@@ -48,7 +48,7 @@ describe('CharacterStatus', () => {
     expect(value('Rüstung').textContent?.trim()).toBe('6/6');
     expect(value('Leben').textContent?.trim()).toBe('12/12');
 
-    cardManager.discardAssignedCards([{ deckId: 'deck-1', cardId: 'e1' }]);
+    cardManager.discardOwnedCards([{ deckId: 'deck-1', cardId: 'e1' }]);
     fixture.detectChanges();
     expect(value('Rüstung').textContent?.trim()).toBe('6/4');
   });

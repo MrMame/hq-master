@@ -11,7 +11,9 @@ export type GameLogEntryType =
   | 'damage'
   | 'round'
   | 'equipment-assigned'
-  | 'equipment-removed';
+  | 'equipment-removed'
+  | 'inventory-added'
+  | 'inventory-removed';
 
 export const GAME_LOG_ENTRY_TYPES: readonly GameLogEntryType[] = [
   'time',
@@ -23,6 +25,8 @@ export const GAME_LOG_ENTRY_TYPES: readonly GameLogEntryType[] = [
   'round',
   'equipment-assigned',
   'equipment-removed',
+  'inventory-added',
+  'inventory-removed',
 ];
 
 /** Ein Ereignis der Spielesession mit der Spielzeit, zu der es eingetreten ist. */

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EquippedCards } from './equipped-cards';
+import { CardViewerService } from '../../../../shared/services/card-viewer.service';
 import {
   assignedCard,
   createTwoDeckState,
@@ -50,6 +51,20 @@ describe('EquippedCards', () => {
     await fixture.whenStable();
     expect(host.querySelector('.card-owner')).toBeNull();
     expect(host.querySelector('.card-origin')).toBeNull();
+  });
+
+  it('opens a clicked card in the card viewer without moving it', async () => {
+    testbed.cardManager.restore({
+      ...createTwoDeckState(),
+      assigned: [assignedCard(TOWER_SHIELD, 'a', 'rightHand', 'deck-2')],
+    });
+    await fixture.whenStable();
+    (host.querySelector('.card-display') as HTMLElement).click();
+    expect(TestBed.inject(CardViewerService).viewed()?.ref).toEqual({
+      deckId: 'deck-2',
+      cardId: 'e2',
+    });
+    expect(testbed.cardManager.assigned()).toHaveLength(1);
   });
 
   it('renders nothing without assignments', async () => {

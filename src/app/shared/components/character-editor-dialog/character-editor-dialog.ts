@@ -1,4 +1,4 @@
-import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
+import { Component, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -18,19 +18,23 @@ import { conditionChangeEntries } from '../../utils/game-log-entries.util';
 import { withStat } from '../../utils/character-stat.util';
 import { withinLimits } from '../../../core/services/characters/character-limits.util';
 import { AssignedCard, CardRef } from '../../../core/models/deck-state.model';
-import { isSameCard } from '../../../core/services/card-deck/deck-state.util';
 import { EquipmentService } from '../../../core/services/equipment/equipment.service';
 import { cardsOf, modifiersOf } from '../../../core/services/equipment/effective-stats.util';
 import { CharacterStatsEditor, StatChange } from '../character-stats-editor/character-stats-editor';
 import { CharacterEquipmentEditor } from '../character-equipment-editor/character-equipment-editor';
+import { CardViewerService } from '../../services/card-viewer.service';
+import { CardDraft } from '../../models/card-action.model';
+import { CharacterInventoryEditor } from '../character-inventory-editor/character-inventory-editor';
+import { CharacterCardDraftService } from '../../services/character-card-draft.service';
+import { DraftCards } from '../../utils/card-draft.util';
 
 /**
  * Systemweiter Charakter-Editor: Ohne Daten geöffnet legt er einen neuen Charakter an, sonst bearbeitet
  * er den übergebenen. „Übernehmen“ schreibt sofort in die Session, „Abbrechen“ verwirft die Arbeitskopie.
  * „Entfernen“ (nur beim Bearbeiten) löscht den Charakter nach einer Rückfrage aus der Session.
  * „Zufälliger Charakter erstellen“ (nur beim Anlegen) füllt die Arbeitskopie mit Zufallswerten.
- * Beim Übernehmen werden Leben und Rüstung auf ihr wirksames Maximum begrenzt; „Ablegen“ unter „Ausrüstung“
- * legt die Karte erst dann in den Ablagestapel.
+ * Beim Übernehmen werden Leben und Rüstung auf ihr wirksames Maximum begrenzt. Karten unter „Ausrüstung“
+ * und „Inventar“ öffnen den Card Viewer im Entwurf; dort vorgemerkte Bewegungen wirken erst dann.
  */
 @Component({
   selector: 'app-character-editor-dialog',
@@ -41,8 +45,10 @@ import { CharacterEquipmentEditor } from '../character-equipment-editor/characte
     CharacterConditionsEditor,
     CharacterStatsEditor,
     CharacterEquipmentEditor,
+    CharacterInventoryEditor,
   ],
   host: { class: 'general-dialog' },
+  providers: [CharacterCardDraftService],
   templateUrl: './character-editor-dialog.html',
   styleUrl: './character-editor-dialog.css',
 })
@@ -55,6 +61,7 @@ export class CharacterEditorDialog {
   private readonly gameTimeService: GameTimeService = inject(GameTimeService);
   private readonly gameLog: GameLogService = inject(GameLogService);
   private readonly equipment: EquipmentService = inject(EquipmentService);
+  private readonly cardViewer: CardViewerService = inject(CardViewerService);
   private readonly character: CharacterInfo | null = inject<CharacterInfo | null>(MAT_DIALOG_DATA);
 
   protected readonly isEditMode: boolean = this.character !== null;
@@ -66,14 +73,11 @@ export class CharacterEditorDialog {
     this.character ? { ...this.character } : createNewCharacter(),
   );
 
-  /** Abgelegte, aber noch nicht übernommene Karten. */
-  private readonly discardedCards: WritableSignal<CardRef[]> = signal<CardRef[]>([]);
-  /** Karten, die nach dem Übernehmen am Charakter bleiben. */
-  protected readonly equippedCards: Signal<AssignedCard[]> = computed(() =>
-    cardsOf(this.equipment.assigned(), this.draft().id).filter(
-      (entry) => !this.discardedCards().some((ref) => isSameCard(entry, ref)),
-    ),
-  );
+  private readonly cardDraftService: CharacterCardDraftService = inject(CharacterCardDraftService);
+  /** Entwurf für den Card Viewer: Ablegen, Ins Inventar legen und Anlegen wirken erst mit „Übernehmen“. */
+  private readonly cardDraft: CardDraft = this.cardDraftService.start(this.draft().id);
+  /** Slot- und Inventarkarten, wie sie nach dem Übernehmen lägen. */
+  protected readonly draftCards: Signal<DraftCards> = this.cardDraftService.cards;
   protected readonly types: string[] = Object.values(ElementalTypes);
   protected readonly abilities: string[] = Object.values(CharacterAbilities);
   protected readonly images: string[] = CHARACTER_IMAGES;
@@ -87,8 +91,8 @@ export class CharacterEditorDialog {
     this.draft.update((character) => withStat(character, stat, value, !this.isEditMode));
   }
 
-  discardCard(ref: CardRef): void {
-    this.discardedCards.update((refs) => [...refs, ref]);
+  viewCard(ref: CardRef): void {
+    this.cardViewer.open(ref, { mode: 'draft', draft: this.cardDraft });
   }
 
   toggleAbility(ability: string): void {
@@ -106,15 +110,21 @@ export class CharacterEditorDialog {
     this.draft.set(createRandomCharacter(this.draft().id));
   }
 
-  /** Neu angekreuzte Zustände starten zur aktuellen Spielzeit; Zustände und abgelegte Karten kommen ins Log. */
+  /**
+   * Neu angekreuzte Zustände starten zur aktuellen Spielzeit. Danach laufen die vorgemerkten Kartenbewegungen
+   * wie im Card Viewer (Bonus, Begrenzung, Log); Zustände kommen ins Log.
+   */
   apply(): void {
     const now: Date = this.gameTimeService.gameTime();
-    const character: CharacterInfo = {
-      ...withinLimits(this.draft(), modifiersOf(this.equippedCards())),
+    const current: AssignedCard[] = cardsOf(this.equipment.assigned(), this.draft().id);
+    const written: CharacterInfo = {
+      ...withinLimits(this.draft(), modifiersOf(current)),
       conditions: startConditions(this.draft().conditions, now),
     };
-    this.charactersDbService.writeCharacter(character);
-    this.equipment.discardCards(character, this.discardedCards());
+    this.charactersDbService.writeCharacter(written);
+    this.cardDraftService.apply();
+    const character: CharacterInfo =
+      this.charactersDbService.characters().find((entry) => entry.id === written.id) ?? written;
     this.gameLog.append(
       ...conditionChangeEntries(this.character?.conditions ?? [], character, now),
     );

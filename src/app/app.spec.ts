@@ -38,4 +38,8 @@ describe('App', () => {
   it('renders the router outlet inside main', () => {
     expect(host.querySelector('main router-outlet')).not.toBeNull();
   });
+
+  it('renders the card viewer once for all features', () => {
+    expect(host.querySelectorAll('app-card-viewer')).toHaveLength(1);
+  });
 });

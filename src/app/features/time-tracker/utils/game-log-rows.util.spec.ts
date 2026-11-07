@@ -51,8 +51,12 @@ describe('game-log-rows.util', () => {
   });
 
   it('shows equipment entries only under "all"', () => {
-    const equipment: GameLogEntry[] = [entry('erhält', { type: 'equipment-assigned' })];
-    expect(gameLogRows(equipment, 'all')).toHaveLength(1);
+    const equipment: GameLogEntry[] = [
+      entry('erhält', { type: 'equipment-assigned' }),
+      entry('ins Inventar', { type: 'inventory-added' }),
+      entry('aus dem Inventar', { type: 'inventory-removed' }),
+    ];
+    expect(gameLogRows(equipment, 'all')).toHaveLength(3);
     (['time', 'conditions', 'damage'] as GameLogFilter[]).forEach((filter) =>
       expect(gameLogRows(equipment, filter)).toEqual([]),
     );
@@ -74,6 +78,8 @@ describe('game-log-rows.util', () => {
     [{ type: 'round' }, './img/clock.svg'],
     [{ type: 'equipment-assigned' }, './img/equipment.svg'],
     [{ type: 'equipment-removed' }, './img/equipment.svg'],
+    [{ type: 'inventory-added' }, './img/equipment.svg'],
+    [{ type: 'inventory-removed' }, './img/equipment.svg'],
   ])('picks the icon for %o', (overrides, icon) => {
     expect(entryIcon(createTestLogEntry(overrides))).toBe(icon);
   });

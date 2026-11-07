@@ -32,7 +32,14 @@
       <span class="deck-row__count" data-testid="draw-count">{{ current.drawPile.length }}</span>
     </button>
 
-    <div class="deck-row__pile" title="Ablagestapel">
+    <button
+      type="button"
+      class="deck-row__pile deck-row__pile--discard"
+      [attr.aria-label]="'Oberste Karte im Ablagestapel von ' + current.name + ' ansehen'"
+      title="Ablagestapel"
+      [disabled]="topDiscard() === null"
+      (click)="$event.stopPropagation(); viewTopDiscard()"
+    >
       @if (topDiscard(); as top) {
         <img class="deck-row__thumb" [src]="top.imagePath" [alt]="top.name" />
       } @else {
@@ -41,7 +48,7 @@
       <span class="deck-row__count" data-testid="discard-count">{{
         current.discardPile.length
       }}</span>
-    </div>
+    </button>
 
     <div class="deck-row__bank" title="Karten in der Bank">
       <span class="deck-row__label">Bank</span>
@@ -52,6 +59,6 @@
   </div>
 
   @if (expanded()) {
-    <app-deck-piles [deck]="current" [activeCard]="activeCard()" />
+    <app-deck-piles [deck]="current" />
   }
 </article>

@@ -85,30 +85,19 @@ describe('CardManagerPage', () => {
     expect(scrolled()).toEqual([rows()[1]]);
   });
 
-  describe('choosing a deck in the sidebar with an active card', () => {
-    const choose: (index: number) => Promise<void> = async (index) => {
-      host.querySelectorAll<HTMLButtonElement>('[data-testid="deck-list-entry"]')[index].click();
-      await harness.fixture.whenStable();
-    };
-
+  describe('choosing a deck in the sidebar with hand cards', () => {
     beforeEach(async () => {
       await harness.render(createTwoDeckState());
       harness.cardManager.draw('deck-1');
       await harness.fixture.whenStable();
     });
 
-    it('discards the active card into its own deck when another deck is chosen', async () => {
-      await choose(1);
-      expect(harness.cardManager.state().activeCard).toBeNull();
-      expect(harness.cardManager.decks()[0].discardPile.map((card) => card.id)).toEqual(['b1']);
-      expect(harness.cardManager.decks()[1].discardPile).toEqual([]);
+    it('only expands the chosen deck and keeps the hand cards of other decks', async () => {
+      host.querySelectorAll<HTMLButtonElement>('[data-testid="deck-list-entry"]')[1].click();
+      await harness.fixture.whenStable();
+      expect(harness.cardManager.hand().map((entry) => entry.deckId)).toEqual(['deck-1']);
+      expect(harness.cardManager.decks()[0].discardPile).toEqual([]);
       expect(expandedRows()).toEqual([rows()[1]]);
-    });
-
-    it('keeps the active card when its own deck is chosen', async () => {
-      await choose(0);
-      expect(harness.cardManager.state().activeCard?.deckId).toBe('deck-1');
-      expect(expandedRows()).toEqual([rows()[0]]);
     });
   });
 });

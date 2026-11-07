@@ -51,7 +51,8 @@
   flex-shrink: 0;
 }
 
-.deck-row__pile--draw {
+.deck-row__pile--draw,
+.deck-row__pile--discard {
   padding: var(--space-1);
   border-radius: var(--radius-sm);
   cursor: pointer;
