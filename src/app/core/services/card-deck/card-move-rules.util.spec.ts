@@ -20,11 +20,14 @@ describe('moveCard – rules', () => {
     expect(next.decks[0]).toBe(s.decks[0]);
   });
 
-  it('activates a card of the second instance and discards the active card into its own deck', () => {
-    const next: DeckState = moveCard(s, { deckId: 'deck-2', cardId: 'h1' }, { kind: 'active' });
-    expect(next.activeCard).toEqual({ deckId: 'deck-2', card: H1 });
-    expect(next.decks[0].discardPile).toEqual([H3, H1]);
-    expect(next.decks[1].discardPile).toEqual([H3]);
+  it('takes a card of the second instance into the hand next to the same ID of the first', () => {
+    const next: DeckState = moveCard(s, { deckId: 'deck-2', cardId: 'h1' }, { kind: 'hand' });
+    expect(next.hand).toEqual([
+      { deckId: 'deck-1', card: H1 },
+      { deckId: 'deck-2', card: H1 },
+    ]);
+    expect(next.decks[0].discardPile).toEqual([H3]);
+    expect(next.decks[1].drawPile).toEqual([H2]);
   });
 
   it('shuffles a card into the draw pile', () => {
@@ -88,7 +91,7 @@ describe('discardAssigned', () => {
     });
     const next: DeckState = discardAssigned(two, [deck1Ref('h2'), deck1Ref('h1'), deck1Ref('h5')]);
     expect(next.decks[0].discardPile).toEqual([H3, H5, H2]);
-    expect(next.activeCard).toEqual(s.activeCard);
+    expect(next.hand).toEqual(s.hand);
     expect(discardAssigned(s, [{ deckId: 'deck-3', cardId: 'h5' }])).toBe(s);
   });
 });

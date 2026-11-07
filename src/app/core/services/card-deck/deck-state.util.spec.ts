@@ -10,6 +10,7 @@ import {
 import {
   emptyDeckState,
   isSameCard,
+  isSameRef,
   toCardRef,
   unassignedCards,
   updateDeck,
@@ -19,7 +20,7 @@ import {
 
 describe('deck state', () => {
   it('starts without decks', () => {
-    expect(emptyDeckState()).toEqual({ decks: [], activeCard: null, assigned: [] });
+    expect(emptyDeckState()).toEqual({ decks: [], hand: [], assigned: [] });
   });
 
   it('identifies a card by deck and card id', () => {
@@ -32,6 +33,12 @@ describe('deck state', () => {
     expect(isSameCard(entry, { deckId: 'deck-2', cardId: 'b1' })).toBe(false);
   });
 
+  it('compares two addresses by deck and card', () => {
+    expect(isSameRef({ deckId: 'd1', cardId: 'b1' }, { deckId: 'd1', cardId: 'b1' })).toBe(true);
+    expect(isSameRef({ deckId: 'd1', cardId: 'b1' }, { deckId: 'd2', cardId: 'b1' })).toBe(false);
+    expect(isSameRef({ deckId: 'd1', cardId: 'b1' }, { deckId: 'd1', cardId: 'c1' })).toBe(false);
+  });
+
   it('returns the same state for an unknown or unchanged deck', () => {
     const s: DeckState = createTwoDeckState();
     expect(updateDeck(s, 'unknown', (d) => ({ ...d, name: 'x' }))).toBe(s);
@@ -39,12 +46,12 @@ describe('deck state', () => {
     expect(updateDeck(s, 'deck-2', (d) => ({ ...d, name: 'x' })).decks[1].name).toBe('x');
   });
 
-  it('collects the free cards of one deck including its active card', () => {
+  it('collects the free cards of one deck including its hand cards', () => {
     const s: DeckState = createDeckState();
     expect(unassignedCards(s, 'deck-1')).toEqual([BASIC_CARD, COMBAT_CARD]);
     expect(unassignedCards(s, 'unknown')).toEqual([]);
     expect(
-      unassignedCards({ ...s, activeCard: { deckId: 'other', card: COMBAT_CARD } }, 'deck-1'),
+      unassignedCards({ ...s, hand: [{ deckId: 'other', card: COMBAT_CARD }] }, 'deck-1'),
     ).toEqual([BASIC_CARD]);
   });
 
@@ -57,18 +64,21 @@ describe('deck state', () => {
     expect(next.decks[1].discardPile).toEqual([COMBAT_CARD]);
   });
 
-  it('drops the active card and assignments of missing decks', () => {
+  it('drops hand cards and assignments of missing decks', () => {
     const s: DeckState = {
       ...createTwoDeckState(),
-      activeCard: { deckId: 'gone', card: BASIC_CARD },
+      hand: [
+        { deckId: 'gone', card: BASIC_CARD },
+        { deckId: 'deck-1', card: COMBAT_CARD },
+      ],
       assigned: [
         assignedCard(TOWER_SHIELD, 'a', 'leftHand', 'gone'),
         assignedCard(TOWER_SHIELD, 'a', 'rightHand'),
       ],
     };
     const next: DeckState = withoutDanglingRefs(s);
-    expect(next.activeCard).toBeNull();
+    expect(next.hand).toEqual([{ deckId: 'deck-1', card: COMBAT_CARD }]);
     expect(next.assigned).toEqual([assignedCard(TOWER_SHIELD, 'a', 'rightHand')]);
-    expect(withoutDanglingRefs(createDeckState()).activeCard?.deckId).toBe('deck-1');
+    expect(withoutDanglingRefs(createDeckState()).hand).toEqual(createDeckState().hand);
   });
 });

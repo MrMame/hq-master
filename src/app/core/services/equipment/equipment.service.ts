@@ -1,15 +1,17 @@
 import { inject, Injectable, Signal } from '@angular/core';
 import { Card } from '../../models/card.model';
+import { CardLocation } from '../../models/card-location.model';
 import { CharacterInfo } from '../../models/character-info.model';
 import { AssignedCard, CardRef, DeckState } from '../../models/deck-state.model';
 import { EquipmentSlot } from '../../models/equipment.model';
 import { CardManagerService } from '../card-deck/card-manager.service';
 import { findCard } from '../card-deck/card-location.util';
 import { isSameCard, toCardRef } from '../card-deck/deck-state.util';
+import { withinLimits } from '../characters/character-limits.util';
 import { CharactersDbService } from '../characters/characters-db.service';
 import { GameLogService } from '../game-log/game-log.service';
 import { GameTimeService } from '../game-time/game-time.service';
-import { cardsOf } from './effective-stats.util';
+import { cardsOf, modifiersOf } from './effective-stats.util';
 import { equipmentEntry } from './equipment-log.util';
 import { EquipmentTransfer, transferEquipment } from './equipment-transfer.util';
 
@@ -31,7 +33,7 @@ export class EquipmentService {
   readonly assigned: Signal<AssignedCard[]> = this.cardManager.assigned;
 
   /**
-   * Weist eine Ausrüstungskarte von beliebigem Ort zu (aktiv, Stapel, Bank, Slot eines Charakters). Der
+   * Weist eine Ausrüstungskarte von beliebigem Ort zu (Hand, Stapel, Bank, Slot eines Charakters). Der
    * bisherige Besitzer und eine Karte im Slot werden zuerst abgelegt (Leben/Rüstung auf das neue Maximum
    * begrenzt), dann steigen Leben/Rüstung des Empfängers um den Bonus. Ungültige Zuweisung → keine Änderung.
    */
@@ -56,6 +58,26 @@ export class EquipmentService {
     });
     transfer.characters.forEach((character) => this.charactersDb.writeCharacter(character));
     this.gameLog.append(...transfer.entries);
+  }
+
+  /**
+   * Bewegt eine Karte von beliebigem Ort ans Ziel; ein Slot als Ziel weist zu (`assignCard`). Verlässt eine
+   * ausgerüstete Karte dabei ihren Slot, verliert der Besitzer den Bonus (Leben/Rüstung auf das neue Maximum
+   * begrenzt), und das Ablegen kommt ins Log. Ungültige Bewegung → keine Änderung.
+   */
+  moveCard(ref: CardRef, target: CardLocation): void {
+    if (target.kind === 'equipped') {
+      this.assignCard(ref, target.characterId, target.slot);
+      return;
+    }
+    const before: DeckState = this.cardManager.state();
+    const owned: AssignedCard | undefined = before.assigned.find((entry) => isSameCard(entry, ref));
+    this.cardManager.moveCard(ref, target);
+    const owner: CharacterInfo | undefined = owned && this.findCharacter(owned.characterId);
+    if (!owned || !owner || this.cardManager.state() === before) return;
+    const remaining: AssignedCard[] = cardsOf(this.assigned(), owner.id);
+    this.charactersDb.writeCharacter(withinLimits(owner, modifiersOf(remaining)));
+    this.gameLog.append(equipmentEntry(owner, owned.card, null, this.gameTime.gameTime()));
   }
 
   /**

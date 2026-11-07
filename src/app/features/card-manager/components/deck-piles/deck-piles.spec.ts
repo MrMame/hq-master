@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DeckPiles } from './deck-piles';
-import { DeckInstance, DeckState } from '../../../../core/models/deck-state.model';
+import { DeckState } from '../../../../core/models/deck-state.model';
+import { CardViewerService } from '../../../../shared/services/card-viewer.service';
 import {
   BASIC_CARD,
   COMBAT_CARD,
@@ -18,28 +19,30 @@ describe('DeckPiles', () => {
   let fixture: ComponentFixture<DeckPiles>;
   let host: HTMLElement;
 
-  const deck: (index: number) => DeckInstance = (index) => testbed.cardManager.decks()[index];
   const pile: (label: string) => HTMLElement = (label) =>
     host.querySelector<HTMLElement>(`section[aria-label="${label}"]`)!;
-  const clickCard: (label: string) => Promise<void> = async (label) => {
-    Array.from(pile(label).querySelectorAll<HTMLElement>('.card-display')).at(-1)!.click();
-    await render();
-  };
-  const clickPile: (label: string) => Promise<void> = async (label) => {
-    pile(label).click();
-    await render();
-  };
+  const topCard: (label: string) => HTMLElement = (label) =>
+    Array.from(pile(label).querySelectorAll<HTMLElement>('.card-display')).at(-1)!;
+  const viewed: () => string | undefined = () =>
+    TestBed.inject(CardViewerService).viewed()?.ref.cardId;
 
-  /** Zeigt deck-2 mit dem aktuellen Zustand des Service. */
-  async function render(): Promise<void> {
-    fixture.componentRef.setInput('deck', deck(1));
-    fixture.componentRef.setInput('activeCard', testbed.cardManager.state().activeCard);
+  /** Zeigt deck-2 des Zustands. */
+  async function start(state: DeckState): Promise<void> {
+    testbed.cardManager.restore(state);
+    fixture.componentRef.setInput('deck', testbed.cardManager.decks()[1]);
     await fixture.whenStable();
   }
 
-  async function start(state: DeckState): Promise<void> {
-    testbed.cardManager.restore(state);
-    await render();
+  /** deck-2: c1 im Nachziehstapel, b1 abgelegt, Turmschild in der Bank. */
+  function filledState(): DeckState {
+    const s: DeckState = createTwoDeckState();
+    return {
+      ...s,
+      decks: [
+        s.decks[0],
+        { ...s.decks[1], drawPile: [COMBAT_CARD], discardPile: [BASIC_CARD], bank: [TOWER_SHIELD] },
+      ],
+    };
   }
 
   beforeEach(() => {
@@ -55,74 +58,33 @@ describe('DeckPiles', () => {
     expect(pile('Bank').textContent).toContain('Keine Karten in der Bank.');
   });
 
-  it('makes a draw pile card active and shuffles it back on the next click', async () => {
-    await start(createTwoDeckState());
-    await clickCard('Nachziehstapel');
-    expect(testbed.cardManager.state().activeCard?.deckId).toBe('deck-2');
-    expect(deck(1).drawPile).toHaveLength(1);
+  it.each([
+    ['Nachziehstapel', 'c1'],
+    ['Ablagestapel', 'b1'],
+    ['Bank', 'e2'],
+  ])('opens a card of the %s in the viewer without moving it', async (label, cardId) => {
+    const state: DeckState = filledState();
+    await start(state);
 
-    await clickCard('Nachziehstapel');
-    expect(testbed.cardManager.state().activeCard).toBeNull();
-    expect(deck(1).drawPile).toHaveLength(2);
+    topCard(label).click();
+
+    expect(TestBed.inject(CardViewerService).viewed()?.ref).toEqual({ deckId: 'deck-2', cardId });
+    expect(testbed.cardManager.decks()[1]).toEqual(state.decks[1]);
   });
 
-  it('puts its active card into the discard pile or the bank of this deck', async () => {
-    await start({ ...createTwoDeckState(), activeCard: { deckId: 'deck-2', card: TOWER_SHIELD } });
-    await clickPile('Bank');
-    expect(deck(1).bank).toEqual([TOWER_SHIELD]);
-
-    await clickCard('Bank');
-    expect(testbed.cardManager.state().activeCard?.card).toBe(TOWER_SHIELD);
-    await clickPile('Ablagestapel');
-    expect(deck(1).discardPile).toEqual([TOWER_SHIELD]);
+  it('shows the back of draw pile cards and the front of the others', async () => {
+    await start(filledState());
+    expect(pile('Nachziehstapel').querySelector('.card-back')).not.toBeNull();
+    expect(pile('Ablagestapel').querySelector('.card-front')).not.toBeNull();
+    expect(pile('Bank').querySelector('.card-front')).not.toBeNull();
   });
 
-  it('discards the own active card when a discard pile card is clicked, else activates it', async () => {
-    const s: DeckState = createTwoDeckState();
-    const withDiscard: DeckState = {
-      ...s,
-      decks: [s.decks[0], { ...s.decks[1], discardPile: [COMBAT_CARD] }],
-      activeCard: { deckId: 'deck-2', card: TOWER_SHIELD },
-    };
-    await start(withDiscard);
-    await clickCard('Ablagestapel');
-    expect(deck(1).discardPile).toEqual([COMBAT_CARD, TOWER_SHIELD]);
-    expect(testbed.cardManager.state().activeCard).toBeNull();
-
-    await clickCard('Ablagestapel');
-    expect(testbed.cardManager.state().activeCard?.card).toBe(TOWER_SHIELD);
-  });
-
-  it('activates a clicked card while a card of another deck is active, discarding that one', async () => {
-    await start({ ...createTwoDeckState(), activeCard: { deckId: 'deck-1', card: COMBAT_CARD } });
-    await clickPile('Bank');
-    await clickPile('Ablagestapel');
-    expect(deck(1).bank).toEqual([]);
-    expect(deck(1).discardPile).toEqual([]);
-
-    await clickCard('Nachziehstapel');
-    expect(testbed.cardManager.state().activeCard).toEqual({ deckId: 'deck-2', card: COMBAT_CARD });
-    expect(deck(0).discardPile).toEqual([COMBAT_CARD]);
-    expect(deck(0).drawPile).toEqual([BASIC_CARD]);
-  });
-
-  it('shows a placeholder for an empty draw pile', async () => {
-    testbed.cardManager.restore(createTwoDeckState());
-    testbed.cardManager.draw('deck-2');
-    testbed.cardManager.draw('deck-2');
-    await render();
-    expect(pile('Nachziehstapel').textContent).toContain('leer');
-  });
-
-  it('ignores a click on a bank card while its own active card is shown', async () => {
-    const s: DeckState = createTwoDeckState();
-    await start({
-      ...s,
-      decks: [s.decks[0], { ...s.decks[1], bank: [COMBAT_CARD] }],
-      activeCard: { deckId: 'deck-2', card: TOWER_SHIELD },
-    });
-    await clickCard('Bank');
-    expect(testbed.cardManager.state().activeCard?.card).toBe(TOWER_SHIELD);
-    expect(deck(1).bank).toEqual([COMBAT_CARD]);
+  it('does nothing on a click on a pile or the bank outside of a card', async () => {
+    const state: DeckState = filledState();
+    await start(state);
+    pile('Ablagestapel').click();
+    pile('Bank').click();
+    expect(viewed()).toBeUndefined();
+    expect(testbed.cardManager.decks()[1]).toEqual(state.decks[1]);
   });
 });

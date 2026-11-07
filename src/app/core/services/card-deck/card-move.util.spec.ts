@@ -45,10 +45,11 @@ describe('moveCard – every origin and target', () => {
       // Die zweite Instanz mit denselben Karten-IDs bleibt unberührt.
       expect(next.decks[1]).toBe(s.decks[1]);
       expect(next.assigned).toContainEqual(s.assigned[1]);
-      if (from.kind === 'active') expect(next.activeCard).toBeNull();
-      if (to.kind === 'active') {
-        // Die bisher aktive Karte h1 kommt in den Ablagestapel ihres Decks.
-        expect(next.decks[0].discardPile.at(-1)).toBe(HAND_CARDS[0]);
+      if (from.kind === 'hand') expect(next.hand).toEqual([]);
+      if (to.kind === 'hand') {
+        // Die Karte kommt ans Ende der Hand, h1 bleibt in der Hand und wird nicht abgelegt.
+        expect(next.hand.map((entry) => entry.card.id)).toEqual(['h1', cardId]);
+        expect(next.decks[0].discardPile).not.toContain(HAND_CARDS[0]);
       }
     },
   );

@@ -1,6 +1,12 @@
 import { Card } from '../../models/card.model';
 import { CardLocation, PILE_KINDS } from '../../models/card-location.model';
-import { AssignedCard, CardRef, DeckInstance, DeckState } from '../../models/deck-state.model';
+import {
+  AssignedCard,
+  CardRef,
+  DeckInstance,
+  DeckState,
+  HandCard,
+} from '../../models/deck-state.model';
 import { findDeck, isSameCard } from './deck-state.util';
 
 /** Eine Karte mit ihrem Ort; Ergebnis von `findCardAt`. */
@@ -10,15 +16,14 @@ export interface LocatedCard {
 }
 
 /**
- * Sucht eine Karte über ihre `CardRef`: aktive Karte, Stapel und Bank ihres Decks, Slots der Charaktere.
+ * Sucht eine Karte über ihre `CardRef`: Hand, Stapel und Bank ihres Decks, Slots der Charaktere.
  * Unbekannte Karte oder Deck nicht (mehr) auf dem Tisch → `null`.
  */
 export function findCardAt(s: DeckState, ref: CardRef): LocatedCard | null {
   const deck: DeckInstance | undefined = findDeck(s, ref.deckId);
   if (!deck) return null;
-  if (s.activeCard && isSameCard(s.activeCard, ref)) {
-    return { card: s.activeCard.card, location: { kind: 'active' } };
-  }
+  const inHand: HandCard | undefined = s.hand.find((entry) => isSameCard(entry, ref));
+  if (inHand) return { card: inHand.card, location: { kind: 'hand' } };
   for (const kind of PILE_KINDS) {
     const card: Card | undefined = deck[kind].find((c) => c.id === ref.cardId);
     if (card) return { card, location: { kind } };

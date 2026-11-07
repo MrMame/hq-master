@@ -46,7 +46,7 @@ describe('card location', () => {
     expect(isSameLocation(slot('a', true), slot('a', true))).toBe(true);
     expect(isSameLocation(slot('a', true), slot('a', false))).toBe(false);
     expect(isSameLocation(slot('a', true), slot('b', true))).toBe(false);
-    expect(isSameLocation(slot('a', true), { kind: 'active' })).toBe(false);
-    expect(isSameLocation({ kind: 'active' }, slot('a', true))).toBe(false);
+    expect(isSameLocation(slot('a', true), { kind: 'hand' })).toBe(false);
+    expect(isSameLocation({ kind: 'hand' }, slot('a', true))).toBe(false);
   });
 });

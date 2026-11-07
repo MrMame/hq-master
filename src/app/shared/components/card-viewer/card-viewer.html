@@ -1,0 +1,34 @@
+<ng-template #viewerTemplate>
+  @if (context(); as viewed) {
+    <div
+      class="card-viewer"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Card Viewer"
+      cdkTrapFocus
+      [cdkTrapFocusAutoCapture]="true"
+    >
+      <header class="card-viewer__header">
+        <span class="card-viewer__location" data-testid="card-viewer-location">{{ title() }}</span>
+        <button
+          type="button"
+          class="card-viewer__close"
+          aria-label="Schließen"
+          title="Schließen"
+          (click)="close()"
+        >
+          ×
+        </button>
+      </header>
+      <div class="card-viewer__body">
+        <!-- Immer die Vorderseite, auch im Nachziehstapel; ein Klick auf die Karte löst nichts aus. -->
+        <app-card-display
+          class="card-viewer__card"
+          [card]="viewed.card"
+          [backImagePath]="viewed.deck.config.backImagePath"
+        />
+        <app-card-action-menu [entries]="entries()" (run)="run($event)" />
+      </div>
+    </div>
+  }
+</ng-template>

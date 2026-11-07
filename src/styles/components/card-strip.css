@@ -1,0 +1,31 @@
+/* Kartenreihe über dem Spieltisch (Hand des Dungeon Masters, Ausgerüstet): Überschrift und Karten, die in
+   Reihen umbrechen; höchstens zwei Reihen sind sichtbar, weitere scrollen senkrecht in sich. */
+.card-strip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.card-strip__cards {
+  --card-strip-card-height: 12rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: var(--space-2);
+  max-height: calc(2 * var(--card-strip-card-height) + var(--space-2));
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.card-strip__card {
+  height: var(--card-strip-card-height);
+  width: auto;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .card-strip__cards {
+    --card-strip-card-height: 8rem;
+  }
+}

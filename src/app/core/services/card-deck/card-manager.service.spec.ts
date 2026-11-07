@@ -15,7 +15,7 @@ import { describePersistedState } from '../../session-state/testing/describe-per
 import { SESSION_KEYS } from '../../session-state/session-keys';
 
 const KEY: string = SESSION_KEYS.deckState;
-const EMPTY: DeckState = { decks: [], activeCard: null, assigned: [] };
+const EMPTY: DeckState = { decks: [], hand: [], assigned: [] };
 
 const readStored: () => DeckState = (): DeckState =>
   JSON.parse(localStorage.getItem(KEY) ?? 'null') as DeckState;
@@ -92,42 +92,38 @@ describe('CardManagerService', () => {
     });
   });
 
-  describe('active card', () => {
+  describe('hand', () => {
     beforeEach(() => {
       service = createService();
       service.restore(createTwoDeckState());
     });
 
-    it('should draw from any deck and discard the previous active card into its own deck', () => {
+    it('should draw from any deck into the hand without discarding earlier hand cards', () => {
       service.draw('deck-1');
-      expect(service.state().activeCard).toEqual({
-        deckId: 'deck-1',
-        card: deck(0).config.cards[1],
-      });
+      expect(service.hand()).toEqual([{ deckId: 'deck-1', card: deck(0).config.cards[1] }]);
       service.draw('deck-2');
-      expect(service.state().activeCard?.deckId).toBe('deck-2');
-      expect(ids(deck(0).discardPile)).toEqual(['b1']);
+      expect(service.hand().map((entry) => entry.deckId)).toEqual(['deck-1', 'deck-2']);
+      expect(deck(0).discardPile).toEqual([]);
       expect(deck(1).discardPile).toEqual([]);
       expect(readStored()).toEqual(service.state());
     });
 
-    it('should make a card active, shuffle it back and drop it into the bank of its deck', () => {
+    it('should take a card into the hand, shuffle it back, bank it and discard it', () => {
       const c1: CardRef = { deckId: 'deck-2', cardId: 'c1' };
-      service.moveCard(c1, { kind: 'active' });
+      service.moveCard(c1, { kind: 'hand' });
       service.moveCard(c1, { kind: 'drawPile' });
       expect(ids(deck(1).drawPile)).toEqual(['b1', 'c1']);
-      service.moveCard(c1, { kind: 'active' });
+      service.moveCard(c1, { kind: 'hand' });
       service.moveCard(c1, { kind: 'bank' });
       expect(ids(deck(1).bank)).toEqual(['c1']);
-      service.moveCard(c1, { kind: 'active' });
-      service.discardActiveCard();
+      service.moveCard(c1, { kind: 'hand' });
+      service.moveCard(c1, { kind: 'discardPile' });
       expect(ids(deck(1).discardPile)).toEqual(['c1']);
-      expect(service.state().activeCard).toBeNull();
+      expect(service.hand()).toEqual([]);
     });
 
     it('should not write when nothing changes', () => {
       const before: DeckState = service.state();
-      service.discardActiveCard();
       service.draw('unknown');
       service.moveCard({ deckId: 'deck-1', cardId: 'unknown' }, { kind: 'bank' });
       expect(service.state()).toBe(before);

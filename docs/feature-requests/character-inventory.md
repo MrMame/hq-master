@@ -3,7 +3,7 @@
 **Datum:** 2026-11-07  
 **Priorität:** Hoch  
 **Status:** open  
-**Bezug:** setzt `docs/feature-requests/card-viewer.md` voraus; `src/app/core/models/deck-state.model.ts`,
+**Bezug:** setzt `docs/feature-requests/done/card-viewer.md` voraus; `src/app/core/models/deck-state.model.ts`,
 `src/app/core/services/card-deck/`, `src/app/core/services/equipment/`, `src/app/core/services/characters/`,
 `src/app/features/card-manager/`, `src/app/features/game-session/xml/`,
 `src/app/shared/components/character-editor-dialog/`, `REQUIREMENTS.md` (Abschnitte 1 und 5)
@@ -16,7 +16,7 @@ Die vier Requests bauen aufeinander auf und werden nacheinander umgesetzt. Ein R
 alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
 
 1. `docs/refactoring-requests/done/card-move-foundation.md` (keine Voraussetzung)
-2. `docs/feature-requests/card-viewer.md` – braucht 1.
+2. `docs/feature-requests/done/card-viewer.md` – braucht 1.
 3. **`docs/feature-requests/character-inventory.md`** ← dieser Request – braucht 1. und 2. (`moveCard`,
    Card Viewer mit Aktions-Registry und Modus `draft`)
 4. `docs/feature-requests/card-viewer-comfort.md` – braucht 1. bis 3.

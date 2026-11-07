@@ -23,13 +23,13 @@ describe('CardManagerService – equipment', () => {
 
   beforeEach(() => {
     service = TestBed.inject(CardManagerService);
-    // Runenrüstung aktiv, Turmschild in der linken Hand von „a“.
+    // Runenrüstung in der Hand, Turmschild in der linken Hand von „a“.
     service.restore(createEquipmentDeckState('a'));
   });
 
-  it('assigns the active card with its deck and persists it', () => {
+  it('assigns a hand card with its deck and persists it', () => {
     service.moveCard(RUNE_ARMOR_REF, { kind: 'equipped', characterId: 'a', slot: 'body' });
-    expect(state().activeCard).toBeNull();
+    expect(state().hand).toEqual([]);
     expect(service.assigned()).toEqual([
       assignedCard(TOWER_SHIELD, 'a', 'leftHand'),
       assignedCard(RUNE_ARMOR, 'a', 'body'),
@@ -40,7 +40,7 @@ describe('CardManagerService – equipment', () => {
   it('moves the previous card of an occupied slot onto the discard pile of its deck', () => {
     service.restore({
       ...createEquipmentDeckState('a'),
-      activeCard: { deckId: 'deck-1', card: BUCKLER },
+      hand: [{ deckId: 'deck-1', card: BUCKLER }],
     });
     service.moveCard(
       { deckId: 'deck-1', cardId: 'e3' },
@@ -65,7 +65,7 @@ describe('CardManagerService – equipment', () => {
   it('keeps assigned cards with their owners on reset of their deck', () => {
     service.resetDeck('deck-1');
     expect(service.assigned().map((entry) => entry.card)).toEqual([TOWER_SHIELD]);
-    expect(state().activeCard).toBeNull();
+    expect(state().hand).toEqual([]);
     expect(
       state()
         .decks[0].drawPile.map((card) => card.id)
@@ -73,11 +73,11 @@ describe('CardManagerService – equipment', () => {
     ).toEqual(['b1', 'c1', 'e1']);
   });
 
-  it('makes an assigned card active and frees its slot', () => {
-    service.moveCard({ deckId: 'deck-1', cardId: 'e2' }, { kind: 'active' });
+  it('takes an assigned card into the hand next to the earlier hand card and frees its slot', () => {
+    service.moveCard({ deckId: 'deck-1', cardId: 'e2' }, { kind: 'hand' });
     expect(service.assigned()).toEqual([]);
-    expect(state().activeCard).toEqual({ deckId: 'deck-1', card: TOWER_SHIELD });
-    expect(state().decks[0].discardPile).toEqual([RUNE_ARMOR]);
+    expect(state().hand.map((entry) => entry.card)).toEqual([RUNE_ARMOR, TOWER_SHIELD]);
+    expect(state().decks[0].discardPile).toEqual([]);
   });
 
   it('removes the equipped cards of a removed deck, but not those of other decks', () => {
@@ -91,6 +91,6 @@ describe('CardManagerService – equipment', () => {
     });
     service.removeDeck('deck-1');
     expect(service.assigned()).toEqual([assignedCard(TOWER_SHIELD, 'b', 'rightHand', 'deck-2')]);
-    expect(state().activeCard).toBeNull();
+    expect(state().hand).toEqual([]);
   });
 });

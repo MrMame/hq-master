@@ -9,7 +9,7 @@
           [card]="card"
           [backImagePath]="current.config.backImagePath"
           side="back"
-          (cardClick)="onDrawPileCardClick(card.id)"
+          (cardClick)="view(card.id)"
         />
       } @empty {
         <div class="deck-piles__placeholder">leer</div>
@@ -17,7 +17,7 @@
     </div>
   </section>
 
-  <section class="deck-piles__pile" aria-label="Ablagestapel" (click)="onDiscardPileClick()">
+  <section class="deck-piles__pile" aria-label="Ablagestapel">
     <h3 class="section-heading">Ablagestapel ({{ current.discardPile.length }})</h3>
     <div class="deck-piles__stack">
       @for (card of current.discardPile; track card.id) {
@@ -25,8 +25,7 @@
           class="deck-piles__card deck-piles__card--stacked"
           [card]="card"
           [backImagePath]="current.config.backImagePath"
-          (click)="$event.stopPropagation()"
-          (cardClick)="onDiscardPileCardClick(card.id)"
+          (cardClick)="view(card.id)"
         />
       } @empty {
         <div class="deck-piles__placeholder">leer</div>
@@ -34,7 +33,7 @@
     </div>
   </section>
 
-  <section class="deck-piles__bank" aria-label="Bank" (click)="onBankClick()">
+  <section class="deck-piles__bank" aria-label="Bank">
     <h3 class="section-heading">Bank ({{ current.bank.length }})</h3>
     <div class="deck-piles__bank-cards">
       @for (card of current.bank; track card.id) {
@@ -42,8 +41,7 @@
           class="deck-piles__card"
           [card]="card"
           [backImagePath]="current.config.backImagePath"
-          (click)="$event.stopPropagation()"
-          (cardClick)="onBankCardClick(card.id)"
+          (cardClick)="view(card.id)"
         />
       } @empty {
         <p class="empty-hint empty-hint--sm">Keine Karten in der Bank.</p>

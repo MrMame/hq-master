@@ -1,17 +1,14 @@
 import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { AssignedCard } from '../../../../core/models/deck-state.model';
+import { AssignedCard } from '../../../core/models/deck-state.model';
 import {
   CARD_SLOT_LABELS,
   EQUIPMENT_SLOT_LABELS,
   EquipmentSlot,
-} from '../../../../core/models/equipment.model';
-import { slotOccupant } from '../../../../core/services/card-deck/deck-assignment.util';
-import {
-  preferredSlot,
-  slotsForCard,
-} from '../../../../core/services/equipment/equipment-slots.util';
+} from '../../../core/models/equipment.model';
+import { slotOccupant } from '../../../core/services/card-deck/deck-assignment.util';
+import { preferredSlot, slotsForCard } from '../../../core/services/equipment/equipment-slots.util';
 import {
   AssignEquipmentChoice,
   AssignEquipmentDialogData,

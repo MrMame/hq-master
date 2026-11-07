@@ -4,15 +4,15 @@
     <div class="equipment-editor__slot">
       <span class="equipment-editor__label">{{ row.label }}</span>
       @if (row.entry; as entry) {
-        <img [src]="entry.card.imagePath" alt="" class="equipment-editor__image" />
-        <span class="equipment-editor__name">{{ entry.card.name }}</span>
+        <!-- Öffnet die Karte im Card Viewer; Ablegen wirkt dort erst mit „Übernehmen“. -->
         <button
           type="button"
-          class="equipment-editor__discard"
-          [attr.aria-label]="entry.card.name + ' ablegen'"
-          (click)="discard.emit({ deckId: entry.deckId, cardId: entry.card.id })"
+          class="equipment-editor__card"
+          [attr.aria-label]="entry.card.name + ' ansehen'"
+          (click)="view.emit({ deckId: entry.deckId, cardId: entry.card.id })"
         >
-          Ablegen
+          <img [src]="entry.card.imagePath" alt="" class="equipment-editor__image" />
+          <span class="equipment-editor__name">{{ entry.card.name }}</span>
         </button>
       } @else {
         <span class="equipment-editor__free">frei</span>

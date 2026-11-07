@@ -7,6 +7,7 @@ import { DungeonPosition } from './features/dungeon-tracker/models/dungeon-posit
 import { createTestCharacter } from './core/testing/character.fixtures';
 import { GameTimeService } from './core/services/game-time/game-time.service';
 import { createConditionedCharacter } from './core/testing/condition.fixtures';
+import { CARD_ACTIONS } from './shared/models/card-action.model';
 
 const readStoredPositions: () => DungeonPosition[] | null = (): DungeonPosition[] | null =>
   JSON.parse(localStorage.getItem('dungeon_positions') ?? 'null') as DungeonPosition[] | null;
@@ -47,5 +48,16 @@ describe('appConfig', () => {
     TestBed.tick();
 
     expect(charactersDb.characters().find((c) => c.id === 'p')?.health).toBe(11);
+  });
+
+  it('registers the general card actions for the card viewer', () => {
+    expect(TestBed.inject(CARD_ACTIONS).map((action) => action.id)).toEqual([
+      'take-into-hand',
+      'discard',
+      'shuffle-back',
+      'bank',
+      'assign',
+      'draft-discard',
+    ]);
   });
 });

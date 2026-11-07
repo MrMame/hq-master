@@ -71,7 +71,7 @@ describe('DeckMenu', () => {
     testbed.cardManager.draw('deck-2');
     await open(1, false, true);
     await menu.clickItem({ text: 'Zurücksetzen' });
-    expect(testbed.cardManager.state().activeCard).toBeNull();
+    expect(testbed.cardManager.hand()).toEqual([]);
     expect(testbed.cardManager.decks()[1].drawPile).toHaveLength(2);
     expect(testbed.cardManager.decks()[0].drawPile).toHaveLength(1);
   });

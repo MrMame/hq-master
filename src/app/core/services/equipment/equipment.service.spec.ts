@@ -22,7 +22,7 @@ describe('EquipmentService', () => {
   let service: EquipmentService;
   let cardManager: CardManagerService;
   let charactersDb: CharactersDbService;
-  // Rüstung 4/4, Turmschild in der linken Hand, Runenrüstung aktiv.
+  // Rüstung 4/4, Turmschild in der linken Hand, Runenrüstung in der Hand.
   const barbarian: CharacterInfo = { ...createTestCharacter('a'), name: 'Barbar', armor: 4 };
 
   const character: () => CharacterInfo = () => charactersDb.characters()[0];
@@ -41,10 +41,10 @@ describe('EquipmentService', () => {
     cardManager.restore(createEquipmentDeckState('a'));
   });
 
-  it('assigns the active card, raises armor by its bonus and logs it (4/4 → 6/6)', () => {
+  it('assigns a hand card, raises armor by its bonus and logs it (4/4 → 6/6)', () => {
     service.assignCard(RUNE_ARMOR_REF, 'a', 'body');
 
-    expect(deck().activeCard).toBeNull();
+    expect(deck().hand).toEqual([]);
     expect(service.assigned().map((entry) => entry.card)).toEqual([TOWER_SHIELD, RUNE_ARMOR]);
     expect(character()).toEqual({ ...barbarian, armor: 6 });
     expect(logTexts()).toEqual(['Barbar erhält Runenrüstung (Körper)']);
@@ -56,10 +56,12 @@ describe('EquipmentService', () => {
     cardManager.restore({
       ...createEquipmentDeckState('a'),
       assigned: [assignedCard(RUNE_ARMOR, 'a', 'body')],
-      activeCard: {
-        deckId: 'deck-1',
-        card: createEquipmentCard('e5', 'Kettenhemd', 'body', [{ stat: 'maxArmor', value: 1 }]),
-      },
+      hand: [
+        {
+          deckId: 'deck-1',
+          card: createEquipmentCard('e5', 'Kettenhemd', 'body', [{ stat: 'maxArmor', value: 1 }]),
+        },
+      ],
     });
 
     service.assignCard({ deckId: 'deck-1', cardId: 'e5' }, 'a', 'body');
@@ -78,7 +80,7 @@ describe('EquipmentService', () => {
     service.assignCard({ deckId: 'deck-1', cardId: 'b1' }, 'a', 'body');
     service.assignCard({ deckId: 'deck-2', cardId: 'e1' }, 'a', 'body');
     service.assignCard(RUNE_ARMOR_REF, 'a', 'head');
-    expect(deck().activeCard?.card).toBe(RUNE_ARMOR);
+    expect(deck().hand.map((entry) => entry.card)).toEqual([RUNE_ARMOR]);
     expect(service.assigned()).toHaveLength(1);
     expect(character()).toEqual(barbarian);
     expect(logTexts()).toEqual([]);

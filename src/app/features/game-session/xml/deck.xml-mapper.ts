@@ -1,52 +1,38 @@
-import { Card } from '../../../core/models/card.model';
-import { ActiveCard, DeckState } from '../../../core/models/deck-state.model';
+import { DeckState } from '../../../core/models/deck-state.model';
 import { migrateLegacyDeck } from '../../../core/services/card-deck/deck-state-migration.util';
 import { withoutDanglingRefs } from '../../../core/services/card-deck/deck-state.util';
-import {
-  appendElement,
-  childElements,
-  firstChild,
-  readString,
-  setAttributes,
-} from '../../../shared/utils/xml.util';
+import { childElements, firstChild } from '../../../shared/utils/xml.util';
 import { readAssignedCards, writeAssignedCards } from './assigned-cards.xml-mapper';
-import { readCard, readCardList, writeCard } from './card.xml-mapper';
+import { readCardList } from './card.xml-mapper';
 import {
   readDeckConfig,
   readDeckInstance,
   readDeckPiles,
   writeDeckInstance,
 } from './deck-instance.xml-mapper';
+import { readHand, writeHand } from './hand.xml-mapper';
 
-/** `<cardDeck>` mit allen Decks in Tischreihenfolge, der aktiven Karte und den Zuweisungen. */
+/** `<cardDeck>` mit allen Decks in Tischreihenfolge, der Hand des Dungeon Masters und den Zuweisungen. */
 export function writeDeck(doc: XMLDocument, state: DeckState): Element {
   const el: Element = doc.createElement('cardDeck');
   state.decks.forEach((deck) => writeDeckInstance(el, deck));
-  const activeEl: Element = appendElement(el, 'activeCard');
-  if (state.activeCard) {
-    setAttributes(activeEl, { deckId: state.activeCard.deckId });
-    writeCard(activeEl, state.activeCard.card);
-  }
+  writeHand(el, state.hand);
   writeAssignedCards(el, state.assigned);
   return el;
 }
 
 /**
- * Ältere Spielstände mit einem Deck (`<config>` direkt in `<cardDeck>`) laden als eine Instanz.
- * Aktive Karte und Zuweisungen auf fehlende Instanzen werden verworfen.
+ * Ältere Spielstände mit einem Deck (`<config>` direkt in `<cardDeck>`) laden als eine Instanz, eine aktive
+ * Karte (`<activeCard>`) als einzige Handkarte. Handkarten und Zuweisungen auf fehlende Instanzen werden
+ * verworfen.
  */
 export function readDeck(el: Element): DeckState {
   if (firstChild(el, 'config')) return readLegacyDeck(el);
   return withoutDanglingRefs({
     decks: childElements(el, 'deck').map(readDeckInstance),
-    activeCard: readActiveCard(firstChild(el, 'activeCard')),
+    hand: readHand(el),
     assigned: readAssignedCards(el),
   });
-}
-
-function readActiveCard(el: Element | null): ActiveCard | null {
-  const card: Card | undefined = el ? childElements(el, 'card').map(readCard)[0] : undefined;
-  return el && card ? { deckId: readString(el, 'deckId'), card } : null;
 }
 
 function readLegacyDeck(el: Element): DeckState {

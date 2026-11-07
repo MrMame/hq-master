@@ -12,7 +12,7 @@ export interface LegacyDeckState {
   assigned: Omit<AssignedCard, 'deckId'>[];
 }
 
-/** Ein älterer Zustand wird zu einer Instanz; aktive Karte und Zuweisungen gehören zu ihr. */
+/** Ein älterer Zustand wird zu einer Instanz; die aktive Karte wird einzige Handkarte, Zuweisungen gehören zu ihr. */
 export function migrateLegacyDeck(legacy: LegacyDeckState): DeckState {
   const deckId: string = legacy.config.id || 'deck-1';
   return {
@@ -27,7 +27,7 @@ export function migrateLegacyDeck(legacy: LegacyDeckState): DeckState {
         bank: legacy.bank,
       },
     ],
-    activeCard: legacy.activeCard ? { deckId, card: legacy.activeCard } : null,
+    hand: legacy.activeCard ? [{ deckId, card: legacy.activeCard }] : [],
     assigned: legacy.assigned.map((entry) => ({ ...entry, deckId })),
   };
 }

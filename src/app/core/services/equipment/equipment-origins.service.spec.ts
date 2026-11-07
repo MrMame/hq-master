@@ -48,7 +48,7 @@ describe('EquipmentService – any origin', () => {
     const deck: DeckInstance = base.decks[0];
     cardManager.restore({
       ...base,
-      activeCard: null,
+      hand: [],
       assigned,
       decks: [pile ? { ...deck, [pile]: [...deck[pile], RUNE_ARMOR] } : deck],
     });

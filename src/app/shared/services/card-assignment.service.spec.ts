@@ -5,12 +5,12 @@ import { Mock } from 'vitest';
 
 import { CardAssignmentService } from './card-assignment.service';
 import { AssignEquipmentChoice } from '../models/assign-equipment.model';
-import { CardManagerService } from '../../../core/services/card-deck/card-manager.service';
-import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
-import { ConfirmationService } from '../../../shared/services/confirmation.service';
-import { CharacterInfo } from '../../../core/models/character-info.model';
-import { CardRef, DeckState } from '../../../core/models/deck-state.model';
-import { createTestCharacter } from '../../../core/testing/character.fixtures';
+import { CardManagerService } from '../../core/services/card-deck/card-manager.service';
+import { CharactersDbService } from '../../core/services/characters/characters-db.service';
+import { ConfirmationService } from './confirmation.service';
+import { CharacterInfo } from '../../core/models/character-info.model';
+import { CardRef, DeckState } from '../../core/models/deck-state.model';
+import { createTestCharacter } from '../../core/testing/character.fixtures';
 import {
   assignedCard,
   BUCKLER,
@@ -18,7 +18,7 @@ import {
   createEquipmentDeckState,
   RUNE_ARMOR,
   TOWER_SHIELD,
-} from '../../../core/testing/deck.fixtures';
+} from '../../core/testing/deck.fixtures';
 
 const RUNE_ARMOR_REF: CardRef = { deckId: 'deck-1', cardId: 'e1' };
 
@@ -49,7 +49,7 @@ describe('CardAssignmentService', () => {
     cardManager = TestBed.inject(CardManagerService);
     charactersDb = TestBed.inject(CharactersDbService);
     charactersDb.writeCharacter(barbarian);
-    // Runenrüstung aktiv, Turmschild in der linken Hand von „a“.
+    // Runenrüstung in der Hand, Turmschild in der linken Hand von „a“.
     cardManager.restore(createEquipmentDeckState('a'));
   });
 
@@ -62,21 +62,21 @@ describe('CardAssignmentService', () => {
       assigned: [assignedCard(TOWER_SHIELD, 'a', 'leftHand')],
     });
     expect(confirm).not.toHaveBeenCalled();
-    expect(deck().activeCard).toBeNull();
+    expect(deck().hand).toEqual([]);
     expect(deck().assigned.map((entry) => entry.card.id)).toEqual(['e2', 'e1']);
   });
 
   it('assigns nothing when the dialog is cancelled', async () => {
     choice = undefined;
     await service.assignCard(RUNE_ARMOR_REF);
-    expect(deck().activeCard?.card).toBe(RUNE_ARMOR);
+    expect(deck().hand.map((entry) => entry.card)).toEqual([RUNE_ARMOR]);
   });
 
   it('asks before an occupied slot is replaced', async () => {
     const buckler: CardRef = { deckId: 'deck-1', cardId: 'e3' };
     cardManager.restore({
       ...createEquipmentDeckState('a'),
-      activeCard: { deckId: 'deck-1', card: BUCKLER },
+      hand: [{ deckId: 'deck-1', card: BUCKLER }],
     });
     choice = { characterId: 'a', slot: 'leftHand' };
     confirm.mockResolvedValue(false);
@@ -85,7 +85,7 @@ describe('CardAssignmentService', () => {
     expect(confirm).toHaveBeenCalledWith(
       expect.objectContaining({ message: '„Turmschild“ in den Ablagestapel legen?' }),
     );
-    expect(deck().activeCard?.card).toBe(BUCKLER);
+    expect(deck().hand.map((entry) => entry.card)).toEqual([BUCKLER]);
 
     confirm.mockResolvedValue(true);
     await service.assignCard(buckler);

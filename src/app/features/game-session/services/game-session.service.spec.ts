@@ -62,7 +62,7 @@ describe('GameSessionService', () => {
     expect(characters.characters()).toEqual([]);
     expect(board.boardState()).toEqual(DEFAULT_DUNGEON_BOARD_STATE);
     expect(board.positions()).toEqual([]);
-    expect(cards.state()).toEqual({ decks: [], activeCard: null, assigned: [] });
+    expect(cards.state()).toEqual({ decks: [], hand: [], assigned: [] });
     expect(TestBed.inject(GameLogService).entries()).toEqual([]);
     expect(TestBed.inject(GameTimeService).gameTime()).toEqual(new Date(2390, 4, 6, 7, 0, 0));
   });

@@ -1,8 +1,8 @@
 import { EquipmentSlot } from './equipment.model';
 
-/** Die eine aktive Karte aller Decks. */
-export interface ActiveLocation {
-  kind: 'active';
+/** Hand des Dungeon Masters: gezogene Karten aller Decks. */
+export interface HandLocation {
+  kind: 'hand';
 }
 
 /** Stapel oder Bank des eigenen Decks einer Karte; eine Karte liegt nie in einem fremden Deck. */
@@ -18,10 +18,10 @@ export interface EquippedLocation {
 }
 
 /**
- * Ort einer Karte und Ziel einer Bewegung. Weitere Orte (z. B. Hand, Inventar) kommen als neue `kind` dazu.
- * Beim Nachziehstapel als Ziel wird die Karte eingemischt.
+ * Ort einer Karte und Ziel einer Bewegung. Weitere Orte (z. B. Inventar) kommen als neue `kind` dazu.
+ * Beim Nachziehstapel als Ziel wird die Karte eingemischt, in der Hand kommt sie ans Ende.
  */
-export type CardLocation = ActiveLocation | PileLocation | EquippedLocation;
+export type CardLocation = HandLocation | PileLocation | EquippedLocation;
 
 export type PileKind = PileLocation['kind'];
 

@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-07  
 **Priorität:** Hoch  
-**Status:** open  
+**Status:** done (2026-11-07 08:45)  
 **Bezug:** setzt `docs/refactoring-requests/done/card-move-foundation.md` voraus;
 `src/app/features/card-manager/` (`active-card-overlay`, `card-manager-page`, `deck-row`, `deck-piles`,
 `equipped-cards`, `card-assignment.service.ts`), `src/app/core/models/deck-state.model.ts`,
@@ -18,7 +18,7 @@ Die vier Requests bauen aufeinander auf und werden nacheinander umgesetzt. Ein R
 alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
 
 1. `docs/refactoring-requests/done/card-move-foundation.md` (keine Voraussetzung)
-2. **`docs/feature-requests/card-viewer.md`** ← dieser Request – braucht 1. (`CardDisplay` in `shared/`,
+2. **`docs/feature-requests/done/card-viewer.md`** ← dieser Request – braucht 1. (`CardDisplay` in `shared/`,
    `locateCard`, `moveCard`, Zuweisen per `CardRef`)
 3. `docs/feature-requests/character-inventory.md` – braucht 1. und 2.
 4. `docs/feature-requests/card-viewer-comfort.md` – braucht 1. bis 3.
@@ -61,7 +61,7 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
 
 ## Anforderungen
 
-### 1. Hand des Dungeon Masters statt aktiver Karte
+### 1. Hand des Dungeon Masters statt aktiver Karte ✅ done (2026-11-07 08:45)
 
 - `DeckState.activeCard` wird zur geordneten Liste `hand` (Einträge mit `deckId` und Karte). Neuester Eintrag
   steht am Ende.
@@ -72,7 +72,7 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
   Deck nur noch auf.
 - Zurücksetzen eines Decks mischt auch seine Handkarten zurück. Entfernen eines Decks entfernt seine Handkarten.
 
-### 2. Bereich „Hand des Dungeon Masters“
+### 2. Bereich „Hand des Dungeon Masters“ ✅ done (2026-11-07 08:45)
 
 - Ganz oben im Hauptbereich des Card Managers, über „Ausgerüstet“, steht der Bereich „Hand des Dungeon Masters“
   mit Anzahl. Er zeigt alle Handkarten mit dem Namen ihres Decks.
@@ -80,7 +80,7 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
 - Ohne Handkarten ist der Bereich ausgeblendet, wie „Ausgerüstet“.
 - Höhe und Scrollverhalten wie „Ausgerüstet“ (höchstens zwei Reihen sichtbar, weitere scrollen in sich).
 
-### 3. Card Viewer
+### 3. Card Viewer ✅ done (2026-11-07 08:45)
 
 - Neuer globaler Viewer unter `src/app/shared/components/card-viewer/`, gesteuert von einem Root-Service
   (`CardViewerService`: `open(ref, kontext?)`, `close()`, `viewed`). Er ist einmal in `app.html` eingebunden und
@@ -95,7 +95,7 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
 - Der Viewer liegt auch über offenen Dialogen (z. B. dem Charakter-Editor).
 - Verschwindet die Karte (z. B. Deck entfernt, Spielstand geladen), schließt der Viewer.
 
-### 4. Aktions-Registry
+### 4. Aktions-Registry ✅ done (2026-11-07 08:45)
 
 - Eine Kartenaktion beschreibt sich selbst: ID, Beschriftung, Gruppe (für Trennlinien), Reihenfolge, „verfügbar?“
   (sonst ausgeblendet), optional „Grund für deaktiviert“ (ausgegraut mit Tooltip) und „ausführen“.
@@ -105,7 +105,7 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
   Der Viewer zeigt alle verfügbaren Aktionen, ohne eine einzelne zu kennen.
 - Allgemeine Aktionen liegen unter `shared/` und werden in `app.config.ts` registriert.
 
-### 5. Aktionen
+### 5. Aktionen ✅ done (2026-11-07 08:45)
 
 | Aktion                              | Verfügbar, wenn die Karte …                                                   |
 | ----------------------------------- | ----------------------------------------------------------------------------- |
@@ -121,7 +121,7 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
 - Legt eine Aktion eine ausgerüstete Karte woanders hin, verliert der Besitzer den Bonus (Regeln aus
   REQUIREMENTS Abschnitt 1). Das kommt ins Log.
 
-### 6. Viewer öffnen statt Direktaktionen
+### 6. Viewer öffnen statt Direktaktionen ✅ done (2026-11-07 08:45)
 
 - **Card Manager:** Ein Klick auf eine Karte öffnet den Viewer. Das gilt für die Hand, „Ausgerüstet“, die Karten
   im aufgeklappten Nachziehstapel, Ablagestapel und in der Bank sowie die oberste Ablagekarte in der kompakten
@@ -131,19 +131,19 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
 - **Charakter-Editor:** Ein Klick auf Bild oder Name einer ausgerüsteten Karte öffnet den Viewer (siehe 7.).
   Der Knopf „Ablegen“ im Editor entfällt zugunsten der Viewer-Aktion.
 
-### 7. Viewer im Charakter-Editor (Entwurf)
+### 7. Viewer im Charakter-Editor (Entwurf) ✅ done (2026-11-07 08:45)
 
 - Aus dem Editor geöffnet, arbeitet der Viewer im Modus `draft`. Er zeigt nur Aktionen, die den Entwurf
   unterstützen, für Karten dieses Charakters zunächst „In den Ablagestapel legen“.
 - Diese Aktionen schreiben in den Entwurf des Editors. Erst „Übernehmen“ wendet sie an, „Abbrechen“ verwirft sie.
 - Der Ort im Viewer zeigt den Entwurfsstand, z. B. „wird abgelegt“.
 
-### 8. Spielesession und XML-Spielstand
+### 8. Spielesession und XML-Spielstand ✅ done (2026-11-07 08:45)
 
 - Die Hand gehört zur Spielesession und zum XML-Spielstand.
 - Ältere Spielstände und gespeicherte Sessions mit `activeCard` laden diese als einzige Handkarte.
 
-### 9. Dokumentation
+### 9. Dokumentation ✅ done (2026-11-07 08:45)
 
 - `REQUIREMENTS.md` Abschnitte 1 (Charakter-Editor: Ausrüstung) und 5 (Card Manager) beschreiben Hand, Viewer und
   Menü statt aktiver Karte und Direktklicks.
@@ -152,18 +152,18 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
 
 ## Akzeptanzkriterien
 
-- [ ] Der DM zieht nacheinander drei Karten aus zwei Decks; alle drei liegen in der Hand, keine wurde abgelegt.
-- [ ] Der Bereich „Hand des Dungeon Masters“ steht über „Ausgerüstet“ und ist ohne Handkarten ausgeblendet.
-- [ ] Jede Karte im Card Manager und jede ausgerüstete Karte im Charakter-Editor öffnet beim Klick den Viewer mit
+- [x] Der DM zieht nacheinander drei Karten aus zwei Decks; alle drei liegen in der Hand, keine wurde abgelegt.
+- [x] Der Bereich „Hand des Dungeon Masters“ steht über „Ausgerüstet“ und ist ohne Handkarten ausgeblendet.
+- [x] Jede Karte im Card Manager und jede ausgerüstete Karte im Charakter-Editor öffnet beim Klick den Viewer mit
       Deck und Ort; Karten im Nachziehstapel zeigen die Vorderseite.
-- [ ] Klick daneben und `Esc` schließen den Viewer, ohne die Karte zu bewegen.
-- [ ] Die Aktionen aus 5. erscheinen nur, wo sie verfügbar sind, und bringen die Karte immer in Stapel oder Bank
+- [x] Klick daneben und `Esc` schließen den Viewer, ohne die Karte zu bewegen.
+- [x] Die Aktionen aus 5. erscheinen nur, wo sie verfügbar sind, und bringen die Karte immer in Stapel oder Bank
       ihres eigenen Decks.
-- [ ] Anlegen und Umlegen ändern Werte und Log wie in REQUIREMENTS Abschnitt 1.
-- [ ] Eine Test-Aktion, die nur per `provideCardActions` registriert wird, erscheint im Menü, ohne den Viewer zu
+- [x] Anlegen und Umlegen ändern Werte und Log wie in REQUIREMENTS Abschnitt 1.
+- [x] Eine Test-Aktion, die nur per `provideCardActions` registriert wird, erscheint im Menü, ohne den Viewer zu
       ändern (Spec).
-- [ ] Im Charakter-Editor wirkt „In den Ablagestapel legen“ erst nach „Übernehmen“; „Abbrechen“ lässt die Karte am
+- [x] Im Charakter-Editor wirkt „In den Ablagestapel legen“ erst nach „Übernehmen“; „Abbrechen“ lässt die Karte am
       Charakter.
-- [ ] Spielstände mit `activeCard` laden die Karte in die Hand; Hand übersteht Speichern/Laden.
-- [ ] Klickflächen Ablagestapel/Bank und `active-card-overlay` sind entfernt.
-- [ ] Ein Playwright-Smoke-Test zieht zwei Karten, öffnet eine aus der Hand und legt sie über das Menü ab.
+- [x] Spielstände mit `activeCard` laden die Karte in die Hand; Hand übersteht Speichern/Laden.
+- [x] Klickflächen Ablagestapel/Bank und `active-card-overlay` sind entfernt.
+- [x] Ein Playwright-Smoke-Test zieht zwei Karten, öffnet eine aus der Hand und legt sie über das Menü ab.

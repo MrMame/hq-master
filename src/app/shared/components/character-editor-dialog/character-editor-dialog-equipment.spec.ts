@@ -9,7 +9,7 @@ import {
   editorField,
 } from '../../testing/character-editor-dialog.fixtures';
 import {
-  discardButton,
+  discardInViewer,
   EQUIPPED_BARBARIAN,
   setupEquippedEditor,
 } from '../../testing/character-equipment.fixtures';
@@ -21,11 +21,13 @@ describe('CharacterEditorDialog – equipment', () => {
       .entries()
       .map((entry) => entry.text);
 
-  it('discards the card on apply, lowers armor to the new maximum and logs it (6/6 → 4/4)', async () => {
-    const { host, click, button, characters, close }: CharacterEditorDialogSetup =
-      await setupEquippedEditor();
+  it('discards the card from the viewer on apply, lowers armor to the new maximum and logs it (6/6 → 4/4)', async () => {
+    const setup: CharacterEditorDialogSetup = await setupEquippedEditor();
+    const { button, characters, close } = setup;
 
-    await click(discardButton(host, 'Runenrüstung'));
+    await discardInViewer(setup, 'Runenrüstung');
+    // Bis zum Übernehmen liegt die Karte noch am Charakter.
+    expect(deck().assigned).toHaveLength(2);
     await (await button('Übernehmen')).click();
 
     expect(deck().decks[0].discardPile).toEqual([RUNE_ARMOR]);
@@ -36,10 +38,10 @@ describe('CharacterEditorDialog – equipment', () => {
   });
 
   it('keeps the card on cancel', async () => {
-    const { host, click, button, characters }: CharacterEditorDialogSetup =
-      await setupEquippedEditor();
+    const setup: CharacterEditorDialogSetup = await setupEquippedEditor();
+    const { button, characters } = setup;
 
-    await click(discardButton(host, 'Runenrüstung'));
+    await discardInViewer(setup, 'Runenrüstung');
     await (await button('Abbrechen')).click();
 
     expect(deck().assigned).toHaveLength(2);

@@ -9,6 +9,7 @@
 @import './styles/components/feature-page.css' layer(components);
 @import './styles/components/sidebar.css' layer(components);
 @import './styles/components/dialog.css' layer(components);
+@import './styles/components/card-strip.css' layer(components);
 
 @layer base {
   *,

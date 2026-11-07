@@ -15,7 +15,7 @@ describe('migrateLegacyDeck', () => {
       assigned: [{ card: TOWER_SHIELD, characterId: 'a', slot: 'leftHand' }],
     });
     expect(state.decks[0].id).toBe('deck-1');
-    expect(state.activeCard).toBeNull();
+    expect(state.hand).toEqual([]);
     expect(state.assigned[0].deckId).toBe('deck-1');
   });
 });

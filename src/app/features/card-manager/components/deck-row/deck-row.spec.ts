@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DeckRow } from './deck-row';
+import { CardViewerService } from '../../../../shared/services/card-viewer.service';
 import { DeckInstance } from '../../../../core/models/deck-state.model';
 import {
   BASIC_CARD,
@@ -23,6 +24,8 @@ describe('DeckRow', () => {
     host.querySelector(`[data-testid="${testId}"]`)?.textContent?.trim();
   const drawButton: () => HTMLButtonElement = () =>
     host.querySelector<HTMLButtonElement>('button[aria-label^="Karte ziehen"]')!;
+  const discardButton: () => HTMLButtonElement = () =>
+    host.querySelector<HTMLButtonElement>('button[aria-label^="Oberste Karte im Ablagestapel"]')!;
 
   async function render(deck: DeckInstance, expanded: boolean = false): Promise<void> {
     fixture.componentRef.setInput('deck', deck);
@@ -61,11 +64,31 @@ describe('DeckRow', () => {
     expect(drawButton().disabled).toBe(true);
   });
 
-  it('draws a card of its own deck without toggling the row', async () => {
+  it('draws the top card into the hand and opens it in the viewer without toggling the row', async () => {
     await render(testbed.cardManager.decks()[1]);
     drawButton().click();
-    expect(testbed.cardManager.state().activeCard?.deckId).toBe('deck-2');
+    expect(testbed.cardManager.hand()).toEqual([{ deckId: 'deck-2', card: BASIC_CARD }]);
+    expect(TestBed.inject(CardViewerService).viewed()?.ref).toEqual({
+      deckId: 'deck-2',
+      cardId: 'b1',
+    });
     expect(toggles).toBe(0);
+  });
+
+  it('opens the top discard card in the viewer without moving it or toggling the row', async () => {
+    await render(createDeckInstance('deck-2', { discardPile: [BASIC_CARD, COMBAT_CARD] }));
+    discardButton().click();
+    expect(TestBed.inject(CardViewerService).viewed()?.ref).toEqual({
+      deckId: 'deck-2',
+      cardId: 'c1',
+    });
+    expect(testbed.cardManager.hand()).toEqual([]);
+    expect(toggles).toBe(0);
+  });
+
+  it('disables the discard pile without cards', async () => {
+    await render(createDeckInstance('deck-2'));
+    expect(discardButton().disabled).toBe(true);
   });
 
   it('asks to toggle when the row or its name is clicked', async () => {

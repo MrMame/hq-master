@@ -19,10 +19,13 @@ function roundTrip(state: DeckState): DeckState {
 }
 
 describe('deck.xml-mapper – several decks', () => {
-  it('keeps all decks, the active card and assignments of two instances of the same file', () => {
+  it('keeps all decks, the hand and assignments of two instances of the same file', () => {
     const state: DeckState = {
       ...createTwoDeckState(),
-      activeCard: { deckId: 'deck-2', card: COMBAT_CARD },
+      hand: [
+        { deckId: 'deck-2', card: COMBAT_CARD },
+        { deckId: 'deck-1', card: COMBAT_CARD },
+      ],
       assigned: [
         assignedCard(TOWER_SHIELD, 'a', 'leftHand'),
         assignedCard(TOWER_SHIELD, 'b', 'leftHand', 'deck-2'),
@@ -31,34 +34,34 @@ describe('deck.xml-mapper – several decks', () => {
     expect(roundTrip(state)).toEqual(state);
   });
 
-  it('writes an empty <activeCard/> without active card and no <deck> without decks', () => {
+  it('writes an empty <hand/> without hand cards and no <deck> without decks', () => {
     const doc: XMLDocument = document.implementation.createDocument(null, null);
-    const empty: DeckState = { decks: [], activeCard: null, assigned: [] };
+    const empty: DeckState = { decks: [], hand: [], assigned: [] };
     const el: Element = writeDeck(doc, empty);
     expect(el.querySelector('deck')).toBeNull();
-    expect(el.querySelector('activeCard')?.children).toHaveLength(0);
+    expect(el.querySelector('hand')?.children).toHaveLength(0);
     expect(readDeck(el)).toEqual(empty);
   });
 
-  it('drops an active card and assignments of missing decks', () => {
+  it('drops hand cards and assignments of missing decks', () => {
     const xml: string = `<cardDeck><deck id="d1" name="A"/>
-      <activeCard deckId="gone"><card id="b1"/></activeCard>
+      <hand><handCard deckId="gone"><card id="b1"/></handCard></hand>
       <assigned><assignment deckId="gone" characterId="a" slot="body">
         <card id="e1" type="equipment" slot="body"/>
       </assignment></assigned></cardDeck>`;
     const state: DeckState = readDeck(parse(xml));
     expect(state.decks.map((deck) => deck.id)).toEqual(['d1']);
-    expect(state.activeCard).toBeNull();
+    expect(state.hand).toEqual([]);
     expect(state.assigned).toEqual([]);
   });
 
   it('reads an empty <cardDeck/> as no decks', () => {
-    expect(readDeck(parse('<cardDeck/>'))).toEqual({ decks: [], activeCard: null, assigned: [] });
+    expect(readDeck(parse('<cardDeck/>'))).toEqual({ decks: [], hand: [], assigned: [] });
   });
 });
 
 describe('deck.xml-mapper – older saves with one deck', () => {
-  it('reads one deck with its active card and assignments', () => {
+  it('reads one deck with its active card as the only hand card and its assignments', () => {
     const xml: string = `<cardDeck>
       <config id="old" name="Altes Deck"/>
       <drawPile><card id="b1" name="Fackel"/></drawPile>
@@ -71,12 +74,11 @@ describe('deck.xml-mapper – older saves with one deck', () => {
     expect(state.decks).toHaveLength(1);
     expect(state.decks[0]).toMatchObject({ id: 'old', name: 'Altes Deck', source: '' });
     expect(state.decks[0].drawPile.map((card) => card.id)).toEqual(['b1']);
-    expect(state.activeCard?.deckId).toBe('old');
-    expect(state.activeCard?.card.id).toBe('c1');
+    expect(state.hand.map((entry) => [entry.deckId, entry.card.id])).toEqual([['old', 'c1']]);
     expect(state.assigned.map((entry) => [entry.deckId, entry.card.id])).toEqual([['old', 'e2']]);
   });
 
-  it('reads missing lists as empty and a missing active card as none', () => {
+  it('reads missing lists as empty and a missing active card as an empty hand', () => {
     expect(readDeck(parse('<cardDeck><config/></cardDeck>'))).toEqual({
       decks: [
         {
@@ -89,7 +91,7 @@ describe('deck.xml-mapper – older saves with one deck', () => {
           bank: [],
         },
       ],
-      activeCard: null,
+      hand: [],
       assigned: [],
     });
   });

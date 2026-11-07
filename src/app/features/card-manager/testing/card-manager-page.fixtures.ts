@@ -8,7 +8,7 @@ import { DeckXmlLoaderService } from '../../../core/services/card-deck/deck-xml-
 import { DeckConfig } from '../../../core/models/deck-config.model';
 import { CardRef, DeckState } from '../../../core/models/deck-state.model';
 import { createDeckInstance } from '../../../core/testing/deck.fixtures';
-import { CardAssignmentService } from '../services/card-assignment.service';
+import { CardAssignmentService } from '../../../shared/services/card-assignment.service';
 
 export interface CardAssignmentServiceMock {
   assignDisabledReason: WritableSignal<string | null>;

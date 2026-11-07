@@ -1,4 +1,4 @@
-import { Signal } from '@angular/core';
+import { Provider, Signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
@@ -34,11 +34,13 @@ export interface CharacterEditorDialogSetup {
 
 /**
  * Rendert den Editor mit `data` (`null` = neuer Charakter), gemocktem `MatDialogRef` und gemockter
- * Rückfrage (Standard: bestätigt); `stored` liegt vorher schon in der Session (nur für Specs).
+ * Rückfrage (Standard: bestätigt); `stored` liegt vorher schon in der Session, `providers` ergänzen das
+ * TestBed (nur für Specs).
  */
 export async function setupCharacterEditorDialog(
   data: CharacterInfo | null,
   stored: CharacterInfo[] = [],
+  providers: Provider[] = [],
 ): Promise<CharacterEditorDialogSetup> {
   const close: Mock = vi.fn();
   let confirmed: boolean = true;
@@ -48,6 +50,7 @@ export async function setupCharacterEditorDialog(
     providers: [
       { provide: MatDialogRef, useValue: { close } },
       { provide: MAT_DIALOG_DATA, useValue: data },
+      ...providers,
     ],
   });
   // Nicht über providers: MatDialogModule stellt MatDialog im Standalone-Injector des Editors bereit.

@@ -1,4 +1,4 @@
-import { ActiveCard, AssignedCard, DeckInstance, DeckState } from '../../models/deck-state.model';
+import { AssignedCard, DeckInstance, DeckState, HandCard } from '../../models/deck-state.model';
 import { EQUIPMENT_SLOTS } from '../../models/equipment.model';
 import { StorageCodec } from '../../session-state/persisted-state';
 import { LegacyDeckState, migrateLegacyDeck } from './deck-state-migration.util';
@@ -33,7 +33,7 @@ function isDeckInstance(value: unknown): value is DeckInstance {
   );
 }
 
-function isActiveCard(value: unknown): value is ActiveCard {
+function isHandCard(value: unknown): value is HandCard {
   return isRecord(value) && typeof value['deckId'] === 'string' && isRecord(value['card']);
 }
 
@@ -47,6 +47,12 @@ function decodeLegacy(stored: Record<string, unknown>): DeckState {
     ...(stored as unknown as LegacyDeckState),
     assigned: list(stored['assigned'], isAssignment),
   });
+}
+
+/** Hand; ein älterer Zustand mit `activeCard` lädt sie als einzige Handkarte. */
+function decodeHand(stored: Record<string, unknown>): HandCard[] {
+  if (Array.isArray(stored['hand'])) return list(stored['hand'], isHandCard);
+  return isHandCard(stored['activeCard']) ? [stored['activeCard']] : [];
 }
 
 /**
@@ -64,7 +70,7 @@ export const DECK_STATE_CODEC: StorageCodec<DeckState> = {
         ...deck,
         source: typeof deck.source === 'string' ? deck.source : '',
       })),
-      activeCard: isActiveCard(stored['activeCard']) ? stored['activeCard'] : null,
+      hand: decodeHand(stored),
       assigned: list(stored['assigned'], isAssignedCard),
     });
   },

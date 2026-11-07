@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MainNav } from './shared/components/main-nav/main-nav';
+import { CardViewer } from './shared/components/card-viewer/card-viewer';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MainNav],
+  imports: [RouterOutlet, MainNav, CardViewer],
   template: `
     <!-- Ganzseitiger Container: Navigationsleiste oben, Seiteninhalt darunter -->
     <div class="app-shell">
@@ -19,6 +20,9 @@ import { MainNav } from './shared/components/main-nav/main-nav';
         <router-outlet></router-outlet>
       </main>
     </div>
+
+    <!-- 3. Card Viewer: schwebt im Overlay-Container über allem, aus jedem Feature nutzbar -->
+    <app-card-viewer />
   `,
   styleUrl: './app.css',
 })

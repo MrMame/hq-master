@@ -8,8 +8,7 @@ import { isSameCard, updateDeck, withDiscarded } from './deck-state.util';
 import { shuffled } from './shuffle.util';
 
 /**
- * Nimmt eine Karte von ihrem Ort und legt sie am Ziel ab: aktive Karte (eine bisher aktive kommt in den
- * Ablagestapel ihres Decks), Nachziehstapel (eingemischt), Ablagestapel oder Bank ihres eigenen Decks, Slot
+ * Nimmt eine Karte von ihrem Ort und legt sie am Ziel ab: Hand (ans Ende), Nachziehstapel (eingemischt), Ablagestapel oder Bank ihres eigenen Decks, Slot
  * eines Charakters (eine dort liegende Karte kommt in den Ablagestapel ihres Decks).
  * Unbekannte Karte, Ziel gleich Herkunft oder unpassender Slot → derselbe Zustand.
  */
@@ -48,9 +47,8 @@ function relocate(
     return fitsSlot(card, target) ? equip(take(s, ref, location), ref.deckId, card, target) : s;
   }
   const taken: DeckState = take(s, ref, location);
-  if (target.kind === 'active') {
-    const previous: DeckState = withDiscarded(taken, taken.activeCard ? [taken.activeCard] : []);
-    return { ...previous, activeCard: { deckId: ref.deckId, card } };
+  if (target.kind === 'hand') {
+    return { ...taken, hand: [...taken.hand, { deckId: ref.deckId, card }] };
   }
   return updateDeck(taken, ref.deckId, (deck) => withPile(deck, target.kind, card));
 }
@@ -61,8 +59,8 @@ function fitsSlot(card: Card, target: EquippedLocation): card is EquipmentCard {
 
 function take(s: DeckState, ref: CardRef, from: CardLocation): DeckState {
   switch (from.kind) {
-    case 'active':
-      return { ...s, activeCard: null };
+    case 'hand':
+      return { ...s, hand: s.hand.filter((entry) => !isSameCard(entry, ref)) };
     case 'equipped':
       return { ...s, assigned: s.assigned.filter((entry) => !isSameCard(entry, ref)) };
     default:

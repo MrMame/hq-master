@@ -29,8 +29,8 @@ export interface DeckInstance {
   bank: Card[];
 }
 
-/** Die eine aktive Karte aller Decks mit ihrer Instanz. */
-export interface ActiveCard {
+/** Eine Karte in der Hand des Dungeon Masters mit ihrer Instanz. */
+export interface HandCard {
   deckId: string;
   card: Card;
 }
@@ -38,7 +38,8 @@ export interface ActiveCard {
 export interface DeckState {
   /** Reihenfolge = Anzeigereihenfolge auf dem Tisch. */
   decks: DeckInstance[];
-  activeCard: ActiveCard | null;
+  /** Hand des Dungeon Masters; neueste Karte am Ende. */
+  hand: HandCard[];
   /** Zugewiesene Karten liegen in keinem anderen Bereich. */
   assigned: AssignedCard[];
 }

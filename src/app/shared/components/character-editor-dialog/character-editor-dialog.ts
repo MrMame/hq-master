@@ -23,14 +23,16 @@ import { EquipmentService } from '../../../core/services/equipment/equipment.ser
 import { cardsOf, modifiersOf } from '../../../core/services/equipment/effective-stats.util';
 import { CharacterStatsEditor, StatChange } from '../character-stats-editor/character-stats-editor';
 import { CharacterEquipmentEditor } from '../character-equipment-editor/character-equipment-editor';
+import { CardViewerService } from '../../services/card-viewer.service';
+import { CardDraft } from '../../models/card-action.model';
 
 /**
  * Systemweiter Charakter-Editor: Ohne Daten geöffnet legt er einen neuen Charakter an, sonst bearbeitet
  * er den übergebenen. „Übernehmen“ schreibt sofort in die Session, „Abbrechen“ verwirft die Arbeitskopie.
  * „Entfernen“ (nur beim Bearbeiten) löscht den Charakter nach einer Rückfrage aus der Session.
  * „Zufälliger Charakter erstellen“ (nur beim Anlegen) füllt die Arbeitskopie mit Zufallswerten.
- * Beim Übernehmen werden Leben und Rüstung auf ihr wirksames Maximum begrenzt; „Ablegen“ unter „Ausrüstung“
- * legt die Karte erst dann in den Ablagestapel.
+ * Beim Übernehmen werden Leben und Rüstung auf ihr wirksames Maximum begrenzt. Karten unter „Ausrüstung“
+ * öffnen den Card Viewer im Entwurf; dort abgelegte Karten kommen erst dann in den Ablagestapel.
  */
 @Component({
   selector: 'app-character-editor-dialog',
@@ -55,6 +57,7 @@ export class CharacterEditorDialog {
   private readonly gameTimeService: GameTimeService = inject(GameTimeService);
   private readonly gameLog: GameLogService = inject(GameLogService);
   private readonly equipment: EquipmentService = inject(EquipmentService);
+  private readonly cardViewer: CardViewerService = inject(CardViewerService);
   private readonly character: CharacterInfo | null = inject<CharacterInfo | null>(MAT_DIALOG_DATA);
 
   protected readonly isEditMode: boolean = this.character !== null;
@@ -68,6 +71,12 @@ export class CharacterEditorDialog {
 
   /** Abgelegte, aber noch nicht übernommene Karten. */
   private readonly discardedCards: WritableSignal<CardRef[]> = signal<CardRef[]>([]);
+  /** Entwurf für den Card Viewer: Ablegen wirkt erst mit „Übernehmen“. */
+  private readonly cardDraft: CardDraft = {
+    characterId: this.draft().id,
+    discarded: this.discardedCards.asReadonly(),
+    discard: (ref: CardRef) => this.discardedCards.update((refs) => [...refs, ref]),
+  };
   /** Karten, die nach dem Übernehmen am Charakter bleiben. */
   protected readonly equippedCards: Signal<AssignedCard[]> = computed(() =>
     cardsOf(this.equipment.assigned(), this.draft().id).filter(
@@ -87,8 +96,8 @@ export class CharacterEditorDialog {
     this.draft.update((character) => withStat(character, stat, value, !this.isEditMode));
   }
 
-  discardCard(ref: CardRef): void {
-    this.discardedCards.update((refs) => [...refs, ref]);
+  viewCard(ref: CardRef): void {
+    this.cardViewer.open(ref, { mode: 'draft', draft: this.cardDraft });
   }
 
   toggleAbility(ability: string): void {

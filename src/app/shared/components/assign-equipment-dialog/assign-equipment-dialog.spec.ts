@@ -6,10 +6,10 @@ import { Mock } from 'vitest';
 
 import { AssignEquipmentDialog } from './assign-equipment-dialog';
 import { AssignEquipmentDialogData } from '../../models/assign-equipment.model';
-import { CharacterInfo } from '../../../../core/models/character-info.model';
-import { AssignedCard } from '../../../../core/models/deck-state.model';
-import { createTestCharacter } from '../../../../core/testing/character.fixtures';
-import { assignedCard, RUNE_ARMOR, TOWER_SHIELD } from '../../../../core/testing/deck.fixtures';
+import { CharacterInfo } from '../../../core/models/character-info.model';
+import { AssignedCard } from '../../../core/models/deck-state.model';
+import { createTestCharacter } from '../../../core/testing/character.fixtures';
+import { assignedCard, RUNE_ARMOR, TOWER_SHIELD } from '../../../core/testing/deck.fixtures';
 
 const barbarian: CharacterInfo = { ...createTestCharacter('a'), name: 'Barbar' };
 const dwarf: CharacterInfo = { ...createTestCharacter('b'), name: 'Zwerg' };
