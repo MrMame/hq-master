@@ -97,3 +97,6 @@ Thumbs.db
 /playwright/.cache/
 # Lokale Ad-hoc-Proben (Projekt "probe" in playwright.config.ts)
 /e2e/probe/
+
+# Deck-Katalog (Build-Ergebnis von scripts/build-deck-index.mjs)
+/public/decks/index.json

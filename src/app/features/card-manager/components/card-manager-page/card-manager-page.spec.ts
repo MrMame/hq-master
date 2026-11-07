@@ -32,7 +32,7 @@ describe('CardManagerPage', () => {
     expect(host.textContent).not.toContain('Deck Aktionen');
   });
 
-  it('puts path and "Deck hinzufügen" in "Deck Management" above the deck list group', () => {
+  it('puts the deck choice and "Deck hinzufügen" in "Deck Management" above the deck list group', () => {
     const sections: HTMLElement[] = Array.from(host.querySelectorAll('app-sidebar-section'));
     expect(sections.map((section) => section.getAttribute('sectionid'))).toEqual([
       'card-manager.deck-management',

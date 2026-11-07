@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-07  
 **Priorität:** Mittel  
-**Status:** open  
+**Status:** ✅ done (2026-11-07 18:04)  
 **Bezug:** `src/app/features/card-manager/components/add-deck-form/`, `src/app/core/services/card-deck/`,
 `public/decks/`, `package.json`, `playwright.config.ts`, `.gitignore`, `REQUIREMENTS.md` (Abschnitt Card Manager)
 
@@ -26,7 +26,7 @@ Deck bereitzustellen heißt nur noch: Ordner nach `public/decks/` kopieren.
 
 ## Anforderungen
 
-### 1. Deck-Katalog per Skript erzeugen
+### 1. Deck-Katalog per Skript erzeugen ✅ done (2026-11-07 18:04)
 
 - Ein Node-Skript `scripts/build-deck-index.mjs` durchsucht `public/decks/*/*.xml` und schreibt
   `public/decks/index.json`:
@@ -42,21 +42,21 @@ Deck bereitzustellen heißt nur noch: Ordner nach `public/decks/` kopieren.
   die Datei und Grund nennt. Es entsteht dann keine `index.json`.
 - Das Skript bekommt Tests (`node --test`), u. a. für mehrere Decks, Sortierung, fehlenden `name` und kein Deck.
 
-### 2. Skript automatisch ausführen
+### 2. Skript automatisch ausführen ✅ done (2026-11-07 18:04)
 
 - Das Skript läuft vor jedem Weg, auf dem die App gebaut oder ausgeliefert wird:
   `prestart`, `prebuild`, `predeploy` in `package.json` (`ng deploy` ruft nicht `npm run build` auf) und im
   `webServer.command` von `playwright.config.ts` (startet `ng serve` direkt).
 - `public/decks/index.json` ist ein Build-Ergebnis und steht in `.gitignore`.
 
-### 3. Katalog in der App laden
+### 3. Katalog in der App laden ✅ done (2026-11-07 18:04)
 
 - Ein Service `DeckCatalogService` (in `core/services/card-deck/`) lädt `decks/index.json` per `HttpClient` und
   stellt die Einträge als Signal bereit, dazu Lade- und Fehlerzustand.
 - Der Katalog wird einmal geladen, nicht bei jedem Öffnen des Card Managers neu.
 - Der Katalog gehört nicht zur Spielesession und nicht zum XML-Spielstand.
 
-### 4. Auswahlliste statt Pfadeingabe
+### 4. Auswahlliste statt Pfadeingabe ✅ done (2026-11-07 18:04)
 
 - `AddDeckForm` zeigt statt des Textfelds eine Auswahlliste mit den Namen aller Decks im Katalog und daneben
   „Deck hinzufügen“. Eine Pfadeingabe gibt es nicht mehr.
@@ -72,7 +72,7 @@ Deck bereitzustellen heißt nur noch: Ordner nach `public/decks/` kopieren.
   - Katalog nicht ladbar: Meldung „Deckliste konnte nicht geladen werden.“, Knopf deaktiviert.
   - Katalog leer: Meldung „Keine Decks unter public/decks gefunden.“, Knopf deaktiviert.
 
-### 5. Dokumentation
+### 5. Dokumentation ✅ done (2026-11-07 18:04)
 
 - `REQUIREMENTS.md` beschreibt die Auswahlliste statt „Pfadangabe, vorbelegt mit dem Beispieldeck“.
 - `REQUIREMENTS.md` nennt, dass ein Deck durch Ablegen eines Ordners unter `public/decks/` bereitgestellt wird und
@@ -82,12 +82,12 @@ Deck bereitzustellen heißt nur noch: Ordner nach `public/decks/` kopieren.
 
 ## Akzeptanzkriterien
 
-- [ ] Ein neuer Deck-Ordner unter `public/decks/` erscheint nach `npm start` ohne weitere Schritte in der Auswahlliste.
-- [ ] Im Card Manager gibt es kein Textfeld für einen Deck-Pfad mehr.
-- [ ] Dasselbe Deck lässt sich mehrfach hintereinander hinzufügen („Monster“, „Monster (2)“, …), ohne die Auswahl zu
+- [x] Ein neuer Deck-Ordner unter `public/decks/` erscheint nach `npm start` ohne weitere Schritte in der Auswahlliste.
+- [x] Im Card Manager gibt es kein Textfeld für einen Deck-Pfad mehr.
+- [x] Dasselbe Deck lässt sich mehrfach hintereinander hinzufügen („Monster“, „Monster (2)“, …), ohne die Auswahl zu
       ändern.
-- [ ] Lade-, Fehler- und Leerzustand des Katalogs werden angezeigt; der Knopf ist dann deaktiviert (Specs mit
+- [x] Lade-, Fehler- und Leerzustand des Katalogs werden angezeigt; der Knopf ist dann deaktiviert (Specs mit
       `HttpTestingController`).
-- [ ] Ein fehlerhaftes Deck-XML lässt `npm start` / `npm run build` mit verständlicher Meldung scheitern.
-- [ ] `npm run e2e` und `npm run deploy` erzeugen den Katalog vor dem Start bzw. Build.
-- [ ] `public/decks/index.json` ist nicht eingecheckt.
+- [x] Ein fehlerhaftes Deck-XML lässt `npm start` / `npm run build` mit verständlicher Meldung scheitern.
+- [x] `npm run e2e` und `npm run deploy` erzeugen den Katalog vor dem Start bzw. Build.
+- [x] `public/decks/index.json` ist nicht eingecheckt.

@@ -1,10 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Provider, signal, WritableSignal } from '@angular/core';
+import { EnvironmentProviders, Provider, signal, WritableSignal } from '@angular/core';
 import { Mock, vi } from 'vitest';
 
 import { CardManagerPage } from '../components/card-manager-page/card-manager-page';
 import { CardManagerService } from '../../../core/services/card-deck/card-manager.service';
 import { DeckXmlLoaderService } from '../../../core/services/card-deck/deck-xml-loader.service';
+import { DeckCatalogService } from '../../../core/services/card-deck/deck-catalog.service';
+import { DeckCatalogEntry } from '../../../core/models/deck-catalog-entry.model';
 import { CharacterInfo } from '../../../core/models/character-info.model';
 import { DeckConfig } from '../../../core/models/deck-config.model';
 import { CardRef, DeckState } from '../../../core/models/deck-state.model';
@@ -19,7 +21,14 @@ export interface CardAssignmentServiceMock {
   inventoryTargets: Mock<() => CharacterInfo[]>;
 }
 
-/** Echter Deck-Zustand; nur das Laden der Deck-Datei und der Zuweisungsablauf sind gemockt. */
+/** Deckliste mit dem Beispieldeck, ohne HTTP; Specs mit echtem Katalog überschreiben `DeckCatalogService`. */
+export const DEFAULT_CATALOG_ENTRY: DeckCatalogEntry = {
+  id: 'default-deck',
+  name: 'Beispieldeck',
+  url: 'decks/default/default-deck.xml',
+};
+
+/** Echter Deck-Zustand; nur das Laden der Deck-Datei, die Deckliste und der Zuweisungsablauf sind gemockt. */
 export interface CardManagerTestbed {
   cardManager: CardManagerService;
   loadFromUrl: Mock<(url: string) => Promise<DeckConfig>>;
@@ -27,7 +36,9 @@ export interface CardManagerTestbed {
 }
 
 /** Konfiguriert das TestBed für Card-Manager-Komponenten; danach `TestBed.createComponent(…)`. */
-export function configureCardManagerTestbed(extraProviders: Provider[] = []): CardManagerTestbed {
+export function configureCardManagerTestbed(
+  extraProviders: (Provider | EnvironmentProviders)[] = [],
+): CardManagerTestbed {
   const loadFromUrl: Mock<(url: string) => Promise<DeckConfig>> = vi
     .fn<(url: string) => Promise<DeckConfig>>()
     .mockResolvedValue(createDeckInstance().config);
@@ -42,6 +53,14 @@ export function configureCardManagerTestbed(extraProviders: Provider[] = []): Ca
     providers: [
       { provide: DeckXmlLoaderService, useValue: { loadFromUrl } },
       { provide: CardAssignmentService, useValue: assignment },
+      {
+        provide: DeckCatalogService,
+        useValue: {
+          entries: signal([DEFAULT_CATALOG_ENTRY]),
+          isLoading: signal(false),
+          loadError: signal(null),
+        },
+      },
       ...extraProviders,
     ],
   });

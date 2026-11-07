@@ -3,12 +3,16 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "prestart": "node scripts/build-deck-index.mjs",
     "start": "ng serve",
+    "prebuild": "node scripts/build-deck-index.mjs",
     "build": "ng build",
+    "prewatch": "node scripts/build-deck-index.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
     "prepare": "husky",
+    "predeploy": "node scripts/build-deck-index.mjs",
     "deploy": "ng deploy --base-href=\"https://mrmame.github.io/hq-master/\"",
     "e2e": "playwright test --project=chromium"
   },

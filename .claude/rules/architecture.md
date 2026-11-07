@@ -23,7 +23,8 @@ core/
                     condition-templates.model.ts (CONDITION_TEMPLATES: Standardwerte und Symbole der Zustände),
                     condition-event.model.ts (ConditionEvent: Schaden/Ablauf eines Zustands),
                     game-log-entry.model.ts (GameLogEntry, GameLogEntryType: Ereignis-Log der Session),
-                    card.model.ts, deck-config.model.ts, deck-state.model.ts (Deck-Instanzen `DeckInstance`, die Hand
+                    card.model.ts, deck-config.model.ts, deck-catalog-entry.model.ts (`DeckCatalogEntry`: Eintrag der Deckliste),
+                    deck-state.model.ts (Deck-Instanzen `DeckInstance`, die Hand
                     als `HandCard[]`, `AssignedCard`, `InventoryCard` (eigene Liste, Boni nur aus Slots) und `CardRef` mit `deckId`; in core, weil der Charakter-Editor die
                     Ausrüstung bearbeitet),
                     equipment.model.ts (ModifiableStat, StatModifier, EquipmentSlot, CardSlot, Beschriftungen),
@@ -51,7 +52,9 @@ core/
                     `withinLimits(c, modifiers)` begrenzt auf das wirksame Maximum, `normalizedLimits` für Codec/XML
                     nur nach unten, `withAddedEquipment`)
     card-deck/    → CardManagerService (beliebig viele Deck-Instanzen, `hand`, `assigned`, `inventory`),
-                    DeckXmlLoaderService, deck-state.util.ts (Instanz finden/ändern, `isSameRef`, `withDiscarded` in den
+                    DeckXmlLoaderService, DeckCatalogService (Deckliste `decks/index.json` einmal laden: `entries`,
+                    `isLoading`, `loadError`; nicht Teil der Session), deck-catalog.util.ts (Inhalt der Deckliste prüfen),
+                    deck-state.util.ts (Instanz finden/ändern, `isSameRef`, `withDiscarded` in den
                     Ablagestapel der eigenen Instanz, `withoutDanglingRefs`), deck-instance.util.ts (hinzufügen mit Durchnummerieren,
                     umbenennen, entfernen, verschieben, mischen, zurücksetzen), card-location.util.ts (`locateCard`,
                     `findCard` per `CardRef`, `ownerOf`), card-move.util.ts (`moveCard`: einzige Kartenbewegung von jedem Ort an
@@ -150,7 +153,7 @@ features/
                          Viewer, sonst keine Klickflächen), DeckMenu (`MatMenu`: Mischen,
                          Zurücksetzen, Umbenennen, Nach oben/unten, Entfernen), DeckList (Seitenleiste „Decks“: Suche und Liste; „Deck hinzufügen“ steht in der Gruppe
                          „Deck Management“ darüber),
-                         AddDeckForm (Deck-Datei als neue Instanz laden), RenameDeckDialog, EquippedCards (gemeinsamer
+                         AddDeckForm (Deck aus der Auswahlliste der Deckliste als neue Instanz laden), RenameDeckDialog, EquippedCards (gemeinsamer
                          Bereich „Ausgerüstet“ über dem Spieltisch mit Besitzer und Herkunftsdeck, höchstens zwei
                          Reihen sichtbar, weitere scrollen in sich; ohne Karten ausgeblendet; Klick öffnet den Viewer;
                          Hand und Ausgerüstet nutzen `.card-strip` aus `src/styles/components/card-strip.css`),
@@ -158,7 +161,7 @@ features/
                          Höhe begrenzt, ohne Karten ausgeblendet; Klick öffnet den Viewer)
     services/          → deck-actions.service.ts (Umbenennen per Dialog, Entfernen nach Rückfrage);
                          Deck-Zustand und Loader liegen in core/services/card-deck/
-    testing/           → card-manager-page.fixtures.ts (echter Deck-Zustand, gemockter Loader und Zuweisungsablauf;
+    testing/           → card-manager-page.fixtures.ts (echter Deck-Zustand, gemockter Loader, Deckliste und Zuweisungsablauf;
                          nur für Specs)
 
   game-session/        → Session starten/beenden, Speichern/Laden als XML
@@ -263,7 +266,9 @@ shared/
 ## E2E-Tests (`e2e/`, Projekt-Root)
 
 Playwright-Smoke-Tests (`npm run e2e`) liegen unter `e2e/` – **nicht** unter `src/`, damit sie weder
-von Vitest noch vom App-Build erfasst werden. `playwright.config.ts` (Root) startet `ng serve` auf Port 4321.
+von Vitest noch vom App-Build erfasst werden. `playwright.config.ts` (Root) erzeugt die Deckliste und startet `ng serve` auf Port 4321.
+Die Deckliste `public/decks/index.json` erzeugt `scripts/build-deck-index.mjs` (Tests: `node --test scripts/*.test.mjs`)
+vor `start`, `build`, `watch` und `deploy`; sie ist nicht eingecheckt.
 Nur wenige, stabile Abläufe über echte Browser-Interaktion (Routing, Reload-Persistenz, Drag & Drop,
 Datei-Export/-Import); Logik wird weiterhin in Vitest-Specs getestet.
 Gemeinsame Schritte (z. B. `createCharacter()` über „Neuer Charakter“) liegen unter `e2e/support/`
