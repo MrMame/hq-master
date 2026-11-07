@@ -12,50 +12,39 @@ import {
   viewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { createGlobalPositionStrategy, createOverlayRef, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { CharacterInfo } from '../../../core/models/character-info.model';
-import { DeckInstance, DeckState } from '../../../core/models/deck-state.model';
 import { CardManagerService } from '../../../core/services/card-deck/card-manager.service';
-import {
-  findCardAt,
-  LocatedCard,
-  ownerOf,
-} from '../../../core/services/card-deck/card-location.util';
-import { findDeck } from '../../../core/services/card-deck/deck-state.util';
-import { CardLocation } from '../../../core/models/card-location.model';
-import { draftMoveOf, locationInDraft } from '../../utils/card-draft.util';
-import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
-import {
-  CARD_ACTIONS,
-  CardAction,
-  CardActionContext,
-  CardDraft,
-} from '../../models/card-action.model';
+import { CardActionContext } from '../../models/card-action.model';
 import { CardViewerService, ViewedCard } from '../../services/card-viewer.service';
-import { cardMenuEntries, CardMenuEntry } from '../../utils/card-menu-entries.util';
-import { cardViewerTitle } from '../../utils/card-viewer-title.util';
-import { CardActionMenu } from '../card-action-menu/card-action-menu';
-import { CardDisplay } from '../card-display/card-display';
+import { viewerContext } from '../../utils/card-viewer-context.util';
+import { CardViewerPanel } from '../card-viewer-panel/card-viewer-panel';
 
 /**
- * App-weiter Card Viewer, einmal im App-Template: zeigt die angesehene Karte groß (immer die Vorderseite) mit
- * Deck, Ort und dem Menü aller registrierten Aktionen. Er liegt mit abgedunkeltem Hintergrund über allem, auch
- * über offenen Dialogen. Klick daneben, „Schließen“ oder Escape schließen ihn, ohne die Karte zu bewegen.
- * Den Ort bestimmt er bei jeder Änderung neu; verschwindet die Karte, schließt er sich.
+ * App-weiter Card Viewer, einmal im App-Template: zeigt die angesehene Karte im `CardViewerPanel` mit
+ * abgedunkeltem Hintergrund über allem, auch über offenen Dialogen. Klick daneben, „Schließen“ oder Escape
+ * schließen ihn, ohne die Karte zu bewegen. Den Ort bestimmt er bei jeder Änderung neu; verschwindet die Karte,
+ * schließt er sich.
  */
 @Component({
   selector: 'app-card-viewer',
-  imports: [CardActionMenu, CardDisplay, CdkTrapFocus],
-  templateUrl: './card-viewer.html',
-  styleUrl: './card-viewer.css',
+  imports: [CardViewerPanel],
+  template: `
+    <ng-template #viewerTemplate>
+      @if (context(); as viewed) {
+        <app-card-viewer-panel [context]="viewed" (closed)="close()" />
+      }
+    </ng-template>
+  `,
+  styles: `
+    :host {
+      display: contents;
+    }
+  `,
 })
 export class CardViewer {
   private readonly viewer: CardViewerService = inject(CardViewerService);
   private readonly cardManager: CardManagerService = inject(CardManagerService);
-  private readonly characters: Signal<CharacterInfo[]> = inject(CharactersDbService).characters;
-  private readonly actions: readonly CardAction[] = inject(CARD_ACTIONS, { optional: true }) ?? [];
   private readonly injector: Injector = inject(Injector);
   private readonly viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
   private readonly viewerTemplate: Signal<TemplateRef<unknown>> =
@@ -65,35 +54,7 @@ export class CardViewer {
   /** Karte an ihrem aktuellen Ort; `null` ohne angesehene oder nicht mehr vorhandene Karte. */
   protected readonly context: Signal<CardActionContext | null> = computed(() => {
     const viewed: ViewedCard | null = this.viewer.viewed();
-    if (!viewed) return null;
-    const state: DeckState = this.cardManager.state();
-    const found: LocatedCard | null = findCardAt(state, viewed.ref);
-    const deck: DeckInstance | undefined = findDeck(state, viewed.ref.deckId);
-    if (!found || !deck) return null;
-    const { context } = viewed;
-    const draft: CardDraft | null = context.mode === 'draft' ? context.draft : null;
-    const location: CardLocation = draft
-      ? locationInDraft(draft.characterId, draft.moves(), viewed.ref, found.location)
-      : found.location;
-    return { card: found.card, location, ref: viewed.ref, deck, mode: context.mode, draft };
-  });
-
-  protected readonly title: Signal<string> = computed(() => {
-    const context: CardActionContext | null = this.context();
-    if (!context) return '';
-    const { location, draft, ref } = context;
-    const ownerId: string | undefined = ownerOf(location);
-    const owner: string | undefined = ownerId
-      ? this.characters().find((character) => character.id === ownerId)?.name
-      : undefined;
-    const discarded: boolean =
-      !!draft && draftMoveOf(draft.moves(), ref)?.target.kind === 'discardPile';
-    return cardViewerTitle(context.deck.name, location, owner, discarded);
-  });
-
-  protected readonly entries: Signal<CardMenuEntry[]> = computed(() => {
-    const context: CardActionContext | null = this.context();
-    return context ? cardMenuEntries(this.actions, context) : [];
+    return viewed ? viewerContext(this.cardManager.state(), viewed.ref, viewed.context) : null;
   });
 
   private readonly syncOverlay: EffectRef = effect(() => {
@@ -117,11 +78,6 @@ export class CardViewer {
 
   protected close(): void {
     this.viewer.close();
-  }
-
-  protected run(action: CardAction): void {
-    const context: CardActionContext | null = this.context();
-    if (context) void action.run(context);
   }
 
   private attach(): void {

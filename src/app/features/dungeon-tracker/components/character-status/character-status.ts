@@ -18,16 +18,19 @@ import {
   effectiveStats,
   modifiersOf,
 } from '../../../../core/services/equipment/effective-stats.util';
+import { CharacterCards } from '../character-cards/character-cards';
 
 /**
  * Zustandswerte eines Charakters als `aktuell/wirksames Maximum` (Leben rot, Rüstung blau) für Token und
- * Legende; das Maximum enthält den Bonus der Ausrüstung.
+ * Legende; das Maximum enthält den Bonus der Ausrüstung. Dahinter stehen die Karten des Charakters
+ * (`CharacterCards`).
  * Mit `damageable` werden die Werte zu Buttons, die die passende Schadensart melden.
  * Hintergrund und Position legt der Einbettende fest; Zustände zeigt `CharacterConditions`.
  */
 @Component({
   selector: 'app-character-status',
   standalone: true,
+  imports: [CharacterCards],
   template: `
     @if (damageable()) {
       <button
@@ -54,6 +57,7 @@ import {
         armor()
       }}</span>
     }
+    <app-character-cards [character]="character()" />
   `,
   styleUrl: './character-status.css',
 })

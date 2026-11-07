@@ -14,10 +14,9 @@ import { CardAssignmentService } from '../../../shared/services/card-assignment.
 export interface CardAssignmentServiceMock {
   assignDisabledReason: WritableSignal<string | null>;
   ownerNames: WritableSignal<ReadonlyMap<string, string>>;
-  assignCard: Mock<(ref: CardRef) => Promise<void>>;
+  assignTo: Mock<(ref: CardRef) => Promise<void>>;
   characters: WritableSignal<CharacterInfo[]>;
   inventoryTargets: Mock<() => CharacterInfo[]>;
-  giveToInventory: Mock<(ref: CardRef) => Promise<void>>;
 }
 
 /** Echter Deck-Zustand; nur das Laden der Deck-Datei und der Zuweisungsablauf sind gemockt. */
@@ -35,10 +34,9 @@ export function configureCardManagerTestbed(extraProviders: Provider[] = []): Ca
   const assignment: CardAssignmentServiceMock = {
     assignDisabledReason: signal<string | null>(null),
     ownerNames: signal<ReadonlyMap<string, string>>(new Map()),
-    assignCard: vi.fn<(ref: CardRef) => Promise<void>>().mockResolvedValue(undefined),
+    assignTo: vi.fn<(ref: CardRef) => Promise<void>>().mockResolvedValue(undefined),
     characters: signal<CharacterInfo[]>([]),
     inventoryTargets: vi.fn<() => CharacterInfo[]>(() => []),
-    giveToInventory: vi.fn<(ref: CardRef) => Promise<void>>().mockResolvedValue(undefined),
   };
   TestBed.configureTestingModule({
     providers: [

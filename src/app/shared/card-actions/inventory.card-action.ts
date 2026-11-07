@@ -5,12 +5,14 @@ import { CardAssignmentService } from '../services/card-assignment.service';
 import { CardActionFactory } from './provide-card-actions';
 
 /**
- * „Einem Charakter ins Inventar geben“ für jede Karte, auch zum Weitergeben an einen anderen Charakter.
+ * „Einem Charakter ins Inventar geben“ für jede Karte, auch zum Weitergeben an einen anderen Charakter:
+ * Untermenü mit den Charakteren, der bisherige Inventarbesitzer fehlt.
  * Fehlt ein anderer Charakter als der Inventarbesitzer, ist die Aktion ausgeblendet; ohne Charaktere
  * ausgegraut.
  */
 export const giveToInventoryAction: CardActionFactory = (): CardAction => {
   const assignment: CardAssignmentService = inject(CardAssignmentService);
+  const equipment: EquipmentService = inject(EquipmentService);
   return {
     id: 'give-to-inventory',
     label: 'Einem Charakter ins Inventar geben',
@@ -20,7 +22,12 @@ export const giveToInventoryAction: CardActionFactory = (): CardAction => {
     isAvailable: ({ location }) =>
       assignment.characters().length === 0 || assignment.inventoryTargets(location).length > 0,
     disabledReason: () => assignment.assignDisabledReason(),
-    run: ({ ref, location }) => assignment.giveToInventory(ref, location),
+    choices: ({ ref, location }) =>
+      assignment.inventoryTargets(location).map((character) => ({
+        id: character.id,
+        label: character.name,
+        run: () => equipment.moveCard(ref, { kind: 'inventory', characterId: character.id }),
+      })),
   };
 };
 

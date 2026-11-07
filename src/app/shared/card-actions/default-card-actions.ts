@@ -6,6 +6,7 @@ import { giveToInventoryAction, stowAction } from './inventory.card-action';
 import {
   bankAction,
   discardAction,
+  drawPileTopAction,
   shuffleBackAction,
   takeIntoHandAction,
 } from './move.card-action';
@@ -17,6 +18,7 @@ export function provideDefaultCardActions(): Provider[] {
     takeIntoHandAction,
     discardAction,
     shuffleBackAction,
+    drawPileTopAction,
     bankAction,
     assignAction,
     giveToInventoryAction,

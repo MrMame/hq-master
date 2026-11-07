@@ -1,0 +1,47 @@
+<div class="card-action-menu">
+  @if (level().label; as heading) {
+    <div class="card-action-menu__header">
+      <button
+        type="button"
+        class="card-action-menu__back"
+        aria-label="Zurück"
+        title="Zurück"
+        (click)="back()"
+      >
+        ‹
+      </button>
+      <span class="card-action-menu__heading" data-testid="card-action-menu-heading">{{
+        heading
+      }}</span>
+    </div>
+  }
+  <ul
+    class="card-action-menu__list"
+    role="menu"
+    [attr.aria-label]="level().label ?? 'Kartenaktionen'"
+  >
+    @for (entry of level().entries; track entry.id) {
+      @if (entry.dividerBefore) {
+        <li class="card-action-menu__divider" role="separator"></li>
+      }
+      <!-- Der Tooltip hängt am Eintrag, weil deaktivierte Buttons in manchen Browsern keinen zeigen. -->
+      <li role="none" [attr.title]="entry.disabledReason">
+        <button
+          type="button"
+          class="card-action-menu__item"
+          role="menuitem"
+          [attr.aria-haspopup]="entry.choices ? 'menu' : null"
+          [disabled]="entry.disabledReason !== null"
+          (click)="select(entry)"
+        >
+          <span>{{ entry.label }}</span>
+          @if (entry.choices) {
+            <span class="card-action-menu__more" aria-hidden="true">›</span>
+          }
+        </button>
+      </li>
+    } @empty {
+      <li class="card-action-menu__empty" role="none">Keine Aktionen</li>
+    }
+  </ul>
+</div>

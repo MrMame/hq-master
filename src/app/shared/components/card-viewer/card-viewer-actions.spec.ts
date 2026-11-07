@@ -4,7 +4,12 @@ import { Mock, vi } from 'vitest';
 import { CardRef } from '../../../core/models/deck-state.model';
 import { createTwoDeckState } from '../../../core/testing/deck.fixtures';
 import { provideCardActions } from '../../card-actions/provide-card-actions';
-import { CardAction, CardActionContext, CardDraft } from '../../models/card-action.model';
+import {
+  CardAction,
+  CardActionContext,
+  CardActionInfo,
+  CardDraft,
+} from '../../models/card-action.model';
 import { CardViewerSetup, setupCardViewer } from '../../testing/card-viewer.fixtures';
 
 const DRAW_CARD: CardRef = { deckId: 'deck-2', cardId: 'c1' };
@@ -15,7 +20,7 @@ describe('CardViewer – actions', () => {
   let blocked: WritableSignal<string | null>;
 
   /** Nur hier registrierte Test-Aktionen; der Viewer kennt keine davon. */
-  function testAction(id: string, overrides: Partial<CardAction> = {}): () => CardAction {
+  function testAction(id: string, overrides: Partial<CardActionInfo> = {}): () => CardAction {
     return () => ({
       id,
       label: id,

@@ -43,11 +43,21 @@ export interface CardActionContext {
   draft: CardDraft | null;
 }
 
-/**
- * Eine Aktion im Menü des Card Viewers. Sie beschreibt sich selbst; der Viewer kennt keine einzelne Aktion.
- * `isAvailable` und `disabledReason` dürfen Signale lesen, das Menü folgt ihnen dann von selbst.
- */
-export interface CardAction {
+/** Was ein Menüeintrag beim Wählen tut: ausführen oder ein Untermenü mit weiteren Einträgen öffnen. */
+export type CardMenuStep<Args extends unknown[]> =
+  | { run(...args: Args): void | Promise<void>; choices?: never }
+  | { choices(...args: Args): readonly CardChoice[]; run?: never };
+
+/** Eintrag eines Untermenüs, z. B. ein Charakter oder eine Hand; darf selbst ein Untermenü öffnen. */
+export type CardChoice = {
+  id: string;
+  label: string;
+  /** Grund für einen ausgegrauten Eintrag; fehlend oder `null` = wählbar. */
+  disabledReason?: string | null;
+} & CardMenuStep<[]>;
+
+/** Beschreibung einer Aktion; was sie tut, legt `CardMenuStep` fest. */
+export interface CardActionInfo {
   id: string;
   label: string;
   /** Aktionen verschiedener Gruppen trennt eine Linie. */
@@ -60,8 +70,14 @@ export interface CardAction {
   isAvailable(context: CardActionContext): boolean;
   /** Grund für eine ausgegraute Aktion (Tooltip); `null` oder fehlend = ausführbar. */
   disabledReason?(context: CardActionContext): string | null;
-  run(context: CardActionContext): void | Promise<void>;
 }
+
+/**
+ * Eine Aktion im Menü des Card Viewers. Sie beschreibt sich selbst; der Viewer kennt keine einzelne Aktion.
+ * Statt `run` kann sie mit `choices` ein Untermenü liefern. `isAvailable`, `disabledReason` und `choices`
+ * dürfen Signale lesen, das Menü folgt ihnen dann von selbst.
+ */
+export type CardAction = CardActionInfo & CardMenuStep<[CardActionContext]>;
 
 /** Alle registrierten Kartenaktionen; Registrierung nur über `provideCardActions(...)`. */
 export const CARD_ACTIONS: InjectionToken<readonly CardAction[]> = new InjectionToken<

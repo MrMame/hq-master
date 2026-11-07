@@ -1,84 +1,73 @@
-import { Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
-import { CardAction } from '../../models/card-action.model';
-import { CardMenuEntry } from '../../utils/card-menu-entries.util';
+import {
+  Component,
+  computed,
+  input,
+  InputSignal,
+  linkedSignal,
+  output,
+  OutputEmitterRef,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
+import { CardMenuEntry, CardMenuRun } from '../../utils/card-menu-entries.util';
 
-/** Aktionsmenü des Card Viewers: Einträge mit Trennlinien zwischen Gruppen, ausgegraute mit Tooltip. */
+/** Eine Ebene des Menüs: oben ohne Überschrift, im Untermenü mit dem Namen des geöffneten Eintrags. */
+interface MenuLevel {
+  label: string | null;
+  entries: CardMenuEntry[];
+}
+
+/**
+ * Aktionsmenü des Card Viewers: Einträge mit Trennlinien zwischen Gruppen, ausgegraute mit Tooltip.
+ * Ein Eintrag mit Untermenü ersetzt die Liste durch seine Einträge, „Zurück“ führt eine Ebene hinauf.
+ * Die geöffneten Ebenen stehen als IDs fest und werden gegen die aktuellen Einträge aufgelöst; ein anderer
+ * `cardKey` oder ein ausgeführter Eintrag führt zurück nach oben.
+ */
 @Component({
   selector: 'app-card-action-menu',
   imports: [],
-  template: `
-    <ul class="card-action-menu" role="menu" aria-label="Kartenaktionen">
-      @for (entry of entries(); track entry.action.id) {
-        @if (entry.dividerBefore) {
-          <li class="card-action-menu__divider" role="separator"></li>
-        }
-        <!-- Der Tooltip hängt am Eintrag, weil deaktivierte Buttons in manchen Browsern keinen zeigen. -->
-        <li role="none" [attr.title]="entry.disabledReason">
-          <button
-            type="button"
-            class="card-action-menu__item"
-            role="menuitem"
-            [disabled]="entry.disabledReason !== null"
-            (click)="run.emit(entry.action)"
-          >
-            {{ entry.action.label }}
-          </button>
-        </li>
-      } @empty {
-        <li class="card-action-menu__empty" role="none">Keine Aktionen</li>
-      }
-    </ul>
-  `,
-  styles: `
-    .card-action-menu {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1);
-      min-width: 14rem;
-      padding: var(--space-2);
-      border-radius: var(--radius-md);
-      background-color: var(--color-gray-900);
-      box-shadow: var(--shadow-card-floating);
-    }
-
-    .card-action-menu__item {
-      width: 100%;
-      padding: var(--space-2) var(--space-3);
-      border-radius: var(--radius-sm);
-      background: none;
-      color: var(--color-white);
-      font-size: var(--text-sm);
-      line-height: var(--text-sm--line-height);
-      text-align: left;
-      cursor: pointer;
-
-      &:hover:not(:disabled),
-      &:focus-visible {
-        background-color: var(--color-gray-700);
-      }
-
-      &:disabled {
-        color: var(--color-gray-500);
-        cursor: not-allowed;
-      }
-    }
-
-    .card-action-menu__divider {
-      margin: var(--space-1) 0;
-      border-top: 1px solid var(--color-gray-700);
-    }
-
-    .card-action-menu__empty {
-      padding: var(--space-2) var(--space-3);
-      color: var(--color-gray-400);
-      font-size: var(--text-sm);
-      line-height: var(--text-sm--line-height);
-    }
-  `,
+  templateUrl: './card-action-menu.html',
+  styleUrl: './card-action-menu.css',
 })
 export class CardActionMenu {
   readonly entries: InputSignal<readonly CardMenuEntry[]> =
     input.required<readonly CardMenuEntry[]>();
-  /** Ein Eintrag wurde gewählt; ausgeführt wird im Viewer mit dem aktuellen Kontext. */
-  readonly run: OutputEmitterRef<CardAction> = output<CardAction>();
+  /** Angesehene Karte; wechselt sie, schließen offene Untermenüs. */
+  readonly cardKey: InputSignal<string> = input<string>('');
+  /** Ein ausführbarer Eintrag wurde gewählt; ausgeführt wird im Viewer. */
+  readonly run: OutputEmitterRef<CardMenuRun> = output<CardMenuRun>();
+
+  private readonly path: WritableSignal<string[]> = linkedSignal<string, string[]>({
+    source: this.cardKey,
+    computation: () => [],
+  });
+
+  /** Alle Ebenen bis zur geöffneten, soweit ihre Einträge noch existieren und wählbar sind. */
+  private readonly levels: Signal<MenuLevel[]> = computed(() => {
+    const levels: MenuLevel[] = [{ label: null, entries: [...this.entries()] }];
+    for (const id of this.path()) {
+      const parent: CardMenuEntry | undefined = levels
+        .at(-1)!
+        .entries.find((entry) => entry.id === id && entry.disabledReason === null);
+      if (!parent?.choices) break;
+      levels.push({ label: parent.label, entries: parent.choices() });
+    }
+    return levels;
+  });
+
+  protected readonly level: Signal<MenuLevel> = computed(() => this.levels().at(-1)!);
+
+  protected select(entry: CardMenuEntry): void {
+    const open: string[] = this.path().slice(0, this.levels().length - 1);
+    if (entry.choices) {
+      this.path.set([...open, entry.id]);
+      return;
+    }
+    this.path.set([]);
+    if (entry.run) this.run.emit(entry.run);
+  }
+
+  protected back(): void {
+    this.path.set(this.path().slice(0, this.levels().length - 2));
+  }
 }

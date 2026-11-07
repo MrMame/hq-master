@@ -10,14 +10,15 @@ import {
 import { slotsForCard } from '../equipment/equipment-slots.util';
 import { findCardAt, isSameLocation, LocatedCard } from './card-location.util';
 import { slotOccupant } from './deck-assignment.util';
-import { CardInDeck, isSameCard, updateDeck, withDiscarded } from './deck-state.util';
+import { CardInDeck, findDeck, isSameCard, updateDeck, withDiscarded } from './deck-state.util';
 import { shuffled } from './shuffle.util';
 
 /**
- * Nimmt eine Karte von ihrem Ort und legt sie am Ziel ab: Hand (ans Ende), Nachziehstapel (eingemischt),
+ * Nimmt eine Karte von ihrem Ort und legt sie am Ziel ab: Hand (ans Ende), Nachziehstapel (eingemischt, mit
+ * `top` oben auf, auch aus dem Nachziehstapel selbst),
  * Ablagestapel oder Bank ihres eigenen Decks, Slot eines Charakters (eine dort liegende Karte kommt in den
  * Ablagestapel ihres Decks), Inventar eines Charakters (ans Ende, jede Kartenart).
- * Unbekannte Karte, Ziel gleich Herkunft oder unpassender Slot → derselbe Zustand.
+ * Unbekannte Karte, Ziel gleich Herkunft (auch: liegt schon oben) oder unpassender Slot → derselbe Zustand.
  */
 export function moveCard(s: DeckState, ref: CardRef, target: CardLocation): DeckState {
   const found: LocatedCard | null = findCardAt(s, ref);
@@ -65,6 +66,7 @@ function relocate(
   { card, location }: LocatedCard,
   target: CardLocation,
 ): DeckState {
+  if (isOnTopTarget(target)) return putOnTop(s, ref, card, location);
   if (isSameLocation(location, target)) return s;
   if (target.kind === 'equipped') {
     return fitsSlot(card, target) ? equip(take(s, ref, location), ref.deckId, card, target) : s;
@@ -78,6 +80,18 @@ function relocate(
     return { ...taken, inventory: [...taken.inventory, carried] };
   }
   return updateDeck(taken, ref.deckId, (deck) => withPile(deck, target.kind, card));
+}
+
+function isOnTopTarget(target: CardLocation): boolean {
+  return target.kind === 'drawPile' && target.top === true;
+}
+
+function putOnTop(s: DeckState, ref: CardRef, card: Card, from: CardLocation): DeckState {
+  if (from.kind === 'drawPile' && findDeck(s, ref.deckId)?.drawPile[0]?.id === ref.cardId) return s;
+  return updateDeck(take(s, ref, from), ref.deckId, (deck) => ({
+    ...deck,
+    drawPile: [card, ...deck.drawPile],
+  }));
 }
 
 function fitsSlot(card: Card, target: EquippedLocation): card is EquipmentCard {

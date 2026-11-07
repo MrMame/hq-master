@@ -28,7 +28,7 @@ core/
                     Ausrüstung bearbeitet),
                     equipment.model.ts (ModifiableStat, StatModifier, EquipmentSlot, CardSlot, Beschriftungen),
                     card-location.model.ts (`CardLocation`: Ort einer Karte und Ziel einer Bewegung – Hand,
-                    Nachziehstapel, Ablagestapel, Bank, Slot, Inventar; neue Orte als weitere `kind`)
+                    Nachziehstapel (als Ziel mit `top` oben auflegen), Ablagestapel, Bank, Slot, Inventar; neue Orte als weitere `kind`)
     character-names/ → <klasse>-names.model.ts (editierbare Vor-/Nachnamen je Charakterklasse,
                     vom Dateilimit ausgenommen), character-names.model.ts (CHARACTER_NAMES_BY_IMAGE)
   session-state/  → persisted-state.ts (persistedState), session-keys.ts (SESSION_KEYS),
@@ -55,7 +55,8 @@ core/
                     Ablagestapel der eigenen Instanz, `withoutDanglingRefs`), deck-instance.util.ts (hinzufügen mit Durchnummerieren,
                     umbenennen, entfernen, verschieben, mischen, zurücksetzen), card-location.util.ts (`locateCard`,
                     `findCard` per `CardRef`, `ownerOf`), card-move.util.ts (`moveCard`: einzige Kartenbewegung von jedem Ort an
-                    jedes Ziel, `discardOwned` für Slot- und Inventarkarten; neue Bewegungen nur hierüber), deck-draw.util.ts (ziehen in die Hand), deck-assignment.util.ts (Slot-Belegung, verwaiste Slot- und Inventarkarten), shuffle.util.ts, deck-state-codec.util.ts (DECK_STATE_CODEC),
+                    jedes Ziel, `discardOwned` für Slot- und Inventarkarten; neue Bewegungen nur hierüber), deck-draw.util.ts (ziehen in die Hand), moved-cards.util.ts (`movedCards`: bewegte Karten zwischen zwei Zuständen,
+                    `isRevertible`, `revertOrder` für Rückgängig), deck-assignment.util.ts (Slot-Belegung, verwaiste Slot- und Inventarkarten), shuffle.util.ts, deck-state-codec.util.ts (DECK_STATE_CODEC),
                     deck-state-migration.util.ts (älterer Zustand mit einem Deck → eine Instanz; Codec und XML;
                     eine alte `activeCard` wird einzige Handkarte),
                     equipment-card-xml.util.ts (Slot und `<modifier>` lesen/schreiben für Deck-XML und Spielstand)
@@ -82,7 +83,8 @@ features/
                          oder Zahl, Token-Größe, Spalten über Bildbreite), GridSlider (Raster-Regler mit „−“/„+“ in feinster Stufe),
                          GridOriginMarker (ziehbarer Nullpunkt-Marker, nur im Modus „Nullpunkt verschieben“),
                          DungeonLegendEntry (Legendeneintrag),
-                         CharacterStatus (Leben/Rüstung als `aktuell/max` an Token und Legende),
+                         CharacterStatus (Leben/Rüstung als `aktuell/max` an Token und Legende, dahinter `CharacterCards`),
+                         CharacterCards (ausgerüstete Karten als kleine Bilder und Inventaranzahl; Klick öffnet den Card Viewer),
                          DeadMarker (rotes Kreuz „Tot“ bei 0 Leben über Porträt und Legendenbild, lässt Klicks durch),
                          CharacterConditions (Zustände mit Restdauer: `token` Symbole am Porträt, „+n“ ab 4,
                          `selected` mit Name unter dem markierten Token, `legend` zweite Zeile der Legende),
@@ -185,11 +187,10 @@ shared/
                          Entwurf, Ablegen erst mit „Übernehmen“),
                          CharacterInventoryEditor (Abschnitt „Inventar“ unter „Ausrüstung“, öffnet den Viewer im Entwurf),
                          CardViewer (einmal im App-Template: Overlay mit Backdrop über allem, auch über Dialogen;
-                         Karte groß mit Deck/Ort und `CardActionMenu`; Ort per `findCardAt` bei jeder Änderung neu,
-                         schließt bei verschwundener Karte; kennt keine einzelne Aktion),
-                         CardActionMenu (Menüeinträge mit Trennlinien und ausgegrauten Einträgen mit Tooltip),
-                         AssignEquipmentDialog (Charakter und Hand wählen, schreibt nichts),
-                         GiveToInventoryDialog (Charakter fürs Inventar wählen, schreibt nichts),
+                         Ort per `viewerContext` bei jeder Änderung neu, schließt bei verschwundener Karte),
+                         CardViewerPanel (Inhalt des Viewers: Deck/Ort, Karte mit Blättern am Ort nur `live`, `CardActionMenu`;
+                         Aktionen `live` über `CardUndoService.track`, danach nachrückende Karte; kennt keine einzelne Aktion),
+                         CardActionMenu (Menüeinträge mit Trennlinien, ausgegraute mit Tooltip, Untermenüs mit „Zurück“),
                          SlotOccupiedDialog (belegter Slot: Inventar / Ablagestapel / Abbrechen),
                          CardDisplay (eine Karte: Vorder-/Rückseite, Slot, Modifikatoren, „Im Besitz von“, Herkunftsdeck),
                          SearchField (Suchfeld mit `label`, × und Escape leeren es; Builder-Bibliothek, Deckliste),
@@ -205,23 +206,24 @@ shared/
   card-actions/        → Kartenaktionen des Card Viewers: provide-card-actions.ts (`provideCardActions(...)`:
                          Multi-Provider auf `CARD_ACTIONS`; neue Aktionen nur so registrieren),
                          *.card-action.ts (move: Hand/Ablage/Nachziehstapel/Bank über `EquipmentService.moveCard`;
-                         assign: „Einem Charakter anlegen“; inventory: „ins Inventar geben“, „Ins Inventar legen“;
+                         inkl. „Oben auf den Nachziehstapel legen“; assign: „Einem Charakter anlegen“ als Untermenü (Charakter → ggf. Hand);
+                         inventory: „ins Inventar geben“ als Untermenü, „Ins Inventar legen“;
                          draft-discard, draft-inventory: Ablegen, Ins Inventar legen, Anlegen im Entwurf des Editors),
                          default-card-actions.ts (`provideDefaultCardActions()`, registriert in app.config.ts)
   directives/          → board-pan.ts (BoardPan: Ausschnitt eines Scroll-Containers per Ziehen verschieben),
                          repeat-on-hold.ts (RepeatOnHold: Schritt-Button wiederholt beim Gedrückthalten)
   models/              → confirmation-dialog-data.model.ts (Texte der Rückfrage),
-                         card-action.model.ts (`CardAction`, `CardActionContext`, Modus `live`/`draft`, `CardDraft` mit
+                         card-action.model.ts (`CardAction` = `CardActionInfo` + `run` oder `choices` (Untermenü aus `CardChoice`), `CardActionContext`, Modus `live`/`draft`, `CardDraft` mit
                          vorgemerkten `DraftMove`s,
                          `CardViewerContext`, `CARD_ACTIONS`),
-                         assign-equipment.model.ts (Daten und Ergebnis des Zuweisungsdialogs),
-                         give-to-inventory.model.ts, slot-occupied.model.ts (Daten/Ergebnis der Inventar-Dialoge),
+                         slot-occupied.model.ts (Daten/Ergebnis der Rückfrage bei belegtem Slot),
                          damage-dialog-data.model.ts (Titel des Schadensauswahl-Dialogs)
   services/            → character-editor.service.ts (öffnet den Charakter-Editor systemweit),
                          card-viewer.service.ts (CardViewerService: `open(ref, context?)`, `close()`, `viewed`;
                          UI-Zustand ohne Speicherung),
-                         card-assignment.service.ts (Zuweisungsdialog für eine `CardRef`, Rückfrage bei belegtem Slot,
-                         „Ins Inventar geben“),
+                         card-assignment.service.ts (`assignTo` mit Rückfrage bei belegtem Slot, Inventarziele),
+                         card-undo.service.ts (CardUndoService: Rückgängig der letzten Aktion `live` per MatSnackBar, 5 s;
+                         UI-Zustand ohne Speicherung),
                          character-card-draft.service.ts (je Editor bereitgestellt: Kartenentwurf, `apply()` beim Übernehmen),
                          character-damage.service.ts (Schadensauswahl → applyDamage → Session),
                          condition-tick.service.ts (ConditionTickService: effect() auf die Spielzeit → advanceConditions
@@ -243,14 +245,18 @@ shared/
                          game-log-entries.util.ts (Log-Einträge zu Zustands-Tick, Setzen/Entfernen, manuellem Schaden),
                          xml.util.ts (XML lesen/schreiben, `requireChild` mit Dateiart in der Fehlermeldung),
                          text-search.util.ts (`isSearching`, `matchesSearch`: Namenssuche ohne Groß-/Kleinschreibung),
-                         card-menu-entries.util.ts (Menü: Modus, Verfügbarkeit, Reihenfolge, Trennlinien),
+                         card-menu-entries.util.ts (Menü: Modus, Verfügbarkeit, Reihenfolge, Trennlinien, Untermenüs),
+                         assign-targets.util.ts (Charaktere und Slots fürs Anlegen, freie zuerst, „– ersetzt …“),
+                         card-place.util.ts (Karten eines Ortes zum Blättern, nachrückende Karte nach einer Aktion),
+                         card-viewer-context.util.ts (Kontext der angesehenen Karte, im Entwurf Ort laut Entwurf),
+                         undo-hint-text.util.ts (Text des Rückgängig-Hinweises),
                          card-viewer-title.util.ts (Deck und Ort über der Karte, „wird abgelegt“ im Entwurf),
                          card-draft.util.ts (Entwurfsbewegungen: Ort im Entwurf, Karten laut Entwurf)
   testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
                          scroll-into-view.fixtures.ts (Spy für das in jsdom fehlende scrollIntoView),
                          character-editor-dialog.fixtures.ts, character-conditions-editor.fixtures.ts,
                          character-equipment.fixtures.ts (inkl. Ablegen über den Card Viewer),
-                         card-viewer.fixtures.ts (Viewer mit echtem Deck-Zustand),
+                         card-viewer.fixtures.ts (Viewer mit echtem Deck-Zustand), snack-bar.fixtures.ts (steuerbare Snackbar),
                          main-nav.fixtures.ts)
 ```
 

@@ -32,7 +32,9 @@ test('keeps cards drawn from two decks in the hand and discards one via the card
   await hand.getByTestId('hand-card').first().click();
   await expect(location).toHaveText('Beispieldeck · Hand');
   await viewer.getByRole('menuitem', { name: 'In den Ablagestapel legen' }).click();
-  await expect(location).toHaveText('Beispieldeck · Ablagestapel');
+  // Der Viewer bleibt am Ort und zeigt die nachrückende Handkarte; „Rückgängig“ wird angeboten.
+  await expect(location).toHaveText('Beispieldeck (2) · Hand');
+  await expect(page.getByRole('button', { name: 'Rückgängig' })).toBeVisible();
   await page.keyboard.press('Escape');
 
   await expect(hand.getByRole('heading')).toHaveText('Hand des Dungeon Masters (1)');
