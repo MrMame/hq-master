@@ -55,6 +55,7 @@ describe('appConfig', () => {
       'take-into-hand',
       'discard',
       'shuffle-back',
+      'draw-pile-top',
       'bank',
       'assign',
       'give-to-inventory',

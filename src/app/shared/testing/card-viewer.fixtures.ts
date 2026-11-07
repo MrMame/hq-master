@@ -10,6 +10,7 @@ import { CardViewerService } from '../services/card-viewer.service';
 
 /** Card Viewer mit echtem Deck-Zustand (nur für Specs). */
 export interface CardViewerSetup {
+  fixture: ComponentFixture<CardViewer>;
   cardManager: CardManagerService;
   viewer: CardViewerService;
   /** Overlay-Container, in dem der Viewer erscheint. */
@@ -42,6 +43,7 @@ export async function setupCardViewer(
     Array.from(overlay.querySelectorAll<HTMLButtonElement>('[role="menuitem"]'));
 
   return {
+    fixture,
     cardManager,
     viewer,
     overlay,

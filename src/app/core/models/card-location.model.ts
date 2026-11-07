@@ -8,6 +8,8 @@ export interface HandLocation {
 /** Stapel oder Bank des eigenen Decks einer Karte; eine Karte liegt nie in einem fremden Deck. */
 export interface PileLocation {
   kind: 'drawPile' | 'discardPile' | 'bank';
+  /** Nur als Ziel beim Nachziehstapel: oben auflegen statt einmischen; der nächste Zug zieht die Karte. */
+  top?: true;
 }
 
 /** Slot eines Charakters. */
@@ -25,7 +27,8 @@ export interface InventoryLocation {
 
 /**
  * Ort einer Karte und Ziel einer Bewegung. Weitere Orte kommen als neue `kind` dazu.
- * Beim Nachziehstapel als Ziel wird die Karte eingemischt, in Hand und Inventar kommt sie ans Ende.
+ * Beim Nachziehstapel als Ziel wird die Karte eingemischt (mit `top` oben aufgelegt), in Hand und Inventar
+ * kommt sie ans Ende.
  */
 export type CardLocation = HandLocation | PileLocation | EquippedLocation | InventoryLocation;
 

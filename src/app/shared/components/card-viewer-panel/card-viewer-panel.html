@@ -1,0 +1,60 @@
+@let viewed = context();
+<div
+  class="card-viewer"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Card Viewer"
+  cdkTrapFocus
+  [cdkTrapFocusAutoCapture]="true"
+>
+  <header class="card-viewer__header">
+    <span class="card-viewer__location" data-testid="card-viewer-location">{{ title() }}</span>
+    <button
+      type="button"
+      class="card-viewer__close"
+      aria-label="Schließen"
+      title="Schließen"
+      (click)="closed.emit()"
+    >
+      ×
+    </button>
+  </header>
+  <div class="card-viewer__body">
+    <div class="card-viewer__stage">
+      @if (position(); as pos) {
+        <button
+          type="button"
+          class="card-viewer__arrow"
+          aria-label="Vorherige Karte"
+          title="Vorherige Karte"
+          [disabled]="pos.index === 0"
+          (click)="step(-1)"
+        >
+          ‹
+        </button>
+      }
+      <!-- Immer die Vorderseite, auch im Nachziehstapel; ein Klick auf die Karte löst nichts aus. -->
+      <app-card-display
+        class="card-viewer__card"
+        [card]="viewed.card"
+        [backImagePath]="viewed.deck.config.backImagePath"
+      />
+      @if (position(); as pos) {
+        <button
+          type="button"
+          class="card-viewer__arrow"
+          aria-label="Nächste Karte"
+          title="Nächste Karte"
+          [disabled]="pos.index === pos.total - 1"
+          (click)="step(1)"
+        >
+          ›
+        </button>
+        <span class="card-viewer__position" data-testid="card-viewer-position"
+          >{{ pos.index + 1 }} / {{ pos.total }}</span
+        >
+      }
+    </div>
+    <app-card-action-menu [entries]="entries()" [cardKey]="cardKey()" (run)="run($event)" />
+  </div>
+</div>

@@ -52,3 +52,17 @@ export const shuffleBackAction: CardActionFactory = moveAction(
 export const bankAction: CardActionFactory = moveAction('bank', 'In die Bank legen', 40, {
   kind: 'bank',
 });
+
+/** „Oben auf den Nachziehstapel legen“: ohne Mischen, der nächste Zug zieht die Karte. */
+export const drawPileTopAction: CardActionFactory = (): CardAction => {
+  const equipment: EquipmentService = inject(EquipmentService);
+  return {
+    id: 'draw-pile-top',
+    label: 'Oben auf den Nachziehstapel legen',
+    group: 'move',
+    order: 35,
+    modes: ['live'],
+    isAvailable: ({ deck, ref }) => deck.drawPile[0]?.id !== ref.cardId,
+    run: ({ ref }) => equipment.moveCard(ref, { kind: 'drawPile', top: true }),
+  };
+};

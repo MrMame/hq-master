@@ -5,22 +5,19 @@ import { Card } from '../../core/models/card.model';
 import { CardLocation } from '../../core/models/card-location.model';
 import { CharacterInfo } from '../../core/models/character-info.model';
 import { AssignedCard, CardRef } from '../../core/models/deck-state.model';
+import { EquipmentSlot } from '../../core/models/equipment.model';
 import { CardManagerService } from '../../core/services/card-deck/card-manager.service';
 import { findCard } from '../../core/services/card-deck/card-location.util';
 import { slotOccupant } from '../../core/services/card-deck/deck-assignment.util';
 import { isSameCard } from '../../core/services/card-deck/deck-state.util';
 import { CharactersDbService } from '../../core/services/characters/characters-db.service';
 import { EquipmentService } from '../../core/services/equipment/equipment.service';
-import { AssignEquipmentDialog } from '../components/assign-equipment-dialog/assign-equipment-dialog';
-import { GiveToInventoryDialog } from '../components/give-to-inventory-dialog/give-to-inventory-dialog';
 import { SlotOccupiedDialog } from '../components/slot-occupied-dialog/slot-occupied-dialog';
-import { AssignEquipmentChoice, AssignEquipmentDialogData } from '../models/assign-equipment.model';
-import { GiveToInventoryDialogData } from '../models/give-to-inventory.model';
 import { SlotOccupiedChoice, SlotOccupiedDialogData } from '../models/slot-occupied.model';
 
 /**
- * Abläufe rund um Karten der Charaktere: Zuweisungsdialog, Rückfrage bei belegtem Slot (Inventar,
- * Ablagestapel oder Abbrechen) und „Ins Inventar geben“. Geschrieben wird über den `EquipmentService`.
+ * Abläufe rund um Karten der Charaktere: Anlegen mit Rückfrage bei belegtem Slot (Inventar, Ablagestapel oder
+ * Abbrechen) und mögliche Inventarziele. Geschrieben wird über den `EquipmentService`.
  */
 @Injectable({
   providedIn: 'root',
@@ -42,48 +39,22 @@ export class CardAssignmentService {
   );
 
   /**
-   * Öffnet den Dialog für eine Ausrüstungskarte von beliebigem Ort (Hand, Stapel, Bank, Slot, Inventar) und
-   * weist sie nach der Auswahl zu; bei belegtem Slot wählt der DM, wohin die bisherige Karte kommt.
+   * Legt die Karte `characterId` in `slot` an. Liegt dort eine andere Karte, wählt der DM, wohin sie kommt
+   * (Inventar, Ablagestapel oder Abbrechen). Ohne Charaktere oder für andere Karten keine Änderung.
    */
-  async assignCard(ref: CardRef): Promise<void> {
+  async assignTo(ref: CardRef, characterId: string, slot: EquipmentSlot): Promise<void> {
     const card: Card | undefined = findCard(this.cardManager.state(), ref);
     if (card?.cardType !== 'equipment' || this.assignDisabledReason() !== null) return;
-    const assigned: AssignedCard[] = this.cardManager.assigned();
-    const choice: AssignEquipmentChoice | undefined = await firstValueFrom(
-      this.dialog
-        .open<AssignEquipmentDialog, AssignEquipmentDialogData, AssignEquipmentChoice>(
-          AssignEquipmentDialog,
-          { data: { card, characters: this.characters(), assigned }, width: '24rem' },
-        )
-        .afterClosed(),
-    );
-    if (!choice) return;
     const previous: AssignedCard | undefined = slotOccupant(
-      assigned,
-      choice.characterId,
-      choice.slot,
+      this.cardManager.assigned(),
+      characterId,
+      slot,
     );
     const displaced: SlotOccupiedChoice | undefined =
       previous && !isSameCard(previous, ref)
-        ? await this.chooseDisplaced(previous.card.name, choice.characterId)
+        ? await this.chooseDisplaced(previous.card.name, characterId)
         : 'discardPile';
-    if (displaced) this.equipment.assignCard(ref, choice.characterId, choice.slot, displaced);
-  }
-
-  /** Wählt den Charakter und legt die Karte in sein Inventar; der bisherige Inventarbesitzer fehlt. */
-  async giveToInventory(ref: CardRef, location: CardLocation): Promise<void> {
-    const card: Card | undefined = findCard(this.cardManager.state(), ref);
-    const characters: CharacterInfo[] = this.inventoryTargets(location);
-    if (!card || characters.length === 0) return;
-    const characterId: string | undefined = await firstValueFrom(
-      this.dialog
-        .open<GiveToInventoryDialog, GiveToInventoryDialogData, string>(GiveToInventoryDialog, {
-          data: { card, characters },
-          width: '24rem',
-        })
-        .afterClosed(),
-    );
-    if (characterId) this.equipment.moveCard(ref, { kind: 'inventory', characterId });
+    if (displaced) this.equipment.assignCard(ref, characterId, slot, displaced);
   }
 
   /** Charaktere, in deren Inventar eine Karte von `location` kommen kann. */

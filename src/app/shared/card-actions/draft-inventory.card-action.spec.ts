@@ -77,17 +77,17 @@ describe('draft card actions', () => {
 
   it('only records moves and moves nothing in the session', async () => {
     const before: DeckState = cardManager.state();
-    await action('draft-stow').run(context(deck1Ref('h5')));
+    await action('draft-stow').run!(context(deck1Ref('h5')));
     expect(moves()).toEqual([{ ref: deck1Ref('h5'), target: { kind: 'inventory' } }]);
     expect(offered(deck1Ref('h5'))).toEqual(['draft-discard', 'draft-equip']);
 
-    await action('draft-discard').run(context(deck1Ref('h6')));
+    await action('draft-discard').run!(context(deck1Ref('h6')));
     expect(offered(deck1Ref('h6'))).toEqual([]);
     expect(cardManager.state()).toBe(before);
   });
 
   it('equips into the free hand without asking', async () => {
-    await action('draft-equip').run(context(deck1Ref('h6')));
+    await action('draft-equip').run!(context(deck1Ref('h6')));
     expect(chooseDisplaced).not.toHaveBeenCalled();
     expect(moves()).toEqual([
       { ref: deck1Ref('h6'), target: { kind: 'equipped', slot: 'rightHand' } },
@@ -97,12 +97,12 @@ describe('draft card actions', () => {
   it('asks where the previous card goes when both hands are taken, and stops on cancel', async () => {
     cardManager.moveCard(deck1Ref('h4'), { kind: 'equipped', characterId: 'a', slot: 'rightHand' });
     chooseDisplaced.mockResolvedValueOnce(undefined);
-    await action('draft-equip').run(context(deck1Ref('h6')));
+    await action('draft-equip').run!(context(deck1Ref('h6')));
     expect(chooseDisplaced).toHaveBeenCalledWith('Schild 5', 'a');
     expect(moves()).toEqual([]);
 
     chooseDisplaced.mockResolvedValueOnce('inventory');
-    await action('draft-equip').run(context(deck1Ref('h6')));
+    await action('draft-equip').run!(context(deck1Ref('h6')));
     expect(moves()).toEqual([
       { ref: deck1Ref('h5'), target: { kind: 'inventory' } },
       { ref: deck1Ref('h6'), target: { kind: 'equipped', slot: 'leftHand' } },
@@ -110,8 +110,8 @@ describe('draft card actions', () => {
   });
 
   it('does nothing without a draft or for a card that is no equipment', async () => {
-    await action('draft-equip').run({ ...context(deck1Ref('h6')), draft: null });
-    await action('draft-equip').run({ ...context(deck1Ref('b1')) });
+    await action('draft-equip').run!({ ...context(deck1Ref('h6')), draft: null });
+    await action('draft-equip').run!({ ...context(deck1Ref('b1')) });
     expect(moves()).toEqual([]);
   });
 });

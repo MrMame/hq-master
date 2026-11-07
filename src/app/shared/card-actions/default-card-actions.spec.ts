@@ -20,14 +20,12 @@ describe('default card actions', () => {
     assignDisabledReason: WritableSignal<string | null>;
     characters: WritableSignal<CharacterInfo[]>;
     inventoryTargets: ReturnType<typeof vi.fn>;
-    assignCard: ReturnType<typeof vi.fn>;
-    giveToInventory: ReturnType<typeof vi.fn>;
+    assignTo: ReturnType<typeof vi.fn>;
   } = {
     assignDisabledReason: signal<string | null>(null),
     characters: signal<CharacterInfo[]>([createTestCharacter('a')]),
     inventoryTargets: vi.fn(() => [createTestCharacter('b')]),
-    assignCard: vi.fn(),
-    giveToInventory: vi.fn(),
+    assignTo: vi.fn(),
   };
 
   const action: (id: string) => CardAction = (id) => actions.find((a) => a.id === id)!;
@@ -58,14 +56,31 @@ describe('default card actions', () => {
 
   const give: string[] = ['assign', 'give-to-inventory'];
   it.each<[string, string[]]>([
-    ['h1', ['discard', 'shuffle-back', 'bank', ...give]],
+    ['h1', ['discard', 'shuffle-back', 'draw-pile-top', 'bank', ...give]],
     ['h2', ['take-into-hand', 'discard', 'bank', ...give]],
-    ['h3', ['take-into-hand', 'shuffle-back', 'bank', ...give]],
-    ['h4', ['take-into-hand', 'discard', 'shuffle-back', ...give]],
-    ['h5', ['take-into-hand', 'discard', 'shuffle-back', 'bank', ...give, 'stow']],
-    ['h6', ['take-into-hand', 'discard', 'shuffle-back', 'bank', ...give]],
+    ['h3', ['take-into-hand', 'shuffle-back', 'draw-pile-top', 'bank', ...give]],
+    ['h4', ['take-into-hand', 'discard', 'shuffle-back', 'draw-pile-top', ...give]],
+    ['h5', ['take-into-hand', 'discard', 'shuffle-back', 'draw-pile-top', 'bank', ...give, 'stow']],
+    ['h6', ['take-into-hand', 'discard', 'shuffle-back', 'draw-pile-top', 'bank', ...give]],
   ])('offers for %s every move except to where it lies', (cardId, ids) => {
     expect(available(deck1Ref(cardId))).toEqual(ids);
+  });
+
+  it('puts a card on top of the draw pile, also from inside it, so the next draw takes it', () => {
+    void action('draw-pile-top').run!(context(deck1Ref('h1')));
+    expect(cardManager.state().decks[0].drawPile.map((card) => card.id)).toEqual([
+      'h1',
+      'h2',
+      'b1',
+    ]);
+    void action('draw-pile-top').run!(context(deck1Ref('b1')));
+    expect(cardManager.state().decks[0].drawPile.map((card) => card.id)).toEqual([
+      'b1',
+      'h1',
+      'h2',
+    ]);
+    cardManager.draw('deck-1');
+    expect(cardManager.state().hand.map((entry) => entry.card.id)).toEqual(['b1']);
   });
 
   it('offers no assignment for cards that are no equipment, but the inventory', () => {
@@ -86,31 +101,24 @@ describe('default card actions', () => {
   ])('%s moves the card only within its own deck', (id, target) => {
     const ref: CardRef = deck1Ref(ORIGINS.find((o) => o.location.kind !== target.kind)!.cardId);
     const other: DeckInstance = cardManager.state().decks[1];
-    void action(id).run(context(ref));
+    void action(id).run!(context(ref));
     expect(findCardAt(cardManager.state(), ref)?.location).toEqual(target);
     expect(cardManager.state().decks[1]).toBe(other);
   });
 
   it('stows an equipped card in the inventory of its owner', () => {
-    void action('stow').run(context(deck1Ref('h5')));
+    void action('stow').run!(context(deck1Ref('h5')));
     expect(findCardAt(cardManager.state(), deck1Ref('h5'))?.location).toEqual({
       kind: 'inventory',
       characterId: 'a',
     });
     // Ohne Slot als Ort tut die Aktion nichts.
     const before: DeckState = cardManager.state();
-    void action('stow').run(context(deck1Ref('h1')));
+    void action('stow').run!(context(deck1Ref('h1')));
     expect(cardManager.state()).toBe(before);
   });
 
-  it('starts the dialogs and passes the reason for disabled actions', () => {
-    void action('assign').run(context(deck1Ref('h2')));
-    expect(assignment.assignCard).toHaveBeenCalledWith(deck1Ref('h2'));
-    void action('give-to-inventory').run(context(deck1Ref('h6')));
-    expect(assignment.giveToInventory).toHaveBeenCalledWith(deck1Ref('h6'), {
-      kind: 'inventory',
-      characterId: 'a',
-    });
+  it('passes the reason for disabled actions without characters', () => {
     assignment.assignDisabledReason.set('Keine Charaktere in der Session');
     assignment.characters.set([]);
     for (const id of give) {
