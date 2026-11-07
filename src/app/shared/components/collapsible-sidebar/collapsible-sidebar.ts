@@ -1,4 +1,5 @@
-import { Component, Signal, signal, WritableSignal } from '@angular/core';
+import { Component, computed, inject, input, InputSignal, Signal } from '@angular/core';
+import { CollapsibleSidebarStateService } from '../../services/collapsible-sidebar-state.service';
 
 /** Fortlaufende Nummer, damit `aria-controls` je Instanz auf die eigene Leiste zeigt. */
 let nextSidebarId: number = 0;
@@ -6,7 +7,7 @@ let nextSidebarId: number = 0;
 /**
  * Gemeinsame Seitenleiste (`.general-sidebar`) mit Griff am rechten Rand zum Ein- und Ausklappen.
  * Eingeklappt bleibt nur der Griff sichtbar; der Inhalt bleibt im DOM und behält seinen Zustand.
- * Reiner UI-Zustand: startet ausgeklappt und wird nicht gespeichert.
+ * Der Zustand wird je `stateId` (Feature) gespeichert; ohne gespeicherten Wert startet die Leiste ausgeklappt.
  */
 @Component({
   selector: 'app-collapsible-sidebar',
@@ -62,10 +63,18 @@ let nextSidebarId: number = 0;
 export class CollapsibleSidebar {
   protected readonly sidebarId: string = `collapsible-sidebar-${nextSidebarId++}`;
 
-  private readonly _collapsed: WritableSignal<boolean> = signal<boolean>(false);
-  readonly collapsed: Signal<boolean> = this._collapsed.asReadonly();
+  private readonly sidebarState: CollapsibleSidebarStateService = inject(
+    CollapsibleSidebarStateService,
+  );
+
+  /** Feature-ID, unter der der Zustand gespeichert wird, z. B. `dungeon-tracker`. */
+  readonly stateId: InputSignal<string> = input.required<string>();
+
+  readonly collapsed: Signal<boolean> = computed(() =>
+    this.sidebarState.isCollapsed(this.stateId()),
+  );
 
   protected toggle(): void {
-    this._collapsed.update((collapsed) => !collapsed);
+    this.sidebarState.toggle(this.stateId());
   }
 }

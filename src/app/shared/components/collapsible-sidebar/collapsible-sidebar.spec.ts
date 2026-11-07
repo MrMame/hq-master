@@ -1,14 +1,17 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { TOOL_STATE_KEYS } from '../../../core/session-state/tool-state-keys';
 import { CollapsibleSidebar } from './collapsible-sidebar';
 
 @Component({
   standalone: true,
   imports: [CollapsibleSidebar],
   template: `
-    <app-collapsible-sidebar><h2 class="projected">Titel</h2></app-collapsible-sidebar>
-    <app-collapsible-sidebar><p>Zweite Leiste</p></app-collapsible-sidebar>
+    <app-collapsible-sidebar stateId="first"
+      ><h2 class="projected">Titel</h2></app-collapsible-sidebar
+    >
+    <app-collapsible-sidebar stateId="second"><p>Zweite Leiste</p></app-collapsible-sidebar>
   `,
 })
 class TestHost {}
@@ -28,11 +31,15 @@ describe('CollapsibleSidebar', () => {
     await fixture.whenStable();
   };
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({ imports: [TestHost] }).compileComponents();
+  const createHost: () => Promise<void> = async (): Promise<void> => {
     fixture = TestBed.createComponent(TestHost);
     host = fixture.nativeElement as HTMLElement;
     await fixture.whenStable();
+  };
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({ imports: [TestHost] }).compileComponents();
+    await createHost();
   });
 
   it('should start expanded and show the projected content inside the sidebar', () => {
@@ -72,9 +79,26 @@ describe('CollapsibleSidebar', () => {
     expect(new Set(ids).size).toBe(2);
   });
 
-  it('should not store the state', async () => {
+  it('should store the collapsed state under its own stateId', async () => {
     await clickToggle();
 
-    expect(localStorage.length).toBe(0);
+    expect(JSON.parse(localStorage.getItem(TOOL_STATE_KEYS.collapsedSidebars)!)).toEqual(['first']);
+  });
+
+  it('should keep the other sidebar expanded when one is collapsed', async () => {
+    await clickToggle();
+    const second: HTMLElement = host.querySelectorAll<HTMLElement>('app-collapsible-sidebar')[1];
+
+    expect(second.classList).not.toContain('collapsible-sidebar--collapsed');
+  });
+
+  it('should start collapsed when its stateId was stored as collapsed', async () => {
+    localStorage.setItem(TOOL_STATE_KEYS.collapsedSidebars, JSON.stringify(['first']));
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({ imports: [TestHost] }).compileComponents();
+    await createHost();
+
+    expect(sidebar().classList).toContain('collapsible-sidebar--collapsed');
+    expect(toggleButton().getAttribute('aria-expanded')).toBe('false');
   });
 });
