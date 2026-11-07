@@ -51,14 +51,14 @@ describe('CardManagerService – equipment', () => {
   });
 
   it('discards an assigned card onto the discard pile of its deck', () => {
-    service.discardAssignedCards([{ deckId: 'deck-1', cardId: 'e2' }]);
+    service.discardOwnedCards([{ deckId: 'deck-1', cardId: 'e2' }]);
     expect(service.assigned()).toEqual([]);
     expect(state().decks[0].discardPile).toEqual([TOWER_SHIELD]);
     expect(readStored()).toEqual(state());
   });
 
   it('keeps cards with the same id from another deck when discarding', () => {
-    service.discardAssignedCards([{ deckId: 'deck-2', cardId: 'e2' }]);
+    service.discardOwnedCards([{ deckId: 'deck-2', cardId: 'e2' }]);
     expect(service.assigned()).toEqual([assignedCard(TOWER_SHIELD, 'a', 'leftHand')]);
   });
 

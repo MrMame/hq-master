@@ -33,7 +33,7 @@
     <!-- Zahlenwerte (Grundwerte, mit Bonus durch Ausrüstung) -->
     <app-character-stats-editor
       [character]="draft()"
-      [cards]="equippedCards()"
+      [cards]="draftCards().equipped"
       (statChange)="setStat($event)"
     />
 
@@ -73,7 +73,12 @@
     <hr class="character-editor__divider" />
 
     <!-- Ausrüstung -->
-    <app-character-equipment-editor [cards]="equippedCards()" (view)="viewCard($event)" />
+    <app-character-equipment-editor [cards]="draftCards().equipped" (view)="viewCard($event)" />
+
+    <hr class="character-editor__divider" />
+
+    <!-- Inventar -->
+    <app-character-inventory-editor [cards]="draftCards().inventory" (view)="viewCard($event)" />
 
     <hr class="character-editor__divider" />
 

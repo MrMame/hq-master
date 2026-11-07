@@ -2,7 +2,7 @@ import { EquippedLocation } from '../../models/card-location.model';
 import { DeckState } from '../../models/deck-state.model';
 import { createMoveState, deck1Ref, HAND_CARDS } from '../../testing/card-move.fixtures';
 import { assignedCard, BASIC_CARD, RUNE_ARMOR } from '../../testing/deck.fixtures';
-import { discardAssigned, moveCard } from './card-move.util';
+import { discardOwned, moveCard } from './card-move.util';
 
 const [H1, H2, H3, H4, H5] = HAND_CARDS;
 
@@ -69,7 +69,7 @@ describe('moveCard – rules', () => {
   });
 });
 
-describe('discardAssigned', () => {
+describe('discardOwned', () => {
   let s: DeckState;
 
   beforeEach(() => {
@@ -77,7 +77,7 @@ describe('discardAssigned', () => {
   });
 
   it('discards only the card of the addressed deck, although both have the same id', () => {
-    const next: DeckState = discardAssigned(s, [{ deckId: 'deck-2', cardId: 'h5' }]);
+    const next: DeckState = discardOwned(s, [{ deckId: 'deck-2', cardId: 'h5' }]);
     expect(next.assigned).toEqual([s.assigned[0]]);
     expect(next.decks[1].discardPile).toEqual([H3, H5]);
     expect(next.decks[0].discardPile).toEqual([H3]);
@@ -89,9 +89,9 @@ describe('discardAssigned', () => {
       characterId: 'a',
       slot: 'rightHand',
     });
-    const next: DeckState = discardAssigned(two, [deck1Ref('h2'), deck1Ref('h1'), deck1Ref('h5')]);
+    const next: DeckState = discardOwned(two, [deck1Ref('h2'), deck1Ref('h1'), deck1Ref('h5')]);
     expect(next.decks[0].discardPile).toEqual([H3, H5, H2]);
     expect(next.hand).toEqual(s.hand);
-    expect(discardAssigned(s, [{ deckId: 'deck-3', cardId: 'h5' }])).toBe(s);
+    expect(discardOwned(s, [{ deckId: 'deck-3', cardId: 'h5' }])).toBe(s);
   });
 });

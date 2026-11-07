@@ -36,7 +36,7 @@ describe('deck.xml-mapper – several decks', () => {
 
   it('writes an empty <hand/> without hand cards and no <deck> without decks', () => {
     const doc: XMLDocument = document.implementation.createDocument(null, null);
-    const empty: DeckState = { decks: [], hand: [], assigned: [] };
+    const empty: DeckState = { decks: [], hand: [], assigned: [], inventory: [] };
     const el: Element = writeDeck(doc, empty);
     expect(el.querySelector('deck')).toBeNull();
     expect(el.querySelector('hand')?.children).toHaveLength(0);
@@ -56,7 +56,12 @@ describe('deck.xml-mapper – several decks', () => {
   });
 
   it('reads an empty <cardDeck/> as no decks', () => {
-    expect(readDeck(parse('<cardDeck/>'))).toEqual({ decks: [], hand: [], assigned: [] });
+    expect(readDeck(parse('<cardDeck/>'))).toEqual({
+      decks: [],
+      hand: [],
+      assigned: [],
+      inventory: [],
+    });
   });
 });
 
@@ -93,6 +98,7 @@ describe('deck.xml-mapper – older saves with one deck', () => {
       ],
       hand: [],
       assigned: [],
+      inventory: [],
     });
   });
 

@@ -1,4 +1,10 @@
-import { AssignedCard, DeckInstance, DeckState, HandCard } from '../../models/deck-state.model';
+import {
+  AssignedCard,
+  DeckInstance,
+  DeckState,
+  HandCard,
+  InventoryCard,
+} from '../../models/deck-state.model';
 import { EQUIPMENT_SLOTS } from '../../models/equipment.model';
 import { StorageCodec } from '../../session-state/persisted-state';
 import { LegacyDeckState, migrateLegacyDeck } from './deck-state-migration.util';
@@ -37,6 +43,10 @@ function isHandCard(value: unknown): value is HandCard {
   return isRecord(value) && typeof value['deckId'] === 'string' && isRecord(value['card']);
 }
 
+function isInventoryCard(value: unknown): value is InventoryCard {
+  return isRecord(value) && isHandCard(value) && typeof value['characterId'] === 'string';
+}
+
 function list<T>(value: unknown, guard: (item: unknown) => item is T): T[] {
   return Array.isArray(value) ? value.filter(guard) : [];
 }
@@ -57,8 +67,8 @@ function decodeHand(stored: Record<string, unknown>): HandCard[] {
 
 /**
  * Speichert den Deck-Zustand unverändert. Beim Laden wird ein älterer Zustand mit einem Deck zu einer
- * Instanz; ungültige Instanzen und Zuweisungen sowie Verweise auf fehlende Instanzen werden verworfen.
- * Kein Objekt → Startwert (keine Decks).
+ * Instanz; ungültige Instanzen, Zuweisungen und Inventarkarten sowie Verweise auf fehlende Instanzen werden
+ * verworfen; ohne Inventar (ältere Stände) ist es leer. Kein Objekt → Startwert (keine Decks).
  */
 export const DECK_STATE_CODEC: StorageCodec<DeckState> = {
   encode: (state: DeckState): unknown => state,
@@ -72,6 +82,7 @@ export const DECK_STATE_CODEC: StorageCodec<DeckState> = {
       })),
       hand: decodeHand(stored),
       assigned: list(stored['assigned'], isAssignedCard),
+      inventory: list(stored['inventory'], isInventoryCard),
     });
   },
 };

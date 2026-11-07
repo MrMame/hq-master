@@ -19,13 +19,12 @@ const MOVES: { cardId: string; from: CardLocation; to: CardLocation }[] = ORIGIN
       to,
     })),
 );
-// 20 Paare mit verschiedener Art; Slot → anderer Slot ist die 21. Bewegung, die übrigen 4 der 25
-// Kombinationen (gleiche Art) prüft „where it already is“.
-const SLOT_TO_SLOT: { cardId: string; from: CardLocation; to: CardLocation } = {
-  cardId: 'h5',
-  from: ORIGINS[4].location,
-  to: TARGETS[4],
-};
+// 30 Paare mit verschiedener Art; Slot → anderer Slot und Inventar → anderes Inventar kommen dazu, die
+// übrigen 6 der 36 Kombinationen (gleicher Ort) prüft „where it already is“.
+const SAME_KIND: { cardId: string; from: CardLocation; to: CardLocation }[] = [
+  { cardId: 'h5', from: ORIGINS[4].location, to: TARGETS[4] },
+  { cardId: 'h6', from: ORIGINS[5].location, to: TARGETS[5] },
+];
 
 describe('moveCard – every origin and target', () => {
   let s: DeckState;
@@ -34,7 +33,7 @@ describe('moveCard – every origin and target', () => {
     s = createMoveState();
   });
 
-  it.each([...MOVES, SLOT_TO_SLOT])(
+  it.each([...MOVES, ...SAME_KIND])(
     'moves $cardId from $from.kind to $to.kind',
     ({ cardId, from, to }) => {
       const ref: CardRef = deck1Ref(cardId);
@@ -45,6 +44,7 @@ describe('moveCard – every origin and target', () => {
       // Die zweite Instanz mit denselben Karten-IDs bleibt unberührt.
       expect(next.decks[1]).toBe(s.decks[1]);
       expect(next.assigned).toContainEqual(s.assigned[1]);
+      expect(next.inventory).toContainEqual(s.inventory[1]);
       if (from.kind === 'hand') expect(next.hand).toEqual([]);
       if (to.kind === 'hand') {
         // Die Karte kommt ans Ende der Hand, h1 bleibt in der Hand und wird nicht abgelegt.

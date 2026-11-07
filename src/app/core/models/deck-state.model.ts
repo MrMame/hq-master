@@ -17,6 +17,16 @@ export interface AssignedCard {
   slot: EquipmentSlot;
 }
 
+/**
+ * Eine Karte im Inventar eines Charakters; jede Kartenart passt, sie ändert keine Werte. Eigene Liste neben
+ * `AssignedCard`, damit Boni nur aus Slots kommen.
+ */
+export interface InventoryCard {
+  deckId: string;
+  card: Card;
+  characterId: string;
+}
+
 /** Ein Deck auf dem Spieltisch; dieselbe Deck-Datei kann mehrere Instanzen haben. */
 export interface DeckInstance {
   id: string;
@@ -42,4 +52,6 @@ export interface DeckState {
   hand: HandCard[];
   /** Zugewiesene Karten liegen in keinem anderen Bereich. */
   assigned: AssignedCard[];
+  /** Inventarkarten aller Charaktere; neueste Karte am Ende. */
+  inventory: InventoryCard[];
 }

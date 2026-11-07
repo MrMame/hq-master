@@ -2,6 +2,7 @@ import { computed, inject, Injectable, Signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import { Card } from '../../core/models/card.model';
+import { CardLocation } from '../../core/models/card-location.model';
 import { CharacterInfo } from '../../core/models/character-info.model';
 import { AssignedCard, CardRef } from '../../core/models/deck-state.model';
 import { CardManagerService } from '../../core/services/card-deck/card-manager.service';
@@ -10,24 +11,27 @@ import { slotOccupant } from '../../core/services/card-deck/deck-assignment.util
 import { isSameCard } from '../../core/services/card-deck/deck-state.util';
 import { CharactersDbService } from '../../core/services/characters/characters-db.service';
 import { EquipmentService } from '../../core/services/equipment/equipment.service';
-import { ConfirmationService } from './confirmation.service';
 import { AssignEquipmentDialog } from '../components/assign-equipment-dialog/assign-equipment-dialog';
+import { GiveToInventoryDialog } from '../components/give-to-inventory-dialog/give-to-inventory-dialog';
+import { SlotOccupiedDialog } from '../components/slot-occupied-dialog/slot-occupied-dialog';
 import { AssignEquipmentChoice, AssignEquipmentDialogData } from '../models/assign-equipment.model';
+import { GiveToInventoryDialogData } from '../models/give-to-inventory.model';
+import { SlotOccupiedChoice, SlotOccupiedDialogData } from '../models/slot-occupied.model';
 
 /**
- * Ablauf rund um das Anlegen von Ausrüstung: Zuweisungsdialog und Rückfrage bei belegtem Slot. Geschrieben wird über den `EquipmentService` bzw. den `CardManagerService`.
+ * Abläufe rund um Karten der Charaktere: Zuweisungsdialog, Rückfrage bei belegtem Slot (Inventar,
+ * Ablagestapel oder Abbrechen) und „Ins Inventar geben“. Geschrieben wird über den `EquipmentService`.
  */
 @Injectable({
   providedIn: 'root',
 })
 export class CardAssignmentService {
   private readonly dialog: MatDialog = inject(MatDialog);
-  private readonly confirmation: ConfirmationService = inject(ConfirmationService);
   private readonly cardManager: CardManagerService = inject(CardManagerService);
   private readonly equipment: EquipmentService = inject(EquipmentService);
-  private readonly characters: Signal<CharacterInfo[]> = inject(CharactersDbService).characters;
+  readonly characters: Signal<CharacterInfo[]> = inject(CharactersDbService).characters;
 
-  /** Grund für eine deaktivierte Aktion „Einem Charakter anlegen“; `null` = zuweisbar. */
+  /** Grund für deaktiviertes „anlegen“ bzw. „ins Inventar geben“; `null` = möglich. */
   readonly assignDisabledReason: Signal<string | null> = computed(() =>
     this.characters().length === 0 ? 'Keine Charaktere in der Session' : null,
   );
@@ -38,8 +42,8 @@ export class CardAssignmentService {
   );
 
   /**
-   * Öffnet den Dialog für eine Ausrüstungskarte von beliebigem Ort (Hand, Stapel, Bank, Slot) und weist
-   * sie nach der Auswahl zu.
+   * Öffnet den Dialog für eine Ausrüstungskarte von beliebigem Ort (Hand, Stapel, Bank, Slot, Inventar) und
+   * weist sie nach der Auswahl zu; bei belegtem Slot wählt der DM, wohin die bisherige Karte kommt.
    */
   async assignCard(ref: CardRef): Promise<void> {
     const card: Card | undefined = findCard(this.cardManager.state(), ref);
@@ -53,22 +57,50 @@ export class CardAssignmentService {
         )
         .afterClosed(),
     );
-    if (!choice || !(await this.confirmReplace(assigned, ref, choice))) return;
-    this.equipment.assignCard(ref, choice.characterId, choice.slot);
+    if (!choice) return;
+    const previous: AssignedCard | undefined = slotOccupant(
+      assigned,
+      choice.characterId,
+      choice.slot,
+    );
+    const displaced: SlotOccupiedChoice | undefined =
+      previous && !isSameCard(previous, ref)
+        ? await this.chooseDisplaced(previous.card.name, choice.characterId)
+        : 'discardPile';
+    if (displaced) this.equipment.assignCard(ref, choice.characterId, choice.slot, displaced);
   }
 
-  /** Fragt nur, wenn im Slot eine andere Karte liegt. */
-  private async confirmReplace(
-    assigned: AssignedCard[],
-    ref: CardRef,
-    { characterId, slot }: AssignEquipmentChoice,
-  ): Promise<boolean> {
-    const previous: AssignedCard | undefined = slotOccupant(assigned, characterId, slot);
-    if (!previous || isSameCard(previous, ref)) return true;
-    return this.confirmation.confirm({
-      title: 'Slot belegt',
-      message: `„${previous.card.name}“ in den Ablagestapel legen?`,
-      confirmLabel: 'Ablegen',
-    });
+  /** Wählt den Charakter und legt die Karte in sein Inventar; der bisherige Inventarbesitzer fehlt. */
+  async giveToInventory(ref: CardRef, location: CardLocation): Promise<void> {
+    const card: Card | undefined = findCard(this.cardManager.state(), ref);
+    const characters: CharacterInfo[] = this.inventoryTargets(location);
+    if (!card || characters.length === 0) return;
+    const characterId: string | undefined = await firstValueFrom(
+      this.dialog
+        .open<GiveToInventoryDialog, GiveToInventoryDialogData, string>(GiveToInventoryDialog, {
+          data: { card, characters },
+          width: '24rem',
+        })
+        .afterClosed(),
+    );
+    if (characterId) this.equipment.moveCard(ref, { kind: 'inventory', characterId });
+  }
+
+  /** Charaktere, in deren Inventar eine Karte von `location` kommen kann. */
+  inventoryTargets(location: CardLocation): CharacterInfo[] {
+    const owner: string | null = location.kind === 'inventory' ? location.characterId : null;
+    return this.characters().filter((character) => character.id !== owner);
+  }
+
+  /** Rückfrage bei belegtem Slot; `undefined` = abgebrochen. */
+  chooseDisplaced(cardName: string, characterId: string): Promise<SlotOccupiedChoice | undefined> {
+    const characterName: string = this.ownerNames().get(characterId) ?? 'Unbekannt';
+    return firstValueFrom(
+      this.dialog
+        .open<SlotOccupiedDialog, SlotOccupiedDialogData, SlotOccupiedChoice>(SlotOccupiedDialog, {
+          data: { cardName, characterName },
+        })
+        .afterClosed(),
+    );
   }
 }

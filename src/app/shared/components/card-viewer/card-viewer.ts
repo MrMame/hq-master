@@ -18,10 +18,21 @@ import { TemplatePortal } from '@angular/cdk/portal';
 import { CharacterInfo } from '../../../core/models/character-info.model';
 import { DeckInstance, DeckState } from '../../../core/models/deck-state.model';
 import { CardManagerService } from '../../../core/services/card-deck/card-manager.service';
-import { findCardAt, LocatedCard } from '../../../core/services/card-deck/card-location.util';
-import { findDeck, isSameRef } from '../../../core/services/card-deck/deck-state.util';
+import {
+  findCardAt,
+  LocatedCard,
+  ownerOf,
+} from '../../../core/services/card-deck/card-location.util';
+import { findDeck } from '../../../core/services/card-deck/deck-state.util';
+import { CardLocation } from '../../../core/models/card-location.model';
+import { draftMoveOf, locationInDraft } from '../../utils/card-draft.util';
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
-import { CARD_ACTIONS, CardAction, CardActionContext } from '../../models/card-action.model';
+import {
+  CARD_ACTIONS,
+  CardAction,
+  CardActionContext,
+  CardDraft,
+} from '../../models/card-action.model';
 import { CardViewerService, ViewedCard } from '../../services/card-viewer.service';
 import { cardMenuEntries, CardMenuEntry } from '../../utils/card-menu-entries.util';
 import { cardViewerTitle } from '../../utils/card-viewer-title.util';
@@ -60,24 +71,23 @@ export class CardViewer {
     const deck: DeckInstance | undefined = findDeck(state, viewed.ref.deckId);
     if (!found || !deck) return null;
     const { context } = viewed;
-    return {
-      ...found,
-      ref: viewed.ref,
-      deck,
-      mode: context.mode,
-      draft: context.mode === 'draft' ? context.draft : null,
-    };
+    const draft: CardDraft | null = context.mode === 'draft' ? context.draft : null;
+    const location: CardLocation = draft
+      ? locationInDraft(draft.characterId, draft.moves(), viewed.ref, found.location)
+      : found.location;
+    return { card: found.card, location, ref: viewed.ref, deck, mode: context.mode, draft };
   });
 
   protected readonly title: Signal<string> = computed(() => {
     const context: CardActionContext | null = this.context();
     if (!context) return '';
     const { location, draft, ref } = context;
-    const owner: string | undefined =
-      location.kind === 'equipped'
-        ? this.characters().find((character) => character.id === location.characterId)?.name
-        : undefined;
-    const discarded: boolean = !!draft?.discarded().some((entry) => isSameRef(entry, ref));
+    const ownerId: string | undefined = ownerOf(location);
+    const owner: string | undefined = ownerId
+      ? this.characters().find((character) => character.id === ownerId)?.name
+      : undefined;
+    const discarded: boolean =
+      !!draft && draftMoveOf(draft.moves(), ref)?.target.kind === 'discardPile';
     return cardViewerTitle(context.deck.name, location, owner, discarded);
   });
 

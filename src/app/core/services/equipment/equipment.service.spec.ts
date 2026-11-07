@@ -85,22 +85,4 @@ describe('EquipmentService', () => {
     expect(character()).toEqual(barbarian);
     expect(logTexts()).toEqual([]);
   });
-
-  it('discards cards of a character onto the discard pile and logs it', () => {
-    service.discardCards(barbarian, [
-      { deckId: 'deck-1', cardId: 'e2' },
-      { deckId: 'deck-1', cardId: 'e1' },
-      { deckId: 'deck-2', cardId: 'e2' },
-    ]);
-
-    expect(service.assigned()).toEqual([]);
-    expect(discardPile()).toEqual([TOWER_SHIELD]);
-    expect(logTexts()).toEqual(['Barbar legt Turmschild ab']);
-  });
-
-  it('does not discard cards of other characters', () => {
-    service.discardCards({ ...barbarian, id: 'b' }, [{ deckId: 'deck-1', cardId: 'e2' }]);
-    expect(service.assigned()).toHaveLength(1);
-    expect(logTexts()).toEqual([]);
-  });
 });

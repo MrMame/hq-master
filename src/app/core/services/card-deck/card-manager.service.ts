@@ -11,9 +11,10 @@ import {
   DeckInstance,
   DeckState,
   HandCard,
+  InventoryCard,
 } from '../../models/deck-state.model';
 import { DECK_STATE_CODEC } from './deck-state-codec.util';
-import { discardAssigned, moveCard } from './card-move.util';
+import { discardOwned, moveCard } from './card-move.util';
 import { emptyDeckState } from './deck-state.util';
 import { drawCard } from './deck-draw.util';
 import {
@@ -47,6 +48,8 @@ export class CardManagerService implements SessionStateSlice<DeckState> {
   public readonly hand: Signal<HandCard[]> = computed(() => this.state().hand);
   /** Zugewiesene Ausrüstungskarten aller Decks. */
   public readonly assigned: Signal<AssignedCard[]> = computed(() => this.state().assigned);
+  /** Inventarkarten aller Charaktere. */
+  public readonly inventory: Signal<InventoryCard[]> = computed(() => this.state().inventory);
 
   /** Lädt eine Deck-XML-Datei als neue Instanz am Ende des Tischs. */
   async addDeck(url: string): Promise<void> {
@@ -61,7 +64,7 @@ export class CardManagerService implements SessionStateSlice<DeckState> {
     this.change((s) => renameDeck(s, deckId, name));
   }
 
-  /** Entfernt das Deck mit Stapeln, Bank, Handkarten und seinen zugewiesenen Karten. */
+  /** Entfernt das Deck mit Stapeln, Bank, Handkarten und seinen Slot- und Inventarkarten. */
   removeDeck(deckId: string): void {
     this.change((s) => removeDeck(s, deckId));
   }
@@ -74,7 +77,7 @@ export class CardManagerService implements SessionStateSlice<DeckState> {
     this.change((s) => shuffleDrawPile(s, deckId));
   }
 
-  /** Mischt Stapel, Ablage, Bank und die Handkarten des Decks zurück; Zuweisungen bleiben. */
+  /** Mischt Stapel, Ablage, Bank und die Handkarten des Decks zurück; Slots und Inventar bleiben. */
   resetDeck(deckId: string): void {
     this.change((s) => resetDeck(s, deckId));
   }
@@ -85,16 +88,16 @@ export class CardManagerService implements SessionStateSlice<DeckState> {
   }
 
   /**
-   * Bewegt eine Karte von ihrem Ort ans Ziel (Hand, Stapel oder Bank ihres Decks, Slot eines Charakters);
+   * Bewegt eine Karte von ihrem Ort ans Ziel (Hand, Stapel oder Bank ihres Decks, Slot oder Inventar eines Charakters);
    * eine verdrängte Slot-Karte kommt in ihren Ablagestapel. Ungültige Bewegung → keine Änderung.
    */
   moveCard(ref: CardRef, target: CardLocation): void {
     this.change((s) => moveCard(s, ref, target));
   }
 
-  /** Zugewiesene Karten aus ihren Slots in den Ablagestapel ihres Decks. */
-  discardAssignedCards(refs: readonly CardRef[]): void {
-    this.change((s) => discardAssigned(s, refs));
+  /** Karten der Charaktere aus Slots und Inventar in den Ablagestapel ihres Decks. */
+  discardOwnedCards(refs: readonly CardRef[]): void {
+    this.change((s) => discardOwned(s, refs));
   }
 
   /** Ersetzt den Deck-Zustand vollständig, z. B. beim Laden einer Session. */

@@ -21,7 +21,12 @@ describe('CardViewerService', () => {
       ref: { deckId: 'd1', cardId: 'c1' },
       context: { mode: 'live' },
     });
-    const draft: CardDraft = { characterId: 'a', discarded: signal([]), discard: () => undefined };
+    const draft: CardDraft = {
+      characterId: 'a',
+      moves: signal([]),
+      equipped: signal([]),
+      move: () => undefined,
+    };
     service.open({ deckId: 'd1', cardId: 'c2' }, { mode: 'draft', draft });
     expect(service.viewed()?.ref.cardId).toBe('c2');
     expect(service.viewed()?.context).toEqual({ mode: 'draft', draft });

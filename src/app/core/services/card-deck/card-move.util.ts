@@ -1,15 +1,22 @@
 import { Card, EquipmentCard } from '../../models/card.model';
 import { CardLocation, EquippedLocation, PileKind } from '../../models/card-location.model';
-import { AssignedCard, CardRef, DeckInstance, DeckState } from '../../models/deck-state.model';
+import {
+  AssignedCard,
+  CardRef,
+  DeckInstance,
+  DeckState,
+  InventoryCard,
+} from '../../models/deck-state.model';
 import { slotsForCard } from '../equipment/equipment-slots.util';
 import { findCardAt, isSameLocation, LocatedCard } from './card-location.util';
 import { slotOccupant } from './deck-assignment.util';
-import { isSameCard, updateDeck, withDiscarded } from './deck-state.util';
+import { CardInDeck, isSameCard, updateDeck, withDiscarded } from './deck-state.util';
 import { shuffled } from './shuffle.util';
 
 /**
- * Nimmt eine Karte von ihrem Ort und legt sie am Ziel ab: Hand (ans Ende), Nachziehstapel (eingemischt), Ablagestapel oder Bank ihres eigenen Decks, Slot
- * eines Charakters (eine dort liegende Karte kommt in den Ablagestapel ihres Decks).
+ * Nimmt eine Karte von ihrem Ort und legt sie am Ziel ab: Hand (ans Ende), Nachziehstapel (eingemischt),
+ * Ablagestapel oder Bank ihres eigenen Decks, Slot eines Charakters (eine dort liegende Karte kommt in den
+ * Ablagestapel ihres Decks), Inventar eines Charakters (ans Ende, jede Kartenart).
  * Unbekannte Karte, Ziel gleich Herkunft oder unpassender Slot → derselbe Zustand.
  */
 export function moveCard(s: DeckState, ref: CardRef, target: CardLocation): DeckState {
@@ -18,22 +25,38 @@ export function moveCard(s: DeckState, ref: CardRef, target: CardLocation): Deck
 }
 
 /**
- * Nimmt Karten aus ihren Slots in den Ablagestapel ihres Decks (in der Reihenfolge der Zuweisungen). Der Ort
- * steht schon fest, deshalb wird nicht neu gesucht.
+ * Nimmt Karten der Charaktere aus Slots und Inventar in den Ablagestapel ihres Decks (erst Slots, dann
+ * Inventar, jeweils in Listenreihenfolge). Der Ort steht schon fest, deshalb wird nicht neu gesucht.
  */
-export function discardAssigned(s: DeckState, refs: readonly CardRef[]): DeckState {
-  return s.assigned
-    .filter((entry) => refs.some((ref) => isSameCard(entry, ref)))
-    .reduce(
-      (state, { deckId, card, characterId, slot }) =>
-        relocate(
-          state,
-          { deckId, cardId: card.id },
-          { card, location: { kind: 'equipped', characterId, slot } },
-          { kind: 'discardPile' },
-        ),
-      s,
-    );
+export function discardOwned(s: DeckState, refs: readonly CardRef[]): DeckState {
+  const picked: (entry: CardInDeck) => boolean = (entry) => refs.some((r) => isSameCard(entry, r));
+  const owned: LocatedRef[] = [
+    ...s.assigned.filter(picked).map(slotEntry),
+    ...s.inventory.filter(picked).map(inventoryEntry),
+  ];
+  return owned.reduce(
+    (state, { ref, found }) => relocate(state, ref, found, { kind: 'discardPile' }),
+    s,
+  );
+}
+
+interface LocatedRef {
+  ref: CardRef;
+  found: LocatedCard;
+}
+
+function slotEntry({ deckId, card, characterId, slot }: AssignedCard): LocatedRef {
+  return {
+    ref: { deckId, cardId: card.id },
+    found: { card, location: { kind: 'equipped', characterId, slot } },
+  };
+}
+
+function inventoryEntry({ deckId, card, characterId }: InventoryCard): LocatedRef {
+  return {
+    ref: { deckId, cardId: card.id },
+    found: { card, location: { kind: 'inventory', characterId } },
+  };
 }
 
 function relocate(
@@ -50,6 +73,10 @@ function relocate(
   if (target.kind === 'hand') {
     return { ...taken, hand: [...taken.hand, { deckId: ref.deckId, card }] };
   }
+  if (target.kind === 'inventory') {
+    const carried: InventoryCard = { deckId: ref.deckId, card, characterId: target.characterId };
+    return { ...taken, inventory: [...taken.inventory, carried] };
+  }
   return updateDeck(taken, ref.deckId, (deck) => withPile(deck, target.kind, card));
 }
 
@@ -63,6 +90,8 @@ function take(s: DeckState, ref: CardRef, from: CardLocation): DeckState {
       return { ...s, hand: s.hand.filter((entry) => !isSameCard(entry, ref)) };
     case 'equipped':
       return { ...s, assigned: s.assigned.filter((entry) => !isSameCard(entry, ref)) };
+    case 'inventory':
+      return { ...s, inventory: s.inventory.filter((entry) => !isSameCard(entry, ref)) };
     default:
       return updateDeck(s, ref.deckId, (deck) => ({
         ...deck,

@@ -82,3 +82,28 @@ export function equipmentText(
     ? `${name} legt ${cardName} ab`
     : `${name} erhält ${cardName} (${slotLabel})`;
 }
+
+/** z. B. „Heiltrank ins Inventar von Zwerg“ bzw. „Heiltrank von Barbar ins Inventar von Zwerg“. */
+export function inventoryAddedText(
+  cardName: string,
+  receiverName: string | undefined,
+  giverName: string | null,
+): string {
+  const from: string = giverName === null ? '' : ` von ${giverName || UNNAMED}`;
+  return `${cardName}${from} ins Inventar von ${receiverName || UNNAMED}`;
+}
+
+/**
+ * z. B. „Runenrüstung von Barbar aus dem Inventar angelegt“ (`destination` = `null`, eigener Slot) bzw.
+ * „Heiltrank aus dem Inventar von Zwerg in die Hand“.
+ */
+export function inventoryRemovedText(
+  cardName: string,
+  ownerName: string | undefined,
+  destination: string | null,
+): string {
+  const owner: string = ownerName || UNNAMED;
+  return destination === null
+    ? `${cardName} von ${owner} aus dem Inventar angelegt`
+    : `${cardName} aus dem Inventar von ${owner} ${destination}`;
+}

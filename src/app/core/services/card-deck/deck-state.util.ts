@@ -9,7 +9,7 @@ export interface CardInDeck {
 
 /** Startzustand: keine Decks auf dem Tisch. */
 export function emptyDeckState(): DeckState {
-  return { decks: [], hand: [], assigned: [] };
+  return { decks: [], hand: [], assigned: [], inventory: [] };
 }
 
 /** Gleiche Karte, wenn Deck-Instanz und Karten-ID übereinstimmen. */
@@ -42,7 +42,7 @@ export function updateDeck(
   return next === deck ? s : { ...s, decks: s.decks.map((d) => (d === deck ? next : d)) };
 }
 
-/** Karten einer Instanz außer den zugewiesenen: Stapel, Ablage, Bank und ihre Handkarten. */
+/** Karten einer Instanz außer denen der Charaktere (Slots, Inventar): Stapel, Ablage, Bank und Handkarten. */
 export function unassignedCards(s: DeckState, deckId: string): Card[] {
   const deck: DeckInstance | undefined = findDeck(s, deckId);
   if (!deck) return [];
@@ -59,12 +59,13 @@ export function withDiscarded(s: DeckState, entries: readonly CardInDeck[]): Dec
   );
 }
 
-/** Verwirft Handkarten und Zuweisungen, deren Instanz nicht (mehr) auf dem Tisch liegt. */
+/** Verwirft Hand-, Slot- und Inventarkarten, deren Instanz nicht (mehr) auf dem Tisch liegt. */
 export function withoutDanglingRefs(s: DeckState): DeckState {
   const exists: (deckId: string) => boolean = (deckId) => !!findDeck(s, deckId);
   return {
     ...s,
     hand: s.hand.filter((entry) => exists(entry.deckId)),
     assigned: s.assigned.filter((entry) => exists(entry.deckId)),
+    inventory: s.inventory.filter((entry) => exists(entry.deckId)),
   };
 }

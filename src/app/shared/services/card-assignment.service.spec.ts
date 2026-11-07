@@ -7,7 +7,8 @@ import { CardAssignmentService } from './card-assignment.service';
 import { AssignEquipmentChoice } from '../models/assign-equipment.model';
 import { CardManagerService } from '../../core/services/card-deck/card-manager.service';
 import { CharactersDbService } from '../../core/services/characters/characters-db.service';
-import { ConfirmationService } from './confirmation.service';
+import { SlotOccupiedDialog } from '../components/slot-occupied-dialog/slot-occupied-dialog';
+import { SlotOccupiedChoice } from '../models/slot-occupied.model';
 import { CharacterInfo } from '../../core/models/character-info.model';
 import { CardRef, DeckState } from '../../core/models/deck-state.model';
 import { createTestCharacter } from '../../core/testing/character.fixtures';
@@ -16,6 +17,7 @@ import {
   BUCKLER,
   createDeckState,
   createEquipmentDeckState,
+  inventoryCard,
   RUNE_ARMOR,
   TOWER_SHIELD,
 } from '../../core/testing/deck.fixtures';
@@ -27,23 +29,21 @@ describe('CardAssignmentService', () => {
   let cardManager: CardManagerService;
   let charactersDb: CharactersDbService;
   let open: Mock;
-  let confirm: Mock<() => Promise<boolean>>;
   let choice: AssignEquipmentChoice | undefined;
+  let displaced: SlotOccupiedChoice | undefined;
   const barbarian: CharacterInfo = { ...createTestCharacter('a'), name: 'Barbar' };
 
   const deck: () => DeckState = () => cardManager.state();
 
   beforeEach(() => {
     choice = { characterId: 'a', slot: 'body' };
-    open = vi.fn(() => ({
-      afterClosed: (): Observable<AssignEquipmentChoice | undefined> => of(choice),
+    displaced = 'discardPile';
+    open = vi.fn((component: unknown) => ({
+      afterClosed: (): Observable<unknown> =>
+        of(component === SlotOccupiedDialog ? displaced : choice),
     }));
-    confirm = vi.fn().mockResolvedValue(true);
     TestBed.configureTestingModule({
-      providers: [
-        { provide: MatDialog, useValue: { open } },
-        { provide: ConfirmationService, useValue: { confirm } },
-      ],
+      providers: [{ provide: MatDialog, useValue: { open } }],
     });
     service = TestBed.inject(CardAssignmentService);
     cardManager = TestBed.inject(CardManagerService);
@@ -61,7 +61,7 @@ describe('CardAssignmentService', () => {
       characters: [barbarian],
       assigned: [assignedCard(TOWER_SHIELD, 'a', 'leftHand')],
     });
-    expect(confirm).not.toHaveBeenCalled();
+    expect(open).toHaveBeenCalledTimes(1);
     expect(deck().hand).toEqual([]);
     expect(deck().assigned.map((entry) => entry.card.id)).toEqual(['e2', 'e1']);
   });
@@ -72,24 +72,34 @@ describe('CardAssignmentService', () => {
     expect(deck().hand.map((entry) => entry.card)).toEqual([RUNE_ARMOR]);
   });
 
-  it('asks before an occupied slot is replaced', async () => {
+  it('asks where the card of an occupied slot goes: cancel, discard pile or inventory', async () => {
     const buckler: CardRef = { deckId: 'deck-1', cardId: 'e3' };
     cardManager.restore({
       ...createEquipmentDeckState('a'),
       hand: [{ deckId: 'deck-1', card: BUCKLER }],
     });
     choice = { characterId: 'a', slot: 'leftHand' };
-    confirm.mockResolvedValue(false);
+    displaced = undefined;
     await service.assignCard(buckler);
 
-    expect(confirm).toHaveBeenCalledWith(
-      expect.objectContaining({ message: '„Turmschild“ in den Ablagestapel legen?' }),
-    );
+    expect(open.mock.calls[1]).toEqual([
+      SlotOccupiedDialog,
+      { data: { cardName: 'Turmschild', characterName: 'Barbar' } },
+    ]);
     expect(deck().hand.map((entry) => entry.card)).toEqual([BUCKLER]);
 
-    confirm.mockResolvedValue(true);
+    displaced = 'discardPile';
     await service.assignCard(buckler);
     expect(deck().decks[0].discardPile).toEqual([TOWER_SHIELD]);
+
+    displaced = 'inventory';
+    cardManager.restore({
+      ...createEquipmentDeckState('a'),
+      hand: [{ deckId: 'deck-1', card: BUCKLER }],
+    });
+    await service.assignCard(buckler);
+    expect(deck().inventory).toEqual([inventoryCard(TOWER_SHIELD, 'a')]);
+    expect(deck().assigned).toEqual([assignedCard(BUCKLER, 'a', 'leftHand')]);
   });
 
   it('moves an equipped card to another slot without asking about the card itself', async () => {
@@ -101,7 +111,7 @@ describe('CardAssignmentService', () => {
 
     choice = { characterId: 'a', slot: 'rightHand' };
     await service.assignCard(shield);
-    expect(confirm).not.toHaveBeenCalled();
+    expect(open).toHaveBeenCalledTimes(2);
     expect(deck().assigned).toEqual([assignedCard(TOWER_SHIELD, 'a', 'rightHand')]);
   });
 

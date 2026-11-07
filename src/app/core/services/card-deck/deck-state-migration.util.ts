@@ -29,5 +29,6 @@ export function migrateLegacyDeck(legacy: LegacyDeckState): DeckState {
     ],
     hand: legacy.activeCard ? [{ deckId, card: legacy.activeCard }] : [],
     assigned: legacy.assigned.map((entry) => ({ ...entry, deckId })),
+    inventory: [],
   };
 }

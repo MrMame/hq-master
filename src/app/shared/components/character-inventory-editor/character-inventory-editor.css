@@ -1,0 +1,62 @@
+/* Gleiche Optik wie die übrigen Abschnitte des Charakter-Editors */
+.inventory-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.inventory-editor__caption {
+  margin-bottom: var(--space-1);
+  color: var(--color-gray-400);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+/* Kleines Kartenbild im Kartenformat */
+.inventory-editor__image {
+  height: var(--space-8);
+  aspect-ratio: var(--card-aspect-ratio);
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-card-surface);
+}
+
+.inventory-editor__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Bild und Name als ein Knopf zum Card Viewer */
+.inventory-editor__card {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--color-gray-700);
+  }
+}
+
+.inventory-editor__empty {
+  color: var(--color-gray-400);
+  font-size: var(--text-sm);
+  font-style: italic;
+}

@@ -79,7 +79,12 @@ describe('CardViewer – actions', () => {
   });
 
   it('shows only draft actions in draft mode and passes the draft', async () => {
-    const draft: CardDraft = { characterId: 'a', discarded: signal([]), discard: vi.fn() };
+    const draft: CardDraft = {
+      characterId: 'a',
+      moves: signal([]),
+      equipped: signal([]),
+      move: vi.fn(),
+    };
     await setup.open(DRAW_CARD, { mode: 'draft', draft });
 
     expect(setup.menuLabels()).toEqual(['Entwurf']);

@@ -15,7 +15,7 @@ import { describePersistedState } from '../../session-state/testing/describe-per
 import { SESSION_KEYS } from '../../session-state/session-keys';
 
 const KEY: string = SESSION_KEYS.deckState;
-const EMPTY: DeckState = { decks: [], hand: [], assigned: [] };
+const EMPTY: DeckState = { decks: [], hand: [], assigned: [], inventory: [] };
 
 const readStored: () => DeckState = (): DeckState =>
   JSON.parse(localStorage.getItem(KEY) ?? 'null') as DeckState;

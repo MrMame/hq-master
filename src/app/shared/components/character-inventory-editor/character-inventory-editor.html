@@ -1,0 +1,17 @@
+<fieldset class="inventory-editor">
+  <legend class="inventory-editor__caption">Inventar</legend>
+  @for (entry of cards(); track entry.deckId + '/' + entry.card.id) {
+    <!-- Öffnet die Karte im Card Viewer; Aktionen wirken dort erst mit „Übernehmen“. -->
+    <button
+      type="button"
+      class="inventory-editor__card"
+      [attr.aria-label]="entry.card.name + ' ansehen'"
+      (click)="view.emit({ deckId: entry.deckId, cardId: entry.card.id })"
+    >
+      <img [src]="entry.card.imagePath" alt="" class="inventory-editor__image" />
+      <span class="inventory-editor__name">{{ entry.card.name }}</span>
+    </button>
+  } @empty {
+    <span class="inventory-editor__empty">Keine Karten im Inventar</span>
+  }
+</fieldset>

@@ -8,8 +8,9 @@ const PLACE_LABELS: Readonly<Record<PileKind | 'hand', string>> = {
   bank: 'Bank',
 };
 
-/** Ort einer Karte als Text, z. B. „Ablagestapel“ oder „Barbar · Linke Hand“. */
+/** Ort einer Karte als Text, z. B. „Ablagestapel“, „Barbar · Linke Hand“ oder „Barbar · Inventar“. */
 export function locationLabel(location: CardLocation, ownerName: string | undefined): string {
+  if (location.kind === 'inventory') return `${ownerName ?? 'Unbekannt'} · Inventar`;
   if (location.kind !== 'equipped') return PLACE_LABELS[location.kind];
   return `${ownerName ?? 'Unbekannt'} · ${EQUIPMENT_SLOT_LABELS[location.slot]}`;
 }

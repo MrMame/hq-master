@@ -14,6 +14,7 @@ import { DeckList } from '../deck-list/deck-list';
 import { DeckRow } from '../deck-row/deck-row';
 import { DmHand } from '../dm-hand/dm-hand';
 import { EquippedCards } from '../equipped-cards/equipped-cards';
+import { InventoryCards } from '../inventory-cards/inventory-cards';
 import { CollapsibleSidebar } from '../../../../shared/components/collapsible-sidebar/collapsible-sidebar';
 import { SidebarSection } from '../../../../shared/components/sidebar-section/sidebar-section';
 import { SidebarSectionToggleAll } from '../../../../shared/components/sidebar-section-toggle-all/sidebar-section-toggle-all';
@@ -31,6 +32,7 @@ import { SidebarSectionToggleAll } from '../../../../shared/components/sidebar-s
     DeckRow,
     DmHand,
     EquippedCards,
+    InventoryCards,
     CollapsibleSidebar,
     SidebarSection,
     SidebarSectionToggleAll,

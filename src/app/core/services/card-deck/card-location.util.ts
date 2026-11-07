@@ -6,6 +6,7 @@ import {
   DeckInstance,
   DeckState,
   HandCard,
+  InventoryCard,
 } from '../../models/deck-state.model';
 import { findDeck, isSameCard } from './deck-state.util';
 
@@ -16,7 +17,7 @@ export interface LocatedCard {
 }
 
 /**
- * Sucht eine Karte über ihre `CardRef`: Hand, Stapel und Bank ihres Decks, Slots der Charaktere.
+ * Sucht eine Karte über ihre `CardRef`: Hand, Stapel und Bank ihres Decks, Slots und Inventar der Charaktere.
  * Unbekannte Karte oder Deck nicht (mehr) auf dem Tisch → `null`.
  */
 export function findCardAt(s: DeckState, ref: CardRef): LocatedCard | null {
@@ -29,11 +30,13 @@ export function findCardAt(s: DeckState, ref: CardRef): LocatedCard | null {
     if (card) return { card, location: { kind } };
   }
   const assigned: AssignedCard | undefined = s.assigned.find((entry) => isSameCard(entry, ref));
-  return assigned
-    ? {
-        card: assigned.card,
-        location: { kind: 'equipped', characterId: assigned.characterId, slot: assigned.slot },
-      }
+  if (assigned) {
+    const { card, characterId, slot } = assigned;
+    return { card, location: { kind: 'equipped', characterId, slot } };
+  }
+  const carried: InventoryCard | undefined = s.inventory.find((entry) => isSameCard(entry, ref));
+  return carried
+    ? { card: carried.card, location: { kind: 'inventory', characterId: carried.characterId } }
     : null;
 }
 
@@ -47,15 +50,15 @@ export function findCard(s: DeckState, ref: CardRef): Card | undefined {
   return findCardAt(s, ref)?.card;
 }
 
-/** Gleicher Ort: gleiche Art, bei Slots auch gleicher Charakter und Slot. */
+/** Besitzer einer Karte in Slot oder Inventar; sonst `undefined`. */
+export function ownerOf(location: CardLocation): string | undefined {
+  return location.kind === 'equipped' || location.kind === 'inventory'
+    ? location.characterId
+    : undefined;
+}
+
+/** Gleicher Ort: gleiche Art, bei Slots und Inventar auch gleicher Charakter, bei Slots gleicher Slot. */
 export function isSameLocation(a: CardLocation, b: CardLocation): boolean {
-  if (a.kind === 'equipped' || b.kind === 'equipped') {
-    return (
-      a.kind === 'equipped' &&
-      b.kind === 'equipped' &&
-      a.characterId === b.characterId &&
-      a.slot === b.slot
-    );
-  }
-  return a.kind === b.kind;
+  if (a.kind !== b.kind || ownerOf(a) !== ownerOf(b)) return false;
+  return a.kind !== 'equipped' || b.kind !== 'equipped' || a.slot === b.slot;
 }

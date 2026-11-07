@@ -1,7 +1,7 @@
 import { CardLocation } from '../../models/card-location.model';
 import { DeckState } from '../../models/deck-state.model';
 import { createMoveState, deck1Ref, HAND_CARDS, ORIGINS } from '../../testing/card-move.fixtures';
-import { findCard, isSameLocation, locateCard } from './card-location.util';
+import { findCard, isSameLocation, locateCard, ownerOf } from './card-location.util';
 
 describe('card location', () => {
   let s: DeckState;
@@ -20,6 +20,10 @@ describe('card location', () => {
       kind: 'equipped',
       characterId: 'b',
       slot: 'rightHand',
+    });
+    expect(locateCard(s, { deckId: 'deck-2', cardId: 'h6' })).toEqual({
+      kind: 'inventory',
+      characterId: 'b',
     });
   });
 
@@ -48,5 +52,23 @@ describe('card location', () => {
     expect(isSameLocation(slot('a', true), slot('b', true))).toBe(false);
     expect(isSameLocation(slot('a', true), { kind: 'hand' })).toBe(false);
     expect(isSameLocation({ kind: 'hand' }, slot('a', true))).toBe(false);
+  });
+
+  it('compares inventories by character and tells them apart from slots', () => {
+    const inventory: (characterId: string) => CardLocation = (characterId) => ({
+      kind: 'inventory',
+      characterId,
+    });
+    expect(isSameLocation(inventory('a'), inventory('a'))).toBe(true);
+    expect(isSameLocation(inventory('a'), inventory('b'))).toBe(false);
+    expect(
+      isSameLocation(inventory('a'), { kind: 'equipped', characterId: 'a', slot: 'head' }),
+    ).toBe(false);
+  });
+
+  it('names the owner of slot and inventory cards only', () => {
+    expect(ownerOf({ kind: 'inventory', characterId: 'a' })).toBe('a');
+    expect(ownerOf({ kind: 'equipped', characterId: 'b', slot: 'head' })).toBe('b');
+    expect(ownerOf({ kind: 'hand' })).toBeUndefined();
   });
 });

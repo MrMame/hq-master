@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-07  
 **Priorität:** Hoch  
-**Status:** open  
+**Status:** done (2026-11-07 10:10)  
 **Bezug:** setzt `docs/feature-requests/done/card-viewer.md` voraus; `src/app/core/models/deck-state.model.ts`,
 `src/app/core/services/card-deck/`, `src/app/core/services/equipment/`, `src/app/core/services/characters/`,
 `src/app/features/card-manager/`, `src/app/features/game-session/xml/`,
@@ -17,7 +17,7 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
 
 1. `docs/refactoring-requests/done/card-move-foundation.md` (keine Voraussetzung)
 2. `docs/feature-requests/done/card-viewer.md` – braucht 1.
-3. **`docs/feature-requests/character-inventory.md`** ← dieser Request – braucht 1. und 2. (`moveCard`,
+3. **`docs/feature-requests/done/character-inventory.md`** ← dieser Request – braucht 1. und 2. (`moveCard`,
    Card Viewer mit Aktions-Registry und Modus `draft`)
 4. `docs/feature-requests/card-viewer-comfort.md` – braucht 1. bis 3.
 
@@ -46,13 +46,16 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
 - Besitz steht an einer einzigen Stelle. Bevorzugt werden Slot- und Inventarkarten in einer gemeinsamen Liste
   geführt (z. B. `slot: EquipmentSlot | null`, `null` = Inventar). Dann gelten Löschen, Laden und Entfernen für
   beide automatisch gleich. Die Entscheidung fällt bei der Umsetzung und wird im Log begründet.
+- **Entscheidung (umgesetzt):** eigene Liste `DeckState.inventory` neben `assigned`. `AssignedCard` garantiert
+  weiter Ausrüstungskarte und Slot, Boni kommen typsicher nur aus Slots; Löschen, Laden und Entfernen laufen über
+  gemeinsame Helfer (`withoutDanglingRefs`, `removeDeck`, `orphanedCards`, `discardOwned`) für beide Listen.
 - Keine Obergrenze für die Zahl der Inventarkarten.
 
 ---
 
 ## Anforderungen
 
-### 1. Datenmodell und Bewegungen
+### 1. Datenmodell und Bewegungen ✅ done (2026-11-07 10:10)
 
 - Inventarkarten mit `deckId`, Karte und `characterId`.
 - `locateCard` und `moveCard` kennen den Ort/das Ziel „Inventar von <Charakter>“.
@@ -61,7 +64,7 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
   - Inventar → Slot: Leben und Rüstung steigen um den Bonus.
     Das sind dieselben Regeln wie Ablegen und Anlegen.
 
-### 2. Aktionen im Card Viewer
+### 2. Aktionen im Card Viewer ✅ done (2026-11-07 10:10)
 
 | Aktion                             | Verfügbar, wenn die Karte …                                                                                |
 | ---------------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -74,7 +77,7 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
   Charakters, in den **Ablagestapel** ihres Decks oder **Abbrechen**.
 - Alle Aktionen aus `card-viewer.md` (Hand, Ablagestapel, Zurückmischen, Bank) gelten auch für Inventarkarten.
 
-### 3. Bereich „Inventar“ im Card Manager
+### 3. Bereich „Inventar“ im Card Manager ✅ done (2026-11-07 10:10)
 
 - Eigener Bereich „Inventar“ im Hauptbereich unter „Ausgerüstet“ und über dem Spieltisch.
 - Er zeigt die Inventarkarten **aller** Charaktere übersichtlich, gruppiert nach Charakter: aktueller Name mit
@@ -83,7 +86,7 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
 - Höhe begrenzt wie „Ausgerüstet“, weitere Inhalte scrollen in sich.
 - Ein Klick auf eine Karte öffnet den Viewer.
 
-### 4. Inventar im Charakter-Editor
+### 4. Inventar im Charakter-Editor ✅ done (2026-11-07 10:10)
 
 - Neuer Abschnitt „Inventar“ unter „Ausrüstung“ mit Bild und Name je Karte; leer: „Keine Karten im Inventar“.
 - Ein Klick öffnet den Viewer im Modus `draft`.
@@ -93,7 +96,7 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
   - „Anlegen“ (aus dem Inventar in einen eigenen Slot)
 - Die Werte unter Angriff, Abwehr usw. zeigen den Entwurfsstand.
 
-### 5. Löschen, Entfernen, Speichern
+### 5. Löschen, Entfernen, Speichern ✅ done (2026-11-07 10:10)
 
 - Wird ein Charakter gelöscht, kommen seine Inventarkarten in den Ablagestapel ihres Decks.
 - Wird ein Deck entfernt, verschwinden seine Inventarkarten.
@@ -102,12 +105,12 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
   Inventarkarten fehlender Charaktere landen beim Laden im Ablagestapel ihres Decks, Inventarkarten fehlender Decks
   werden verworfen.
 
-### 6. Ereignis-Log
+### 6. Ereignis-Log ✅ done (2026-11-07 10:10)
 
 - Jede Bewegung in ein Inventar und aus einem Inventar steht im Ereignis-Log (wie Zuweisen/Ablegen, nur unter
   „Alle“), z. B. „Heiltrank ins Inventar von Zwerg“ oder „Runenrüstung von Barbar aus dem Inventar angelegt“.
 
-### 7. Dokumentation
+### 7. Dokumentation ✅ done (2026-11-07 10:10)
 
 - `REQUIREMENTS.md` Abschnitte 1 und 5 beschreiben das Inventar.
 
@@ -115,14 +118,14 @@ alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
 
 ## Akzeptanzkriterien
 
-- [ ] Basis-, Kampf- und Ausrüstungskarten lassen sich über den Viewer jedem Charakter ins Inventar geben und an
+- [x] Basis-, Kampf- und Ausrüstungskarten lassen sich über den Viewer jedem Charakter ins Inventar geben und an
       einen anderen weitergeben.
-- [ ] Eine Ausrüstungskarte im Inventar ändert keine Werte; angelegt wirkt ihr Bonus, zurück ins Inventar entfällt
+- [x] Eine Ausrüstungskarte im Inventar ändert keine Werte; angelegt wirkt ihr Bonus, zurück ins Inventar entfällt
       er (Beispielrechnung aus REQUIREMENTS Abschnitt 1 als Spec).
-- [ ] Belegter Slot beim Anlegen bietet Inventar, Ablagestapel und Abbrechen an.
-- [ ] Der Bereich „Inventar“ im Card Manager zeigt alle Charaktere mit Inventarkarten gruppiert und ist sonst
+- [x] Belegter Slot beim Anlegen bietet Inventar, Ablagestapel und Abbrechen an.
+- [x] Der Bereich „Inventar“ im Card Manager zeigt alle Charaktere mit Inventarkarten gruppiert und ist sonst
       ausgeblendet.
-- [ ] Im Charakter-Editor wirken Inventaraktionen erst nach „Übernehmen“.
-- [ ] Löschen eines Charakters, Entfernen eines Decks und Laden alter oder unvollständiger Spielstände verhalten
+- [x] Im Charakter-Editor wirken Inventaraktionen erst nach „Übernehmen“.
+- [x] Löschen eines Charakters, Entfernen eines Decks und Laden alter oder unvollständiger Spielstände verhalten
       sich wie in 5.; Specs decken das ab.
-- [ ] Alle Inventarbewegungen stehen im Ereignis-Log.
+- [x] Alle Inventarbewegungen stehen im Ereignis-Log.

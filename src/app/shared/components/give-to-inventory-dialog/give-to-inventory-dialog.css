@@ -1,0 +1,44 @@
+/* Fläche, Titel und Aktions-Buttons: gemeinsamer Look `.general-dialog`; Auswahl wie beim Zuweisen */
+.give-inventory {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.give-inventory__card {
+  font-weight: 600;
+}
+
+.give-inventory__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Beschriftung wie die Überschriften im Charakter-Editor */
+.give-inventory__caption {
+  margin-bottom: var(--space-1);
+  color: var(--color-gray-400);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+.give-inventory__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  accent-color: var(--color-yellow-400);
+  cursor: pointer;
+}
+
+.give-inventory__portrait {
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: 50%;
+  object-fit: cover;
+}

@@ -50,7 +50,7 @@ describe('CharacterEquipmentEditor', () => {
       Array.from(overlay.querySelectorAll('[role="menuitem"]')).map((item) =>
         item.textContent?.trim(),
       ),
-    ).toEqual(['In den Ablagestapel legen']);
+    ).toEqual(['In den Ablagestapel legen', 'Ins Inventar legen']);
   });
 
   it('shows a card discarded in the viewer as pending and its slot as free', async () => {

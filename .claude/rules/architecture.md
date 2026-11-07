@@ -24,11 +24,11 @@ core/
                     condition-event.model.ts (ConditionEvent: Schaden/Ablauf eines Zustands),
                     game-log-entry.model.ts (GameLogEntry, GameLogEntryType: Ereignis-Log der Session),
                     card.model.ts, deck-config.model.ts, deck-state.model.ts (Deck-Instanzen `DeckInstance`, die Hand
-                    als `HandCard[]`, `AssignedCard` und `CardRef` mit `deckId`; in core, weil der Charakter-Editor die
+                    als `HandCard[]`, `AssignedCard`, `InventoryCard` (eigene Liste, Boni nur aus Slots) und `CardRef` mit `deckId`; in core, weil der Charakter-Editor die
                     Ausrüstung bearbeitet),
                     equipment.model.ts (ModifiableStat, StatModifier, EquipmentSlot, CardSlot, Beschriftungen),
                     card-location.model.ts (`CardLocation`: Ort einer Karte und Ziel einer Bewegung – Hand,
-                    Nachziehstapel, Ablagestapel, Bank, Slot; neue Orte als weitere `kind`)
+                    Nachziehstapel, Ablagestapel, Bank, Slot, Inventar; neue Orte als weitere `kind`)
     character-names/ → <klasse>-names.model.ts (editierbare Vor-/Nachnamen je Charakterklasse,
                     vom Dateilimit ausgenommen), character-names.model.ts (CHARACTER_NAMES_BY_IMAGE)
   session-state/  → persisted-state.ts (persistedState), session-keys.ts (SESSION_KEYS),
@@ -50,24 +50,26 @@ core/
                     `readLimit`: fehlendes/ungültiges Maximum → aktueller Wert; für Codec, XML und Editor;
                     `withinLimits(c, modifiers)` begrenzt auf das wirksame Maximum, `normalizedLimits` für Codec/XML
                     nur nach unten, `withAddedEquipment`)
-    card-deck/    → CardManagerService (beliebig viele Deck-Instanzen, `hand`, `assigned`),
+    card-deck/    → CardManagerService (beliebig viele Deck-Instanzen, `hand`, `assigned`, `inventory`),
                     DeckXmlLoaderService, deck-state.util.ts (Instanz finden/ändern, `isSameRef`, `withDiscarded` in den
                     Ablagestapel der eigenen Instanz, `withoutDanglingRefs`), deck-instance.util.ts (hinzufügen mit Durchnummerieren,
                     umbenennen, entfernen, verschieben, mischen, zurücksetzen), card-location.util.ts (`locateCard`,
-                    `findCard` per `CardRef`), card-move.util.ts (`moveCard`: einzige Kartenbewegung von jedem Ort an
-                    jedes Ziel, `discardAssigned`; neue Bewegungen nur hierüber), deck-draw.util.ts (ziehen in die Hand), deck-assignment.util.ts (Slot-Belegung, verwaiste Zuweisungen), shuffle.util.ts, deck-state-codec.util.ts (DECK_STATE_CODEC),
+                    `findCard` per `CardRef`, `ownerOf`), card-move.util.ts (`moveCard`: einzige Kartenbewegung von jedem Ort an
+                    jedes Ziel, `discardOwned` für Slot- und Inventarkarten; neue Bewegungen nur hierüber), deck-draw.util.ts (ziehen in die Hand), deck-assignment.util.ts (Slot-Belegung, verwaiste Slot- und Inventarkarten), shuffle.util.ts, deck-state-codec.util.ts (DECK_STATE_CODEC),
                     deck-state-migration.util.ts (älterer Zustand mit einem Deck → eine Instanz; Codec und XML;
                     eine alte `activeCard` wird einzige Handkarte),
                     equipment-card-xml.util.ts (Slot und `<modifier>` lesen/schreiben für Deck-XML und Spielstand)
     equipment/    → effective-stats.util.ts (`effectiveStats`: einzige Berechnung der wirksamen Werte),
                     equipment-text.util.ts, equipment-slots.util.ts, equipment-log.util.ts,
                     equipment-transfer.util.ts (Werte und Log-Einträge von Abgebendem und Empfänger),
-                    EquipmentService (Zuweisen jeder Karte per `CardRef`/Ablegen inkl. Leben/Rüstung und Log;
-                    `moveCard`: jede Bewegung, bei der ein Besitzer seinen Bonus verliert; kein eigener Zustand),
-                    EquipmentSyncService (effect(): Karten fehlender Charaktere ablegen, Leben/Rüstung auf das
+                    inventory-log.util.ts (Log-Einträge in und aus Inventaren, ein Eintrag je Bewegung),
+                    EquipmentService (Zuweisen jeder Karte per `CardRef`, belegter Slot → Ablage oder Inventar,
+                    Ablegen inkl. Leben/Rüstung und Log; `moveCard`: jede Bewegung mit Bonusverlust und Log, auch
+                    Inventar; kein eigener Zustand),
+                    EquipmentSyncService (effect(): Slot- und Inventarkarten fehlender Charaktere ablegen, Leben/Rüstung auf das
                     wirksame Maximum begrenzen; app-weit in app.config.ts gestartet)
   testing/        → character.fixtures.ts (Testdaten für Charaktere), deck.fixtures.ts (Deck, Ausrüstungskarten),
-                    card-move.fixtures.ts (je Ort eine Karte in zwei Deck-Instanzen, Bewegungsmatrix; Hand statt aktiv),
+                    card-move.fixtures.ts (je Ort eine Karte in zwei Deck-Instanzen inkl. Inventar, Bewegungsmatrix),
                     condition.fixtures.ts (Test-Zustände, Spielzeit
                     ab 12:00:00), game-log.fixtures.ts (Log-Einträge), nur für Specs
 
@@ -149,7 +151,9 @@ features/
                          AddDeckForm (Deck-Datei als neue Instanz laden), RenameDeckDialog, EquippedCards (gemeinsamer
                          Bereich „Ausgerüstet“ über dem Spieltisch mit Besitzer und Herkunftsdeck, höchstens zwei
                          Reihen sichtbar, weitere scrollen in sich; ohne Karten ausgeblendet; Klick öffnet den Viewer;
-                         Hand und Ausgerüstet nutzen `.card-strip` aus `src/styles/components/card-strip.css`)
+                         Hand und Ausgerüstet nutzen `.card-strip` aus `src/styles/components/card-strip.css`),
+                         InventoryCards (Bereich „Inventar“ unter „Ausgerüstet“: Karten aller Charaktere gruppiert,
+                         Höhe begrenzt, ohne Karten ausgeblendet; Klick öffnet den Viewer)
     services/          → deck-actions.service.ts (Umbenennen per Dialog, Entfernen nach Rückfrage);
                          Deck-Zustand und Loader liegen in core/services/card-deck/
     testing/           → card-manager-page.fixtures.ts (echter Deck-Zustand, gemockter Loader und Zuweisungsablauf;
@@ -163,6 +167,7 @@ features/
                          card.xml-mapper.ts (Karten), deck.xml-mapper.ts (`<cardDeck>` mit `<deck>`-Instanzen, Hand
                          und Zuweisungen; älteres `<config>` direkt in `<cardDeck>` → eine Instanz),
                          hand.xml-mapper.ts (`<hand>`; älteres `<activeCard>` → einzige Handkarte),
+                         inventory.xml-mapper.ts (`<inventory>`; fehlend → leer),
                          deck-instance.xml-mapper.ts (eine Instanz), assigned-cards.xml-mapper.ts (fehlendes `<assigned>`
                          → leer)
     utils/             → date-time-local.util.ts (reine Hilfsfunktionen)
@@ -178,11 +183,14 @@ shared/
                          CharacterStatsEditor (Zahlenwerte im Editor mit Bonus `+2 = 6`, ebenfalls per `viewProviders`),
                          CharacterEquipmentEditor (Abschnitt „Ausrüstung“: Slots; Bild/Name öffnen den Card Viewer im
                          Entwurf, Ablegen erst mit „Übernehmen“),
+                         CharacterInventoryEditor (Abschnitt „Inventar“ unter „Ausrüstung“, öffnet den Viewer im Entwurf),
                          CardViewer (einmal im App-Template: Overlay mit Backdrop über allem, auch über Dialogen;
                          Karte groß mit Deck/Ort und `CardActionMenu`; Ort per `findCardAt` bei jeder Änderung neu,
                          schließt bei verschwundener Karte; kennt keine einzelne Aktion),
                          CardActionMenu (Menüeinträge mit Trennlinien und ausgegrauten Einträgen mit Tooltip),
                          AssignEquipmentDialog (Charakter und Hand wählen, schreibt nichts),
+                         GiveToInventoryDialog (Charakter fürs Inventar wählen, schreibt nichts),
+                         SlotOccupiedDialog (belegter Slot: Inventar / Ablagestapel / Abbrechen),
                          CardDisplay (eine Karte: Vorder-/Rückseite, Slot, Modifikatoren, „Im Besitz von“, Herkunftsdeck),
                          SearchField (Suchfeld mit `label`, × und Escape leeren es; Builder-Bibliothek, Deckliste),
                          DamageTakenDialog, BoardZoomControl (senkrechter Zoom-Regler für zoombare Spielflächen,
@@ -197,19 +205,24 @@ shared/
   card-actions/        → Kartenaktionen des Card Viewers: provide-card-actions.ts (`provideCardActions(...)`:
                          Multi-Provider auf `CARD_ACTIONS`; neue Aktionen nur so registrieren),
                          *.card-action.ts (move: Hand/Ablage/Nachziehstapel/Bank über `EquipmentService.moveCard`;
-                         assign: „Einem Charakter anlegen“; draft-discard: Ablegen im Entwurf des Editors),
+                         assign: „Einem Charakter anlegen“; inventory: „ins Inventar geben“, „Ins Inventar legen“;
+                         draft-discard, draft-inventory: Ablegen, Ins Inventar legen, Anlegen im Entwurf des Editors),
                          default-card-actions.ts (`provideDefaultCardActions()`, registriert in app.config.ts)
   directives/          → board-pan.ts (BoardPan: Ausschnitt eines Scroll-Containers per Ziehen verschieben),
                          repeat-on-hold.ts (RepeatOnHold: Schritt-Button wiederholt beim Gedrückthalten)
   models/              → confirmation-dialog-data.model.ts (Texte der Rückfrage),
-                         card-action.model.ts (`CardAction`, `CardActionContext`, Modus `live`/`draft`, `CardDraft`,
+                         card-action.model.ts (`CardAction`, `CardActionContext`, Modus `live`/`draft`, `CardDraft` mit
+                         vorgemerkten `DraftMove`s,
                          `CardViewerContext`, `CARD_ACTIONS`),
                          assign-equipment.model.ts (Daten und Ergebnis des Zuweisungsdialogs),
+                         give-to-inventory.model.ts, slot-occupied.model.ts (Daten/Ergebnis der Inventar-Dialoge),
                          damage-dialog-data.model.ts (Titel des Schadensauswahl-Dialogs)
   services/            → character-editor.service.ts (öffnet den Charakter-Editor systemweit),
                          card-viewer.service.ts (CardViewerService: `open(ref, context?)`, `close()`, `viewed`;
                          UI-Zustand ohne Speicherung),
-                         card-assignment.service.ts (Zuweisungsdialog für eine `CardRef`, Rückfrage bei belegtem Slot),
+                         card-assignment.service.ts (Zuweisungsdialog für eine `CardRef`, Rückfrage bei belegtem Slot,
+                         „Ins Inventar geben“),
+                         character-card-draft.service.ts (je Editor bereitgestellt: Kartenentwurf, `apply()` beim Übernehmen),
                          character-damage.service.ts (Schadensauswahl → applyDamage → Session),
                          condition-tick.service.ts (ConditionTickService: effect() auf die Spielzeit → advanceConditions
                          → CharactersDbService; app-weit in app.config.ts gestartet, Ereignisse → GameLogService),
@@ -231,7 +244,8 @@ shared/
                          xml.util.ts (XML lesen/schreiben, `requireChild` mit Dateiart in der Fehlermeldung),
                          text-search.util.ts (`isSearching`, `matchesSearch`: Namenssuche ohne Groß-/Kleinschreibung),
                          card-menu-entries.util.ts (Menü: Modus, Verfügbarkeit, Reihenfolge, Trennlinien),
-                         card-viewer-title.util.ts (Deck und Ort über der Karte, „wird abgelegt“ im Entwurf)
+                         card-viewer-title.util.ts (Deck und Ort über der Karte, „wird abgelegt“ im Entwurf),
+                         card-draft.util.ts (Entwurfsbewegungen: Ort im Entwurf, Karten laut Entwurf)
   testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
                          scroll-into-view.fixtures.ts (Spy für das in jsdom fehlende scrollIntoView),
                          character-editor-dialog.fixtures.ts, character-conditions-editor.fixtures.ts,

@@ -57,7 +57,11 @@ describe('appConfig', () => {
       'shuffle-back',
       'bank',
       'assign',
+      'give-to-inventory',
+      'stow',
       'draft-discard',
+      'draft-stow',
+      'draft-equip',
     ]);
   });
 });

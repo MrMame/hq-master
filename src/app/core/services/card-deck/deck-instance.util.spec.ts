@@ -3,8 +3,10 @@ import { Card } from '../../models/card.model';
 import { DeckState } from '../../models/deck-state.model';
 import {
   assignedCard,
+  BASIC_CARD,
   createDeckInstance,
   createTwoDeckState,
+  inventoryCard,
   TOWER_SHIELD,
 } from '../../testing/deck.fixtures';
 import { drawCard } from './deck-draw.util';
@@ -95,5 +97,16 @@ describe('deck instances', () => {
     expect(next.decks[0]).toEqual(active.decks[0]);
     expect(resetDeck(active, 'deck-1').hand.map((entry) => entry.deckId)).toEqual(['deck-2']);
     expect(resetDeck(active, 'unknown')).toBe(active);
+  });
+
+  it('drops the inventory cards of a removed deck, but a reset leaves them with their owner', () => {
+    const s: DeckState = {
+      ...createTwoDeckState(),
+      inventory: [inventoryCard(BASIC_CARD, 'a'), inventoryCard(BASIC_CARD, 'b', 'deck-2')],
+    };
+    expect(removeDeck(s, 'deck-2').inventory).toEqual([inventoryCard(BASIC_CARD, 'a')]);
+    const reset: DeckState = resetDeck(s, 'deck-2');
+    expect(reset.inventory).toEqual(s.inventory);
+    expect(ids(reset.decks[1].drawPile)).toEqual(['b1', 'c1']);
   });
 });

@@ -34,13 +34,14 @@ export function renameDeck(s: DeckState, deckId: string, name: string): DeckStat
   return updateDeck(s, deckId, (d) => (d.name === trimmed ? d : { ...d, name: trimmed }));
 }
 
-/** Entfernt die Instanz samt ihrer Hand- und zugewiesenen Karten. */
+/** Entfernt die Instanz samt ihrer Hand-, Slot- und Inventarkarten. */
 export function removeDeck(s: DeckState, deckId: string): DeckState {
   if (!findDeck(s, deckId)) return s;
   return {
     decks: s.decks.filter((d) => d.id !== deckId),
     hand: s.hand.filter((entry) => entry.deckId !== deckId),
     assigned: s.assigned.filter((entry) => entry.deckId !== deckId),
+    inventory: s.inventory.filter((entry) => entry.deckId !== deckId),
   };
 }
 
@@ -59,7 +60,7 @@ export function shuffleDrawPile(s: DeckState, deckId: string): DeckState {
   return updateDeck(s, deckId, (d) => ({ ...d, drawPile: shuffled(d.drawPile) }));
 }
 
-/** Stapel, Ablage, Bank und Handkarten der Instanz zurück in den Nachziehstapel; Zuweisungen bleiben. */
+/** Stapel, Ablage, Bank und Handkarten der Instanz zurück in den Nachziehstapel; Slots und Inventar bleiben. */
 export function resetDeck(s: DeckState, deckId: string): DeckState {
   if (!findDeck(s, deckId)) return s;
   const drawPile: Card[] = shuffled(unassignedCards(s, deckId));

@@ -21,7 +21,7 @@ describe('SessionXmlService', () => {
     const snapshot: SessionSnapshot = {
       ...createSessionSnapshot(),
       characters: [],
-      deck: { decks: [], hand: [], assigned: [] },
+      deck: { decks: [], hand: [], assigned: [], inventory: [] },
       dungeon: {
         board: { ...createSessionSnapshot().dungeon.board, boardImageBase64: null },
         positions: [],

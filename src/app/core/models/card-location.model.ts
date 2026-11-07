@@ -17,11 +17,17 @@ export interface EquippedLocation {
   slot: EquipmentSlot;
 }
 
+/** Inventar eines Charakters: Karten, die er trägt, ohne dass sie Werte ändern. */
+export interface InventoryLocation {
+  kind: 'inventory';
+  characterId: string;
+}
+
 /**
- * Ort einer Karte und Ziel einer Bewegung. Weitere Orte (z. B. Inventar) kommen als neue `kind` dazu.
- * Beim Nachziehstapel als Ziel wird die Karte eingemischt, in der Hand kommt sie ans Ende.
+ * Ort einer Karte und Ziel einer Bewegung. Weitere Orte kommen als neue `kind` dazu.
+ * Beim Nachziehstapel als Ziel wird die Karte eingemischt, in Hand und Inventar kommt sie ans Ende.
  */
-export type CardLocation = HandLocation | PileLocation | EquippedLocation;
+export type CardLocation = HandLocation | PileLocation | EquippedLocation | InventoryLocation;
 
 export type PileKind = PileLocation['kind'];
 

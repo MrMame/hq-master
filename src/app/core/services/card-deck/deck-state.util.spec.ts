@@ -5,6 +5,7 @@ import {
   COMBAT_CARD,
   createDeckState,
   createTwoDeckState,
+  inventoryCard,
   TOWER_SHIELD,
 } from '../../testing/deck.fixtures';
 import {
@@ -20,7 +21,7 @@ import {
 
 describe('deck state', () => {
   it('starts without decks', () => {
-    expect(emptyDeckState()).toEqual({ decks: [], hand: [], assigned: [] });
+    expect(emptyDeckState()).toEqual({ decks: [], hand: [], assigned: [], inventory: [] });
   });
 
   it('identifies a card by deck and card id', () => {
@@ -64,7 +65,7 @@ describe('deck state', () => {
     expect(next.decks[1].discardPile).toEqual([COMBAT_CARD]);
   });
 
-  it('drops hand cards and assignments of missing decks', () => {
+  it('drops hand, slot and inventory cards of missing decks', () => {
     const s: DeckState = {
       ...createTwoDeckState(),
       hand: [
@@ -75,8 +76,10 @@ describe('deck state', () => {
         assignedCard(TOWER_SHIELD, 'a', 'leftHand', 'gone'),
         assignedCard(TOWER_SHIELD, 'a', 'rightHand'),
       ],
+      inventory: [inventoryCard(BASIC_CARD, 'a', 'gone'), inventoryCard(BASIC_CARD, 'a')],
     };
     const next: DeckState = withoutDanglingRefs(s);
+    expect(next.inventory).toEqual([inventoryCard(BASIC_CARD, 'a')]);
     expect(next.hand).toEqual([{ deckId: 'deck-1', card: COMBAT_CARD }]);
     expect(next.assigned).toEqual([assignedCard(TOWER_SHIELD, 'a', 'rightHand')]);
     expect(withoutDanglingRefs(createDeckState()).hand).toEqual(createDeckState().hand);

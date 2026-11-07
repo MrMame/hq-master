@@ -5,6 +5,7 @@ import {
   COMBAT_CARD,
   createDeckInstance,
   createEquipmentDeckState,
+  inventoryCard,
   TOWER_SHIELD,
 } from '../../testing/deck.fixtures';
 import { DECK_STATE_CODEC } from './deck-state-codec.util';
@@ -24,7 +25,10 @@ function legacyStored(): Record<string, unknown> {
 
 describe('DECK_STATE_CODEC', () => {
   it('stores and reads the deck state unchanged', () => {
-    const deck: DeckState = createEquipmentDeckState('a');
+    const deck: DeckState = {
+      ...createEquipmentDeckState('a'),
+      inventory: [inventoryCard(BASIC_CARD, 'a')],
+    };
     const stored: unknown = JSON.parse(JSON.stringify(DECK_STATE_CODEC.encode(deck)));
     expect(DECK_STATE_CODEC.decode(stored)).toEqual(deck);
   });
@@ -44,6 +48,23 @@ describe('DECK_STATE_CODEC', () => {
     ]);
     expect(state?.hand).toEqual([{ deckId: 'test-deck', card: COMBAT_CARD }]);
     expect(state?.assigned).toEqual([assignedCard(TOWER_SHIELD, 'a', 'leftHand', 'test-deck')]);
+    expect(state?.inventory).toEqual([]);
+  });
+
+  it('drops invalid inventory cards and those of missing decks', () => {
+    const deck: DeckState = createEquipmentDeckState('a');
+    const valid: unknown = inventoryCard(COMBAT_CARD, 'a');
+    const stored: unknown = {
+      ...deck,
+      inventory: [
+        null,
+        { deckId: 'deck-1', card: COMBAT_CARD },
+        { deckId: 'deck-1', card: COMBAT_CARD, characterId: 3 },
+        inventoryCard(COMBAT_CARD, 'a', 'gone'),
+        valid,
+      ],
+    };
+    expect(DECK_STATE_CODEC.decode(stored)?.inventory).toEqual([valid]);
   });
 
   it('drops invalid decks and assignments and references to missing decks', () => {
@@ -72,8 +93,14 @@ describe('DECK_STATE_CODEC', () => {
       decks: [createDeckInstance('deck-1', { source: '' })],
       hand: [],
       assigned: [],
+      inventory: [],
     });
-    expect(DECK_STATE_CODEC.decode({})).toEqual({ decks: [], hand: [], assigned: [] });
+    expect(DECK_STATE_CODEC.decode({})).toEqual({
+      decks: [],
+      hand: [],
+      assigned: [],
+      inventory: [],
+    });
   });
 
   it('reads a stored active card of several decks as the only hand card', () => {

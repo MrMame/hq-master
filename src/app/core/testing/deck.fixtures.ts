@@ -1,5 +1,5 @@
 import { Card, EquipmentCard } from '../models/card.model';
-import { AssignedCard, DeckInstance, DeckState } from '../models/deck-state.model';
+import { AssignedCard, DeckInstance, DeckState, InventoryCard } from '../models/deck-state.model';
 import { CardSlot, EquipmentSlot, StatModifier } from '../models/equipment.model';
 
 /** Testdaten für Specs (wird nicht in den App-Code importiert). */
@@ -63,6 +63,14 @@ export function assignedCard(
   return { deckId, card, characterId, slot };
 }
 
+export function inventoryCard(
+  card: Card,
+  characterId: string,
+  deckId: string = 'deck-1',
+): InventoryCard {
+  return { deckId, card, characterId };
+}
+
 /** Instanz mit den Karten c1 + b1, alle Stapel leer; `overrides` setzt z. B. Stapel oder Namen. */
 export function createDeckInstance(
   id: string = 'deck-1',
@@ -92,6 +100,7 @@ export function createDeckState(): DeckState {
     decks: [createDeckInstance('deck-1', { drawPile: [BASIC_CARD] })],
     hand: [{ deckId: 'deck-1', card: COMBAT_CARD }],
     assigned: [],
+    inventory: [],
   };
 }
 
@@ -107,6 +116,7 @@ export function createEquipmentDeckState(characterId: string): DeckState {
     ],
     hand: [{ deckId: 'deck-1', card: RUNE_ARMOR }],
     assigned: [assignedCard(TOWER_SHIELD, characterId, 'leftHand')],
+    inventory: [],
   };
 }
 
@@ -119,5 +129,6 @@ export function createTwoDeckState(): DeckState {
     ],
     hand: [],
     assigned: [],
+    inventory: [],
   };
 }

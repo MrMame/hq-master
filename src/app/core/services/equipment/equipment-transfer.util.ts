@@ -8,6 +8,7 @@ import { isSameCard } from '../card-deck/deck-state.util';
 import { withAddedEquipment, withinLimits } from '../characters/character-limits.util';
 import { cardsOf, modifiersOf } from './effective-stats.util';
 import { equipmentEntry } from './equipment-log.util';
+import { inventoryRemovedEntry } from './inventory-log.util';
 
 /** Eine Ausrüstungskarte wandert in den Slot von `receiver`; `assigned` ist der Stand vor der Bewegung. */
 export interface EquipmentTransferInput {
@@ -19,6 +20,8 @@ export interface EquipmentTransferInput {
   receiver: CharacterInfo;
   slot: EquipmentSlot;
   now: Date;
+  /** Besitzer, aus dessen Inventar die Karte kommt; sie wirkte dort nicht, das Log nennt das Inventar. */
+  inventoryOwner?: CharacterInfo;
 }
 
 /** Neue Werte der beteiligten Charaktere und die Log-Einträge in Reihenfolge. */
@@ -40,7 +43,15 @@ export function transferEquipment(input: EquipmentTransferInput): EquipmentTrans
   const removedEntries: NewGameLogEntry[] = previous
     ? [equipmentEntry(receiver, previous.card, null, now)]
     : [];
-  const assignedEntry: NewGameLogEntry = equipmentEntry(receiver, card, slot, now);
+  const assignedEntry: NewGameLogEntry = input.inventoryOwner
+    ? inventoryRemovedEntry(
+        input.inventoryOwner,
+        card,
+        { kind: 'equipped', characterId: receiver.id, slot },
+        receiver,
+        now,
+      )
+    : equipmentEntry(receiver, card, slot, now);
 
   if (giver?.id === receiver.id) {
     return {
