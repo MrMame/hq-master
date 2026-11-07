@@ -72,7 +72,10 @@ describe('CardManagerPage – active card and equipment', () => {
     await harness.render(createEquipmentDeckState('a'));
     overlay().querySelector<HTMLButtonElement>('.floating-card__assign')!.click();
 
-    expect(harness.assignment.assignActiveCard).toHaveBeenCalledOnce();
+    expect(harness.assignment.assignCard).toHaveBeenCalledExactlyOnceWith({
+      deckId: 'deck-1',
+      cardId: 'e1',
+    });
     expect(harness.cardManager.state().activeCard).not.toBeNull();
   });
 

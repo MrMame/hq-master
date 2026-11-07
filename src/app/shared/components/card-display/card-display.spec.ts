@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CardDisplay } from './card-display';
-import { BasicCard, Card, CombatCard } from '../../../../core/models/card.model';
-import { RUNE_ARMOR } from '../../../../core/testing/deck.fixtures';
+import { BasicCard, Card, CombatCard } from '../../../core/models/card.model';
+import { RUNE_ARMOR } from '../../../core/testing/deck.fixtures';
 
 const BASIC: BasicCard = {
   id: 'b1',

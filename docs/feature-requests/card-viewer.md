@@ -3,7 +3,7 @@
 **Datum:** 2026-11-07  
 **Priorität:** Hoch  
 **Status:** open  
-**Bezug:** setzt `docs/refactoring-requests/card-move-foundation.md` voraus;
+**Bezug:** setzt `docs/refactoring-requests/done/card-move-foundation.md` voraus;
 `src/app/features/card-manager/` (`active-card-overlay`, `card-manager-page`, `deck-row`, `deck-piles`,
 `equipped-cards`, `card-assignment.service.ts`), `src/app/core/models/deck-state.model.ts`,
 `src/app/core/services/card-deck/` (Codec, Migration), `src/app/features/game-session/xml/`,
@@ -17,7 +17,7 @@
 Die vier Requests bauen aufeinander auf und werden nacheinander umgesetzt. Ein Request wird erst begonnen, wenn
 alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
 
-1. `docs/refactoring-requests/card-move-foundation.md` (keine Voraussetzung)
+1. `docs/refactoring-requests/done/card-move-foundation.md` (keine Voraussetzung)
 2. **`docs/feature-requests/card-viewer.md`** ← dieser Request – braucht 1. (`CardDisplay` in `shared/`,
    `locateCard`, `moveCard`, Zuweisen per `CardRef`)
 3. `docs/feature-requests/character-inventory.md` – braucht 1. und 2.

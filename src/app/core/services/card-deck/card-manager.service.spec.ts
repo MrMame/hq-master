@@ -5,7 +5,7 @@ import { CardManagerService } from './card-manager.service';
 import { DeckXmlLoaderService } from './deck-xml-loader.service';
 import { Card } from '../../models/card.model';
 import { DeckConfig } from '../../models/deck-config.model';
-import { DeckInstance, DeckState } from '../../models/deck-state.model';
+import { CardRef, DeckInstance, DeckState } from '../../models/deck-state.model';
 import {
   createDeckInstance,
   createDeckState,
@@ -83,7 +83,7 @@ describe('CardManagerService', () => {
     it('should shuffle and reset only the chosen deck', () => {
       service.restore(createTwoDeckState());
       service.draw('deck-2');
-      service.dropActiveCardIntoBank();
+      service.moveCard({ deckId: 'deck-2', cardId: 'b1' }, { kind: 'bank' });
       service.shuffle('deck-2');
       service.resetDeck('deck-2');
       expect(ids(deck(1).drawPile)).toEqual(['b1', 'c1']);
@@ -112,13 +112,14 @@ describe('CardManagerService', () => {
     });
 
     it('should make a card active, shuffle it back and drop it into the bank of its deck', () => {
-      service.makeCardActive('deck-2', 'c1');
-      service.shuffleActiveCardIntoDrawPile();
+      const c1: CardRef = { deckId: 'deck-2', cardId: 'c1' };
+      service.moveCard(c1, { kind: 'active' });
+      service.moveCard(c1, { kind: 'drawPile' });
       expect(ids(deck(1).drawPile)).toEqual(['b1', 'c1']);
-      service.makeCardActive('deck-2', 'c1');
-      service.dropActiveCardIntoBank();
+      service.moveCard(c1, { kind: 'active' });
+      service.moveCard(c1, { kind: 'bank' });
       expect(ids(deck(1).bank)).toEqual(['c1']);
-      service.makeCardActive('deck-2', 'c1');
+      service.moveCard(c1, { kind: 'active' });
       service.discardActiveCard();
       expect(ids(deck(1).discardPile)).toEqual(['c1']);
       expect(service.state().activeCard).toBeNull();
@@ -128,6 +129,7 @@ describe('CardManagerService', () => {
       const before: DeckState = service.state();
       service.discardActiveCard();
       service.draw('unknown');
+      service.moveCard({ deckId: 'deck-1', cardId: 'unknown' }, { kind: 'bank' });
       expect(service.state()).toBe(before);
     });
   });

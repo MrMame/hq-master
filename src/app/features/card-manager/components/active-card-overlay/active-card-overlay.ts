@@ -17,7 +17,7 @@ import {
 import { createGlobalPositionStrategy, createOverlayRef, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { Card } from '../../../../core/models/card.model';
-import { CardDisplay } from '../card-display/card-display';
+import { CardDisplay } from '../../../../shared/components/card-display/card-display';
 
 /**
  * Zeigt die aktive Karte als schwebende Ebene mittig im Fenster über der ganzen Seite.

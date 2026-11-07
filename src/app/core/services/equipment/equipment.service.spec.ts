@@ -6,7 +6,7 @@ import { CharactersDbService } from '../characters/characters-db.service';
 import { GameLogService } from '../game-log/game-log.service';
 import { CharacterInfo } from '../../models/character-info.model';
 import { Card } from '../../models/card.model';
-import { DeckState } from '../../models/deck-state.model';
+import { CardRef, DeckState } from '../../models/deck-state.model';
 import { createTestCharacter } from '../../testing/character.fixtures';
 import {
   assignedCard,
@@ -15,6 +15,8 @@ import {
   RUNE_ARMOR,
   TOWER_SHIELD,
 } from '../../testing/deck.fixtures';
+
+const RUNE_ARMOR_REF: CardRef = { deckId: 'deck-1', cardId: 'e1' };
 
 describe('EquipmentService', () => {
   let service: EquipmentService;
@@ -40,7 +42,7 @@ describe('EquipmentService', () => {
   });
 
   it('assigns the active card, raises armor by its bonus and logs it (4/4 → 6/6)', () => {
-    service.assignActiveCard('a', 'body');
+    service.assignCard(RUNE_ARMOR_REF, 'a', 'body');
 
     expect(deck().activeCard).toBeNull();
     expect(service.assigned().map((entry) => entry.card)).toEqual([TOWER_SHIELD, RUNE_ARMOR]);
@@ -60,7 +62,7 @@ describe('EquipmentService', () => {
       },
     });
 
-    service.assignActiveCard('a', 'body');
+    service.assignCard({ deckId: 'deck-1', cardId: 'e5' }, 'a', 'body');
 
     // 6/6 → Runenrüstung ab → 4/4 → Kettenhemd +1 → 5/5
     expect(character().armor).toBe(5);
@@ -71,10 +73,12 @@ describe('EquipmentService', () => {
     ]);
   });
 
-  it('ignores assigning without equipment card or unknown character', () => {
-    service.assignActiveCard('x', 'body');
-    cardManager.discardActiveCard();
-    service.assignActiveCard('a', 'body');
+  it('ignores an unknown character, a non-equipment or unknown card and an unfitting slot', () => {
+    service.assignCard(RUNE_ARMOR_REF, 'x', 'body');
+    service.assignCard({ deckId: 'deck-1', cardId: 'b1' }, 'a', 'body');
+    service.assignCard({ deckId: 'deck-2', cardId: 'e1' }, 'a', 'body');
+    service.assignCard(RUNE_ARMOR_REF, 'a', 'head');
+    expect(deck().activeCard?.card).toBe(RUNE_ARMOR);
     expect(service.assigned()).toHaveLength(1);
     expect(character()).toEqual(barbarian);
     expect(logTexts()).toEqual([]);

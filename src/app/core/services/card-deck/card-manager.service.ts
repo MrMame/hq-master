@@ -4,18 +4,12 @@ import { SESSION_KEYS } from '../../session-state/session-keys';
 import { SessionStateSlice } from '../../session-state/session-state-slice';
 import { DeckXmlLoaderService } from './deck-xml-loader.service';
 import { DeckConfig } from '../../models/deck-config.model';
+import { CardLocation } from '../../models/card-location.model';
 import { AssignedCard, CardRef, DeckInstance, DeckState } from '../../models/deck-state.model';
-import { EquipmentSlot } from '../../models/equipment.model';
 import { DECK_STATE_CODEC } from './deck-state-codec.util';
-import { assignActiveCard, discardAssigned } from './deck-assignment.util';
+import { discardAssigned, moveCard } from './card-move.util';
 import { emptyDeckState } from './deck-state.util';
-import {
-  activateCard,
-  discardActive,
-  drawCard,
-  dropActiveIntoBank,
-  shuffleActiveIntoDrawPile,
-} from './deck-draw.util';
+import { discardActive, drawCard } from './deck-draw.util';
 import {
   addDeck,
   moveDeck,
@@ -82,26 +76,16 @@ export class CardManagerService implements SessionStateSlice<DeckState> {
     this.change((s) => drawCard(s, deckId));
   }
 
-  /** Eine Karte aus Stapel, Ablage oder Bank wird aktiv; die bisherige kommt in ihren Ablagestapel. */
-  makeCardActive(deckId: string, cardId: string): void {
-    this.change((s) => activateCard(s, deckId, cardId));
+  /**
+   * Bewegt eine Karte von ihrem Ort ans Ziel (aktiv, Stapel oder Bank ihres Decks, Slot eines Charakters);
+   * eine verdrängte aktive bzw. Slot-Karte kommt in ihren Ablagestapel. Ungültige Bewegung → keine Änderung.
+   */
+  moveCard(ref: CardRef, target: CardLocation): void {
+    this.change((s) => moveCard(s, ref, target));
   }
 
   discardActiveCard(): void {
     this.change(discardActive);
-  }
-
-  shuffleActiveCardIntoDrawPile(): void {
-    this.change(shuffleActiveIntoDrawPile);
-  }
-
-  dropActiveCardIntoBank(): void {
-    this.change(dropActiveIntoBank);
-  }
-
-  /** Aktive Ausrüstungskarte in den Slot; eine dort liegende Karte kommt in ihren Ablagestapel. */
-  assignActiveCard(characterId: string, slot: EquipmentSlot): void {
-    this.change((s) => assignActiveCard(s, characterId, slot));
   }
 
   /** Zugewiesene Karten aus ihren Slots in den Ablagestapel ihres Decks. */

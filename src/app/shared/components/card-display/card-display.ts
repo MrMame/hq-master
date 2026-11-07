@@ -7,9 +7,9 @@ import {
   OutputEmitterRef,
   Signal,
 } from '@angular/core';
-import { Card, CombatCard } from '../../../../core/models/card.model';
-import { CARD_SLOT_LABELS } from '../../../../core/models/equipment.model';
-import { modifiersText } from '../../../../core/services/equipment/equipment-text.util';
+import { Card, CombatCard } from '../../../core/models/card.model';
+import { CARD_SLOT_LABELS } from '../../../core/models/equipment.model';
+import { modifiersText } from '../../../core/services/equipment/equipment-text.util';
 
 export type CardSide = 'front' | 'back';
 

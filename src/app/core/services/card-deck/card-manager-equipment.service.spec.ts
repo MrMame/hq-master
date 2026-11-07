@@ -1,15 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 
 import { CardManagerService } from './card-manager.service';
-import { DeckState } from '../../models/deck-state.model';
+import { CardRef, DeckState } from '../../models/deck-state.model';
 import { SESSION_KEYS } from '../../session-state/session-keys';
 import {
   assignedCard,
+  BUCKLER,
   createDeckInstance,
   createEquipmentDeckState,
   RUNE_ARMOR,
   TOWER_SHIELD,
 } from '../../testing/deck.fixtures';
+
+const RUNE_ARMOR_REF: CardRef = { deckId: 'deck-1', cardId: 'e1' };
 
 const readStored: () => DeckState = (): DeckState =>
   JSON.parse(localStorage.getItem(SESSION_KEYS.deckState) ?? 'null') as DeckState;
@@ -25,7 +28,7 @@ describe('CardManagerService – equipment', () => {
   });
 
   it('assigns the active card with its deck and persists it', () => {
-    service.assignActiveCard('a', 'body');
+    service.moveCard(RUNE_ARMOR_REF, { kind: 'equipped', characterId: 'a', slot: 'body' });
     expect(state().activeCard).toBeNull();
     expect(service.assigned()).toEqual([
       assignedCard(TOWER_SHIELD, 'a', 'leftHand'),
@@ -35,7 +38,14 @@ describe('CardManagerService – equipment', () => {
   });
 
   it('moves the previous card of an occupied slot onto the discard pile of its deck', () => {
-    service.assignActiveCard('a', 'leftHand');
+    service.restore({
+      ...createEquipmentDeckState('a'),
+      activeCard: { deckId: 'deck-1', card: BUCKLER },
+    });
+    service.moveCard(
+      { deckId: 'deck-1', cardId: 'e3' },
+      { kind: 'equipped', characterId: 'a', slot: 'leftHand' },
+    );
     expect(state().decks[0].discardPile).toEqual([TOWER_SHIELD]);
     expect(service.assigned().map((entry) => entry.slot)).toEqual(['leftHand']);
   });
@@ -63,11 +73,11 @@ describe('CardManagerService – equipment', () => {
     ).toEqual(['b1', 'c1', 'e1']);
   });
 
-  it('does not make an assigned card active', () => {
-    service.discardActiveCard();
-    service.makeCardActive('deck-1', 'e2');
-    expect(service.assigned().map((entry) => entry.card)).toEqual([TOWER_SHIELD]);
-    expect(state().activeCard).toBeNull();
+  it('makes an assigned card active and frees its slot', () => {
+    service.moveCard({ deckId: 'deck-1', cardId: 'e2' }, { kind: 'active' });
+    expect(service.assigned()).toEqual([]);
+    expect(state().activeCard).toEqual({ deckId: 'deck-1', card: TOWER_SHIELD });
+    expect(state().decks[0].discardPile).toEqual([RUNE_ARMOR]);
   });
 
   it('removes the equipped cards of a removed deck, but not those of other decks', () => {

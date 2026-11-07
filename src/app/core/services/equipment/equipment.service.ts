@@ -1,17 +1,17 @@
 import { inject, Injectable, Signal } from '@angular/core';
 import { Card } from '../../models/card.model';
 import { CharacterInfo } from '../../models/character-info.model';
-import { ActiveCard, AssignedCard, CardRef } from '../../models/deck-state.model';
+import { AssignedCard, CardRef, DeckState } from '../../models/deck-state.model';
 import { EquipmentSlot } from '../../models/equipment.model';
 import { CardManagerService } from '../card-deck/card-manager.service';
-import { slotOccupant } from '../card-deck/deck-assignment.util';
+import { findCard } from '../card-deck/card-location.util';
 import { isSameCard, toCardRef } from '../card-deck/deck-state.util';
 import { CharactersDbService } from '../characters/characters-db.service';
-import { withAddedEquipment, withinLimits } from '../characters/character-limits.util';
 import { GameLogService } from '../game-log/game-log.service';
 import { GameTimeService } from '../game-time/game-time.service';
-import { cardsOf, modifiersOf } from './effective-stats.util';
+import { cardsOf } from './effective-stats.util';
 import { equipmentEntry } from './equipment-log.util';
+import { EquipmentTransfer, transferEquipment } from './equipment-transfer.util';
 
 /**
  * Zuweisen und Ablegen von Ausrüstungskarten über Deck und Charakter hinweg: Der Besitz steht im Deck
@@ -31,27 +31,31 @@ export class EquipmentService {
   readonly assigned: Signal<AssignedCard[]> = this.cardManager.assigned;
 
   /**
-   * Weist die aktive Ausrüstungskarte zu. Eine Karte im Slot wird zuerst abgelegt (Leben/Rüstung auf das
-   * neue Maximum begrenzt), dann steigen Leben/Rüstung um den Bonus der neuen Karte.
+   * Weist eine Ausrüstungskarte von beliebigem Ort zu (aktiv, Stapel, Bank, Slot eines Charakters). Der
+   * bisherige Besitzer und eine Karte im Slot werden zuerst abgelegt (Leben/Rüstung auf das neue Maximum
+   * begrenzt), dann steigen Leben/Rüstung des Empfängers um den Bonus. Ungültige Zuweisung → keine Änderung.
    */
-  assignActiveCard(characterId: string, slot: EquipmentSlot): void {
-    const active: ActiveCard | null = this.cardManager.state().activeCard;
-    const card: Card | undefined = active?.card;
-    const character: CharacterInfo | undefined = this.findCharacter(characterId);
-    if (card?.cardType !== 'equipment' || !character) return;
-    const own: AssignedCard[] = cardsOf(this.assigned(), characterId);
-    const previous: AssignedCard | undefined = slotOccupant(own, characterId, slot);
-    const kept: AssignedCard[] = own.filter((entry) => entry !== previous);
-    const afterRemoval: CharacterInfo = withinLimits(character, modifiersOf(kept));
-    this.charactersDb.writeCharacter(
-      withAddedEquipment(afterRemoval, modifiersOf(kept), card.modifiers),
-    );
-    this.cardManager.assignActiveCard(characterId, slot);
-    const now: Date = this.gameTime.gameTime();
-    this.gameLog.append(
-      ...(previous ? [equipmentEntry(character, previous.card, null, now)] : []),
-      equipmentEntry(character, card, slot, now),
-    );
+  assignCard(ref: CardRef, characterId: string, slot: EquipmentSlot): void {
+    const receiver: CharacterInfo | undefined = this.findCharacter(characterId);
+    const before: DeckState = this.cardManager.state();
+    const card: Card | undefined = findCard(before, ref);
+    if (!receiver || card?.cardType !== 'equipment') return;
+    this.cardManager.moveCard(ref, { kind: 'equipped', characterId, slot });
+    if (this.cardManager.state() === before) return;
+    const giverId: string | undefined = before.assigned.find((entry) =>
+      isSameCard(entry, ref),
+    )?.characterId;
+    const transfer: EquipmentTransfer = transferEquipment({
+      assigned: before.assigned,
+      ref,
+      card,
+      giver: giverId === undefined ? undefined : this.findCharacter(giverId),
+      receiver,
+      slot,
+      now: this.gameTime.gameTime(),
+    });
+    transfer.characters.forEach((character) => this.charactersDb.writeCharacter(character));
+    this.gameLog.append(...transfer.entries);
   }
 
   /**

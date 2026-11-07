@@ -1,7 +1,9 @@
 import { Component, computed, inject, input, InputSignal, Signal } from '@angular/core';
-import { ActiveCard, DeckInstance } from '../../../../core/models/deck-state.model';
+import { ActiveCard, CardRef, DeckInstance } from '../../../../core/models/deck-state.model';
+import { CardLocation } from '../../../../core/models/card-location.model';
 import { CardManagerService } from '../../../../core/services/card-deck/card-manager.service';
-import { CardDisplay } from '../card-display/card-display';
+import { toCardRef } from '../../../../core/services/card-deck/deck-state.util';
+import { CardDisplay } from '../../../../shared/components/card-display/card-display';
 
 /**
  * Aufgeklappte Deck-Reihe: Nachziehstapel, Ablagestapel und Bank mit allen Karten.
@@ -21,34 +23,40 @@ export class DeckPiles {
   readonly deck: InputSignal<DeckInstance> = input.required<DeckInstance>();
   readonly activeCard: InputSignal<ActiveCard | null> = input<ActiveCard | null>(null);
 
-  /** Die aktive Karte stammt aus diesem Deck. */
-  protected readonly activeHere: Signal<boolean> = computed(
-    () => this.activeCard()?.deckId === this.deck().id,
-  );
+  /** Die aktive Karte, wenn sie aus diesem Deck stammt; sonst `null`. */
+  private readonly activeHere: Signal<CardRef | null> = computed(() => {
+    const active: ActiveCard | null = this.activeCard();
+    return active?.deckId === this.deck().id ? toCardRef(active) : null;
+  });
 
   protected onDrawPileCardClick(cardId: string): void {
-    if (this.activeHere()) this.cardManager.shuffleActiveCardIntoDrawPile();
-    else this.activate(cardId);
+    this.moveActiveOrActivate({ kind: 'drawPile' }, cardId);
   }
 
   protected onDiscardPileClick(): void {
-    if (this.activeHere()) this.cardManager.discardActiveCard();
+    this.moveActiveOrActivate({ kind: 'discardPile' });
   }
 
   protected onDiscardPileCardClick(cardId: string): void {
-    if (this.activeHere()) this.cardManager.discardActiveCard();
-    else this.activate(cardId);
+    this.moveActiveOrActivate({ kind: 'discardPile' }, cardId);
   }
 
   protected onBankClick(): void {
-    if (this.activeHere()) this.cardManager.dropActiveCardIntoBank();
+    this.moveActiveOrActivate({ kind: 'bank' });
   }
 
   protected onBankCardClick(cardId: string): void {
     if (!this.activeHere()) this.activate(cardId);
   }
 
+  /** Aktive Karte dieses Decks → `target`; sonst wird die geklickte Karte (falls vorhanden) aktiv. */
+  private moveActiveOrActivate(target: CardLocation, cardId?: string): void {
+    const active: CardRef | null = this.activeHere();
+    if (active) this.cardManager.moveCard(active, target);
+    else if (cardId) this.activate(cardId);
+  }
+
   private activate(cardId: string): void {
-    this.cardManager.makeCardActive(this.deck().id, cardId);
+    this.cardManager.moveCard({ deckId: this.deck().id, cardId }, { kind: 'active' });
   }
 }

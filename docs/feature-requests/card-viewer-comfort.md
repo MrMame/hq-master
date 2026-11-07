@@ -15,7 +15,7 @@
 Die vier Requests bauen aufeinander auf und werden nacheinander umgesetzt. Ein Request wird erst begonnen, wenn
 alle vorherigen vollständig umgesetzt und nach `done/` verschoben sind.
 
-1. `docs/refactoring-requests/card-move-foundation.md` (keine Voraussetzung)
+1. `docs/refactoring-requests/done/card-move-foundation.md` (keine Voraussetzung)
 2. `docs/feature-requests/card-viewer.md` – braucht 1.
 3. `docs/feature-requests/character-inventory.md` – braucht 1. und 2.
 4. **`docs/feature-requests/card-viewer-comfort.md`** ← dieser Request – braucht 1. bis 3. (Untermenüs und

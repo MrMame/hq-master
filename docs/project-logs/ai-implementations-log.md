@@ -2,6 +2,21 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-07 08:15) - Refactoring: Grundlage für Kartenbewegungen von beliebigen Orten (card-move-foundation #1–#4)
+
+- **Was wurde gemacht:** CardDisplay nach `shared/` verschoben; `CardLocation` und `locateCard`/`findCard` eingeführt;
+  `moveCard` ersetzt die Sonderfunktionen für die aktive Karte (`drawCard`, `discardActive`, `discardAssigned` rufen nur
+  noch `moveCard` auf); Ausrüsten per `CardRef` von jedem Ort inkl. anderem Charakter mit Werten und Log.
+- **Dateien geändert:** core/models/card-location.model.ts (neu); core/services/card-deck/card-location.util.ts,
+  card-move.util.ts (neu), deck-draw.util.ts, deck-assignment.util.ts, card-manager.service.ts;
+  core/services/equipment/equipment-transfer.util.ts (neu), equipment.service.ts;
+  features/card-manager/services/card-assignment.service.ts, components/deck-piles, card-manager-page;
+  shared/components/card-display (verschoben); Specs und core/testing/card-move.fixtures.ts; .claude/rules/architecture.md.
+- **Wichtige Entscheidung:** `moveCard` prüft, ob die Karte in den Slot passt (Hand/Kopf/Körper/Amulett). Ein Handwechsel
+  beim selben Charakter gibt keinen Bonus und schreibt nur „erhält … (neuer Slot)“ ins Log. `discardAssigned` legt den
+  Slot-Eintrag direkt ab, ohne die Karte neu zu suchen. Das ist robust gegen eine Karte, die zugleich aktiv und zugewiesen ist.
+- **Statistik:** 19 min · 1 Runden · 1 Rückfragen · 69 Tools · Dateien 10 neu / 23 geändert · 3 Fehlschläge · Tokens 11.202.276 (Output 66.506)
+
 ### (2026-11-06 20:34) - Feature: Card Manager mit beliebig vielen Decks (card-manager-multiple-decks #1–#13)
 
 - **Was wurde gemacht:** Der DM legt beliebig viele Decks auf den Spieltisch, auch dieselbe Deck-Datei mehrfach („Beispieldeck (2)“). Jedes Deck ist eine kompakte Reihe mit Nachziehstapel (Klick zieht), oberster Ablagekarte, Bank-Anzahl und Menü ⋮ (Mischen, Zurücksetzen, Umbenennen, Nach oben/unten, Entfernen mit Rückfrage); höchstens eine Reihe ist aufgeklappt und zeigt Stapel und Bank wie bisher. Es gibt genau eine aktive Karte mit dem Namen ihres Decks; wer zieht, während eine aktiv ist, legt sie in den Ablagestapel ihres Decks. „Ausgerüstet“ ist gemeinsam, steht über dem Spieltisch, zeigt das Herkunftsdeck und höchstens zwei Reihen (weitere scrollen in sich); Karten kehren immer in ihr eigenes Deck zurück. Die Seitenleiste hat oben die Gruppe „Deck Management“ (Pfad, „Deck hinzufügen“), darunter „Decks“ mit Suche und Liste; ein Klick klappt das Deck auf. Wählt der DM in der Seitenleiste ein anderes Deck, kommt eine aktive Karte eines anderen Decks in deren Ablagestapel. Der Card Manager nutzt die dunkle `feature-page`. Alle Decks gehören zu Session und XML-Spielstand, alte Spielstände laden als ein Deck.

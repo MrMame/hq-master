@@ -2,7 +2,7 @@ import { Component, computed, inject, Signal } from '@angular/core';
 import { AssignedCard, DeckInstance } from '../../../../core/models/deck-state.model';
 import { CardManagerService } from '../../../../core/services/card-deck/card-manager.service';
 import { CardAssignmentService } from '../../services/card-assignment.service';
-import { CardDisplay } from '../card-display/card-display';
+import { CardDisplay } from '../../../../shared/components/card-display/card-display';
 
 /**
  * Gemeinsamer Bereich „Ausgerüstet“ aller Decks über dem Spieltisch: Besitzer und Herkunftsdeck je Karte,

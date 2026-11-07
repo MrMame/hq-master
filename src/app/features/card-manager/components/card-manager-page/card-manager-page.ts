@@ -9,7 +9,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { CardManagerService } from '../../../../core/services/card-deck/card-manager.service';
-import { findDeck } from '../../../../core/services/card-deck/deck-state.util';
+import { findDeck, toCardRef } from '../../../../core/services/card-deck/deck-state.util';
 import { CardAssignmentService } from '../../services/card-assignment.service';
 import { ActiveCard, DeckInstance } from '../../../../core/models/deck-state.model';
 import { ActiveCardOverlay } from '../active-card-overlay/active-card-overlay';
@@ -82,7 +82,8 @@ export class CardManagerPage {
   }
 
   onAssignClick(): void {
-    this.cardAssignment.assignActiveCard();
+    const active: ActiveCard | null = this.activeCard();
+    if (active) this.cardAssignment.assignCard(toCardRef(active));
   }
 
   onActiveCardClick(): void {

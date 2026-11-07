@@ -9,15 +9,18 @@ import { CardManagerService } from '../../../core/services/card-deck/card-manage
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
 import { ConfirmationService } from '../../../shared/services/confirmation.service';
 import { CharacterInfo } from '../../../core/models/character-info.model';
-import { DeckState } from '../../../core/models/deck-state.model';
+import { CardRef, DeckState } from '../../../core/models/deck-state.model';
 import { createTestCharacter } from '../../../core/testing/character.fixtures';
 import {
   assignedCard,
+  BUCKLER,
   createDeckState,
   createEquipmentDeckState,
   RUNE_ARMOR,
   TOWER_SHIELD,
 } from '../../../core/testing/deck.fixtures';
+
+const RUNE_ARMOR_REF: CardRef = { deckId: 'deck-1', cardId: 'e1' };
 
 describe('CardAssignmentService', () => {
   let service: CardAssignmentService;
@@ -51,7 +54,7 @@ describe('CardAssignmentService', () => {
   });
 
   it('opens the dialog with card, characters and assignments and assigns the choice', async () => {
-    await service.assignActiveCard();
+    await service.assignCard(RUNE_ARMOR_REF);
 
     expect(open.mock.calls[0][1].data).toEqual({
       card: RUNE_ARMOR,
@@ -65,36 +68,54 @@ describe('CardAssignmentService', () => {
 
   it('assigns nothing when the dialog is cancelled', async () => {
     choice = undefined;
-    await service.assignActiveCard();
+    await service.assignCard(RUNE_ARMOR_REF);
     expect(deck().activeCard?.card).toBe(RUNE_ARMOR);
   });
 
   it('asks before an occupied slot is replaced', async () => {
+    const buckler: CardRef = { deckId: 'deck-1', cardId: 'e3' };
+    cardManager.restore({
+      ...createEquipmentDeckState('a'),
+      activeCard: { deckId: 'deck-1', card: BUCKLER },
+    });
     choice = { characterId: 'a', slot: 'leftHand' };
     confirm.mockResolvedValue(false);
-    await service.assignActiveCard();
+    await service.assignCard(buckler);
 
     expect(confirm).toHaveBeenCalledWith(
       expect.objectContaining({ message: '„Turmschild“ in den Ablagestapel legen?' }),
     );
-    expect(deck().activeCard?.card).toBe(RUNE_ARMOR);
+    expect(deck().activeCard?.card).toBe(BUCKLER);
 
     confirm.mockResolvedValue(true);
-    await service.assignActiveCard();
+    await service.assignCard(buckler);
     expect(deck().decks[0].discardPile).toEqual([TOWER_SHIELD]);
   });
 
-  it('offers no assignment without characters or without an active equipment card', async () => {
+  it('moves an equipped card to another slot without asking about the card itself', async () => {
+    const shield: CardRef = { deckId: 'deck-1', cardId: 'e2' };
+    choice = { characterId: 'a', slot: 'leftHand' };
+    await service.assignCard(shield);
+    expect(open.mock.calls[0][1].data.card).toBe(TOWER_SHIELD);
+    expect(deck().assigned).toEqual([assignedCard(TOWER_SHIELD, 'a', 'leftHand')]);
+
+    choice = { characterId: 'a', slot: 'rightHand' };
+    await service.assignCard(shield);
+    expect(confirm).not.toHaveBeenCalled();
+    expect(deck().assigned).toEqual([assignedCard(TOWER_SHIELD, 'a', 'rightHand')]);
+  });
+
+  it('offers no assignment without characters, for a non-equipment card or an unknown card', async () => {
     expect(service.assignDisabledReason()).toBeNull();
     charactersDb.reset();
     expect(service.assignDisabledReason()).toBe('Keine Charaktere in der Session');
-    await service.assignActiveCard();
+    await service.assignCard(RUNE_ARMOR_REF);
 
     charactersDb.writeCharacter(barbarian);
     cardManager.restore(createDeckState());
-    await service.assignActiveCard();
+    await service.assignCard({ deckId: 'deck-1', cardId: 'c1' });
     cardManager.reset();
-    await service.assignActiveCard();
+    await service.assignCard(RUNE_ARMOR_REF);
     expect(open).not.toHaveBeenCalled();
   });
 

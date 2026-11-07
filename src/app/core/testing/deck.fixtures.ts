@@ -49,6 +49,11 @@ export const TOWER_SHIELD: EquipmentCard = createEquipmentCard('e2', 'Turmschild
   { stat: 'defense', value: 2 },
 ]);
 
+/** Buckler: Hand, Abwehr +1; als aktive Handkarte für belegte Hand-Slots. */
+export const BUCKLER: EquipmentCard = createEquipmentCard('e3', 'Buckler', 'hand', [
+  { stat: 'defense', value: 1 },
+]);
+
 export function assignedCard(
   card: EquipmentCard,
   characterId: string,
