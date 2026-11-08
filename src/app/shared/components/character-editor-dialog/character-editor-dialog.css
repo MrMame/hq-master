@@ -42,14 +42,8 @@
   border-color: var(--color-gray-600);
 }
 
-.character-editor__abilities {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-2);
-}
-
 /* Checkbox in Akzentfarbe wie die Raster-Slider */
-.character-editor__ability {
+.character-editor__checkbox {
   display: flex;
   align-items: center;
   gap: var(--space-2);

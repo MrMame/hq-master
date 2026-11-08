@@ -3,7 +3,6 @@ import { ActiveCondition } from './character-condition.model';
 export interface CharacterInfo {
   id: string;
   name: string;
-  type: string;
   /** Aktuelles Leben, immer zwischen 0 und `maxHealth`. */
   health: number;
   /** Maximales Leben (ganze Zahl ≥ 0); Schaden ändert es nicht. */
@@ -15,7 +14,6 @@ export interface CharacterInfo {
   attack: number;
   defense: number;
   speed: number;
-  abilities: string[];
   image: string; // Optionales Feld für das Bild des Monsters;
   description: string; // Optionales Feld für die Beschreibung des Monsters
   /** Aktive Zustände (Gift, Benommen, …); jeder Zustand höchstens einmal. */

@@ -3,7 +3,6 @@ import { CharacterInfo } from '../../../core/models/character-info.model';
 import { CHARACTER_IMAGES } from '../../../core/models/character-images.model';
 import { createTestCharacter } from '../../../core/testing/character.fixtures';
 import {
-  abilityCheckbox,
   CharacterEditorDialogSetup,
   editorField,
   imageButton,
@@ -29,9 +28,7 @@ describe('CharacterEditorDialog – create', () => {
 
     expect(host.querySelector('h2')?.textContent?.trim()).toBe('Neuer Charakter');
     expect(editorField(host, 'Name').value).toBe('');
-    expect(editorField(host, 'Typ').value).toBe('Feuer');
     expect(editorField(host, 'Leben').value).toBe('0');
-    expect(abilityCheckbox(host, 'Erdbeben').checked).toBe(false);
     expect(host.querySelector('[aria-pressed="true"]')).toBeNull();
     expect(host.querySelector('.character-editor__images--missing')).not.toBeNull();
   });
@@ -59,7 +56,6 @@ describe('CharacterEditorDialog – create', () => {
     expect(created).toEqual({
       id: expect.any(String),
       name: 'Neuling',
-      type: 'Feuer',
       health: 0,
       maxHealth: 0,
       armor: 0,
@@ -67,7 +63,6 @@ describe('CharacterEditorDialog – create', () => {
       attack: 0,
       defense: 0,
       speed: 0,
-      abilities: [],
       image: CHARACTER_IMAGES[1],
       description: '',
       conditions: [],

@@ -1,5 +1,4 @@
 import { CharacterInfo } from '../../core/models/character-info.model';
-import { ElementalTypes } from '../../core/models/elemental-types.model';
 
 /**
  * Startwerte für einen neuen, noch leeren Charakter. Die ID besteht aus Zeitstempel und Zufallszahl;
@@ -9,7 +8,6 @@ export function createNewCharacter(): CharacterInfo {
   return {
     id: `${Date.now()}-${Math.floor(Math.random() * 1000)}`,
     name: '',
-    type: ElementalTypes.FEUER,
     health: 0,
     maxHealth: 0,
     armor: 0,
@@ -17,7 +15,6 @@ export function createNewCharacter(): CharacterInfo {
     attack: 0,
     defense: 0,
     speed: 0,
-    abilities: [],
     image: '',
     description: '',
     conditions: [],

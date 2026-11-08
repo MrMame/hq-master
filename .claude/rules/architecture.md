@@ -16,8 +16,7 @@ Alle Features teilen eine gemeinsame Session-Datenbasis über root-provided Serv
 ```
 core/
   models/         → game-time.model.ts, game-time-span.model.ts,
-                    character-info.model.ts, elemental-types.model.ts,
-                    character-abilities.model.ts, character-images.model.ts (Bildlisten),
+                    character-info.model.ts, character-images.model.ts (Bildlisten),
                     damage-types.model.ts (Schadensarten),
                     character-condition.model.ts (ConditionId, ConditionTemplate, ActiveCondition),
                     condition-templates.model.ts (CONDITION_TEMPLATES: Standardwerte und Symbole der Zustände),

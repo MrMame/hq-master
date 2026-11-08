@@ -1,6 +1,4 @@
 import { CharacterInfo } from '../../core/models/character-info.model';
-import { ElementalTypes } from '../../core/models/elemental-types.model';
-import { CharacterAbilities } from '../../core/models/character-abilities.model';
 import { CHARACTER_IMAGES } from '../../core/models/character-images.model';
 import { CharacterNameList } from '../../core/models/character-names/character-name-list.model';
 import { CHARACTER_NAMES_BY_IMAGE } from '../../core/models/character-names/character-names.model';
@@ -31,7 +29,6 @@ export function createRandomName(names: CharacterNameList): string {
  * Leben und Rüstung starten bei ihrem Maximum. Die `id` wird übernommen, damit die Arbeitskopie im Editor ihre ID behält.
  */
 export function createRandomCharacter(id: string): CharacterInfo {
-  const abilities: CharacterAbilities[] = Object.values(CharacterAbilities);
   const image: string = pick(CHARACTER_IMAGES);
   const name: string = createRandomName(CHARACTER_NAMES_BY_IMAGE[image]);
   const health: number = randomInt(50, 200);
@@ -40,7 +37,6 @@ export function createRandomCharacter(id: string): CharacterInfo {
   return {
     id,
     name,
-    type: pick(Object.values(ElementalTypes)),
     health,
     maxHealth: health,
     armor,
@@ -48,7 +44,6 @@ export function createRandomCharacter(id: string): CharacterInfo {
     attack: randomInt(10, 50),
     defense: randomInt(5, 50),
     speed: randomInt(5, 30),
-    abilities: abilities.slice(0, randomInt(1, abilities.length)),
     image,
     description: `Dies ist eine zufällige Beschreibung für ${name}.`,
     conditions: [],

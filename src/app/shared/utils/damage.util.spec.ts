@@ -1,13 +1,11 @@
 import { applyDamage } from './damage.util';
 import { DamageTypes } from '../../core/models/damage-types.model';
 import { CharacterInfo } from '../../core/models/character-info.model';
-import { ElementalTypes } from '../../core/models/elemental-types.model';
 
 function makeCharacter(health: number, armor: number): CharacterInfo {
   return {
     id: 'test-1',
     name: 'Test Hero',
-    type: ElementalTypes.FEUER,
     health,
     maxHealth: health,
     armor,
@@ -15,7 +13,6 @@ function makeCharacter(health: number, armor: number): CharacterInfo {
     attack: 10,
     defense: 5,
     speed: 5,
-    abilities: [],
     image: '',
     description: '',
     conditions: [],

@@ -12,7 +12,6 @@ const createCharacter: (id: string, name?: string) => CharacterInfo = (
 ): CharacterInfo => ({
   id,
   name,
-  type: 'hero',
   health: 10,
   maxHealth: 10,
   armor: 1,
@@ -20,7 +19,6 @@ const createCharacter: (id: string, name?: string) => CharacterInfo = (
   attack: 2,
   defense: 2,
   speed: 3,
-  abilities: [],
   image: '',
   description: '',
   conditions: [],

@@ -40,6 +40,26 @@ describe('characters.xml-mapper', () => {
     expect(condition.querySelector('description')?.textContent).toBe('Gift <&>');
   });
 
+  it('writes neither a type attribute nor <ability> elements', () => {
+    const doc: XMLDocument = document.implementation.createDocument(null, 'root', null);
+    const el: Element = writeCharacters(doc, [createTestCharacter('a')]);
+    const character: Element = el.querySelector('character') as Element;
+
+    expect(character.hasAttribute('type')).toBe(false);
+    expect(character.querySelector('ability')).toBeNull();
+  });
+
+  it('ignores the type and the abilities of older saves', () => {
+    const [character]: CharacterInfo[] = read(
+      '<characters><character id="a" name="Alt" type="Feuer" health="4">' +
+        '<description>Notiz</description><ability>Flammenwerfer</ability><ability>Windstoß</ability>' +
+        '</character></characters>',
+    );
+    expect(character).toMatchObject({ id: 'a', name: 'Alt', health: 4, description: 'Notiz' });
+    expect(character).not.toHaveProperty('type');
+    expect(character).not.toHaveProperty('abilities');
+  });
+
   it('reads older saves without conditions as an empty list', () => {
     expect(read('<characters><character id="a"/></characters>')[0].conditions).toEqual([]);
   });

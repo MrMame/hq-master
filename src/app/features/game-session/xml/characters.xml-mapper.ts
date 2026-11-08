@@ -29,7 +29,6 @@ function writeCharacter(doc: XMLDocument, c: CharacterInfo): Element {
   setAttributes(el, {
     id: c.id,
     name: c.name,
-    type: c.type,
     health: c.health,
     maxHealth: c.maxHealth,
     armor: c.armor,
@@ -41,19 +40,20 @@ function writeCharacter(doc: XMLDocument, c: CharacterInfo): Element {
     movedThisRound: c.movedThisRound,
   });
   appendTextElement(el, 'description', c.description);
-  c.abilities.forEach((ability) => appendTextElement(el, 'ability', ability));
   writeConditions(el, c.conditions);
   return el;
 }
 
-/** Ältere Spielstände ohne Maximum: Maximum = gespeicherter aktueller Wert. */
+/**
+ * Ältere Spielstände ohne Maximum: Maximum = gespeicherter aktueller Wert. Ein altes Attribut `type` und
+ * `<ability>`-Elemente werden ignoriert.
+ */
 function readCharacter(el: Element): CharacterInfo {
   const health: number = readNumber(el, 'health');
   const armor: number = readNumber(el, 'armor');
   return normalizedLimits({
     id: readString(el, 'id'),
     name: readString(el, 'name'),
-    type: readString(el, 'type'),
     health,
     maxHealth: readNumber(el, 'maxHealth', health),
     armor,
@@ -61,7 +61,6 @@ function readCharacter(el: Element): CharacterInfo {
     attack: readNumber(el, 'attack'),
     defense: readNumber(el, 'defense'),
     speed: readNumber(el, 'speed'),
-    abilities: childElements(el, 'ability').map(textOf),
     image: readString(el, 'image'),
     description: textOf(firstChild(el, 'description')),
     conditions: readConditions(el),
