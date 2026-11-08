@@ -3,11 +3,11 @@
   <section class="deck-piles__pile" aria-label="Nachziehstapel">
     <h3 class="section-heading">Nachziehstapel ({{ current.drawPile.length }})</h3>
     <div class="deck-piles__stack">
-      @for (card of current.drawPile; track card.id) {
+      <!-- Umgekehrt, damit die nächste zu ziehende Karte (drawPile[0]) oben liegt. -->
+      @for (card of drawStack(); track card.id) {
         <app-card-display
           class="deck-piles__card deck-piles__card--stacked"
           [card]="card"
-          [backImagePath]="current.config.backImagePath"
           side="back"
           (cardClick)="view(card.id)"
         />
@@ -24,7 +24,6 @@
         <app-card-display
           class="deck-piles__card deck-piles__card--stacked"
           [card]="card"
-          [backImagePath]="current.config.backImagePath"
           (cardClick)="view(card.id)"
         />
       } @empty {
@@ -37,12 +36,7 @@
     <h3 class="section-heading">Bank ({{ current.bank.length }})</h3>
     <div class="deck-piles__bank-cards">
       @for (card of current.bank; track card.id) {
-        <app-card-display
-          class="deck-piles__card"
-          [card]="card"
-          [backImagePath]="current.config.backImagePath"
-          (cardClick)="view(card.id)"
-        />
+        <app-card-display class="deck-piles__card" [card]="card" (cardClick)="view(card.id)" />
       } @empty {
         <p class="empty-hint empty-hint--sm">Keine Karten in der Bank.</p>
       }

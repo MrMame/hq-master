@@ -33,7 +33,7 @@ describe('CharacterInventoryEditor', () => {
       (el) => el.textContent ?? '',
     );
     expect(names).toEqual(['Runenrüstung', 'Fackel']);
-    expect(host.querySelector<HTMLImageElement>('.inventory-editor__image')?.src).toContain(
+    expect(host.querySelector<HTMLImageElement>('.inventory-editor__image img')?.src).toContain(
       'cards/e1.svg',
     );
     expect(host.textContent).not.toContain('Keine Karten im Inventar');

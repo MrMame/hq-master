@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height:512px;width:512px;">
-  <circle cx="256" cy="256" r="256" fill="#1b1b3a"/>
-  <g transform="translate(256 256)"><g transform="translate(-55 10) scale(0.75)"><path d="M-90,130 V-30 A90,90 0 0 1 90,-30 V130 L60,105 L30,130 L0,105 L-30,130 L-60,105Z" fill="#dfe7fd"/><ellipse cx="-30" cy="-20" rx="16" ry="24" fill="#1b1b3a"/><ellipse cx="30" cy="-20" rx="16" ry="24" fill="#1b1b3a"/></g><g transform="translate(80 0) scale(0.8)"><rect x="-10" y="-70" width="20" height="230" rx="8" fill="#4e342e"/><circle cx="0" cy="-110" r="45" fill="#7cf5c8"/></g></g>
-</svg>

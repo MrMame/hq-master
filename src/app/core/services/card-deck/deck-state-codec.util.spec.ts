@@ -2,7 +2,7 @@ import { AssignedCard, DeckInstance, DeckState } from '../../models/deck-state.m
 import {
   assignedCard,
   BASIC_CARD,
-  COMBAT_CARD,
+  SWORD_CARD,
   createDeckInstance,
   createEquipmentDeckState,
   inventoryCard,
@@ -17,7 +17,7 @@ function legacyStored(): Record<string, unknown> {
     config,
     drawPile: [BASIC_CARD],
     discardPile: [],
-    activeCard: COMBAT_CARD,
+    activeCard: SWORD_CARD,
     bank: [],
     assigned: [{ card: TOWER_SHIELD, characterId: 'a', slot: 'leftHand' }, { slot: 'tail' }],
   };
@@ -33,6 +33,20 @@ describe('DECK_STATE_CODEC', () => {
     expect(DECK_STATE_CODEC.decode(stored)).toEqual(deck);
   });
 
+  it('loads stored cards without back with the deck back and combat cards as basic', () => {
+    const stored: Record<string, unknown> = { ...BASIC_CARD };
+    delete stored['backImagePath'];
+    const combat: Record<string, unknown> = { ...stored, cardType: 'combat', attack: 2 };
+    const deck: DeckInstance = createDeckInstance('deck-1', { drawPile: [] });
+    const state: DeckState | null = DECK_STATE_CODEC.decode({
+      decks: [{ ...deck, drawPile: [stored] }],
+      hand: [{ deckId: 'deck-1', card: combat }],
+    });
+    expect(state?.decks[0].drawPile).toEqual([BASIC_CARD]);
+    expect(state?.hand[0].card).toEqual(BASIC_CARD);
+    expect(DECK_STATE_CODEC.decode(legacyStored())?.hand[0].card).toEqual(SWORD_CARD);
+  });
+
   it('reads an older state with one deck as one deck owning the hand card and assignments', () => {
     const state: DeckState | null = DECK_STATE_CODEC.decode(legacyStored());
     expect(state?.decks).toEqual([
@@ -46,21 +60,21 @@ describe('DECK_STATE_CODEC', () => {
         bank: [],
       },
     ]);
-    expect(state?.hand).toEqual([{ deckId: 'test-deck', card: COMBAT_CARD }]);
+    expect(state?.hand).toEqual([{ deckId: 'test-deck', card: SWORD_CARD }]);
     expect(state?.assigned).toEqual([assignedCard(TOWER_SHIELD, 'a', 'leftHand', 'test-deck')]);
     expect(state?.inventory).toEqual([]);
   });
 
   it('drops invalid inventory cards and those of missing decks', () => {
     const deck: DeckState = createEquipmentDeckState('a');
-    const valid: unknown = inventoryCard(COMBAT_CARD, 'a');
+    const valid: unknown = inventoryCard(SWORD_CARD, 'a');
     const stored: unknown = {
       ...deck,
       inventory: [
         null,
-        { deckId: 'deck-1', card: COMBAT_CARD },
-        { deckId: 'deck-1', card: COMBAT_CARD, characterId: 3 },
-        inventoryCard(COMBAT_CARD, 'a', 'gone'),
+        { deckId: 'deck-1', card: SWORD_CARD },
+        { deckId: 'deck-1', card: SWORD_CARD, characterId: 3 },
+        inventoryCard(SWORD_CARD, 'a', 'gone'),
         valid,
       ],
     };
@@ -72,7 +86,7 @@ describe('DECK_STATE_CODEC', () => {
     const valid: AssignedCard = deck.assigned[0];
     const stored: unknown = {
       decks: [...deck.decks, null, { id: 'x', name: 'X' }],
-      hand: [...deck.hand, null, { deckId: 'gone', card: COMBAT_CARD }],
+      hand: [...deck.hand, null, { deckId: 'gone', card: SWORD_CARD }],
       assigned: [
         null,
         { ...valid, slot: 'tail' },
@@ -106,11 +120,9 @@ describe('DECK_STATE_CODEC', () => {
   it('reads a stored active card of several decks as the only hand card', () => {
     const stored: unknown = {
       decks: [createDeckInstance('deck-1')],
-      activeCard: { deckId: 'deck-1', card: COMBAT_CARD },
+      activeCard: { deckId: 'deck-1', card: SWORD_CARD },
     };
-    expect(DECK_STATE_CODEC.decode(stored)?.hand).toEqual([
-      { deckId: 'deck-1', card: COMBAT_CARD },
-    ]);
+    expect(DECK_STATE_CODEC.decode(stored)?.hand).toEqual([{ deckId: 'deck-1', card: SWORD_CARD }]);
   });
 
   it('falls back to no decks for stored values that are no object', () => {

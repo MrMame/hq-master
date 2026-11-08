@@ -2,7 +2,7 @@ import { DeckState } from '../../models/deck-state.model';
 import {
   assignedCard,
   BASIC_CARD,
-  COMBAT_CARD,
+  SWORD_CARD,
   createDeckState,
   createTwoDeckState,
   inventoryCard,
@@ -49,20 +49,20 @@ describe('deck state', () => {
 
   it('collects the free cards of one deck including its hand cards', () => {
     const s: DeckState = createDeckState();
-    expect(unassignedCards(s, 'deck-1')).toEqual([BASIC_CARD, COMBAT_CARD]);
+    expect(unassignedCards(s, 'deck-1')).toEqual([BASIC_CARD, SWORD_CARD]);
     expect(unassignedCards(s, 'unknown')).toEqual([]);
     expect(
-      unassignedCards({ ...s, hand: [{ deckId: 'other', card: COMBAT_CARD }] }, 'deck-1'),
+      unassignedCards({ ...s, hand: [{ deckId: 'other', card: SWORD_CARD }] }, 'deck-1'),
     ).toEqual([BASIC_CARD]);
   });
 
   it('discards every card into the pile of its own deck and drops cards of missing decks', () => {
     const next: DeckState = withDiscarded(createTwoDeckState(), [
-      { deckId: 'deck-2', card: COMBAT_CARD },
+      { deckId: 'deck-2', card: SWORD_CARD },
       { deckId: 'gone', card: BASIC_CARD },
     ]);
     expect(next.decks[0].discardPile).toEqual([]);
-    expect(next.decks[1].discardPile).toEqual([COMBAT_CARD]);
+    expect(next.decks[1].discardPile).toEqual([SWORD_CARD]);
   });
 
   it('drops hand, slot and inventory cards of missing decks', () => {
@@ -70,7 +70,7 @@ describe('deck state', () => {
       ...createTwoDeckState(),
       hand: [
         { deckId: 'gone', card: BASIC_CARD },
-        { deckId: 'deck-1', card: COMBAT_CARD },
+        { deckId: 'deck-1', card: SWORD_CARD },
       ],
       assigned: [
         assignedCard(TOWER_SHIELD, 'a', 'leftHand', 'gone'),
@@ -80,7 +80,7 @@ describe('deck state', () => {
     };
     const next: DeckState = withoutDanglingRefs(s);
     expect(next.inventory).toEqual([inventoryCard(BASIC_CARD, 'a')]);
-    expect(next.hand).toEqual([{ deckId: 'deck-1', card: COMBAT_CARD }]);
+    expect(next.hand).toEqual([{ deckId: 'deck-1', card: SWORD_CARD }]);
     expect(next.assigned).toEqual([assignedCard(TOWER_SHIELD, 'a', 'rightHand')]);
     expect(withoutDanglingRefs(createDeckState()).hand).toEqual(createDeckState().hand);
   });

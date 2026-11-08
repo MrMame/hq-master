@@ -8,7 +8,7 @@
       [attr.aria-label]="entry.card.name + ' ansehen'"
       (click)="view.emit({ deckId: entry.deckId, cardId: entry.card.id })"
     >
-      <img [src]="entry.card.imagePath" alt="" class="inventory-editor__image" />
+      <app-card-display class="inventory-editor__image" [card]="entry.card" />
       <span class="inventory-editor__name">{{ entry.card.name }}</span>
     </button>
   } @empty {

@@ -1,28 +1,23 @@
 <div class="card-display" (click)="cardClick.emit(card().id)">
-  @if (showFront()) {
-    <div class="card-face card-front">
-      <img class="card-image" [src]="card().imagePath" [alt]="card().name" />
-      <div class="card-info">
-        <span class="card-name">{{ card().name }}</span>
-        @let combat = asCombat(card());
-        @if (combat) {
-          <span class="card-stats">ATK {{ combat.attack }} / DEF {{ combat.defense }}</span>
-        }
-        @if (equipment(); as info) {
-          <span class="card-stats card-stats--slot">{{ info.slot }}</span>
-          <span class="card-stats">{{ info.modifiers }}</span>
-        }
-        @if (owner()) {
-          <span class="card-owner">Im Besitz von {{ owner() }}</span>
-        }
-        @if (origin()) {
-          <span class="card-stats card-origin">aus {{ origin() }}</span>
+  <div class="card-face" [class.card-front]="showFront()" [class.card-back]="!showFront()">
+    @if (failed()) {
+      <div class="card-placeholder" role="img" [attr.aria-label]="alt()">
+        @if (showFront()) {
+          <span class="card-placeholder__name">{{ card().name }}</span>
         }
       </div>
-    </div>
-  } @else {
-    <div class="card-face card-back">
-      <img class="card-image" [src]="backImagePath()" alt="Kartenrückseite" />
+    } @else {
+      <img class="card-image" [src]="src()" [alt]="alt()" (error)="markFailed()" />
+    }
+  </div>
+  @if (captioned()) {
+    <div class="card-caption">
+      @if (owner()) {
+        <span class="card-owner">Im Besitz von {{ owner() }}</span>
+      }
+      @if (origin()) {
+        <span class="card-origin">aus {{ origin() }}</span>
+      }
     </div>
   }
 </div>

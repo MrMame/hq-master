@@ -25,21 +25,47 @@ function readAttributes(tagBody) {
   return attributes;
 }
 
+function withoutComments(xmlText) {
+  return xmlText.replace(/<!--[\s\S]*?-->/g, '').replace(/<\?[\s\S]*?\?>/g, '');
+}
+
 /** Liest einen Katalog-Eintrag aus dem Text einer Deck-Datei; `url` ist relativ zu `public/`. */
 export function readDeckEntry(xmlText, url) {
-  const content = xmlText.replace(/<!--[\s\S]*?-->/g, '').replace(/<\?[\s\S]*?\?>/g, '');
-  const root = /<([\w:-]+)([^>]*)>/.exec(content);
+  const root = /<([\w:-]+)([^>]*)>/.exec(withoutComments(xmlText));
   if (!root || root[1] !== 'deck') throw new Error(`${url}: kein Deck (kein <deck>-Element).`);
   const { id, name } = readAttributes(root[2]);
   if (!name?.trim()) throw new Error(`${url}: Attribut „name“ am <deck>-Element fehlt.`);
   return { id: id ?? '', name: name.trim(), url };
 }
 
+/** Alle genannten Grafiken einer Deck-Datei: Rückseite des Decks, Vorder- und ggf. eigene Rückseite je Karte. */
+export function readDeckImages(xmlText) {
+  const content = withoutComments(xmlText);
+  const deck = readAttributes(/<deck\b([^>]*)>/.exec(content)?.[1] ?? '');
+  const images = deck.backImage ? [{ label: 'Rückseite des Decks', path: deck.backImage }] : [];
+  for (const [, body] of content.matchAll(/<card\b([^>]*?)\/?>/g)) {
+    const card = readAttributes(body);
+    const label = `Karte „${card.id ?? '?'}“`;
+    if (card.image) images.push({ label: `${label}: Vorderseite`, path: card.image });
+    if (card.backImage) images.push({ label: `${label}: Rückseite`, path: card.backImage });
+  }
+  return images;
+}
+
+/** Wirft, wenn eine genannte Grafik nicht unter `publicDir` liegt (Deck-Datei, Karte und Pfad in der Meldung). */
+export function checkDeckImages(xmlText, url, publicDir) {
+  for (const { label, path } of readDeckImages(xmlText)) {
+    if (!existsSync(join(publicDir, path))) {
+      throw new Error(`${url}: ${label}: Grafik „${path}“ fehlt unter ${publicDir}/.`);
+    }
+  }
+}
+
 function compareEntries(a, b) {
   return a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }) || a.url.localeCompare(b.url);
 }
 
-/** Alle Decks unter `<publicDir>/decks/*\/*.xml`, sortiert nach Name. */
+/** Alle Decks unter `<publicDir>/decks/*\/*.xml`, sortiert nach Name; jede genannte Grafik muss existieren. */
 export function buildDeckIndex(publicDir) {
   const decksDir = join(publicDir, DECKS_DIR);
   if (!existsSync(decksDir)) return [];
@@ -50,7 +76,10 @@ export function buildDeckIndex(publicDir) {
         .filter((file) => file.toLowerCase().endsWith('.xml'))
         .map((file) => {
           const url = [DECKS_DIR, folder.name, file].join('/');
-          return readDeckEntry(readFileSync(join(decksDir, folder.name, file), 'utf8'), url);
+          const xmlText = readFileSync(join(decksDir, folder.name, file), 'utf8');
+          const entry = readDeckEntry(xmlText, url);
+          checkDeckImages(xmlText, url, publicDir);
+          return entry;
         }),
     )
     .sort(compareEntries);

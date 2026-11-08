@@ -6,7 +6,7 @@ import { CharactersDbService } from '../../../../core/services/characters/charac
 import { createTestCharacter } from '../../../../core/testing/character.fixtures';
 import {
   BASIC_CARD,
-  COMBAT_CARD,
+  SWORD_CARD,
   createTwoDeckState,
   inventoryCard,
 } from '../../../../core/testing/deck.fixtures';
@@ -39,7 +39,7 @@ describe('InventoryCards', () => {
       inventory: [
         inventoryCard(BASIC_CARD, 'b', 'deck-2'),
         inventoryCard(BASIC_CARD, 'a'),
-        inventoryCard(COMBAT_CARD, 'b'),
+        inventoryCard(SWORD_CARD, 'b'),
       ],
     });
     await fixture.whenStable();
@@ -80,7 +80,7 @@ describe('InventoryCards', () => {
   it('opens a clicked card in the card viewer without moving it', async () => {
     testbed.cardManager.restore({
       ...createTwoDeckState(),
-      inventory: [inventoryCard(COMBAT_CARD, 'a', 'deck-2')],
+      inventory: [inventoryCard(SWORD_CARD, 'a', 'deck-2')],
     });
     await fixture.whenStable();
     (host.querySelector('.card-display') as HTMLElement).click();

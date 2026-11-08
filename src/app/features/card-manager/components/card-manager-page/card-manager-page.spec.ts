@@ -50,7 +50,7 @@ describe('CardManagerPage', () => {
     clickButton(main, 'Deck hinzufügen');
     await harness.fixture.whenStable();
 
-    expect(harness.loadFromUrl).toHaveBeenCalledWith('decks/default/default-deck.xml');
+    expect(harness.loadFromUrl).toHaveBeenCalledWith('decks/zwerg/zwerg.xml');
     expect(rows()).toHaveLength(1);
     expect(expandedRows()).toEqual([]);
   });

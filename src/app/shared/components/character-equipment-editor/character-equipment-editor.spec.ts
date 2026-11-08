@@ -32,7 +32,7 @@ describe('CharacterEquipmentEditor', () => {
       'Rechte Hand frei',
       'Amulett frei',
     ]);
-    expect(host.querySelector<HTMLImageElement>('.equipment-editor__image')?.src).toContain(
+    expect(host.querySelector<HTMLImageElement>('.equipment-editor__image img')?.src).toContain(
       'cards/e1.svg',
     );
     expect(host.textContent).not.toContain('Ablegen');

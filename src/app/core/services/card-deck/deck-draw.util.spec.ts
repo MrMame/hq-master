@@ -1,12 +1,12 @@
 import { DeckState } from '../../models/deck-state.model';
-import { BASIC_CARD, COMBAT_CARD, createTwoDeckState } from '../../testing/deck.fixtures';
+import { BASIC_CARD, SWORD_CARD, createTwoDeckState } from '../../testing/deck.fixtures';
 import { drawCard } from './deck-draw.util';
 
 describe('deck draw', () => {
   it('draws the top card of the chosen deck into the hand', () => {
     const next: DeckState = drawCard(createTwoDeckState(), 'deck-2');
     expect(next.hand).toEqual([{ deckId: 'deck-2', card: BASIC_CARD }]);
-    expect(next.decks[1].drawPile).toEqual([COMBAT_CARD]);
+    expect(next.decks[1].drawPile).toEqual([SWORD_CARD]);
     expect(next.decks[0].drawPile).toEqual([BASIC_CARD]);
   });
 

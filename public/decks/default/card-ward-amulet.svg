@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height:512px;width:512px;">
-  <circle cx="256" cy="256" r="256" fill="#3d2f5c"/>
-  <g transform="translate(256 256)"><path d="M-90,-150 Q0,30 90,-150" fill="none" stroke="#c9a227" stroke-width="10" stroke-dasharray="14 8"/><circle cx="0" cy="40" r="75" fill="#c9a227"/><circle cx="0" cy="40" r="50" fill="#4dabf7"/></g>
-</svg>

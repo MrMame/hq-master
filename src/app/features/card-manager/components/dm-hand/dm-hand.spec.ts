@@ -2,11 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DmHand } from './dm-hand';
 import { CardViewerService } from '../../../../shared/services/card-viewer.service';
-import {
-  BASIC_CARD,
-  COMBAT_CARD,
-  createTwoDeckState,
-} from '../../../../core/testing/deck.fixtures';
+import { BASIC_CARD, SWORD_CARD, createTwoDeckState } from '../../../../core/testing/deck.fixtures';
 import {
   CardManagerTestbed,
   configureCardManagerTestbed,
@@ -32,7 +28,7 @@ describe('DmHand', () => {
       hand: [
         { deckId: 'deck-1', card: BASIC_CARD },
         { deckId: 'deck-2', card: BASIC_CARD },
-        { deckId: 'deck-2', card: COMBAT_CARD },
+        { deckId: 'deck-2', card: SWORD_CARD },
       ],
     });
     await fixture.whenStable();

@@ -4,9 +4,11 @@ import {
   inject,
   input,
   InputSignal,
+  linkedSignal,
   output,
   OutputEmitterRef,
   Signal,
+  WritableSignal,
 } from '@angular/core';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { CharacterInfo } from '../../../core/models/character-info.model';
@@ -17,6 +19,7 @@ import { isSameRef } from '../../../core/services/card-deck/deck-state.util';
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
 import { CARD_ACTIONS, CardAction, CardActionContext } from '../../models/card-action.model';
 import { CardUndoService } from '../../services/card-undo.service';
+import { CardViewerMenuStateService } from '../../services/card-viewer-menu-state.service';
 import { CardViewerService } from '../../services/card-viewer.service';
 import { draftMoveOf } from '../../utils/card-draft.util';
 import { cardMenuEntries, CardMenuEntry, CardMenuRun } from '../../utils/card-menu-entries.util';
@@ -28,12 +31,14 @@ import {
 } from '../../utils/card-place.util';
 import { cardViewerTitle } from '../../utils/card-viewer-title.util';
 import { CardActionMenu } from '../card-action-menu/card-action-menu';
-import { CardDisplay } from '../card-display/card-display';
+import { CardDisplay, CardSide } from '../card-display/card-display';
 
 /**
- * Inhalt des Card Viewers: Deck und Ort, die Karte groß mit Pfeilen zum Blättern am Ort (nur `live`) und das
- * Menü aller Aktionen. Aktionen im Modus `live` laufen mit „Rückgängig“; verlässt die Karte dabei ihren Ort,
- * zeigt der Viewer die nachrückende Karte desselben Ortes.
+ * Inhalt des Card Viewers: eine Leiste über der Karte (Deck und Ort, Blättern am Ort nur `live`, „Umdrehen“,
+ * „Aktionen“, Schließen) und die Karte so groß wie das Fenster erlaubt. Das Aktionsmenü klappt über der Karte
+ * auf; sein Zustand ist gespeichert und bleibt auch nach einer Aktion. Aktionen im Modus `live` laufen mit „Rückgängig“; verlässt die Karte dabei ihren Ort,
+ * zeigt der Viewer die nachrückende Karte desselben Ortes. „Umdrehen“ wechselt nur die Ansicht (keine Bewegung,
+ * kein Log); jede andere Karte und jede Aktion zeigt wieder die Vorderseite.
  */
 @Component({
   selector: 'app-card-viewer-panel',
@@ -47,6 +52,7 @@ export class CardViewerPanel {
   private readonly undo: CardUndoService = inject(CardUndoService);
   private readonly characters: Signal<CharacterInfo[]> = inject(CharactersDbService).characters;
   private readonly actions: readonly CardAction[] = inject(CARD_ACTIONS, { optional: true }) ?? [];
+  protected readonly menu: CardViewerMenuStateService = inject(CardViewerMenuStateService);
 
   readonly context: InputSignal<CardActionContext> = input.required<CardActionContext>();
   readonly closed: OutputEmitterRef<void> = output<void>();
@@ -54,6 +60,12 @@ export class CardViewerPanel {
   protected readonly cardKey: Signal<string> = computed(
     () => `${this.context().ref.deckId}/${this.context().ref.cardId}`,
   );
+
+  /** Angezeigte Seite; eine andere Karte öffnet mit der Vorderseite. */
+  protected readonly side: WritableSignal<CardSide> = linkedSignal<string, CardSide>({
+    source: this.cardKey,
+    computation: () => 'front',
+  });
 
   protected readonly title: Signal<string> = computed(() => {
     const { location, draft, ref, deck } = this.context();
@@ -80,6 +92,15 @@ export class CardViewerPanel {
     return position && position.total > 1 ? position : null;
   });
 
+  /** Klick auf leere Flächen um Leiste und Karte wirkt wie ein Klick auf den Hintergrund. */
+  protected closeOnBackground(event: MouseEvent): void {
+    if (event.target === event.currentTarget || isStage(event.target)) this.closed.emit();
+  }
+
+  protected flip(): void {
+    this.side.update((side) => (side === 'front' ? 'back' : 'front'));
+  }
+
   protected step(offset: number): void {
     const target: CardRef | undefined = this.place()[(this.position()?.index ?? 0) + offset];
     if (target) this.viewer.open(target);
@@ -87,6 +108,7 @@ export class CardViewerPanel {
 
   protected async run(run: CardMenuRun): Promise<void> {
     const { mode, ref, location } = this.context();
+    this.side.set('front');
     if (mode === 'draft') {
       await run();
       return;
@@ -102,4 +124,8 @@ export class CardViewerPanel {
     );
     if (stillViewed && !isSameRef(next, ref)) this.viewer.open(next);
   }
+}
+
+function isStage(target: EventTarget | null): boolean {
+  return target instanceof Element && target.classList.contains('card-viewer__stage');
 }

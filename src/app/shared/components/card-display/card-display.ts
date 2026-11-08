@@ -5,29 +5,28 @@ import {
   InputSignal,
   output,
   OutputEmitterRef,
+  signal,
   Signal,
+  WritableSignal,
 } from '@angular/core';
-import { Card, CombatCard } from '../../../core/models/card.model';
-import { CARD_SLOT_LABELS } from '../../../core/models/equipment.model';
-import { modifiersText } from '../../../core/services/equipment/equipment-text.util';
+import { Card } from '../../../core/models/card.model';
 
 export type CardSide = 'front' | 'back';
 
-/** Slot und Modifikatoren einer Ausrüstungskarte als Anzeigetext. */
-export interface EquipmentInfo {
-  slot: string;
-  modifiers: string;
-}
-
+/**
+ * Eine Karte ist genau ihre Grafik der gewählten Seite (Format 63 : 88, randlos); die App zeichnet nichts auf
+ * sie. Besitzer und Herkunftsdeck stehen als Beschriftung darunter. Lässt sich die Grafik nicht laden, zeigt die
+ * Karte eine neutrale Fläche, vorne mit dem Kartennamen.
+ */
 @Component({
   selector: 'app-card-display',
   imports: [],
+  host: { '[class.card-display--captioned]': 'captioned()' },
   templateUrl: './card-display.html',
   styleUrl: './card-display.css',
 })
 export class CardDisplay {
   card: InputSignal<Card> = input.required<Card>();
-  backImagePath: InputSignal<string> = input.required<string>();
   side: InputSignal<CardSide> = input<CardSide>('front');
   /** Name des Charakters, dem die Karte zugewiesen ist; `null` = frei. */
   owner: InputSignal<string | null> = input<string | null>(null);
@@ -36,15 +35,21 @@ export class CardDisplay {
   cardClick: OutputEmitterRef<string> = output<string>();
 
   showFront: Signal<boolean> = computed(() => this.side() === 'front');
+  protected readonly src: Signal<string> = computed(() =>
+    this.showFront() ? this.card().imagePath : this.card().backImagePath,
+  );
+  protected readonly alt: Signal<string> = computed(() =>
+    this.showFront() ? this.card().name : 'Kartenrückseite',
+  );
+  protected readonly captioned: Signal<boolean> = computed(() => !!(this.owner() || this.origin()));
 
-  protected readonly equipment: Signal<EquipmentInfo | null> = computed(() => {
-    const card: Card = this.card();
-    return card.cardType === 'equipment'
-      ? { slot: CARD_SLOT_LABELS[card.slot], modifiers: modifiersText(card.modifiers) }
-      : null;
-  });
+  /** Pfad, dessen Laden fehlschlug; ein neuer Pfad versucht es erneut. */
+  private readonly failedSrc: WritableSignal<string | null> = signal<string | null>(null);
+  protected readonly failed: Signal<boolean> = computed(
+    () => !this.src() || this.failedSrc() === this.src(),
+  );
 
-  asCombat(card: Card): CombatCard | null {
-    return card.cardType === 'combat' ? (card as CombatCard) : null;
+  protected markFailed(): void {
+    this.failedSrc.set(this.src());
   }
 }

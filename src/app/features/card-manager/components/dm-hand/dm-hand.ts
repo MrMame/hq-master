@@ -25,7 +25,6 @@ import { CardDisplay } from '../../../../shared/components/card-display/card-dis
               class="card-strip__card"
               data-testid="hand-card"
               [card]="entry.card"
-              [backImagePath]="deck?.config?.backImagePath ?? ''"
               [origin]="deck?.name ?? null"
               (cardClick)="view(entry)"
             />

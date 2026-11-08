@@ -6,6 +6,7 @@ import { CardRef, DeckState } from '../../core/models/deck-state.model';
 import { CardManagerService } from '../../core/services/card-deck/card-manager.service';
 import { CardViewer } from '../components/card-viewer/card-viewer';
 import { CardViewerContext } from '../models/card-action.model';
+import { CardViewerMenuStateService } from '../services/card-viewer-menu-state.service';
 import { CardViewerService } from '../services/card-viewer.service';
 
 /** Card Viewer mit echtem Deck-Zustand (nur für Specs). */
@@ -26,14 +27,20 @@ export interface CardViewerSetup {
   menuItem: (label: string) => HTMLButtonElement;
 }
 
-/** Rendert den Viewer wie im App-Template mit `providers` (z. B. `provideCardActions(...)`). */
+/**
+ * Rendert den Viewer wie im App-Template mit `providers` (z. B. `provideCardActions(...)`).
+ * Das Aktionsmenü ist aufgeklappt, außer `menuExpanded` ist `false`; `'stored'` lässt den gespeicherten Zustand.
+ */
 export async function setupCardViewer(
   state: DeckState,
   providers: Provider[] = [],
+  { menuExpanded = true }: { menuExpanded?: boolean | 'stored' } = {},
 ): Promise<CardViewerSetup> {
   TestBed.configureTestingModule({ providers });
   const cardManager: CardManagerService = TestBed.inject(CardManagerService);
   const viewer: CardViewerService = TestBed.inject(CardViewerService);
+  const menu: CardViewerMenuStateService = TestBed.inject(CardViewerMenuStateService);
+  if (menuExpanded !== 'stored' && menu.expanded() !== menuExpanded) menu.toggle();
   cardManager.restore(state);
   const fixture: ComponentFixture<CardViewer> = TestBed.createComponent(CardViewer);
   const overlay: HTMLElement = TestBed.inject(OverlayContainer).getContainerElement();

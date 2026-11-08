@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Deck „Zwerg“: Jede Karte ist genau zwei Grafiken. `image` ist die Vorderseite, `backImage` am <deck> die
+  Rückseite aller Karten; eine <card> darf mit eigenem `backImage` davon abweichen. Pfade relativ zu public/.
+  <description> ist eine Notiz für den DM (z. B. der Regeltext als durchsuchbare Kopie); die App zeigt sie nicht an.
+-->
+<deck id="zwerg" name="Zwerg" backImage="decks/zwerg/zwerg.png" type="basic">
+
+  <card id="wirbelattacke" name="Wirbelattacke" image="decks/zwerg/wirbelattacke.png" type="basic">
+    <description>Alle angrenzenden Felder werden angegriffen. Getroffenes fliegt bis zum nächsten Hindernis zurück. Von Objekten und vom Schlag getroffene Helden/Monster verlieren 1 LP.</description>
+  </card>
+
+</deck>

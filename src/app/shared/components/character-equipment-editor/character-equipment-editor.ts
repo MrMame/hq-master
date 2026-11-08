@@ -13,6 +13,7 @@ import {
   EQUIPMENT_SLOTS,
   EquipmentSlot,
 } from '../../../core/models/equipment.model';
+import { CardDisplay } from '../card-display/card-display';
 
 interface SlotRow {
   slot: EquipmentSlot;
@@ -26,7 +27,7 @@ interface SlotRow {
  */
 @Component({
   selector: 'app-character-equipment-editor',
-  imports: [],
+  imports: [CardDisplay],
   templateUrl: './character-equipment-editor.html',
   styleUrl: './character-equipment-editor.css',
 })

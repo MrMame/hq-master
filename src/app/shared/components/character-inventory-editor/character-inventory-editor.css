@@ -19,11 +19,10 @@
 
 /* Kleines Kartenbild im Kartenformat */
 .inventory-editor__image {
+  --card-shadow: none;
+  --radius-card: var(--radius-sm);
+  flex-shrink: 0;
   height: var(--space-8);
-  aspect-ratio: var(--card-aspect-ratio);
-  object-fit: contain;
-  border-radius: var(--radius-sm);
-  background-color: var(--color-card-surface);
 }
 
 .inventory-editor__name {

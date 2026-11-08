@@ -21,11 +21,11 @@ export interface CardAssignmentServiceMock {
   inventoryTargets: Mock<() => CharacterInfo[]>;
 }
 
-/** Deckliste mit dem Beispieldeck, ohne HTTP; Specs mit echtem Katalog überschreiben `DeckCatalogService`. */
+/** Deckliste mit dem Deck „Zwerg“, ohne HTTP; Specs mit echtem Katalog überschreiben `DeckCatalogService`. */
 export const DEFAULT_CATALOG_ENTRY: DeckCatalogEntry = {
-  id: 'default-deck',
-  name: 'Beispieldeck',
-  url: 'decks/default/default-deck.xml',
+  id: 'zwerg',
+  name: 'Zwerg',
+  url: 'decks/zwerg/zwerg.xml',
 };
 
 /** Echter Deck-Zustand; nur das Laden der Deck-Datei, die Deckliste und der Zuweisungsablauf sind gemockt. */

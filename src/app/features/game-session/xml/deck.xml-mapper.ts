@@ -1,5 +1,6 @@
 import { DeckState } from '../../../core/models/deck-state.model';
 import { migrateLegacyDeck } from '../../../core/services/card-deck/deck-state-migration.util';
+import { withNormalizedCards } from '../../../core/services/card-deck/card-normalize.util';
 import { withoutDanglingRefs } from '../../../core/services/card-deck/deck-state.util';
 import { childElements, firstChild } from '../../../shared/utils/xml.util';
 import { readAssignedCards, writeAssignedCards } from './assigned-cards.xml-mapper';
@@ -26,16 +27,18 @@ export function writeDeck(doc: XMLDocument, state: DeckState): Element {
 /**
  * Ältere Spielstände mit einem Deck (`<config>` direkt in `<cardDeck>`) laden als eine Instanz, eine aktive
  * Karte (`<activeCard>`) als einzige Handkarte. Ohne `<inventory>` ist das Inventar leer. Hand-, Slot- und
- * Inventarkarten fehlender Instanzen werden verworfen.
+ * Inventarkarten fehlender Instanzen werden verworfen; Karten ohne `backImage` erhalten die Rückseite ihres Decks.
  */
 export function readDeck(el: Element): DeckState {
-  if (firstChild(el, 'config')) return readLegacyDeck(el);
-  return withoutDanglingRefs({
-    decks: childElements(el, 'deck').map(readDeckInstance),
-    hand: readHand(el),
-    assigned: readAssignedCards(el),
-    inventory: readInventory(el),
-  });
+  if (firstChild(el, 'config')) return withNormalizedCards(readLegacyDeck(el));
+  return withNormalizedCards(
+    withoutDanglingRefs({
+      decks: childElements(el, 'deck').map(readDeckInstance),
+      hand: readHand(el),
+      assigned: readAssignedCards(el),
+      inventory: readInventory(el),
+    }),
+  );
 }
 
 function readLegacyDeck(el: Element): DeckState {

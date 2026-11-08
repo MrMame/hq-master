@@ -2,6 +2,6 @@
 export interface DeckCatalogEntry {
   id: string;
   name: string;
-  /** Pfad der Deck-XML relativ zur `base href`, z. B. `decks/default/default-deck.xml`. */
+  /** Pfad der Deck-XML relativ zur `base href`, z. B. `decks/zwerg/zwerg.xml`. */
   url: string;
 }

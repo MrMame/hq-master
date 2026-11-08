@@ -24,8 +24,9 @@
       [disabled]="current.drawPile.length === 0"
       (click)="$event.stopPropagation(); draw()"
     >
-      @if (current.drawPile.length > 0) {
-        <img class="deck-row__thumb" [src]="current.config.backImagePath" alt="" />
+      @if (current.drawPile[0]; as next) {
+        <!-- Rückseite der obersten Karte, die als nächste gezogen wird. -->
+        <app-card-display class="deck-row__thumb" [card]="next" side="back" />
       } @else {
         <span class="deck-row__thumb deck-row__thumb--empty" aria-hidden="true"></span>
       }
@@ -41,7 +42,7 @@
       (click)="$event.stopPropagation(); viewTopDiscard()"
     >
       @if (topDiscard(); as top) {
-        <img class="deck-row__thumb" [src]="top.imagePath" [alt]="top.name" />
+        <app-card-display class="deck-row__thumb" [card]="top" />
       } @else {
         <span class="deck-row__thumb deck-row__thumb--empty" aria-hidden="true"></span>
       }

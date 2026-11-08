@@ -12,7 +12,7 @@ function parse(xml: string): Element {
 }
 
 const RUNE_ARMOR_XML: string = `
-  <card id="e1" name="Runenrüstung" image="cards/e1.svg" type="equipment" slot="body">
+  <card id="e1" name="Runenrüstung" image="cards/e1.svg" backImage="cards/back.svg" type="equipment" slot="body">
     <description>Runenrüstung &lt;&amp;&gt;</description>
     <modifier stat="maxArmor" value="2"/>
     <modifier stat="speed" value="-1"/>

@@ -5,7 +5,8 @@ import { DeckState } from '../../../../core/models/deck-state.model';
 import { CardViewerService } from '../../../../shared/services/card-viewer.service';
 import {
   BASIC_CARD,
-  COMBAT_CARD,
+  OWN_BACK_CARD,
+  SWORD_CARD,
   createTwoDeckState,
   TOWER_SHIELD,
 } from '../../../../core/testing/deck.fixtures';
@@ -40,7 +41,7 @@ describe('DeckPiles', () => {
       ...s,
       decks: [
         s.decks[0],
-        { ...s.decks[1], drawPile: [COMBAT_CARD], discardPile: [BASIC_CARD], bank: [TOWER_SHIELD] },
+        { ...s.decks[1], drawPile: [SWORD_CARD], discardPile: [BASIC_CARD], bank: [TOWER_SHIELD] },
       ],
     };
   }
@@ -77,6 +78,17 @@ describe('DeckPiles', () => {
     expect(pile('Nachziehstapel').querySelector('.card-back')).not.toBeNull();
     expect(pile('Ablagestapel').querySelector('.card-front')).not.toBeNull();
     expect(pile('Bank').querySelector('.card-front')).not.toBeNull();
+  });
+
+  it('shows the back of the next card to draw on top and opens it on click', async () => {
+    const state: DeckState = filledState();
+    state.decks[1] = { ...state.decks[1], drawPile: [OWN_BACK_CARD, BASIC_CARD] };
+    await start(state);
+
+    const top: HTMLElement = topCard('Nachziehstapel');
+    expect(top.querySelector('img')?.getAttribute('src')).toBe('cards/special-back.svg');
+    top.click();
+    expect(viewed()).toBe('s1');
   });
 
   it('does nothing on a click on a pile or the bank outside of a card', async () => {
