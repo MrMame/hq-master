@@ -71,6 +71,7 @@ Werte je umgesetztem Punkt (Median). Index: 100 = Median aller Läufe desselben 
 | 2026-11-08 15:35 | implement-feature  | card-bonus-breakdown                | 5      | +3568 / −1942  | 33          | 2      | 2          | 86    | 6 (+1)                 | 65.582        | 12.385.923    | claude-opus-5-5 (medium) | 34a487bb (ändert Harness) | –          | 59    |
 | 2026-11-08 20:00 | implement-feature  | unique-card-ids                     | 5      | +571 / −53     | 15          | 1      | 2          | 58    | 8                      | 43.519        | 6.894.658     | claude-opus-5-5 (medium) | a0a4476b (ändert Harness) | –          | 91    |
 | 2026-11-08 20:45 | implement-feature  | card-viewer-menu-and-table-sections | 6      | +1080 / −320   | 35          | 5      | 0          | 98    | 9 (+3)                 | 80.752        | 14.455.585    | claude-opus-5-5 (medium) | 1772b4f6 (ändert Harness) | –          | 59    |
+| 2026-11-08 21:01 | interview-me       | resizable-sidebar                   | –      | +112 / −0      | 10          | 1      | 3          | 12    | 0                      | 9.141         | 768.211       | claude-opus-5-5 (medium) | 559026cc                  | –          | –     |
 
 ## Harness-Stände
 
