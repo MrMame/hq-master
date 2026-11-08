@@ -1,0 +1,29 @@
+.area-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.area-nav__entry {
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  color: var(--color-gray-100);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  text-align: left;
+  cursor: pointer;
+  transition-property: color, background-color;
+  transition-duration: var(--transition-duration);
+  transition-timing-function: var(--transition-ease);
+
+  &:hover:enabled {
+    background-color: var(--color-gray-700);
+    color: var(--color-yellow-400);
+  }
+
+  &:disabled {
+    color: var(--color-gray-500);
+    cursor: default;
+  }
+}

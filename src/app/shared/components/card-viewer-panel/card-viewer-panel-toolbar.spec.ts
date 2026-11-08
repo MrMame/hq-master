@@ -1,5 +1,4 @@
 import { signal } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 
 import { provideDefaultCardActions } from '../../card-actions/default-card-actions';
@@ -8,7 +7,6 @@ import { DeckInstance, DeckState } from '../../../core/models/deck-state.model';
 import { CardDraft } from '../../models/card-action.model';
 import { createDeckInstance, BASIC_CARD } from '../../../core/testing/deck.fixtures';
 import { deck1Ref, HAND_CARDS } from '../../../core/testing/card-move.fixtures';
-import { TOOL_STATE_KEYS } from '../../../core/session-state/tool-state-keys';
 
 /** deck-1: h1–h3 in der Hand, nur b1 im Nachziehstapel. */
 function handState(): DeckState {
@@ -91,24 +89,37 @@ describe('CardViewerPanel – toolbar and action menu', () => {
     expect(menu()).toBeNull();
   });
 
-  it('keeps the menu state after closing and opening and stores it as tool state', async () => {
+  it('opens collapsed again after closing, without storing the state', async () => {
     await setup.open(deck1Ref('h1'));
     await click(toggle());
 
     await reopen();
-    expect(toggle().getAttribute('aria-expanded')).toBe('true');
-    expect(localStorage.getItem(TOOL_STATE_KEYS.cardViewerMenuOpen)).toBe('true');
+    expect(toggle().getAttribute('aria-expanded')).toBe('false');
+    expect(menu()).toBeNull();
+    expect(localStorage.getItem('card_viewer_menu_open')).toBeNull();
   });
 
-  it('opens with the stored expanded menu', async () => {
-    localStorage.setItem(TOOL_STATE_KEYS.cardViewerMenuOpen, 'true');
-    TestBed.resetTestingModule();
-    setup = await setupCardViewer(handState(), provideDefaultCardActions(), {
-      menuExpanded: 'stored',
-    });
-
+  it('ignores a menu state stored by an older version', async () => {
+    localStorage.setItem('card_viewer_menu_open', 'true');
     await setup.open(deck1Ref('h1'));
-    expect(menu()).not.toBeNull();
+    expect(menu()).toBeNull();
+  });
+
+  it('keeps the menu state while browsing and flipping', async () => {
+    await setup.open(deck1Ref('h1'));
+    await click(toggle());
+
+    await click(setup.overlay.querySelector('[aria-label="Nächste Karte"]'));
+    expect(setup.viewer.viewed()?.ref.cardId).toBe('h2');
+    expect(toggle().getAttribute('aria-expanded')).toBe('true');
+
+    await click(toggle());
+    await click(
+      Array.from(setup.overlay.querySelectorAll<HTMLButtonElement>('button')).find(
+        (button) => button.textContent?.trim() === 'Umdrehen',
+      )!,
+    );
+    expect(toggle().getAttribute('aria-expanded')).toBe('false');
   });
 
   it('keeps the menu open after an action and shows the actions of the next card', async () => {

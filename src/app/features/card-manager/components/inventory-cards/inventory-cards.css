@@ -1,17 +1,5 @@
-/* Behält in der Spalte des Spieltischs seine Höhe; ohne Karten kein Abstand. */
 :host {
   display: block;
-  flex-shrink: 0;
-}
-
-:host(.inventory--empty) {
-  display: none;
-}
-
-.inventory {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
 }
 
 /* Höhe wie „Ausgerüstet“ (zwei Kartenreihen mit Beschriftung), weitere Gruppen scrollen in sich. */

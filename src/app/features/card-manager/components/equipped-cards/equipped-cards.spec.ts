@@ -35,8 +35,6 @@ describe('EquippedCards', () => {
     });
     await fixture.whenStable();
 
-    expect(host.querySelector('h2')?.textContent).toBe('Ausgerüstet (2)');
-    expect(host.classList).not.toContain('equipped--empty');
     expect(Array.from(host.querySelectorAll('.card-origin')).map((el) => el.textContent)).toEqual([
       'aus Testdeck',
       'aus Testdeck (2)',
@@ -67,10 +65,9 @@ describe('EquippedCards', () => {
     expect(testbed.cardManager.assigned()).toHaveLength(1);
   });
 
-  it('renders nothing without assignments', async () => {
+  it('renders no cards without assignments', async () => {
     testbed.cardManager.restore(createTwoDeckState());
     await fixture.whenStable();
-    expect(host.querySelector('section')).toBeNull();
-    expect(host.classList).toContain('equipped--empty');
+    expect(host.querySelector('app-card-display')).toBeNull();
   });
 });

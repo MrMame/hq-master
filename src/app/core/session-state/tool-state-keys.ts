@@ -8,7 +8,6 @@ export const TOOL_STATE_KEYS: {
   readonly dungeonBuilderRecent: 'dungeon_builder_recent';
   readonly sidebarSections: 'sidebar_sections';
   readonly collapsedSidebars: 'collapsed_sidebars';
-  readonly cardViewerMenuOpen: 'card_viewer_menu_open';
 } = {
   dungeonBuilderLayout: 'dungeon_builder_layout',
   /** Zuletzt verwendete Türen und Möbel der Bibliothek (Katalog-IDs, neueste zuerst). */
@@ -17,8 +16,6 @@ export const TOOL_STATE_KEYS: {
   sidebarSections: 'sidebar_sections',
   /** Eingeklappte Seitenleisten (`CollapsibleSidebar`) je Feature. */
   collapsedSidebars: 'collapsed_sidebars',
-  /** Aufgeklapptes Aktionsmenü des Card Viewers (für alle Einsatzorte gleich). */
-  cardViewerMenuOpen: 'card_viewer_menu_open',
 };
 
 export type ToolStateKey = (typeof TOOL_STATE_KEYS)[keyof typeof TOOL_STATE_KEYS];

@@ -30,6 +30,21 @@ describe('SidebarSectionStateService', () => {
     expect(createService().collapsedIds()).toEqual([]);
   });
 
+  it('should expand only one shown section of a scope and collapse the others of that scope', () => {
+    ['table.hand', 'table.belt', 'table.decks', 'side.decks'].forEach((id) => service.register(id));
+    service.toggle('table.belt');
+    service.toggle('side.decks');
+
+    service.expandOnly('table', 'table.belt');
+
+    expect(service.collapsedIds()).toEqual(['side.decks', 'table.hand', 'table.decks']);
+    expect(JSON.parse(localStorage.getItem(TOOL_STATE_KEYS.sidebarSections)!)).toEqual([
+      'side.decks',
+      'table.hand',
+      'table.decks',
+    ]);
+  });
+
   it('should treat unknown sections as open and toggle a section closed and open again', () => {
     expect(service.isCollapsed('dungeon-builder.library.Neu')).toBe(false);
 

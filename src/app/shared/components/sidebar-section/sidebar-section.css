@@ -1,0 +1,65 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sidebar-section__toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition-property: color;
+  transition-duration: var(--transition-duration);
+  transition-timing-function: var(--transition-ease);
+
+  &[aria-expanded='true'] .sidebar-section__arrow {
+    rotate: 90deg;
+  }
+
+  &:hover:enabled {
+    color: var(--color-yellow-400);
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+/* Pfeil ▸ (zu) bzw. ▾ (offen); nicht Teil des barrierefreien Namens */
+.sidebar-section__arrow {
+  transition-property: rotate;
+  transition-duration: var(--transition-duration);
+  transition-timing-function: var(--transition-ease);
+
+  &::before {
+    content: '▸';
+  }
+}
+
+.sidebar-section__content[hidden] {
+  display: none;
+}
+
+/* Bereich im Hauptbereich: eigene Fläche mit Kopfzeile; zugeklappt nur so hoch wie die Kopfzeile. */
+:host(.sidebar-section--area) {
+  flex-shrink: 0;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-gray-700);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-gray-800);
+
+  .sidebar-section__toggle {
+    color: var(--color-gray-100);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+    font-weight: 600;
+
+    &:hover:enabled {
+      color: var(--color-yellow-400);
+    }
+  }
+}

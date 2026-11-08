@@ -19,15 +19,14 @@ interface InventoryGroup {
 const CAPTIONS: Readonly<Record<CarriedKind, string>> = { inventory: 'Inventar', belt: 'Gürtel' };
 
 /**
- * Bereich „Inventar“ unter „Ausgerüstet“ bzw. mit `kind` = `belt` „Gürtel“ darunter: die Karten aller Charaktere, gruppiert nach Charakter in
+ * Inhalt des Bereichs „Inventar“ unter „Ausgerüstet“ bzw. mit `kind` = `belt` „Gürtel“ darunter: die Karten aller Charaktere, gruppiert nach Charakter in
  * Reihenfolge der Session (Name mit Anzahl, Karten mit Herkunftsdeck). Charaktere ohne Inventarkarten fehlen,
- * ohne Inventarkarten ist der Bereich ausgeblendet. Höhe begrenzt, weitere Inhalte scrollen in sich; ein
+ * Überschrift und Ausblenden ohne Karten übernimmt die Seite. Höhe begrenzt, weitere Inhalte scrollen in sich; ein
  * Klick öffnet die Karte im Card Viewer.
  */
 @Component({
   selector: 'app-inventory-cards',
   imports: [CardDisplay],
-  host: { '[class.inventory--empty]': 'groups().length === 0' },
   templateUrl: './inventory-cards.html',
   styleUrl: './inventory-cards.css',
 })

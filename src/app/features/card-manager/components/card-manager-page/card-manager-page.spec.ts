@@ -32,15 +32,19 @@ describe('CardManagerPage', () => {
     expect(host.textContent).not.toContain('Deck Aktionen');
   });
 
-  it('puts the deck choice and "Deck hinzufügen" in "Deck Management" above the deck list group', () => {
-    const sections: HTMLElement[] = Array.from(host.querySelectorAll('app-sidebar-section'));
+  it('puts "Bereiche" first, then "Deck Management" above the deck list group', () => {
+    const sections: HTMLElement[] = Array.from(
+      host.querySelectorAll('app-collapsible-sidebar app-sidebar-section'),
+    );
     expect(sections.map((section) => section.getAttribute('sectionid'))).toEqual([
+      'card-manager.areas',
       'card-manager.deck-management',
       'card-manager.decks',
     ]);
-    expect(sections[0].querySelector('app-add-deck-form')).not.toBeNull();
-    expect(sections[1].querySelector('app-deck-list')).not.toBeNull();
-    expect(sections[1].querySelector('app-add-deck-form')).toBeNull();
+    expect(sections[0].querySelector('app-table-area-nav')).not.toBeNull();
+    expect(sections[1].querySelector('app-add-deck-form')).not.toBeNull();
+    expect(sections[2].querySelector('app-deck-list')).not.toBeNull();
+    expect(sections[2].querySelector('app-add-deck-form')).toBeNull();
   });
 
   it('shows a hint with "Deck hinzufügen" without decks and adds a deck from there', async () => {

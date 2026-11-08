@@ -10,9 +10,9 @@ import {
   discardInViewer,
   equipmentRows,
   renderCardViewer,
+  viewInViewer,
   setupEquippedEditor,
   statBonus,
-  viewButton,
   viewerAction,
 } from '../../testing/character-equipment.fixtures';
 
@@ -42,7 +42,7 @@ describe('CharacterEquipmentEditor', () => {
     const setup: CharacterEditorDialogSetup = await setupEquippedEditor();
     const overlay: HTMLElement = await renderCardViewer();
 
-    await setup.click(viewButton(setup.host, 'Turmschild'));
+    await viewInViewer(setup, overlay, 'Turmschild');
 
     expect(TestBed.inject(CardViewerService).viewed()?.context.mode).toBe('draft');
     expect(location(overlay)).toBe('Testdeck · Barbar · Linke Hand');

@@ -21,7 +21,7 @@ describe('InventoryCards', () => {
   let host: HTMLElement;
 
   const headings: () => string[] = () =>
-    Array.from(host.querySelectorAll('h3')).map((el) => el.textContent?.trim() ?? '');
+    Array.from(host.querySelectorAll('h4')).map((el) => el.textContent?.trim() ?? '');
 
   beforeEach(() => {
     testbed = configureCardManagerTestbed();
@@ -44,7 +44,6 @@ describe('InventoryCards', () => {
     });
     await fixture.whenStable();
 
-    expect(host.querySelector('h2')?.textContent).toBe('Inventar');
     // Elf ohne Inventarkarten erscheint nicht.
     expect(headings()).toEqual(['Barbar (1)', 'Zwerg (2)']);
     const dwarf: Element | null = host.querySelector('[aria-label="Inventar von Zwerg"]');
@@ -67,14 +66,13 @@ describe('InventoryCards', () => {
     expect(headings()).toEqual(['Barbar der Rote (1)']);
   });
 
-  it('is hidden without inventory cards or with cards of unknown characters only', async () => {
+  it('renders no groups for cards of unknown characters only', async () => {
     testbed.cardManager.restore({
       ...createTwoDeckState(),
       inventory: [inventoryCard(BASIC_CARD, 'x')],
     });
     await fixture.whenStable();
     expect(host.querySelector('section')).toBeNull();
-    expect(host.classList).toContain('inventory--empty');
   });
 
   it('opens a clicked card in the card viewer without moving it', async () => {
