@@ -14,13 +14,16 @@
   gap: var(--space-2);
 }
 
-/* Höhe wie „Ausgerüstet“ (zwei Kartenreihen), weitere Gruppen scrollen in sich. */
+/* Höhe wie „Ausgerüstet“ (zwei Kartenreihen mit Beschriftung), weitere Gruppen scrollen in sich. */
 .inventory__groups {
   --card-strip-card-height: 12rem;
+  --card-strip-caption-height: 1.125rem;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  max-height: calc(2 * var(--card-strip-card-height) + var(--space-8));
+  max-height: calc(
+    2 * (var(--card-strip-card-height) + var(--card-strip-caption-height)) + var(--space-8)
+  );
   overflow-x: hidden;
   overflow-y: auto;
 }

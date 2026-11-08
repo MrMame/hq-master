@@ -1,43 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CardDisplay } from './card-display';
-import { BasicCard, Card, CombatCard } from '../../../core/models/card.model';
-import { RUNE_ARMOR } from '../../../core/testing/deck.fixtures';
-
-const BASIC: BasicCard = {
-  id: 'b1',
-  name: 'Fackel',
-  imagePath: 'torch.svg',
-  description: '',
-  cardType: 'basic',
-};
-
-const COMBAT: CombatCard = {
-  id: 'c1',
-  name: 'Schwert',
-  imagePath: 'sword.svg',
-  description: '',
-  cardType: 'combat',
-  attack: 4,
-  defense: 2,
-};
+import { CardDisplay, CardSide } from './card-display';
+import { Card } from '../../../core/models/card.model';
+import { BASIC_CARD, OWN_BACK_CARD, RUNE_ARMOR } from '../../../core/testing/deck.fixtures';
 
 describe('CardDisplay', () => {
   let fixture: ComponentFixture<CardDisplay>;
   let host: HTMLElement;
 
-  const render: (card: Card, side?: 'front' | 'back') => Promise<void> = async (
-    card: Card,
-    side?: 'front' | 'back',
-  ): Promise<void> => {
+  const render: (card: Card, side?: CardSide) => Promise<void> = async (card, side) => {
     fixture.componentRef.setInput('card', card);
-    fixture.componentRef.setInput('backImagePath', 'back.svg');
     if (side) fixture.componentRef.setInput('side', side);
     await fixture.whenStable();
   };
 
-  const image: () => HTMLImageElement = (): HTMLImageElement =>
-    host.querySelector('.card-image') as HTMLImageElement;
+  const image: () => HTMLImageElement | null = () => host.querySelector('img');
+  const placeholder: () => HTMLElement | null = () => host.querySelector('.card-placeholder');
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({ imports: [CardDisplay] }).compileComponents();
@@ -45,38 +23,24 @@ describe('CardDisplay', () => {
     host = fixture.nativeElement as HTMLElement;
   });
 
-  it('shows the front with image and name by default', async () => {
-    await render(BASIC);
+  it('shows only the front image with the card name as alt text', async () => {
+    await render(RUNE_ARMOR);
 
-    expect(host.querySelector('.card-front')).not.toBeNull();
-    expect(image().getAttribute('src')).toBe('torch.svg');
-    expect(image().alt).toBe('Fackel');
-    expect(host.querySelector('.card-name')?.textContent).toBe('Fackel');
+    expect(image()?.getAttribute('src')).toBe('cards/e1.svg');
+    expect(image()?.alt).toBe('Runenrüstung');
+    // Weder Name noch Slot oder Werte stehen auf der Karte.
+    expect(host.textContent?.trim()).toBe('');
   });
 
-  it('hides the stats for basic cards', async () => {
-    await render(BASIC);
+  it('shows the back image of the card when side is back', async () => {
+    await render(OWN_BACK_CARD, 'back');
 
-    expect(host.querySelector('.card-stats')).toBeNull();
-  });
-
-  it('shows attack and defense for combat cards', async () => {
-    await render(COMBAT);
-
-    expect(host.querySelector('.card-stats')?.textContent).toBe('ATK 4 / DEF 2');
-  });
-
-  it('shows only the back image when side is back', async () => {
-    await render(COMBAT, 'back');
-
-    expect(host.querySelector('.card-front')).toBeNull();
-    expect(host.querySelector('.card-back')).not.toBeNull();
-    expect(image().getAttribute('src')).toBe('back.svg');
-    expect(host.querySelector('.card-name')).toBeNull();
+    expect(image()?.getAttribute('src')).toBe('cards/special-back.svg');
+    expect(image()?.alt).toBe('Kartenrückseite');
   });
 
   it('emits the card id on click', async () => {
-    await render(BASIC);
+    await render(BASIC_CARD);
     const clicked: string[] = [];
     fixture.componentInstance.cardClick.subscribe((id: string) => clicked.push(id));
 
@@ -85,35 +49,55 @@ describe('CardDisplay', () => {
     expect(clicked).toEqual(['b1']);
   });
 
-  it('asCombat returns the card only for combat cards', () => {
-    expect(fixture.componentInstance.asCombat(COMBAT)).toBe(COMBAT);
-    expect(fixture.componentInstance.asCombat(BASIC)).toBeNull();
-  });
-
-  it('shows slot and modifiers for equipment cards', async () => {
+  it('shows owner and origin as caption below the card only when given', async () => {
     await render(RUNE_ARMOR);
-
-    const stats: string[] = Array.from(host.querySelectorAll('.card-stats')).map(
-      (el) => el.textContent ?? '',
-    );
-    expect(stats).toEqual(['Körper', 'Rüstung +2 · Tempo −1']);
-  });
-
-  it('shows the owner of an assigned card', async () => {
-    await render(RUNE_ARMOR);
-    expect(host.querySelector('.card-owner')).toBeNull();
+    expect(host.querySelector('.card-caption')).toBeNull();
+    expect(host.classList).not.toContain('card-display--captioned');
 
     fixture.componentRef.setInput('owner', 'Barbar');
-    await fixture.whenStable();
-    expect(host.querySelector('.card-owner')?.textContent).toBe('Im Besitz von Barbar');
-  });
-
-  it('shows the origin deck only when given', async () => {
-    await render(RUNE_ARMOR);
-    expect(host.querySelector('.card-origin')).toBeNull();
-
     fixture.componentRef.setInput('origin', 'Monster (2)');
     await fixture.whenStable();
-    expect(host.querySelector('.card-origin')?.textContent).toBe('aus Monster (2)');
+
+    const caption: HTMLElement = host.querySelector('.card-face + .card-caption') as HTMLElement;
+    expect(caption.querySelector('.card-owner')?.textContent).toBe('Im Besitz von Barbar');
+    expect(caption.querySelector('.card-origin')?.textContent).toBe('aus Monster (2)');
+    expect(host.querySelector('.card-face')?.textContent?.trim()).toBe('');
+    expect(host.classList).toContain('card-display--captioned');
+  });
+
+  it('shows a placeholder with the card name when the front cannot be loaded', async () => {
+    await render(BASIC_CARD);
+    image()!.dispatchEvent(new Event('error'));
+    await fixture.whenStable();
+
+    expect(image()).toBeNull();
+    expect(placeholder()?.getAttribute('aria-label')).toBe('Fackel');
+    expect(placeholder()?.textContent?.trim()).toBe('Fackel');
+  });
+
+  it('shows a placeholder without name when the back cannot be loaded', async () => {
+    await render(BASIC_CARD, 'back');
+    image()!.dispatchEvent(new Event('error'));
+    await fixture.whenStable();
+
+    expect(placeholder()?.getAttribute('aria-label')).toBe('Kartenrückseite');
+    expect(placeholder()?.textContent?.trim()).toBe('');
+  });
+
+  it('tries to load again when the image changes', async () => {
+    await render(BASIC_CARD);
+    image()!.dispatchEvent(new Event('error'));
+    await fixture.whenStable();
+
+    await render(BASIC_CARD, 'back');
+
+    expect(image()?.getAttribute('src')).toBe('cards/back.svg');
+  });
+
+  it('shows the placeholder for a card without image path', async () => {
+    await render({ ...BASIC_CARD, imagePath: '' });
+
+    expect(image()).toBeNull();
+    expect(placeholder()).not.toBeNull();
   });
 });

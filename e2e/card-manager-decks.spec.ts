@@ -1,6 +1,6 @@
 import { expect, Locator, Page, test } from '@playwright/test';
 
-async function addDefaultDeck(page: Page): Promise<void> {
+async function addZwergDeck(page: Page): Promise<void> {
   await page.getByRole('complementary').getByRole('button', { name: 'Deck hinzufügen' }).click();
 }
 
@@ -8,21 +8,21 @@ test('keeps cards drawn from two decks in the hand and discards one via the card
   page,
 }) => {
   await page.goto('/cardmanager');
-  await addDefaultDeck(page);
-  await addDefaultDeck(page);
+  await addZwergDeck(page);
+  await addZwergDeck(page);
   const rows: Locator = page.getByTestId('deck-row');
   await expect(rows).toHaveCount(2);
-  await expect(rows.nth(1)).toContainText('Beispieldeck (2)');
+  await expect(rows.nth(1)).toContainText('Zwerg (2)');
 
   // Ziehen öffnet die Karte im Viewer; Escape schließt ihn, die Karte bleibt in der Hand.
   const viewer: Locator = page.getByRole('dialog', { name: 'Card Viewer' });
   const location: Locator = viewer.getByTestId('card-viewer-location');
-  await rows.nth(0).getByRole('button', { name: 'Karte ziehen aus Beispieldeck' }).click();
-  await expect(location).toHaveText('Beispieldeck · Hand');
+  await rows.nth(0).getByRole('button', { name: 'Karte ziehen aus Zwerg' }).click();
+  await expect(location).toHaveText('Zwerg · Hand');
   await page.keyboard.press('Escape');
   await expect(viewer).toHaveCount(0);
-  await rows.nth(1).getByRole('button', { name: 'Karte ziehen aus Beispieldeck (2)' }).click();
-  await expect(location).toHaveText('Beispieldeck (2) · Hand');
+  await rows.nth(1).getByRole('button', { name: 'Karte ziehen aus Zwerg (2)' }).click();
+  await expect(location).toHaveText('Zwerg (2) · Hand');
   await page.keyboard.press('Escape');
 
   const hand: Locator = page.getByRole('region', { name: 'Hand des Dungeon Masters' });
@@ -30,10 +30,10 @@ test('keeps cards drawn from two decks in the hand and discards one via the card
   await expect(rows.nth(0).getByTestId('discard-count')).toHaveText('0');
 
   await hand.getByTestId('hand-card').first().click();
-  await expect(location).toHaveText('Beispieldeck · Hand');
+  await expect(location).toHaveText('Zwerg · Hand');
   await viewer.getByRole('menuitem', { name: 'In den Ablagestapel legen' }).click();
   // Der Viewer bleibt am Ort und zeigt die nachrückende Handkarte; „Rückgängig“ wird angeboten.
-  await expect(location).toHaveText('Beispieldeck (2) · Hand');
+  await expect(location).toHaveText('Zwerg (2) · Hand');
   await expect(page.getByRole('button', { name: 'Rückgängig' })).toBeVisible();
   await page.keyboard.press('Escape');
 
@@ -44,6 +44,6 @@ test('keeps cards drawn from two decks in the hand and discards one via the card
   await page.reload();
   await expect(rows).toHaveCount(2);
   await expect(hand.getByRole('heading')).toHaveText('Hand des Dungeon Masters (1)');
-  await expect(hand).toContainText('aus Beispieldeck (2)');
+  await expect(hand).toContainText('aus Zwerg (2)');
   await expect(rows.nth(0).getByTestId('discard-count')).toHaveText('1');
 });

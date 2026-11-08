@@ -3,7 +3,7 @@ import { readInventory } from './inventory.xml-mapper';
 import { DeckState } from '../../../core/models/deck-state.model';
 import {
   BASIC_CARD,
-  COMBAT_CARD,
+  SWORD_CARD,
   createEquipmentDeckState,
   createTwoDeckState,
   inventoryCard,
@@ -25,7 +25,7 @@ describe('inventory.xml-mapper', () => {
       ...createEquipmentDeckState('a'),
       inventory: [
         inventoryCard(BASIC_CARD, 'a'),
-        inventoryCard(COMBAT_CARD, 'b'),
+        inventoryCard(SWORD_CARD, 'b'),
         inventoryCard(RUNE_ARMOR, 'a'),
       ],
     };

@@ -25,7 +25,6 @@ import { CardDisplay } from '../../../../shared/components/card-display/card-dis
             <app-card-display
               class="card-strip__card"
               [card]="entry.card"
-              [backImagePath]="deck?.config?.backImagePath ?? ''"
               [owner]="ownerNames().get(entry.characterId) ?? null"
               [origin]="deck?.name ?? null"
               (cardClick)="view(entry)"
@@ -40,6 +39,11 @@ import { CardDisplay } from '../../../../shared/components/card-display/card-dis
     :host {
       display: block;
       flex-shrink: 0;
+    }
+
+    /* Zwei Zeilen unter jeder Karte: Besitzer und Herkunftsdeck. */
+    .card-strip__cards {
+      --card-strip-caption-height: 2rem;
     }
 
     :host(.equipped--empty) {

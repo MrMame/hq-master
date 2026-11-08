@@ -1,6 +1,6 @@
 import { readDeckInstance, writeDeckInstance } from './deck-instance.xml-mapper';
 import { DeckInstance } from '../../../core/models/deck-state.model';
-import { BASIC_CARD, COMBAT_CARD, createDeckInstance } from '../../../core/testing/deck.fixtures';
+import { BASIC_CARD, SWORD_CARD, createDeckInstance } from '../../../core/testing/deck.fixtures';
 
 function parse(xml: string): Element {
   return new DOMParser().parseFromString(xml, 'application/xml').documentElement;
@@ -11,7 +11,7 @@ describe('deck-instance.xml-mapper', () => {
     const deck: DeckInstance = createDeckInstance('d1', {
       name: 'Monster (2)',
       drawPile: [BASIC_CARD],
-      discardPile: [COMBAT_CARD],
+      discardPile: [SWORD_CARD],
     });
     const doc: XMLDocument = document.implementation.createDocument(null, 'cardDeck');
     writeDeckInstance(doc.documentElement, deck);

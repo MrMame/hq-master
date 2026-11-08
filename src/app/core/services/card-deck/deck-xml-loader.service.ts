@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { BaseCard, Card, CardType, EquipmentCard } from '../../models/card.model';
+import { BaseCard, Card, CardType, EquipmentCard, toCardType } from '../../models/card.model';
 import { DeckConfig } from '../../models/deck-config.model';
 import { readEquipmentCard } from './equipment-card-xml.util';
 
@@ -20,38 +20,32 @@ export class DeckXmlLoaderService {
     const deckEl: Element | null = doc.querySelector('deck');
     if (!deckEl) throw new Error('Invalid deck XML: missing <deck> element');
 
-    const defaultCardType: CardType = (deckEl.getAttribute('type') ?? 'basic') as CardType;
+    const defaultCardType: CardType = toCardType(deckEl.getAttribute('type'));
+    const backImagePath: string = deckEl.getAttribute('backImage') ?? '';
     const cards: Card[] = Array.from(deckEl.querySelectorAll('card')).map((el: Element) =>
-      this.parseCard(el, defaultCardType),
+      this.parseCard(el, defaultCardType, backImagePath),
     );
 
     return {
       id: deckEl.getAttribute('id') ?? crypto.randomUUID(),
       name: deckEl.getAttribute('name') ?? '',
-      backImagePath: deckEl.getAttribute('backImage') ?? '',
+      backImagePath,
       defaultCardType,
       cards,
     };
   }
 
-  private parseCard(el: Element, defaultCardType: CardType): Card {
-    const cardType: CardType = (el.getAttribute('type') ?? defaultCardType) as CardType;
+  /** Eine karteneigene Rückseite ersetzt die des Decks; `combat` und Unbekanntes laden als `basic`. */
+  private parseCard(el: Element, defaultCardType: CardType, deckBack: string): Card {
+    const cardType: CardType = toCardType(el.getAttribute('type') ?? defaultCardType);
     const base: BaseCard = {
       id: el.getAttribute('id') ?? crypto.randomUUID(),
       name: el.getAttribute('name') ?? '',
       imagePath: el.getAttribute('image') ?? '',
+      backImagePath: el.getAttribute('backImage') ?? deckBack,
       description: el.querySelector('description')?.textContent?.trim() ?? '',
       cardType,
     };
-
-    if (cardType === 'combat') {
-      return {
-        ...base,
-        cardType: 'combat',
-        attack: Number(el.querySelector('attack')?.textContent ?? 0),
-        defense: Number(el.querySelector('defense')?.textContent ?? 0),
-      };
-    }
 
     if (cardType === 'equipment') {
       const equipment: EquipmentCard | null = readEquipmentCard(el, base);

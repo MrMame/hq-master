@@ -10,7 +10,7 @@ import { createTestCharacter } from '../../testing/character.fixtures';
 import {
   assignedCard,
   BASIC_CARD,
-  COMBAT_CARD,
+  SWORD_CARD,
   createEquipmentDeckState,
   inventoryCard,
   RUNE_ARMOR,
@@ -54,14 +54,14 @@ describe('EquipmentSyncService', () => {
   it('discards the inventory cards of a removed or missing character', () => {
     cardManager.restore({
       ...deck(),
-      inventory: [inventoryCard(BASIC_CARD, 'a'), inventoryCard(COMBAT_CARD, 'x')],
+      inventory: [inventoryCard(BASIC_CARD, 'a'), inventoryCard(SWORD_CARD, 'x')],
     });
     sync();
     expect(deck().inventory).toEqual([inventoryCard(BASIC_CARD, 'a')]);
     charactersDb.removeCharacter(owner);
     sync();
     expect(deck().inventory).toEqual([]);
-    expect(discardPile()).toEqual(expect.arrayContaining([BASIC_CARD, COMBAT_CARD]));
+    expect(discardPile()).toEqual(expect.arrayContaining([BASIC_CARD, SWORD_CARD]));
   });
 
   it('discards all cards of a removed character', () => {

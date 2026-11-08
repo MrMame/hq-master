@@ -4,7 +4,7 @@ import { Card } from '../../../core/models/card.model';
 import {
   assignedCard,
   BASIC_CARD,
-  COMBAT_CARD,
+  SWORD_CARD,
   createTwoDeckState,
   TOWER_SHIELD,
 } from '../../../core/testing/deck.fixtures';
@@ -23,8 +23,8 @@ describe('deck.xml-mapper – several decks', () => {
     const state: DeckState = {
       ...createTwoDeckState(),
       hand: [
-        { deckId: 'deck-2', card: COMBAT_CARD },
-        { deckId: 'deck-1', card: COMBAT_CARD },
+        { deckId: 'deck-2', card: SWORD_CARD },
+        { deckId: 'deck-1', card: SWORD_CARD },
       ],
       assigned: [
         assignedCard(TOWER_SHIELD, 'a', 'leftHand'),
@@ -106,29 +106,42 @@ describe('deck.xml-mapper – older saves with one deck', () => {
     [
       'card without attributes and description',
       '<card/>',
-      { id: '', name: '', imagePath: '', description: '', cardType: 'basic' },
+      {
+        id: '',
+        name: '',
+        imagePath: '',
+        backImagePath: 'back.svg',
+        description: '',
+        cardType: 'basic',
+      },
     ],
     [
       'unknown card type',
       '<card id="x" type="magic"><description>D</description></card>',
-      { id: 'x', name: '', imagePath: '', description: 'D', cardType: 'basic' },
+      {
+        id: 'x',
+        name: '',
+        imagePath: '',
+        backImagePath: 'back.svg',
+        description: 'D',
+        cardType: 'basic',
+      },
     ],
     [
-      'combat card with non-numeric values',
-      '<card id="k" type="combat" attack="viel" defense="3"/>',
+      'former combat card as basic card without values',
+      '<card id="k" type="combat" attack="4" defense="3" backImage="own.svg"/>',
       {
         id: 'k',
         name: '',
         imagePath: '',
+        backImagePath: 'own.svg',
         description: '',
-        cardType: 'combat',
-        attack: 0,
-        defense: 3,
+        cardType: 'basic',
       },
     ],
   ])('reads a %s with fallback values', (_case, cardXml, expected) => {
     const state: DeckState = readDeck(
-      parse(`<cardDeck><config/><bank>${cardXml}</bank></cardDeck>`),
+      parse(`<cardDeck><config backImage="back.svg"/><bank>${cardXml}</bank></cardDeck>`),
     );
     expect(state.decks[0].bank).toEqual([expected]);
   });

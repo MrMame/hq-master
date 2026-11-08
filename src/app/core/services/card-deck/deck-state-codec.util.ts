@@ -9,6 +9,7 @@ import { EQUIPMENT_SLOTS } from '../../models/equipment.model';
 import { StorageCodec } from '../../session-state/persisted-state';
 import { LegacyDeckState, migrateLegacyDeck } from './deck-state-migration.util';
 import { withoutDanglingRefs } from './deck-state.util';
+import { withNormalizedCards } from './card-normalize.util';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -68,14 +69,15 @@ function decodeHand(stored: Record<string, unknown>): HandCard[] {
 /**
  * Speichert den Deck-Zustand unverändert. Beim Laden wird ein älterer Zustand mit einem Deck zu einer
  * Instanz; ungültige Instanzen, Zuweisungen und Inventarkarten sowie Verweise auf fehlende Instanzen werden
- * verworfen; ohne Inventar (ältere Stände) ist es leer. Kein Objekt → Startwert (keine Decks).
+ * verworfen; ohne Inventar (ältere Stände) ist es leer. Karten ohne Rückseite erhalten die ihres
+ * Decks, `combat` wird `basic`. Kein Objekt → Startwert (keine Decks).
  */
 export const DECK_STATE_CODEC: StorageCodec<DeckState> = {
   encode: (state: DeckState): unknown => state,
   decode: (stored: unknown): DeckState | null => {
     if (!isRecord(stored)) return null;
-    if (isRecord(stored['config'])) return decodeLegacy(stored);
-    return withoutDanglingRefs({
+    if (isRecord(stored['config'])) return withNormalizedCards(decodeLegacy(stored));
+    const state: DeckState = withoutDanglingRefs({
       decks: list(stored['decks'], isDeckInstance).map((deck) => ({
         ...deck,
         source: typeof deck.source === 'string' ? deck.source : '',
@@ -84,5 +86,6 @@ export const DECK_STATE_CODEC: StorageCodec<DeckState> = {
       assigned: list(stored['assigned'], isAssignedCard),
       inventory: list(stored['inventory'], isInventoryCard),
     });
+    return withNormalizedCards(state);
   },
 };

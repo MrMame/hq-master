@@ -12,7 +12,6 @@
                 class="card-strip__card"
                 data-testid="inventory-card"
                 [card]="entry.card"
-                [backImagePath]="deck?.config?.backImagePath ?? ''"
                 [origin]="deck?.name ?? null"
                 (cardClick)="view(entry)"
               />

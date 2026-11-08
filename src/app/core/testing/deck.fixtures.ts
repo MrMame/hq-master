@@ -2,21 +2,34 @@ import { Card, EquipmentCard } from '../models/card.model';
 import { AssignedCard, DeckInstance, DeckState, InventoryCard } from '../models/deck-state.model';
 import { CardSlot, EquipmentSlot, StatModifier } from '../models/equipment.model';
 
+/** Rückseite des Testdecks; Karten ohne eigene Rückseite tragen sie. */
+export const TEST_BACK: string = 'cards/back.svg';
+
 /** Testdaten für Specs (wird nicht in den App-Code importiert). */
-export const COMBAT_CARD: Card = {
+export const SWORD_CARD: Card = {
   id: 'c1',
   name: 'Schwert',
   imagePath: 'cards/sword.svg',
+  backImagePath: TEST_BACK,
   description: 'Scharf',
-  cardType: 'combat',
-  attack: 3,
-  defense: 1,
+  cardType: 'basic',
 };
 
 export const BASIC_CARD: Card = {
   id: 'b1',
   name: 'Fackel',
   imagePath: 'cards/torch.svg',
+  backImagePath: TEST_BACK,
+  description: '',
+  cardType: 'basic',
+};
+
+/** Ausnahmekarte mit eigener Rückseite statt der des Decks. */
+export const OWN_BACK_CARD: Card = {
+  id: 's1',
+  name: 'Sonderkarte',
+  imagePath: 'cards/special.svg',
+  backImagePath: 'cards/special-back.svg',
   description: '',
   cardType: 'basic',
 };
@@ -31,6 +44,7 @@ export function createEquipmentCard(
     id,
     name,
     imagePath: `cards/${id}.svg`,
+    backImagePath: TEST_BACK,
     description: `${name} <&>`,
     cardType: 'equipment',
     slot,
@@ -83,9 +97,9 @@ export function createDeckInstance(
     config: {
       id: 'test-deck',
       name: 'Testdeck',
-      backImagePath: 'cards/back.svg',
+      backImagePath: TEST_BACK,
       defaultCardType: 'basic',
-      cards: [COMBAT_CARD, BASIC_CARD],
+      cards: [SWORD_CARD, BASIC_CARD],
     },
     drawPile: [],
     discardPile: [],
@@ -98,7 +112,7 @@ export function createDeckInstance(
 export function createDeckState(): DeckState {
   return {
     decks: [createDeckInstance('deck-1', { drawPile: [BASIC_CARD] })],
-    hand: [{ deckId: 'deck-1', card: COMBAT_CARD }],
+    hand: [{ deckId: 'deck-1', card: SWORD_CARD }],
     assigned: [],
     inventory: [],
   };
@@ -106,7 +120,7 @@ export function createDeckState(): DeckState {
 
 /** Deck mit Runenrüstung in der Hand und dem Turmschild in der linken Hand von `characterId`. */
 export function createEquipmentDeckState(characterId: string): DeckState {
-  const deck: DeckInstance = createDeckInstance('deck-1', { drawPile: [BASIC_CARD, COMBAT_CARD] });
+  const deck: DeckInstance = createDeckInstance('deck-1', { drawPile: [BASIC_CARD, SWORD_CARD] });
   return {
     decks: [
       {
@@ -125,7 +139,7 @@ export function createTwoDeckState(): DeckState {
   return {
     decks: [
       createDeckInstance('deck-1', { drawPile: [BASIC_CARD] }),
-      createDeckInstance('deck-2', { name: 'Testdeck (2)', drawPile: [BASIC_CARD, COMBAT_CARD] }),
+      createDeckInstance('deck-2', { name: 'Testdeck (2)', drawPile: [BASIC_CARD, SWORD_CARD] }),
     ],
     hand: [],
     assigned: [],

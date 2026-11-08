@@ -72,7 +72,7 @@ describe('AddDeckForm', () => {
   it('lists all decks by name with the first one preselected and no path field', async () => {
     await flushCatalog([DEFAULT_CATALOG_ENTRY, MONSTER]);
     expect(Array.from(select().options).map((option) => option.textContent?.trim())).toEqual([
-      'Beispieldeck',
+      'Zwerg',
       'Monster',
     ]);
     expect(select().value).toBe(DEFAULT_CATALOG_ENTRY.url);

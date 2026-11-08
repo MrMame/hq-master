@@ -12,6 +12,7 @@ import { Card } from '../../../../core/models/card.model';
 import { DeckInstance } from '../../../../core/models/deck-state.model';
 import { CardManagerService } from '../../../../core/services/card-deck/card-manager.service';
 import { CardViewerService } from '../../../../shared/services/card-viewer.service';
+import { CardDisplay } from '../../../../shared/components/card-display/card-display';
 import { DeckMenu } from '../deck-menu/deck-menu';
 import { DeckPiles } from '../deck-piles/deck-piles';
 
@@ -22,7 +23,7 @@ import { DeckPiles } from '../deck-piles/deck-piles';
  */
 @Component({
   selector: 'app-deck-row',
-  imports: [DeckMenu, DeckPiles],
+  imports: [CardDisplay, DeckMenu, DeckPiles],
   templateUrl: './deck-row.html',
   styleUrl: './deck-row.css',
 })

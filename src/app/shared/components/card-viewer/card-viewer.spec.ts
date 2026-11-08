@@ -2,7 +2,7 @@ import { CardRef, DeckState } from '../../../core/models/deck-state.model';
 import { createTestCharacter } from '../../../core/testing/character.fixtures';
 import {
   assignedCard,
-  COMBAT_CARD,
+  SWORD_CARD,
   createTwoDeckState,
   TOWER_SHIELD,
 } from '../../../core/testing/deck.fixtures';
@@ -34,7 +34,7 @@ describe('CardViewer', () => {
     const dialog: Element | null = setup.overlay.querySelector('[role="dialog"]');
     expect(dialog?.getAttribute('aria-label')).toBe('Card Viewer');
     expect(setup.location()).toBe('Testdeck (2) · Nachziehstapel');
-    expect(dialog?.querySelector('.card-front .card-name')?.textContent).toBe(COMBAT_CARD.name);
+    expect(dialog?.querySelector<HTMLImageElement>('.card-front img')?.alt).toBe(SWORD_CARD.name);
     expect(dialog?.querySelector('.card-back')).toBeNull();
     expect(setup.overlay.querySelector('.cdk-overlay-backdrop')).not.toBeNull();
   });

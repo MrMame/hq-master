@@ -68,11 +68,12 @@
 }
 
 .deck-row__thumb {
+  --card-shadow: none;
+  --radius-card: var(--radius-sm);
   display: block;
   height: var(--thumb-height);
   aspect-ratio: var(--card-aspect-ratio);
   border-radius: var(--radius-sm);
-  object-fit: cover;
 }
 
 .deck-row__thumb--empty {

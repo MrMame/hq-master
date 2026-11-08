@@ -5,6 +5,7 @@ import { EQUIPMENT_SLOTS } from '../../../../core/models/equipment.model';
 import { CardManagerService } from '../../../../core/services/card-deck/card-manager.service';
 import { toCardRef } from '../../../../core/services/card-deck/deck-state.util';
 import { cardsOf } from '../../../../core/services/equipment/effective-stats.util';
+import { CardDisplay } from '../../../../shared/components/card-display/card-display';
 import { CardViewerService } from '../../../../shared/services/card-viewer.service';
 
 /**
@@ -14,7 +15,7 @@ import { CardViewerService } from '../../../../shared/services/card-viewer.servi
  */
 @Component({
   selector: 'app-character-cards',
-  imports: [],
+  imports: [CardDisplay],
   host: { '(click)': '$event.stopPropagation()', '(dblclick)': '$event.stopPropagation()' },
   template: `
     @for (entry of equipped(); track entry.deckId + '/' + entry.card.id) {
@@ -25,7 +26,7 @@ import { CardViewerService } from '../../../../shared/services/card-viewer.servi
         [title]="entry.card.name"
         (click)="view(entry)"
       >
-        <img class="character-cards__image" [src]="entry.card.imagePath" alt="" />
+        <app-card-display class="character-cards__image" [card]="entry.card" />
       </button>
     }
     @if (inventory().length > 0) {
@@ -67,10 +68,9 @@ import { CardViewerService } from '../../../../shared/services/card-viewer.servi
     }
 
     .character-cards__image {
+      --card-shadow: none;
+      --radius-card: var(--radius-sm);
       height: var(--space-6);
-      aspect-ratio: var(--card-aspect-ratio);
-      border-radius: var(--radius-sm);
-      object-fit: cover;
     }
 
     .character-cards__inventory {

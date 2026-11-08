@@ -5,7 +5,8 @@ import { CardViewerService } from '../../../../shared/services/card-viewer.servi
 import { DeckInstance } from '../../../../core/models/deck-state.model';
 import {
   BASIC_CARD,
-  COMBAT_CARD,
+  OWN_BACK_CARD,
+  SWORD_CARD,
   createDeckInstance,
   createTwoDeckState,
 } from '../../../../core/testing/deck.fixtures';
@@ -47,7 +48,7 @@ describe('DeckRow', () => {
       createDeckInstance('deck-2', {
         name: 'Monster',
         drawPile: [BASIC_CARD],
-        discardPile: [BASIC_CARD, COMBAT_CARD],
+        discardPile: [BASIC_CARD, SWORD_CARD],
       }),
     );
     expect(host.querySelector('.deck-row__title')?.textContent).toBe('Monster');
@@ -56,6 +57,14 @@ describe('DeckRow', () => {
     expect(text('bank-count')).toBe('0');
     expect(host.querySelector<HTMLImageElement>('img[alt="Schwert"]')).not.toBeNull();
     expect(drawButton().getAttribute('aria-label')).toBe('Karte ziehen aus Monster');
+  });
+
+  it('shows the back of the top draw pile card', async () => {
+    await render(createDeckInstance('deck-2', { drawPile: [OWN_BACK_CARD, BASIC_CARD] }));
+    expect(drawButton().querySelector('img')?.getAttribute('src')).toBe('cards/special-back.svg');
+
+    await render(createDeckInstance('deck-2', { drawPile: [BASIC_CARD, OWN_BACK_CARD] }));
+    expect(drawButton().querySelector('img')?.getAttribute('src')).toBe('cards/back.svg');
   });
 
   it('shows placeholders for empty piles and disables drawing', async () => {
@@ -76,7 +85,7 @@ describe('DeckRow', () => {
   });
 
   it('opens the top discard card in the viewer without moving it or toggling the row', async () => {
-    await render(createDeckInstance('deck-2', { discardPile: [BASIC_CARD, COMBAT_CARD] }));
+    await render(createDeckInstance('deck-2', { discardPile: [BASIC_CARD, SWORD_CARD] }));
     discardButton().click();
     expect(TestBed.inject(CardViewerService).viewed()?.ref).toEqual({
       deckId: 'deck-2',

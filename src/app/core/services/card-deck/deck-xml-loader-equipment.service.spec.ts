@@ -37,6 +37,7 @@ describe('DeckXmlLoaderService – equipment', () => {
       id: 'e1',
       name: 'Runenrüstung',
       imagePath: 'rune.svg',
+      backImagePath: 'back.svg',
       description: 'Leicht',
       cardType: 'equipment',
       slot: 'body',

@@ -1,5 +1,5 @@
 import { HandCard } from '../../../core/models/deck-state.model';
-import { BASIC_CARD, COMBAT_CARD } from '../../../core/testing/deck.fixtures';
+import { BASIC_CARD, SWORD_CARD } from '../../../core/testing/deck.fixtures';
 import { readHand, writeHand } from './hand.xml-mapper';
 
 function parse(xml: string): Element {
@@ -9,7 +9,7 @@ function parse(xml: string): Element {
 describe('hand.xml-mapper', () => {
   it('writes and reads the hand in its order', () => {
     const hand: HandCard[] = [
-      { deckId: 'deck-2', card: COMBAT_CARD },
+      { deckId: 'deck-2', card: SWORD_CARD },
       { deckId: 'deck-1', card: BASIC_CARD },
     ];
     const doc: XMLDocument = document.implementation.createDocument(null, null);

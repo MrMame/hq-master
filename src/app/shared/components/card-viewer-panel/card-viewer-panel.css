@@ -54,7 +54,8 @@
   gap: var(--space-2);
 }
 
-.card-viewer__stage > .card-viewer__card:only-child {
+/* Ohne Pfeile (erstes Kind ist die Karte) nimmt die Karte die ganze Zeile ein. */
+.card-viewer__stage > .card-viewer__card:first-child {
   grid-column: 1 / -1;
 }
 
@@ -76,6 +77,18 @@
     color: var(--color-gray-600);
     cursor: not-allowed;
   }
+}
+
+.card-viewer__flip {
+  grid-column: 1 / -1;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-gray-600);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-gray-900);
+  color: var(--color-white);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  cursor: pointer;
 }
 
 .card-viewer__position {

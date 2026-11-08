@@ -17,7 +17,7 @@ const DECK_XML: string = `
       <attack>4</attack>
       <defense>2</defense>
     </card>
-    <card id="b1" name="Fackel" image="torch.svg" type="basic" />
+    <card id="b1" name="Fackel" image="torch.svg" backImage="torch-back.svg" type="basic" />
   </deck>`;
 
 describe('DeckXmlLoaderService', () => {
@@ -41,29 +41,28 @@ describe('DeckXmlLoaderService', () => {
       expect(deck.id).toBe('d1');
       expect(deck.name).toBe('Testdeck');
       expect(deck.backImagePath).toBe('back.svg');
-      expect(deck.defaultCardType).toBe('combat');
       expect(deck.cards.map((c: Card) => c.id)).toEqual(['c1', 'b1']);
     });
 
-    it('parses combat cards with attack, defense and trimmed description', () => {
-      const card: Card = service.parseXml(DECK_XML).cards[0];
+    it('loads former combat cards as basic cards without values', () => {
+      const deck: DeckConfig = service.parseXml(DECK_XML);
 
-      expect(card).toEqual({
+      expect(deck.defaultCardType).toBe('basic');
+      expect(deck.cards[0]).toEqual({
         id: 'c1',
         name: 'Schwert',
         imagePath: 'sword.svg',
+        backImagePath: 'back.svg',
         description: 'Scharf',
-        cardType: 'combat',
-        attack: 4,
-        defense: 2,
+        cardType: 'basic',
       });
     });
 
-    it('lets a card override the deck type', () => {
+    it('lets a card replace the deck back', () => {
       const card: Card = service.parseXml(DECK_XML).cards[1];
 
+      expect(card.backImagePath).toBe('torch-back.svg');
       expect(card.cardType).toBe('basic');
-      expect('attack' in card).toBe(false);
     });
 
     it('defaults the deck type to basic', () => {
@@ -84,13 +83,8 @@ describe('DeckXmlLoaderService', () => {
       expect(card.id).not.toBe(deck.id);
       expect(card.name).toBe('');
       expect(card.imagePath).toBe('');
+      expect(card.backImagePath).toBe('');
       expect(card.description).toBe('');
-    });
-
-    it('defaults missing attack and defense of combat cards to 0', () => {
-      const card: Card = service.parseXml('<deck type="combat"><card id="c" /></deck>').cards[0];
-
-      expect(card).toMatchObject({ cardType: 'combat', attack: 0, defense: 0 });
     });
 
     it('throws when the <deck> element is missing', () => {

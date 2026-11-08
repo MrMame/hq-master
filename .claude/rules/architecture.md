@@ -23,11 +23,11 @@ core/
                     condition-templates.model.ts (CONDITION_TEMPLATES: Standardwerte und Symbole der Zustände),
                     condition-event.model.ts (ConditionEvent: Schaden/Ablauf eines Zustands),
                     game-log-entry.model.ts (GameLogEntry, GameLogEntryType: Ereignis-Log der Session),
-                    card.model.ts, deck-config.model.ts, deck-catalog-entry.model.ts (`DeckCatalogEntry`: Eintrag der Deckliste),
+                    card.model.ts (`Card` mit Vorder- und wirksamer Rückseite, `toCardType`), deck-config.model.ts, deck-catalog-entry.model.ts (`DeckCatalogEntry`: Eintrag der Deckliste),
                     deck-state.model.ts (Deck-Instanzen `DeckInstance`, die Hand
                     als `HandCard[]`, `AssignedCard`, `InventoryCard` (eigene Liste, Boni nur aus Slots) und `CardRef` mit `deckId`; in core, weil der Charakter-Editor die
                     Ausrüstung bearbeitet),
-                    equipment.model.ts (ModifiableStat, StatModifier, EquipmentSlot, CardSlot, Beschriftungen),
+                    equipment.model.ts (ModifiableStat, StatModifier, EquipmentSlot, CardSlot, Slot-Beschriftungen),
                     card-location.model.ts (`CardLocation`: Ort einer Karte und Ziel einer Bewegung – Hand,
                     Nachziehstapel (als Ziel mit `top` oben auflegen), Ablagestapel, Bank, Slot, Inventar; neue Orte als weitere `kind`)
     character-names/ → <klasse>-names.model.ts (editierbare Vor-/Nachnamen je Charakterklasse,
@@ -60,6 +60,8 @@ core/
                     `findCard` per `CardRef`, `ownerOf`), card-move.util.ts (`moveCard`: einzige Kartenbewegung von jedem Ort an
                     jedes Ziel, `discardOwned` für Slot- und Inventarkarten; neue Bewegungen nur hierüber), deck-draw.util.ts (ziehen in die Hand), moved-cards.util.ts (`movedCards`: bewegte Karten zwischen zwei Zuständen,
                     `isRevertible`, `revertOrder` für Rückgängig), deck-assignment.util.ts (Slot-Belegung, verwaiste Slot- und Inventarkarten), shuffle.util.ts, deck-state-codec.util.ts (DECK_STATE_CODEC),
+                    card-normalize.util.ts (`withNormalizedCards`: Karten geladener Stände mit Rückseite des Decks,
+                    `combat` → `basic`; Codec und XML),
                     deck-state-migration.util.ts (älterer Zustand mit einem Deck → eine Instanz; Codec und XML;
                     eine alte `activeCard` wird einzige Handkarte),
                     equipment-card-xml.util.ts (Slot und `<modifier>` lesen/schreiben für Deck-XML und Spielstand)
@@ -144,7 +146,7 @@ features/
     utils/             → active-condition-rows.util.ts (Zeilen sortiert nach nächstem Wirkmoment, dann Restdauer),
                          game-log-rows.util.ts (Spielzeit absteigend, Datums-Trennzeile, Filter, Symbol je Eintrag)
 
-  card-manager/        → Kartenverwaltung: beliebig viele Decks (XML + SVG) auf dem Spieltisch
+  card-manager/        → Kartenverwaltung: beliebig viele Decks (XML + Kartengrafiken) auf dem Spieltisch
     components/        → CardManagerPage (`feature-page`, Spieltisch mit Deck-Reihen, höchstens eine aufgeklappt als
                          UI-Zustand; Klick in der Deckliste klappt auf und scrollt), DmHand („Hand des Dungeon Masters“
                          über „Ausgerüstet“, Klick öffnet den Card Viewer), DeckRow (kompakte Reihe: Name,
@@ -191,11 +193,12 @@ shared/
                          CharacterInventoryEditor (Abschnitt „Inventar“ unter „Ausrüstung“, öffnet den Viewer im Entwurf),
                          CardViewer (einmal im App-Template: Overlay mit Backdrop über allem, auch über Dialogen;
                          Ort per `viewerContext` bei jeder Änderung neu, schließt bei verschwundener Karte),
-                         CardViewerPanel (Inhalt des Viewers: Deck/Ort, Karte mit Blättern am Ort nur `live`, `CardActionMenu`;
+                         CardViewerPanel (Inhalt des Viewers: Deck/Ort, Karte mit Blättern am Ort nur `live`, „Umdrehen“, `CardActionMenu`;
                          Aktionen `live` über `CardUndoService.track`, danach nachrückende Karte; kennt keine einzelne Aktion),
                          CardActionMenu (Menüeinträge mit Trennlinien, ausgegraute mit Tooltip, Untermenüs mit „Zurück“),
                          SlotOccupiedDialog (belegter Slot: Inventar / Ablagestapel / Abbrechen),
-                         CardDisplay (eine Karte: Vorder-/Rückseite, Slot, Modifikatoren, „Im Besitz von“, Herkunftsdeck),
+                         CardDisplay (eine Karte: nur die Grafik der gewählten Seite, Platzhalter bei Ladefehler, „Im Besitz von“ und
+                         Herkunftsdeck als Beschriftung darunter; Bildhöhe dann per `--card-face-height`),
                          SearchField (Suchfeld mit `label`, × und Escape leeren es; Builder-Bibliothek, Deckliste),
                          DamageTakenDialog, BoardZoomControl (senkrechter Zoom-Regler für zoombare Spielflächen,
                          z. B. in der `QuickAccessBar`),
@@ -268,7 +271,8 @@ shared/
 
 Playwright-Smoke-Tests (`npm run e2e`) liegen unter `e2e/` – **nicht** unter `src/`, damit sie weder
 von Vitest noch vom App-Build erfasst werden. `playwright.config.ts` (Root) erzeugt die Deckliste und startet `ng serve` auf Port 4321.
-Die Deckliste `public/decks/index.json` erzeugt `scripts/build-deck-index.mjs` (Tests: `node --test scripts/*.test.mjs`)
+Die Deckliste `public/decks/index.json` erzeugt `scripts/build-deck-index.mjs` (prüft auch, dass jede genannte Grafik existiert;
+Tests: `node --test scripts/*.test.mjs`)
 vor `start`, `build`, `watch` und `deploy`; sie ist nicht eingecheckt.
 Nur wenige, stabile Abläufe über echte Browser-Interaktion (Routing, Reload-Persistenz, Drag & Drop,
 Datei-Export/-Import); Logik wird weiterhin in Vitest-Specs getestet.

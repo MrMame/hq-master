@@ -33,12 +33,8 @@
           ‹
         </button>
       }
-      <!-- Immer die Vorderseite, auch im Nachziehstapel; ein Klick auf die Karte löst nichts aus. -->
-      <app-card-display
-        class="card-viewer__card"
-        [card]="viewed.card"
-        [backImagePath]="viewed.deck.config.backImagePath"
-      />
+      <!-- Öffnet mit der Vorderseite, auch im Nachziehstapel; ein Klick auf die Karte löst nichts aus. -->
+      <app-card-display class="card-viewer__card" [card]="viewed.card" [side]="side()" />
       @if (position(); as pos) {
         <button
           type="button"
@@ -54,6 +50,14 @@
           >{{ pos.index + 1 }} / {{ pos.total }}</span
         >
       }
+      <button
+        type="button"
+        class="card-viewer__flip"
+        [attr.aria-pressed]="side() === 'back'"
+        (click)="flip()"
+      >
+        Umdrehen
+      </button>
     </div>
     <app-card-action-menu [entries]="entries()" [cardKey]="cardKey()" (run)="run($event)" />
   </div>
