@@ -111,9 +111,15 @@ export function createDeckState(): DeckState {
   };
 }
 
-/** Deck mit Runenrüstung in der Hand und dem Turmschild in der linken Hand von `characterId`. */
-export function createEquipmentDeckState(characterId: string): DeckState {
-  const deck: DeckInstance = createDeckInstance('deck-1', { drawPile: [BASIC_CARD, SWORD_CARD] });
+/**
+ * Deck mit Runenrüstung in der Hand und dem Turmschild in der linken Hand von `characterId`; Nachziehstapel
+ * standardmäßig [b1, c1] (leer übergeben, wenn ein Test b1 oder c1 einem Charakter gibt).
+ */
+export function createEquipmentDeckState(
+  characterId: string,
+  drawPile: Card[] = [BASIC_CARD, SWORD_CARD],
+): DeckState {
+  const deck: DeckInstance = createDeckInstance('deck-1', { drawPile });
   return {
     decks: [
       {

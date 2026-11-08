@@ -9,6 +9,7 @@ import {
   inventoryCard,
   OWN_BACK_CARD,
   RUNE_ARMOR,
+  SWORD_CARD,
   TEST_BACK,
 } from '../../testing/deck.fixtures';
 
@@ -74,7 +75,7 @@ describe('card-normalize.util', () => {
 
   it('fills the backs in every place from the deck of the card', () => {
     const deck: DeckInstance = createDeckInstance('deck-1', {
-      drawPile: [LEGACY_COMBAT],
+      drawPile: [{ ...LEGACY_COMBAT, id: 'k-2' }],
       discardPile: [withoutBack(BASIC_CARD)],
       bank: [OWN_BACK_CARD],
     });
@@ -82,10 +83,10 @@ describe('card-normalize.util', () => {
       decks: [
         { ...deck, config: { ...deck.config, defaultCardType: 'combat' } as typeof deck.config },
       ],
-      hand: [{ deckId: 'deck-1', card: withoutBack(BASIC_CARD) }],
+      hand: [{ deckId: 'deck-1', card: withoutBack(SWORD_CARD) }],
       assigned: [assignedCard(withoutBack(RUNE_ARMOR), 'a', 'body')],
       inventory: [inventoryCard(LEGACY_COMBAT, 'a'), inventoryCard(BASIC_CARD, 'b', 'gone')],
-      belt: [inventoryCard(withoutBack(BASIC_CARD), 'a')],
+      belt: [inventoryCard(withoutBack(SWORD_CARD), 'a')],
     });
 
     const [normalized] = state.decks;
@@ -94,10 +95,10 @@ describe('card-normalize.util', () => {
     expect(Object.keys(normalized.drawPile[0])).not.toContain('cardType');
     expect(normalized.discardPile).toEqual([BASIC_CARD]);
     expect(normalized.bank).toEqual([OWN_BACK_CARD]);
-    expect(state.hand[0].card).toEqual(BASIC_CARD);
+    expect(state.hand[0].card).toEqual(SWORD_CARD);
     expect(state.assigned[0].card).toEqual(RUNE_ARMOR);
     expect(state.inventory[0].card.backImagePath).toBe(TEST_BACK);
     expect(state.inventory[1].card).toEqual(BASIC_CARD);
-    expect(state.belt[0].card).toEqual(BASIC_CARD);
+    expect(state.belt[0].card).toEqual(SWORD_CARD);
   });
 });

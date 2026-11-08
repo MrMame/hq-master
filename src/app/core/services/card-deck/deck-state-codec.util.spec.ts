@@ -26,7 +26,7 @@ function legacyStored(): Record<string, unknown> {
 describe('DECK_STATE_CODEC', () => {
   it('stores and reads the deck state unchanged, inventory and belt included', () => {
     const deck: DeckState = {
-      ...createEquipmentDeckState('a'),
+      ...createEquipmentDeckState('a', []),
       inventory: [inventoryCard(BASIC_CARD, 'a')],
       belt: [inventoryCard(SWORD_CARD, 'b')],
     };
@@ -37,14 +37,14 @@ describe('DECK_STATE_CODEC', () => {
   it('loads stored cards without back with the deck back and combat cards as basic', () => {
     const stored: Record<string, unknown> = { ...BASIC_CARD };
     delete stored['backImagePath'];
-    const combat: Record<string, unknown> = { ...stored, cardType: 'combat', attack: 2 };
+    const combat: Record<string, unknown> = { ...stored, id: 'k', cardType: 'combat', attack: 2 };
     const deck: DeckInstance = createDeckInstance('deck-1', { drawPile: [] });
     const state: DeckState | null = DECK_STATE_CODEC.decode({
       decks: [{ ...deck, drawPile: [stored] }],
       hand: [{ deckId: 'deck-1', card: combat }],
     });
     expect(state?.decks[0].drawPile).toEqual([BASIC_CARD]);
-    expect(state?.hand[0].card).toEqual(BASIC_CARD);
+    expect(state?.hand[0].card).toEqual({ ...BASIC_CARD, id: 'k' });
     expect(DECK_STATE_CODEC.decode(legacyStored())?.hand[0].card).toEqual(SWORD_CARD);
   });
 

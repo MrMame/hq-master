@@ -1,4 +1,5 @@
 import { expect, Locator, test } from '@playwright/test';
+import { addDeck } from './support/add-deck';
 import { createCharacter } from './support/create-character';
 
 test('puts a drawn card into the belt of a character and keeps it after a reload', async ({
@@ -6,7 +7,7 @@ test('puts a drawn card into the belt of a character and keeps it after a reload
 }) => {
   await createCharacter(page, 'Barbar', { Leben: 20 });
   await page.goto('/cardmanager');
-  await page.getByRole('complementary').getByRole('button', { name: 'Deck hinzufügen' }).click();
+  await addDeck(page, 'Zwerg');
   await page.getByRole('button', { name: 'Karte ziehen aus Zwerg' }).click();
 
   const viewer: Locator = page.getByRole('dialog', { name: 'Card Viewer' });

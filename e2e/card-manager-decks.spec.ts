@@ -1,7 +1,8 @@
 import { expect, Locator, Page, test } from '@playwright/test';
+import { addDeck } from './support/add-deck';
 
 async function addZwergDeck(page: Page): Promise<void> {
-  await page.getByRole('complementary').getByRole('button', { name: 'Deck hinzufügen' }).click();
+  await addDeck(page, 'Zwerg');
 }
 
 test('keeps cards drawn from two decks in the hand and discards one via the card viewer', async ({

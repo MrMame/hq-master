@@ -22,7 +22,7 @@ function roundTrip(state: DeckState): DeckState {
 describe('inventory.xml-mapper', () => {
   it('keeps every kind of inventory card with its deck and owner in a round trip', () => {
     const state: DeckState = {
-      ...createEquipmentDeckState('a'),
+      ...createEquipmentDeckState('a', []),
       inventory: [
         inventoryCard(BASIC_CARD, 'a'),
         inventoryCard(SWORD_CARD, 'b'),

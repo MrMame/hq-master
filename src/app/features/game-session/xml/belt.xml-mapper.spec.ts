@@ -15,7 +15,7 @@ function parse(xml: string): Element {
 describe('belt.xml-mapper', () => {
   it('keeps the belt of every character in a round trip, order included', () => {
     const deck: DeckState = {
-      ...createEquipmentDeckState('a'),
+      ...createEquipmentDeckState('a', []),
       belt: [inventoryCard(RUNE_ARMOR, 'a'), inventoryCard(BASIC_CARD, 'b')],
     };
     const doc: XMLDocument = document.implementation.createDocument(null, null);
