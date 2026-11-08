@@ -2,7 +2,7 @@ import { readDeck, writeDeck } from './deck.xml-mapper';
 import { DeckState } from '../../../core/models/deck-state.model';
 import {
   assignedCard,
-  SWORD_CARD,
+  RUNE_ARMOR,
   createTwoDeckState,
   TOWER_SHIELD,
 } from '../../../core/testing/deck.fixtures';
@@ -21,8 +21,8 @@ describe('deck.xml-mapper – several decks', () => {
     const state: DeckState = {
       ...createTwoDeckState(),
       hand: [
-        { deckId: 'deck-2', card: SWORD_CARD },
-        { deckId: 'deck-1', card: SWORD_CARD },
+        { deckId: 'deck-2', card: RUNE_ARMOR },
+        { deckId: 'deck-1', card: RUNE_ARMOR },
       ],
       assigned: [
         assignedCard(TOWER_SHIELD, 'a', 'leftHand'),

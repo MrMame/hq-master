@@ -63,7 +63,9 @@ core/
                     jedes Ziel, `discardOwned` für Slot-, Inventar- und Gürtelkarten; neue Bewegungen nur hierüber), deck-draw.util.ts (ziehen in die Hand), moved-cards.util.ts (`movedCards`: bewegte Karten zwischen zwei Zuständen,
                     `isRevertible`, `revertOrder` für Rückgängig), deck-assignment.util.ts (Slot-Belegung, verwaiste Slot-, Inventar- und Gürtelkarten), shuffle.util.ts, deck-state-codec.util.ts (DECK_STATE_CODEC),
                     card-normalize.util.ts (`withNormalizedCards`: Karten geladener Stände mit Rückseite des Decks und
-                    genau den Kartenfeldern, alte `cardType`/`slot`/`modifiers` entfallen; Codec und XML),
+                    genau den Kartenfeldern, eindeutige IDs in `config.cards` und den Stapeln je Instanz, alte `cardType`/`slot`/`modifiers` entfallen; Codec und XML),
+                    card-id.util.ts (`uniqueIds`/`withUniqueCardIds`: einzige Regel für eindeutige Karten-IDs `id`, `id-2`, …;
+                    `duplicateIds`; Loader und `withNormalizedCards`), card-count.util.ts (`count` einer `<card>`),
                     deck-state-migration.util.ts (älterer Zustand mit einem Deck → eine Instanz; Codec und XML;
                     eine alte `activeCard` wird einzige Handkarte),
                     card-property-xml.util.ts (`<property name value>` lesen/schreiben für Deck-XML und Spielstand,

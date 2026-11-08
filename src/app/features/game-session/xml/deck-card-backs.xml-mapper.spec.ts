@@ -5,6 +5,7 @@ import {
   createDeckInstance,
   inventoryCard,
   OWN_BACK_CARD,
+  SWORD_CARD,
   TEST_BACK,
 } from '../../../core/testing/deck.fixtures';
 
@@ -15,7 +16,7 @@ function parse(xml: string): Element {
 describe('deck.xml-mapper – card backs', () => {
   it('keeps the own back of a card and the deck back of the others', () => {
     const state: DeckState = {
-      decks: [createDeckInstance('deck-1', { drawPile: [OWN_BACK_CARD, BASIC_CARD] })],
+      decks: [createDeckInstance('deck-1', { drawPile: [SWORD_CARD] })],
       hand: [{ deckId: 'deck-1', card: OWN_BACK_CARD }],
       assigned: [],
       inventory: [inventoryCard(BASIC_CARD, 'a')],
