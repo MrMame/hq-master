@@ -18,6 +18,7 @@ describe('undoHintText', () => {
       undefined,
       'Runenrüstung ins Inventar von Unbekannt gelegt',
     ],
+    [{ kind: 'belt', characterId: 'b' }, 'Zwerg', 'Runenrüstung in den Gürtel von Zwerg gelegt'],
     [{ kind: 'hand' }, undefined, 'Runenrüstung in die Hand genommen'],
     [{ kind: 'drawPile' }, undefined, 'Runenrüstung in den Nachziehstapel gelegt'],
     [{ kind: 'discardPile' }, undefined, 'Runenrüstung in den Ablagestapel gelegt'],

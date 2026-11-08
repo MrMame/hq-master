@@ -24,10 +24,11 @@ function legacyStored(): Record<string, unknown> {
 }
 
 describe('DECK_STATE_CODEC', () => {
-  it('stores and reads the deck state unchanged', () => {
+  it('stores and reads the deck state unchanged, inventory and belt included', () => {
     const deck: DeckState = {
       ...createEquipmentDeckState('a'),
       inventory: [inventoryCard(BASIC_CARD, 'a')],
+      belt: [inventoryCard(SWORD_CARD, 'b')],
     };
     const stored: unknown = JSON.parse(JSON.stringify(DECK_STATE_CODEC.encode(deck)));
     expect(DECK_STATE_CODEC.decode(stored)).toEqual(deck);
@@ -91,7 +92,7 @@ describe('DECK_STATE_CODEC', () => {
         null,
         { ...valid, slot: 'tail' },
         { ...valid, characterId: 3 },
-        { ...valid, card: { ...valid.card, cardType: 'basic' } },
+        { ...valid, card: null },
         { ...valid, deckId: undefined },
         { ...valid, deckId: 'gone' },
         valid,
@@ -108,12 +109,14 @@ describe('DECK_STATE_CODEC', () => {
       hand: [],
       assigned: [],
       inventory: [],
+      belt: [],
     });
     expect(DECK_STATE_CODEC.decode({})).toEqual({
       decks: [],
       hand: [],
       assigned: [],
       inventory: [],
+      belt: [],
     });
   });
 

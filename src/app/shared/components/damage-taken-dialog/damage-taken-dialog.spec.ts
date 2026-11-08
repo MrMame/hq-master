@@ -48,7 +48,7 @@ describe('DamageTakenDialog', () => {
     expect(title()).toBe('Schaden auf Rüstung: Ork');
   });
 
-  it('names a critical hit as damage to health', async () => {
+  it('names a critical hit as damage to Leben', async () => {
     TestBed.resetTestingModule();
     await create({ characterName: 'Brom', damageType: DamageTypes.Critical });
     fixture.detectChanges();

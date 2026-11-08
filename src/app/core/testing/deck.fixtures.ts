@@ -1,6 +1,7 @@
-import { Card, EquipmentCard } from '../models/card.model';
+import { Card } from '../models/card.model';
 import { AssignedCard, DeckInstance, DeckState, InventoryCard } from '../models/deck-state.model';
-import { CardSlot, EquipmentSlot, StatModifier } from '../models/equipment.model';
+import { CardProperty } from '../models/card-property.model';
+import { EquipmentSlot } from '../models/equipment.model';
 
 /** Rückseite des Testdecks; Karten ohne eigene Rückseite tragen sie. */
 export const TEST_BACK: string = 'cards/back.svg';
@@ -12,7 +13,7 @@ export const SWORD_CARD: Card = {
   imagePath: 'cards/sword.svg',
   backImagePath: TEST_BACK,
   description: 'Scharf',
-  cardType: 'basic',
+  properties: [],
 };
 
 export const BASIC_CARD: Card = {
@@ -21,7 +22,7 @@ export const BASIC_CARD: Card = {
   imagePath: 'cards/torch.svg',
   backImagePath: TEST_BACK,
   description: '',
-  cardType: 'basic',
+  properties: [],
 };
 
 /** Ausnahmekarte mit eigener Rückseite statt der des Decks. */
@@ -31,45 +32,37 @@ export const OWN_BACK_CARD: Card = {
   imagePath: 'cards/special.svg',
   backImagePath: 'cards/special-back.svg',
   description: '',
-  cardType: 'basic',
+  properties: [],
 };
 
-export function createEquipmentCard(
-  id: string,
-  name: string,
-  slot: CardSlot,
-  modifiers: StatModifier[],
-): EquipmentCard {
+/** Karte mit Eigenschaften; jede Karte passt in jeden Slot. */
+export function createPropertyCard(id: string, name: string, properties: CardProperty[]): Card {
   return {
     id,
     name,
     imagePath: `cards/${id}.svg`,
     backImagePath: TEST_BACK,
     description: `${name} <&>`,
-    cardType: 'equipment',
-    slot,
-    modifiers,
+    properties,
   };
 }
 
-/** Runenrüstung: Körper, Rüstung +2, Tempo −1. */
-export const RUNE_ARMOR: EquipmentCard = createEquipmentCard('e1', 'Runenrüstung', 'body', [
-  { stat: 'maxArmor', value: 2 },
-  { stat: 'speed', value: -1 },
+/** Runenrüstung: Ruestung +2, Tempo −1. */
+export const RUNE_ARMOR: Card = createPropertyCard('e1', 'Runenrüstung', [
+  { name: 'Ruestung', value: 2 },
+  { name: 'Tempo', value: -1 },
 ]);
 
-/** Turmschild: Hand, Abwehr +2. */
-export const TOWER_SHIELD: EquipmentCard = createEquipmentCard('e2', 'Turmschild', 'hand', [
-  { stat: 'defense', value: 2 },
+/** Turmschild: Abwehr +2. */
+export const TOWER_SHIELD: Card = createPropertyCard('e2', 'Turmschild', [
+  { name: 'Abwehr', value: 2 },
 ]);
 
-/** Buckler: Hand, Abwehr +1; als aktive Handkarte für belegte Hand-Slots. */
-export const BUCKLER: EquipmentCard = createEquipmentCard('e3', 'Buckler', 'hand', [
-  { stat: 'defense', value: 1 },
-]);
+/** Buckler: Abwehr +1. */
+export const BUCKLER: Card = createPropertyCard('e3', 'Buckler', [{ name: 'Abwehr', value: 1 }]);
 
 export function assignedCard(
-  card: EquipmentCard,
+  card: Card,
   characterId: string,
   slot: EquipmentSlot,
   deckId: string = 'deck-1',
@@ -98,7 +91,6 @@ export function createDeckInstance(
       id: 'test-deck',
       name: 'Testdeck',
       backImagePath: TEST_BACK,
-      defaultCardType: 'basic',
       cards: [SWORD_CARD, BASIC_CARD],
     },
     drawPile: [],
@@ -115,6 +107,7 @@ export function createDeckState(): DeckState {
     hand: [{ deckId: 'deck-1', card: SWORD_CARD }],
     assigned: [],
     inventory: [],
+    belt: [],
   };
 }
 
@@ -131,6 +124,7 @@ export function createEquipmentDeckState(characterId: string): DeckState {
     hand: [{ deckId: 'deck-1', card: RUNE_ARMOR }],
     assigned: [assignedCard(TOWER_SHIELD, characterId, 'leftHand')],
     inventory: [],
+    belt: [],
   };
 }
 
@@ -144,5 +138,6 @@ export function createTwoDeckState(): DeckState {
     hand: [],
     assigned: [],
     inventory: [],
+    belt: [],
   };
 }

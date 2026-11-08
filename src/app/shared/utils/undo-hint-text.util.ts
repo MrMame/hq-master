@@ -16,5 +16,6 @@ export function undoHintText(
   const owner: string = ownerName ?? 'Unbekannt';
   if (to.kind === 'equipped') return `${cardName} an ${owner} angelegt`;
   if (to.kind === 'inventory') return `${cardName} ins Inventar von ${owner} gelegt`;
+  if (to.kind === 'belt') return `${cardName} in den Gürtel von ${owner} gelegt`;
   return `${cardName} ${PLACE_TEXTS[to.kind]}`;
 }

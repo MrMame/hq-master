@@ -23,7 +23,7 @@ export function writeAssignedCards(parent: Element, assigned: AssignedCard[]): v
 /**
  * Ältere Spielstände ohne `<assigned>` → leere Liste; ohne `deckId` ist die Deck-Instanz leer (der
  * Aufrufer ordnet sie zu oder verwirft sie). Einträge ohne gültigen Slot oder ohne
- * Ausrüstungskarte werden verworfen. Verwaiste Besitzer räumt der `EquipmentSyncService` ab.
+ * Karte werden verworfen. Verwaiste Besitzer räumt der `EquipmentSyncService` ab.
  */
 export function readAssignedCards(parent: Element): AssignedCard[] {
   const list: Element | null = firstChild(parent, 'assigned');
@@ -34,7 +34,7 @@ function readAssignment(el: Element): AssignedCard[] {
   const slot: string = readString(el, 'slot');
   const cardEl: Element | null = firstChild(el, 'card');
   const card: Card | null = cardEl ? readCard(cardEl) : null;
-  if (!isEquipmentSlot(slot) || card?.cardType !== 'equipment') return [];
+  if (!isEquipmentSlot(slot) || !card) return [];
   return [
     { deckId: readString(el, 'deckId'), card, characterId: readString(el, 'characterId'), slot },
   ];

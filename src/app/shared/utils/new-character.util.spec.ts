@@ -10,13 +10,9 @@ describe('createNewCharacter', () => {
     expect(id).toEqual(expect.any(String));
     expect(values).toEqual({
       name: '',
-      health: 0,
-      maxHealth: 0,
-      armor: 0,
-      maxArmor: 0,
-      attack: 0,
-      defense: 0,
-      speed: 0,
+      Leben: 0,
+      Ruestung: 0,
+      Tempo: 0,
       image: '',
       description: '',
       conditions: [],

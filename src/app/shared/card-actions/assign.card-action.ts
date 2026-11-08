@@ -1,6 +1,4 @@
 import { inject, Signal } from '@angular/core';
-import { EquipmentCard } from '../../core/models/card.model';
-import { CardLocation } from '../../core/models/card-location.model';
 import { AssignedCard, CardRef } from '../../core/models/deck-state.model';
 import { EQUIPMENT_SLOT_LABELS } from '../../core/models/equipment.model';
 import { CardManagerService } from '../../core/services/card-deck/card-manager.service';
@@ -15,17 +13,13 @@ import {
 import { CardActionFactory } from './provide-card-actions';
 
 /**
- * „Einem Charakter anlegen“ für Ausrüstungskarten von jedem Ort, auch zum Umlegen an einen anderen Charakter
- * oder Slot: Untermenü mit den Charakteren, bei Handkarten danach „Linke Hand / Rechte Hand“ (freie zuerst).
- * Ein belegter Slot zeigt die bisherige Karte; ohne Charaktere ausgegraut.
+ * „Einem Charakter anlegen“ für jede Karte von jedem Ort, auch zum Umlegen an einen anderen Charakter oder Slot:
+ * Untermenü mit den Charakteren, danach alle Slots in `EQUIPMENT_SLOTS`-Reihenfolge (belegte mit „ersetzt …“,
+ * der aktuelle Slot fehlt). Ohne Charaktere ausgegraut.
  */
 export const assignAction: CardActionFactory = (): CardAction => {
   const assignment: CardAssignmentService = inject(CardAssignmentService);
   const assigned: Signal<AssignedCard[]> = inject(CardManagerService).assigned;
-  const targets: (card: EquipmentCard, location: CardLocation) => AssignTarget[] = (
-    card,
-    location,
-  ) => assignTargets(card, location, assignment.characters(), assigned());
 
   return {
     id: 'assign',
@@ -33,37 +27,25 @@ export const assignAction: CardActionFactory = (): CardAction => {
     group: 'equip',
     order: 50,
     modes: ['live'],
-    isAvailable: ({ card, location }) =>
-      card.cardType === 'equipment' &&
-      (assignment.characters().length === 0 || targets(card, location).length > 0),
+    isAvailable: () => true,
     disabledReason: () => assignment.assignDisabledReason(),
-    choices: ({ card, ref, location }) =>
-      card.cardType === 'equipment'
-        ? targets(card, location).map((target) => characterChoice(assignment, ref, card, target))
-        : [],
+    choices: ({ ref, location }) =>
+      assignTargets(location, assignment.characters(), assigned()).map((target) =>
+        characterChoice(assignment, ref, target),
+      ),
   };
 };
 
-/** Ein Charakter: bei Handkarten Untermenü mit den Händen, sonst direkt der passende Slot. */
+/** Ein Charakter mit dem Untermenü seiner Slots. */
 function characterChoice(
   assignment: CardAssignmentService,
   ref: CardRef,
-  card: EquipmentCard,
   { character, slots }: AssignTarget,
 ): CardChoice {
-  if (card.slot !== 'hand') {
-    return {
-      ...slotChoice(assignment, ref, character.id, slots[0], character.name),
-      id: character.id,
-    };
-  }
   return {
     id: character.id,
     label: character.name,
-    choices: () =>
-      slots.map((target) =>
-        slotChoice(assignment, ref, character.id, target, EQUIPMENT_SLOT_LABELS[target.slot]),
-      ),
+    choices: () => slots.map((target) => slotChoice(assignment, ref, character.id, target)),
   };
 }
 
@@ -72,11 +54,10 @@ function slotChoice(
   ref: CardRef,
   characterId: string,
   target: SlotTarget,
-  label: string,
 ): CardChoice {
   return {
     id: target.slot,
-    label: replacingLabel(label, target.replaces),
+    label: replacingLabel(EQUIPMENT_SLOT_LABELS[target.slot], target.replaces),
     run: () => assignment.assignTo(ref, characterId, target.slot),
   };
 }

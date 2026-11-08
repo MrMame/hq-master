@@ -9,7 +9,7 @@ export interface CardInDeck {
 
 /** Startzustand: keine Decks auf dem Tisch. */
 export function emptyDeckState(): DeckState {
-  return { decks: [], hand: [], assigned: [], inventory: [] };
+  return { decks: [], hand: [], assigned: [], inventory: [], belt: [] };
 }
 
 /** Gleiche Karte, wenn Deck-Instanz und Karten-ID übereinstimmen. */
@@ -59,7 +59,7 @@ export function withDiscarded(s: DeckState, entries: readonly CardInDeck[]): Dec
   );
 }
 
-/** Verwirft Hand-, Slot- und Inventarkarten, deren Instanz nicht (mehr) auf dem Tisch liegt. */
+/** Verwirft Hand-, Slot-, Inventar- und Gürtelkarten, deren Instanz nicht (mehr) auf dem Tisch liegt. */
 export function withoutDanglingRefs(s: DeckState): DeckState {
   const exists: (deckId: string) => boolean = (deckId) => !!findDeck(s, deckId);
   return {
@@ -67,5 +67,6 @@ export function withoutDanglingRefs(s: DeckState): DeckState {
     hand: s.hand.filter((entry) => exists(entry.deckId)),
     assigned: s.assigned.filter((entry) => exists(entry.deckId)),
     inventory: s.inventory.filter((entry) => exists(entry.deckId)),
+    belt: s.belt.filter((entry) => exists(entry.deckId)),
   };
 }

@@ -21,7 +21,13 @@ import {
 
 describe('deck state', () => {
   it('starts without decks', () => {
-    expect(emptyDeckState()).toEqual({ decks: [], hand: [], assigned: [], inventory: [] });
+    expect(emptyDeckState()).toEqual({
+      decks: [],
+      hand: [],
+      assigned: [],
+      inventory: [],
+      belt: [],
+    });
   });
 
   it('identifies a card by deck and card id', () => {

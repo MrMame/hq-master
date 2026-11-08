@@ -8,10 +8,10 @@ import { CharactersDbService } from '../../core/services/characters/characters-d
 import { EquipmentService } from '../../core/services/equipment/equipment.service';
 import { CardLocation } from '../../core/models/card-location.model';
 import { CardRef, DeckState } from '../../core/models/deck-state.model';
-import { EquipmentCard } from '../../core/models/card.model';
+import { Card } from '../../core/models/card.model';
 import { createTestCharacter } from '../../core/testing/character.fixtures';
 import { createMoveState, deck1Ref } from '../../core/testing/card-move.fixtures';
-import { createEquipmentCard } from '../../core/testing/deck.fixtures';
+import { createPropertyCard } from '../../core/testing/deck.fixtures';
 import { createSnackBarMock, SnackBarHintMock, SnackBarMock } from '../testing/snack-bar.fixtures';
 
 describe('CardUndoService', () => {
@@ -24,7 +24,7 @@ describe('CardUndoService', () => {
 
   const where: (ref: CardRef) => CardLocation | undefined = (ref) =>
     findCardAt(cardManager.state(), ref)?.location;
-  const barbarian: () => { armor: number; maxArmor: number } = () =>
+  const barbarian: () => { Ruestung: number; Leben: number } = () =>
     charactersDb.characters().find((c) => c.id === 'a')!;
 
   beforeEach(() => {
@@ -38,8 +38,7 @@ describe('CardUndoService', () => {
     charactersDb.writeCharacter({
       ...createTestCharacter('a'),
       name: 'Barbar',
-      armor: 2,
-      maxArmor: 2,
+      Ruestung: 2,
     });
     charactersDb.writeCharacter({ ...createTestCharacter('b'), name: 'Zwerg' });
     // deck-1: h1 Hand, h2 Nachziehstapel, h3 Ablage, h4 Bank, h5 bei „a“ links, h6 im Inventar von „a“.
@@ -47,7 +46,7 @@ describe('CardUndoService', () => {
   });
 
   /** Legt eine zusätzliche Ausrüstungskarte aus deck-1 in die Hand. */
-  function withHandCard(card: EquipmentCard): void {
+  function withHandCard(card: Card): void {
     const state: DeckState = createMoveState();
     cardManager.restore({ ...state, hand: [...state.hand, { deckId: 'deck-1', card }] });
   }
@@ -59,20 +58,20 @@ describe('CardUndoService', () => {
 
   it('offers undo with a text for the action and reverts an assignment with a displaced card', async () => {
     const plate: CardRef = deck1Ref('p1');
-    withHandCard(createEquipmentCard('p1', 'Platte', 'hand', [{ stat: 'maxArmor', value: 3 }]));
+    withHandCard(createPropertyCard('p1', 'Platte', [{ name: 'Ruestung', value: 3 }]));
 
     await act(plate, { kind: 'equipped', characterId: 'a', slot: 'leftHand' });
     expect(open).toHaveBeenCalledWith('Platte an Barbar angelegt', 'Rückgängig', {
       duration: UNDO_HINT_DURATION_MS,
     });
     expect(where(deck1Ref('h5'))).toEqual({ kind: 'discardPile' });
-    expect(barbarian()).toMatchObject({ armor: 5 });
+    expect(barbarian()).toMatchObject({ Ruestung: 5 });
 
     hints[0].action.next();
     TestBed.tick();
     expect(where(plate)).toEqual({ kind: 'hand' });
     expect(where(deck1Ref('h5'))).toEqual({ kind: 'equipped', characterId: 'a', slot: 'leftHand' });
-    expect(barbarian()).toMatchObject({ armor: 2 });
+    expect(barbarian()).toMatchObject({ Ruestung: 2 });
     expect(service.canUndo()).toBe(false);
   });
 
@@ -82,6 +81,8 @@ describe('CardUndoService', () => {
     ['h5', { kind: 'discardPile' }, 'Schild 5 in den Ablagestapel gelegt'],
     ['h3', { kind: 'hand' }, 'Schild 3 in die Hand genommen'],
     ['h2', { kind: 'bank' }, 'Schild 2 in die Bank gelegt'],
+    ['h7', { kind: 'belt', characterId: 'b' }, 'Schild 7 in den Gürtel von Zwerg gelegt'],
+    ['h1', { kind: 'belt', characterId: 'a' }, 'Schild 1 in den Gürtel von Barbar gelegt'],
   ])('brings %s back from %o', async (cardId, target, text) => {
     const ref: CardRef = deck1Ref(cardId);
     const from: CardLocation | undefined = where(ref);
@@ -92,14 +93,24 @@ describe('CardUndoService', () => {
   });
 
   it('restores the bonus of a discarded equipped card', async () => {
-    withHandCard(createEquipmentCard('s9', 'Wall', 'hand', [{ stat: 'maxArmor', value: 2 }]));
+    withHandCard(createPropertyCard('s9', 'Wall', [{ name: 'Ruestung', value: 2 }]));
     equipment.moveCard(deck1Ref('s9'), { kind: 'equipped', characterId: 'a', slot: 'rightHand' });
-    expect(barbarian()).toMatchObject({ armor: 4, maxArmor: 2 });
+    expect(barbarian()).toMatchObject({ Ruestung: 4 });
 
     await act(deck1Ref('s9'), { kind: 'discardPile' });
-    expect(barbarian()).toMatchObject({ armor: 2 });
+    expect(barbarian()).toMatchObject({ Ruestung: 2 });
     service.undo();
-    expect(barbarian()).toMatchObject({ armor: 4 });
+    expect(barbarian()).toMatchObject({ Ruestung: 4 });
+  });
+
+  it('restores Leben when a belt move is undone', async () => {
+    withHandCard(createPropertyCard('l9', 'Lebensband', [{ name: 'Leben', value: 30 }]));
+    const before: number = barbarian().Leben;
+    await act(deck1Ref('l9'), { kind: 'belt', characterId: 'a' });
+    expect(barbarian().Leben).toBe(before + 30);
+    service.undo();
+    expect(where(deck1Ref('l9'))).toEqual({ kind: 'hand' });
+    expect(barbarian().Leben).toBe(before);
   });
 
   it('drops the hint when the card was moved elsewhere or its former owner is gone', async () => {

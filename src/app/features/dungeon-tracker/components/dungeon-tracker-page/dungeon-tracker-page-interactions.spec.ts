@@ -130,17 +130,17 @@ describe('DungeonTrackerPage – interactions', () => {
     expect(host.querySelectorAll('.dungeon-token--selected')).toHaveLength(0);
   });
 
-  it('shows changed health and armor immediately at the selected token and in the legend', async () => {
+  it('shows changed Leben and Ruestung immediately at the selected token and in the legend', async () => {
     // Am Token stehen die Werte nur, solange es markiert ist.
     (host.querySelector('.dungeon-token') as HTMLElement).click();
-    const hit: CharacterInfo = { ...createTestCharacter('a'), health: 3, armor: 0 };
+    const hit: CharacterInfo = { ...createTestCharacter('a'), Leben: 3, Ruestung: 0 };
     TestBed.inject(CharactersDbService).writeCharacter(hit);
     await fixture.whenStable();
 
     for (const selector of ['.dungeon-token', 'app-dungeon-legend-entry']) {
       const scope: Element | null = host.querySelector(selector);
-      expect(scope?.querySelector('[aria-label="Leben"]')?.textContent?.trim()).toBe('3/12');
-      expect(scope?.querySelector('[aria-label="Rüstung"]')?.textContent?.trim()).toBe('0/4');
+      expect(scope?.querySelector('[aria-label="Leben"]')?.textContent?.trim()).toBe('3');
+      expect(scope?.querySelector('[aria-label="Rüstung"]')?.textContent?.trim()).toBe('0');
     }
   });
 });

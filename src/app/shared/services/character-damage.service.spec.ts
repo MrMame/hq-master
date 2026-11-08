@@ -16,7 +16,7 @@ describe('CharacterDamageService', () => {
   let service: CharacterDamageService;
   let charactersDb: CharactersDbService;
   const dialogOpen: ReturnType<typeof vi.fn> = vi.fn();
-  const character: CharacterInfo = { ...createTestCharacter('a'), health: 20, armor: 5 };
+  const character: CharacterInfo = { ...createTestCharacter('a'), Leben: 20, Ruestung: 5 };
 
   beforeEach(() => {
     dialogOpen.mockReset();
@@ -46,14 +46,17 @@ describe('CharacterDamageService', () => {
   it.each<[DamageTypes, number, number]>([
     [DamageTypes.Normal, 18, 0],
     [DamageTypes.Critical, 13, 5],
-  ])('writes a %s hit of 7 as applyDamage() result to the session', (damageType, health, armor) => {
-    closeWith(7);
+  ])(
+    'writes a %s hit of 7 as applyDamage() result to the session',
+    (damageType, Leben, Ruestung) => {
+      closeWith(7);
 
-    service.requestDamage(character, damageType);
+      service.requestDamage(character, damageType);
 
-    expect(charactersDb.characters()).toEqual([applyDamage(character, damageType, 7)]);
-    expect(charactersDb.characters()[0]).toMatchObject({ health, armor });
-  });
+      expect(charactersDb.characters()).toEqual([applyDamage(character, damageType, 7)]);
+      expect(charactersDb.characters()[0]).toMatchObject({ Leben, Ruestung });
+    },
+  );
 
   it.each<[DamageTypes, string]>([
     [DamageTypes.Normal, 'Grimgor: 7 Schaden auf Rüstung'],

@@ -20,6 +20,7 @@ function handState(): DeckState {
     hand: HAND_CARDS.slice(0, 3).map((card) => ({ deckId: 'deck-1', card })),
     assigned: [],
     inventory: [],
+    belt: [],
   };
 }
 

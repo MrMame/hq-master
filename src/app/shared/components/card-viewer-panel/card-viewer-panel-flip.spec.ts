@@ -18,6 +18,7 @@ function handState(): DeckState {
     hand: [OWN_BACK_CARD, BASIC_CARD].map((card) => ({ deckId: 'deck-1', card })),
     assigned: [],
     inventory: [],
+    belt: [],
   };
 }
 

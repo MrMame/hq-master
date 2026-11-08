@@ -47,7 +47,7 @@ describe('appConfig', () => {
     gameTime.addTime({ minutes: 1 });
     TestBed.tick();
 
-    expect(charactersDb.characters().find((c) => c.id === 'p')?.health).toBe(11);
+    expect(charactersDb.characters().find((c) => c.id === 'p')?.Leben).toBe(11);
   });
 
   it('registers the general card actions for the card viewer', () => {
@@ -59,9 +59,11 @@ describe('appConfig', () => {
       'bank',
       'assign',
       'give-to-inventory',
+      'belt',
       'stow',
       'draft-discard',
       'draft-stow',
+      'draft-belt',
       'draft-equip',
     ]);
   });

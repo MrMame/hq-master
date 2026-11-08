@@ -1,4 +1,4 @@
-import { Card, EquipmentCard } from '../models/card.model';
+import { Card } from '../models/card.model';
 import { CardLocation } from '../models/card-location.model';
 import { DeckConfig } from '../models/deck-config.model';
 import { CardRef, DeckInstance, DeckState } from '../models/deck-state.model';
@@ -6,21 +6,21 @@ import {
   assignedCard,
   BASIC_CARD,
   createDeckInstance,
-  createEquipmentCard,
+  createPropertyCard,
   inventoryCard,
 } from './deck.fixtures';
 
 /** Testdaten für Specs (wird nicht in den App-Code importiert). */
-function handCard(n: number): EquipmentCard {
-  return createEquipmentCard(`h${n}`, `Schild ${n}`, 'hand', [{ stat: 'defense', value: n }]);
+function handCard(n: number): Card {
+  return createPropertyCard(`h${n}`, `Schild ${n}`, [{ name: 'Abwehr', value: n }]);
 }
 
-export const HAND_CARDS: readonly EquipmentCard[] = [1, 2, 3, 4, 5, 6].map(handCard);
-const [H1, H2, H3, H4, H5, H6] = HAND_CARDS;
+export const HAND_CARDS: readonly Card[] = [1, 2, 3, 4, 5, 6, 7].map(handCard);
+const [H1, H2, H3, H4, H5, H6, H7] = HAND_CARDS;
 
 /**
  * Je Ort eine Handkarte aus deck-1: h1 in der Hand des DM, h2 im Nachziehstapel, h3 abgelegt, h4 in der Bank,
- * h5 bei „a“ in der linken Hand, h6 im Inventar von „a“.
+ * h5 bei „a“ in der linken Hand, h6 im Inventar von „a“, h7 im Gürtel von „a“.
  */
 export const ORIGINS: readonly { cardId: string; location: CardLocation }[] = [
   { cardId: 'h1', location: { kind: 'hand' } },
@@ -29,9 +29,10 @@ export const ORIGINS: readonly { cardId: string; location: CardLocation }[] = [
   { cardId: 'h4', location: { kind: 'bank' } },
   { cardId: 'h5', location: { kind: 'equipped', characterId: 'a', slot: 'leftHand' } },
   { cardId: 'h6', location: { kind: 'inventory', characterId: 'a' } },
+  { cardId: 'h7', location: { kind: 'belt', characterId: 'a' } },
 ];
 
-/** Ziele der Bewegungsmatrix; Slot und Inventar gehören „b“, der Slot ist frei und passt zu Handkarten. */
+/** Ziele der Bewegungsmatrix; Slot, Inventar und Gürtel gehören „b“, der Slot ist frei. */
 export const TARGETS: readonly CardLocation[] = [
   { kind: 'hand' },
   { kind: 'drawPile' },
@@ -39,6 +40,7 @@ export const TARGETS: readonly CardLocation[] = [
   { kind: 'bank' },
   { kind: 'equipped', characterId: 'b', slot: 'leftHand' },
   { kind: 'inventory', characterId: 'b' },
+  { kind: 'belt', characterId: 'b' },
 ];
 
 export function deck1Ref(cardId: string): CardRef {
@@ -77,10 +79,11 @@ export function createMoveState(): DeckState {
       assignedCard(H5, 'b', 'rightHand', 'deck-2'),
     ],
     inventory: [inventoryCard(H6, 'a', 'deck-1'), inventoryCard(H6, 'b', 'deck-2')],
+    belt: [inventoryCard(H7, 'a', 'deck-1')],
   };
 }
 
-/** Wie oft die Karte im Zustand vorkommt (Hand, Stapel und Bank ihres Decks, Slots, Inventar). */
+/** Wie oft die Karte im Zustand vorkommt (Hand, Stapel und Bank ihres Decks, Slots, Inventar, Gürtel). */
 export function occurrences(s: DeckState, ref: CardRef): number {
   const matches: (cards: readonly Card[]) => number = (cards) =>
     cards.filter((card) => card.id === ref.cardId).length;
@@ -88,7 +91,7 @@ export function occurrences(s: DeckState, ref: CardRef): number {
   const hand: number = s.hand.filter(
     (entry) => entry.deckId === ref.deckId && entry.card.id === ref.cardId,
   ).length;
-  const slots: number = [...s.assigned, ...s.inventory].filter(
+  const slots: number = [...s.assigned, ...s.inventory, ...s.belt].filter(
     (entry) => entry.deckId === ref.deckId && entry.card.id === ref.cardId,
   ).length;
   const piles: number = deck

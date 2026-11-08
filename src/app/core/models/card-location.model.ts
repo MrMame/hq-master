@@ -25,12 +25,22 @@ export interface InventoryLocation {
   characterId: string;
 }
 
+/** Gürtel eines Charakters: mitgeführte Karten, deren Eigenschaften wirken. */
+export interface BeltLocation {
+  kind: 'belt';
+  characterId: string;
+}
+
+/** Orte, an denen ein Charakter beliebig viele Karten mitführt. */
+export type CarriedKind = 'inventory' | 'belt';
+
 /**
  * Ort einer Karte und Ziel einer Bewegung. Weitere Orte kommen als neue `kind` dazu.
- * Beim Nachziehstapel als Ziel wird die Karte eingemischt (mit `top` oben aufgelegt), in Hand und Inventar
- * kommt sie ans Ende.
+ * Beim Nachziehstapel als Ziel wird die Karte eingemischt (mit `top` oben aufgelegt), in Hand, Inventar und
+ * Gürtel kommt sie ans Ende.
  */
-export type CardLocation = HandLocation | PileLocation | EquippedLocation | InventoryLocation;
+export type CardLocation =
+  HandLocation | PileLocation | EquippedLocation | InventoryLocation | BeltLocation;
 
 export type PileKind = PileLocation['kind'];
 

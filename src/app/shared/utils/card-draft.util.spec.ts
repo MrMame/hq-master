@@ -66,7 +66,7 @@ describe('card draft', () => {
   });
 
   it('shows the live cards of the character without moves', () => {
-    const cards: DraftCards = draftCards('a', assigned, inventory, []);
+    const cards: DraftCards = draftCards('a', { assigned, inventory, belt: [] }, []);
     expect(cards.equipped).toEqual([assigned[0]]);
     expect(cards.equipped[0]).toBe(assigned[0]);
     expect(cards.inventory).toEqual([inventory[0], inventory[1]]);
@@ -78,13 +78,28 @@ describe('card draft', () => {
       { ref: ref('e1'), target: { kind: 'equipped', slot: 'body' } },
       { ref: ref('b1'), target: { kind: 'discardPile' } },
     ];
-    const cards: DraftCards = draftCards('a', assigned, inventory, moves);
+    const cards: DraftCards = draftCards('a', { assigned, inventory, belt: [] }, moves);
     expect(cards.equipped).toEqual([assignedCard(RUNE_ARMOR, 'a', 'body')]);
     expect(cards.inventory).toEqual([inventoryCard(TOWER_SHIELD, 'a')]);
   });
 
-  it('never puts a card that is no equipment into a slot', () => {
+  it('puts any inventory card into a slot', () => {
     const moves: DraftMove[] = [{ ref: ref('b1'), target: { kind: 'equipped', slot: 'head' } }];
-    expect(draftCards('a', assigned, inventory, moves).equipped).toEqual([assigned[0]]);
+    expect(
+      draftCards('a', { assigned, inventory, belt: [] }, moves).equipped.map((e) => e.slot),
+    ).toEqual([assigned[0].slot, 'head']);
+  });
+
+  it('keeps belt cards, moves cards into the belt and out of it', () => {
+    const belt: InventoryCard[] = [inventoryCard(BASIC_CARD, 'a', 'deck-2')];
+    const moves: DraftMove[] = [
+      { ref: ref('e2'), target: { kind: 'belt' } },
+      { ref: { deckId: 'deck-2', cardId: 'b1' }, target: { kind: 'equipped', slot: 'amulet' } },
+    ];
+    expect(draftCards('a', { assigned, inventory, belt }, []).belt).toEqual(belt);
+    const cards: DraftCards = draftCards('a', { assigned, inventory, belt }, moves);
+    expect(cards.belt).toEqual([inventoryCard(TOWER_SHIELD, 'a')]);
+    expect(cards.equipped.map((entry) => entry.slot)).toContain('amulet');
+    expect(draftTargetLocation('a', { kind: 'belt' })).toEqual({ kind: 'belt', characterId: 'a' });
   });
 });

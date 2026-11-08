@@ -1,4 +1,5 @@
-import { CharacterInfo } from '../../../core/models/character-info.model';
+import { CharacterInfo, FIXED_PROPERTIES } from '../../../core/models/character-info.model';
+import { warnInvalidCharacter } from '../../../core/services/characters/characters-codec.util';
 import {
   appendTextElement,
   childElements,
@@ -9,7 +10,7 @@ import {
   setAttributes,
   textOf,
 } from '../../../shared/utils/xml.util';
-import { normalizedLimits } from '../../../core/services/characters/character-limits.util';
+import { withinLimits } from '../../../core/services/characters/character-limits.util';
 import { readConditions, writeConditions } from './conditions.xml-mapper';
 
 export function writeCharacters(doc: XMLDocument, characters: CharacterInfo[]): Element {
@@ -20,8 +21,17 @@ export function writeCharacters(doc: XMLDocument, characters: CharacterInfo[]): 
   return root;
 }
 
+/** Charaktere ohne gültige Zahl in `Leben`, `Ruestung` oder `Tempo` werden mit Konsolenwarnung verworfen. */
 export function readCharacters(root: Element): CharacterInfo[] {
-  return childElements(root, 'character').map(readCharacter);
+  return childElements(root, 'character').filter(hasFixedProperties).map(readCharacter);
+}
+
+function hasFixedProperties(el: Element): boolean {
+  const valid: boolean = FIXED_PROPERTIES.every((name) =>
+    Number.isFinite(readNumber(el, name, NaN)),
+  );
+  if (!valid) warnInvalidCharacter(el.getAttribute('id'));
+  return valid;
 }
 
 function writeCharacter(doc: XMLDocument, c: CharacterInfo): Element {
@@ -29,13 +39,9 @@ function writeCharacter(doc: XMLDocument, c: CharacterInfo): Element {
   setAttributes(el, {
     id: c.id,
     name: c.name,
-    health: c.health,
-    maxHealth: c.maxHealth,
-    armor: c.armor,
-    maxArmor: c.maxArmor,
-    attack: c.attack,
-    defense: c.defense,
-    speed: c.speed,
+    Leben: c.Leben,
+    Ruestung: c.Ruestung,
+    Tempo: c.Tempo,
     image: c.image,
     movedThisRound: c.movedThisRound,
   });
@@ -45,22 +51,16 @@ function writeCharacter(doc: XMLDocument, c: CharacterInfo): Element {
 }
 
 /**
- * Ältere Spielstände ohne Maximum: Maximum = gespeicherter aktueller Wert. Ein altes Attribut `type` und
+ * Alte Attribute (`type`, `maxHealth`, `maxArmor`, `attack`, `defense`, `health`, `armor`, `speed`) und
  * `<ability>`-Elemente werden ignoriert.
  */
 function readCharacter(el: Element): CharacterInfo {
-  const health: number = readNumber(el, 'health');
-  const armor: number = readNumber(el, 'armor');
-  return normalizedLimits({
+  return withinLimits({
     id: readString(el, 'id'),
     name: readString(el, 'name'),
-    health,
-    maxHealth: readNumber(el, 'maxHealth', health),
-    armor,
-    maxArmor: readNumber(el, 'maxArmor', armor),
-    attack: readNumber(el, 'attack'),
-    defense: readNumber(el, 'defense'),
-    speed: readNumber(el, 'speed'),
+    Leben: readNumber(el, 'Leben'),
+    Ruestung: readNumber(el, 'Ruestung'),
+    Tempo: readNumber(el, 'Tempo'),
     image: readString(el, 'image'),
     description: textOf(firstChild(el, 'description')),
     conditions: readConditions(el),

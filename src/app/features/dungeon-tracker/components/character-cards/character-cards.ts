@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, InputSignal, Signal } from '@angular/core';
 import { CharacterInfo } from '../../../../core/models/character-info.model';
-import { AssignedCard, InventoryCard } from '../../../../core/models/deck-state.model';
+import { AssignedCard, BeltCard, InventoryCard } from '../../../../core/models/deck-state.model';
 import { EQUIPMENT_SLOTS } from '../../../../core/models/equipment.model';
 import { CardManagerService } from '../../../../core/services/card-deck/card-manager.service';
 import { toCardRef } from '../../../../core/services/card-deck/deck-state.util';
@@ -10,8 +10,8 @@ import { CardViewerService } from '../../../../shared/services/card-viewer.servi
 
 /**
  * Karten eines Charakters an Token und Legende: ausgerüstete Karten als kleine Bilder (Kopf bis Amulett) und die
- * Anzahl seiner Inventarkarten. Ein Klick öffnet die Karte im Card Viewer (`live`), der Inventarhinweis die
- * erste Inventarkarte; Klicks gehen nicht an Token oder Legende weiter.
+ * Anzahl seiner Gürtel- und Inventarkarten. Ein Klick öffnet die Karte im Card Viewer (`live`), der Gürtel- bzw.
+ * Inventarhinweis die erste Karte dort; Klicks gehen nicht an Token oder Legende weiter.
  */
 @Component({
   selector: 'app-character-cards',
@@ -27,6 +27,17 @@ import { CardViewerService } from '../../../../shared/services/card-viewer.servi
         (click)="view(entry)"
       >
         <app-card-display class="character-cards__image" [card]="entry.card" />
+      </button>
+    }
+    @if (belt().length > 0) {
+      <button
+        type="button"
+        class="character-cards__inventory"
+        [attr.aria-label]="'Gürtel ansehen (' + belt().length + ')'"
+        [title]="'Gürtel: ' + belt().length"
+        (click)="view(belt()[0])"
+      >
+        👝 {{ belt().length }}
       </button>
     }
     @if (inventory().length > 0) {
@@ -95,7 +106,11 @@ export class CharacterCards {
     this.cardManager.inventory().filter((entry) => entry.characterId === this.character().id),
   );
 
-  protected view(entry: AssignedCard | InventoryCard): void {
+  protected readonly belt: Signal<BeltCard[]> = computed(() =>
+    this.cardManager.belt().filter((entry) => entry.characterId === this.character().id),
+  );
+
+  protected view(entry: AssignedCard | InventoryCard | BeltCard): void {
     this.viewer.open(toCardRef(entry));
   }
 }

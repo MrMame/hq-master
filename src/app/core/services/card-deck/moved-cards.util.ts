@@ -81,5 +81,10 @@ function placedCards(s: DeckState): PlacedCard[] {
       card: entry.card,
       location: { kind: 'inventory' as const, characterId: entry.characterId },
     })),
+    ...s.belt.map((entry) => ({
+      ref: toCardRef(entry),
+      card: entry.card,
+      location: { kind: 'belt' as const, characterId: entry.characterId },
+    })),
   ];
 }

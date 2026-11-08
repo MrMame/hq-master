@@ -1,30 +1,31 @@
-import { Card, toCardType } from '../../models/card.model';
+import { Card } from '../../models/card.model';
 import { DeckInstance, DeckState } from '../../models/deck-state.model';
-
-function withBack<T extends Card>(card: T, deckBack: string): T {
-  return card.backImagePath ? card : { ...card, backImagePath: deckBack };
-}
+import { readStoredProperties } from './card-property-xml.util';
 
 /**
- * Karte aus einem älteren Stand: ohne eigene Rückseite gilt die des Decks; frühere Kartentypen (`combat`) werden
- * zu `basic`, ihre Werte (`attack`/`defense`) entfallen.
+ * Karte aus einem geladenen Stand mit genau den Feldern einer Karte: Ohne eigene Rückseite gilt die des Decks;
+ * frühere Felder (`cardType`, `slot`, `modifiers`, `attack`/`defense` alter `combat`-Karten) entfallen,
+ * Eigenschaften werden geprüft.
  */
 export function normalizedCard(card: Card, deckBack: string): Card {
-  if (card.cardType === 'equipment') return withBack(card, deckBack);
   const { id, name, imagePath, backImagePath, description } = card;
-  return withBack({ id, name, imagePath, backImagePath, description, cardType: 'basic' }, deckBack);
+  return {
+    id,
+    name,
+    imagePath,
+    backImagePath: backImagePath || deckBack,
+    description,
+    properties: readStoredProperties(card.properties, id),
+  };
 }
 
 function normalizedDeck(deck: DeckInstance): DeckInstance {
   const back: string = deck.config.backImagePath;
   const all: (cards: Card[]) => Card[] = (cards) => cards.map((c) => normalizedCard(c, back));
+  const { id, name, backImagePath } = deck.config;
   return {
     ...deck,
-    config: {
-      ...deck.config,
-      defaultCardType: toCardType(deck.config.defaultCardType),
-      cards: all(deck.config.cards),
-    },
+    config: { id, name, backImagePath, cards: all(deck.config.cards) },
     drawPile: all(deck.drawPile),
     discardPile: all(deck.discardPile),
     bank: all(deck.bank),
@@ -36,14 +37,15 @@ export function withNormalizedCards(state: DeckState): DeckState {
   const backs: ReadonlyMap<string, string> = new Map(
     state.decks.map((deck) => [deck.id, deck.config.backImagePath]),
   );
-  const backOf: (deckId: string) => string = (deckId) => backs.get(deckId) ?? '';
+  const card: <T extends { deckId: string; card: Card }>(entry: T) => T = (entry) => ({
+    ...entry,
+    card: normalizedCard(entry.card, backs.get(entry.deckId) ?? ''),
+  });
   return {
     decks: state.decks.map(normalizedDeck),
-    hand: state.hand.map((e) => ({ ...e, card: normalizedCard(e.card, backOf(e.deckId)) })),
-    assigned: state.assigned.map((e) => ({ ...e, card: withBack(e.card, backOf(e.deckId)) })),
-    inventory: state.inventory.map((e) => ({
-      ...e,
-      card: normalizedCard(e.card, backOf(e.deckId)),
-    })),
+    hand: state.hand.map(card),
+    assigned: state.assigned.map(card),
+    inventory: state.inventory.map(card),
+    belt: state.belt.map(card),
   };
 }

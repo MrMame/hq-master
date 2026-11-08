@@ -1,13 +1,13 @@
-import { EquipmentCard } from '../../models/card.model';
+import { Card } from '../../models/card.model';
 import { CharacterInfo } from '../../models/character-info.model';
 import { EQUIPMENT_SLOT_LABELS, EquipmentSlot } from '../../models/equipment.model';
 import { NewGameLogEntry } from '../../models/game-log-entry.model';
 import { equipmentText } from '../game-log/game-log-text.util';
 
-/** Log-Eintrag zum Zuweisen (`slot` gesetzt) bzw. Ablegen (`slot` = `null`) einer Ausrüstungskarte. */
+/** Log-Eintrag zum Zuweisen (`slot` gesetzt) bzw. Ablegen (`slot` = `null`) einer Karte. */
 export function equipmentEntry(
   character: CharacterInfo,
-  card: EquipmentCard,
+  card: Card,
   slot: EquipmentSlot | null,
   now: Date,
 ): NewGameLogEntry {

@@ -51,22 +51,23 @@ describe('moveCard – rules', () => {
     const slot: EquippedLocation = { kind: 'equipped', characterId: 'a', slot: 'head' };
     expect(moveCard(s, deck1Ref('unknown'), { kind: 'bank' })).toBe(s);
     expect(moveCard(s, { deckId: 'deck-3', cardId: 'h2' }, { kind: 'bank' })).toBe(s);
-    expect(moveCard(s, deck1Ref('b1'), { ...slot, slot: 'leftHand' })).toBe(s);
-    // Eine Handkarte passt nicht auf den Kopf.
-    expect(moveCard(s, deck1Ref('h2'), slot)).toBe(s);
+    // Liegt schon in diesem Slot.
+    expect(moveCard(s, deck1Ref('h5'), { ...slot, slot: 'leftHand' })).toBe(s);
   });
 
-  it('puts body armor only into the body slot', () => {
-    const armor: DeckState = {
-      ...s,
-      decks: [{ ...s.decks[0], bank: [RUNE_ARMOR] }, s.decks[1]],
-    };
-    const body: EquippedLocation = { kind: 'equipped', characterId: 'a', slot: 'body' };
-    expect(moveCard(armor, deck1Ref('e1'), { ...body, slot: 'leftHand' })).toBe(armor);
-    expect(moveCard(armor, deck1Ref('e1'), body).assigned.at(-1)).toEqual(
-      assignedCard(RUNE_ARMOR, 'a', 'body'),
-    );
-  });
+  it.each(['head', 'body', 'leftHand', 'rightHand', 'amulet'] as const)(
+    'puts any card into the %s slot',
+    (slot) => {
+      const withCard: DeckState = {
+        ...s,
+        decks: [{ ...s.decks[0], bank: [RUNE_ARMOR] }, s.decks[1]],
+      };
+      const target: EquippedLocation = { kind: 'equipped', characterId: 'b', slot };
+      expect(moveCard(withCard, deck1Ref('e1'), target).assigned.at(-1)).toEqual(
+        assignedCard(RUNE_ARMOR, 'b', slot),
+      );
+    },
+  );
 });
 
 describe('discardOwned', () => {

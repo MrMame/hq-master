@@ -11,10 +11,8 @@ const token: BoardToken = {
   character: {
     ...createTestCharacter('a'),
     name: 'Ork',
-    health: 20,
-    maxHealth: 20,
-    armor: 5,
-    maxArmor: 5,
+    Leben: 20,
+    Ruestung: 5,
   },
 };
 
@@ -55,9 +53,9 @@ describe('DungeonLegendEntry', () => {
     expect(text('.legend-entry__name')).toBe('Ork');
   });
 
-  it('shows health and armor of the character', () => {
-    expect(text('[aria-label="Leben"]')).toBe('20/20');
-    expect(text('[aria-label="Rüstung"]')).toBe('5/5');
+  it('shows Leben and Ruestung of the character', () => {
+    expect(text('[aria-label="Leben"]')).toBe('20');
+    expect(text('[aria-label="Rüstung"]')).toBe('5');
   });
 
   it.each<[string, DamageTypes]>([

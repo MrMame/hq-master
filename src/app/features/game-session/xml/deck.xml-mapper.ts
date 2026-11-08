@@ -13,21 +13,23 @@ import {
 } from './deck-instance.xml-mapper';
 import { readHand, writeHand } from './hand.xml-mapper';
 import { readInventory, writeInventory } from './inventory.xml-mapper';
+import { readBelt, writeBelt } from './belt.xml-mapper';
 
-/** `<cardDeck>` mit allen Decks in Tischreihenfolge, der Hand des Dungeon Masters, den Zuweisungen und dem Inventar. */
+/** `<cardDeck>` mit allen Decks in Tischreihenfolge, der Hand des Dungeon Masters, den Zuweisungen, dem Inventar und dem Gürtel. */
 export function writeDeck(doc: XMLDocument, state: DeckState): Element {
   const el: Element = doc.createElement('cardDeck');
   state.decks.forEach((deck) => writeDeckInstance(el, deck));
   writeHand(el, state.hand);
   writeAssignedCards(el, state.assigned);
   writeInventory(el, state.inventory);
+  writeBelt(el, state.belt);
   return el;
 }
 
 /**
  * Ältere Spielstände mit einem Deck (`<config>` direkt in `<cardDeck>`) laden als eine Instanz, eine aktive
- * Karte (`<activeCard>`) als einzige Handkarte. Ohne `<inventory>` ist das Inventar leer. Hand-, Slot- und
- * Inventarkarten fehlender Instanzen werden verworfen; Karten ohne `backImage` erhalten die Rückseite ihres Decks.
+ * Karte (`<activeCard>`) als einzige Handkarte. Ohne `<inventory>` bzw. `<belt>` sind sie leer. Hand-, Slot-,
+ * Inventar- und Gürtelkarten fehlender Instanzen werden verworfen; Karten ohne `backImage` erhalten die Rückseite ihres Decks.
  */
 export function readDeck(el: Element): DeckState {
   if (firstChild(el, 'config')) return withNormalizedCards(readLegacyDeck(el));
@@ -37,6 +39,7 @@ export function readDeck(el: Element): DeckState {
       hand: readHand(el),
       assigned: readAssignedCards(el),
       inventory: readInventory(el),
+      belt: readBelt(el),
     }),
   );
 }

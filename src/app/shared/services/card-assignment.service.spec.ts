@@ -92,7 +92,7 @@ describe('CardAssignmentService', () => {
     expect(deck().assigned).toEqual([assignedCard(TOWER_SHIELD, 'a', 'rightHand')]);
   });
 
-  it('assigns nothing without characters, for a non-equipment card or an unknown card', async () => {
+  it('assigns nothing without characters or for an unknown card', async () => {
     expect(service.assignDisabledReason()).toBeNull();
     charactersDb.reset();
     expect(service.assignDisabledReason()).toBe('Keine Charaktere in der Session');
@@ -102,9 +102,10 @@ describe('CardAssignmentService', () => {
     charactersDb.writeCharacter(barbarian);
     cardManager.restore(createDeckState());
     const before: DeckState = deck();
-    await service.assignTo({ deckId: 'deck-1', cardId: 'c1' }, 'a', 'body');
     await service.assignTo(RUNE_ARMOR_REF, 'a', 'body');
     expect(deck()).toBe(before);
+    await service.assignTo({ deckId: 'deck-1', cardId: 'c1' }, 'a', 'head');
+    expect(deck().assigned.map((entry) => entry.card.id)).toEqual(['c1']);
   });
 
   it('looks up owner names by id so renaming shows at once', () => {

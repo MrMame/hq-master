@@ -1,14 +1,13 @@
-import { CharacterInfo } from '../../core/models/character-info.model';
-import { AssignedCard } from '../../core/models/deck-state.model';
-import { MODIFIABLE_STATS, ModifiableStat, StatModifier } from '../../core/models/equipment.model';
+import { CharacterInfo, FixedProperty } from '../../core/models/character-info.model';
+import { Card } from '../../core/models/card.model';
+import { CardProperty } from '../../core/models/card-property.model';
 import {
   bonusOf,
   bonusSources,
   effectiveStats,
-  modifiersOf,
+  propertiesOf,
 } from '../../core/services/equipment/effective-stats.util';
 import { bonusSourcesText, formatBonus } from '../../core/services/equipment/equipment-text.util';
-import { CharacterStat } from './character-stat.util';
 
 /** Anzeige neben einem Grundwert im Editor, z. B. `+2 = 6` mit Tooltip „Turmschild +2“. */
 export interface StatBonusView {
@@ -21,23 +20,24 @@ export interface StatBonusView {
   positive: boolean;
 }
 
-function isModifiable(stat: CharacterStat): stat is ModifiableStat {
-  return MODIFIABLE_STATS.some((modifiable) => modifiable === stat);
+/** Leben und Rüstung haben keinen Bonus: Ausrüstung ändert beim Anlegen direkt den Wert. */
+function isBonusStat(stat: FixedProperty): stat is 'Tempo' {
+  return stat === 'Tempo';
 }
 
-/** Bonus und wirksamer Wert eines Grundwerts; `null`, wenn keine Karte ihn verändert. */
+/** Bonus und wirksamer Wert eines Grundwerts aus den wirkenden Karten; `null`, wenn keine ihn verändert. */
 export function statBonusView(
   character: CharacterInfo,
-  cards: readonly AssignedCard[],
-  stat: CharacterStat,
+  cards: readonly Card[],
+  stat: FixedProperty,
 ): StatBonusView | null {
-  if (!isModifiable(stat)) return null;
-  const modifiers: StatModifier[] = modifiersOf(cards);
-  const bonus: number = bonusOf(modifiers, stat);
+  if (!isBonusStat(stat)) return null;
+  const properties: CardProperty[] = propertiesOf(cards);
+  const bonus: number = bonusOf(properties, stat);
   if (bonus === 0) return null;
   return {
     bonus: formatBonus(bonus),
-    effective: effectiveStats(character, modifiers)[stat],
+    effective: effectiveStats(character, cards)[stat],
     sources: bonusSourcesText(bonusSources(cards, stat)),
     positive: bonus > 0,
   };

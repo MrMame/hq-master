@@ -1,29 +1,39 @@
-import { CharacterInfo } from '../../core/models/character-info.model';
-
-/** Zahlenwerte eines Charakters, die der Charakter-Editor als Eingabefeld anbietet. */
-export type CharacterStat =
-  'health' | 'maxHealth' | 'armor' | 'maxArmor' | 'attack' | 'defense' | 'speed';
-
-/** Maximum, das beim Anlegen dem aktuellen Wert folgt. */
-const LINKED_MAXIMUM: Partial<Record<CharacterStat, 'maxHealth' | 'maxArmor'>> = {
-  health: 'maxHealth',
-  armor: 'maxArmor',
-};
+import { CardProperty } from '../../core/models/card-property.model';
+import { CharacterInfo, FixedProperty } from '../../core/models/character-info.model';
+import { withEquipmentChange } from '../../core/services/characters/character-limits.util';
+import { bonusOf } from '../../core/services/equipment/effective-stats.util';
 
 /**
- * Setzt einen Zahlenwert als neues Objekt. Mit `linkMaximum` (neuer Charakter) übernimmt das Maximum den
- * eingegebenen Startwert von Leben bzw. Rüstung; danach lässt es sich noch getrennt ändern.
+ * Setzt einen festen Wert als neues Objekt. `change` ist die Änderung durch vorgemerkte Kartenbewegungen: Der
+ * eingegebene Wert ist der angezeigte (inkl. `Leben`/`Ruestung` der Karten), gespeichert wird er ohne sie.
  */
 export function withStat(
   character: CharacterInfo,
-  stat: CharacterStat,
+  stat: FixedProperty,
   value: number,
-  linkMaximum: boolean,
+  change: readonly CardProperty[] = [],
 ): CharacterInfo {
-  const maximum: 'maxHealth' | 'maxArmor' | undefined = LINKED_MAXIMUM[stat];
+  if (stat === 'Tempo' || !isNumber(value)) return { ...character, [stat]: value };
+  return { ...character, [stat]: value - bonusOf(change, stat) };
+}
+
+/**
+ * Werte, wie sie nach dem Übernehmen gälten: Leben/Ruestung plus `change`, nie unter 0. Eine ungültige Eingabe
+ * (z. B. leeres Feld) bleibt stehen, damit das Formular sie meldet.
+ */
+export function withDraftChange(
+  character: CharacterInfo,
+  change: readonly CardProperty[],
+): CharacterInfo {
+  if (change.length === 0) return character;
+  const changed: CharacterInfo = withEquipmentChange(character, change, 1);
   return {
-    ...character,
-    [stat]: value,
-    ...(linkMaximum && maximum ? { [maximum]: value } : {}),
+    ...changed,
+    Leben: isNumber(character.Leben) ? changed.Leben : character.Leben,
+    Ruestung: isNumber(character.Ruestung) ? changed.Ruestung : character.Ruestung,
   };
+}
+
+function isNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
 }

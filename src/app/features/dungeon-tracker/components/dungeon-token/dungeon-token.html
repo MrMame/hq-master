@@ -30,7 +30,7 @@
       </div>
     }
     <!-- Tot (0 Leben): Kreuz über dem ganzen Porträt; Ziehen und Markieren gehen durch. -->
-    @if (character().health === 0) {
+    @if (character().Leben === 0) {
       <app-dead-marker data-testid="token-dead-marker" />
     }
   </div>
@@ -56,6 +56,12 @@
         class="dungeon-token__status"
       />
     }
+    <app-character-properties
+      [character]="character()"
+      variant="selected"
+      class="dungeon-token__status"
+      data-testid="token-properties"
+    />
     <app-character-action-bar [character]="character()" class="dungeon-token__actions" />
   }
 </div>

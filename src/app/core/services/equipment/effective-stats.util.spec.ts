@@ -1,84 +1,112 @@
+import { Card } from '../../models/card.model';
 import { CharacterInfo } from '../../models/character-info.model';
 import { AssignedCard } from '../../models/deck-state.model';
 import { createTestCharacter } from '../../testing/character.fixtures';
 import {
   assignedCard,
-  createEquipmentCard,
+  createPropertyCard,
   RUNE_ARMOR,
   TOWER_SHIELD,
 } from '../../testing/deck.fixtures';
 import {
+  activeCardsOf,
   bonusOf,
   bonusSources,
   cardsOf,
   effectiveStats,
-  EffectiveStats,
-  modifiersOf,
+  propertiesOf,
 } from './effective-stats.util';
 
-// Grundwerte: attack 3, defense 4, speed 5, maxHealth 12, maxArmor 4.
+// Grundwert: Tempo 5.
 const character: CharacterInfo = createTestCharacter('a');
+const card: (name: string, ...values: [string, number][]) => Card = (name, ...values) =>
+  createPropertyCard(
+    name,
+    name,
+    values.map(([n, value]) => ({ name: n, value })),
+  );
 
 describe('effectiveStats', () => {
-  it('equals the base values without cards', () => {
-    expect(effectiveStats(character, [])).toEqual({
-      attack: 3,
-      defense: 4,
-      speed: 5,
-      maxHealth: 12,
-      maxArmor: 4,
-    });
+  it('equals the base Tempo and has no dynamic properties without cards', () => {
+    expect(effectiveStats(character, [])).toEqual({ Tempo: 5, dynamic: new Map() });
   });
 
-  it('adds the modifiers of several cards, negative values included', () => {
-    const stats: EffectiveStats = effectiveStats(
-      character,
-      modifiersOf([
-        assignedCard(RUNE_ARMOR, 'a', 'body'),
-        assignedCard(TOWER_SHIELD, 'a', 'leftHand'),
-      ]),
-    );
-    expect(stats).toEqual({ attack: 3, defense: 6, speed: 4, maxHealth: 12, maxArmor: 6 });
+  it('adds Tempo of all cards, negative values included, never below 0', () => {
+    expect(effectiveStats(character, [RUNE_ARMOR, card('Stiefel', ['Tempo', 3])]).Tempo).toBe(7);
+    expect(effectiveStats(character, [card('Blei', ['Tempo', -9])]).Tempo).toBe(0);
   });
 
-  it('never goes below 0', () => {
-    expect(effectiveStats(character, [{ stat: 'speed', value: -9 }]).speed).toBe(0);
+  it('sums dynamic properties in order of first appearance', () => {
+    const cards: Card[] = [
+      card('Schwert', ['Angriff', 3], ['Blitzschaden', 2]),
+      TOWER_SHIELD,
+      card('Ring', ['Angriff', 1]),
+    ];
+    expect([...effectiveStats(character, cards).dynamic]).toEqual([
+      ['Angriff', 4],
+      ['Blitzschaden', 2],
+      ['Abwehr', 2],
+    ]);
+  });
+
+  it('treats names case-sensitively and shows negative sums as 0', () => {
+    const cards: Card[] = [card('A', ['Angriff', 2]), card('B', ['angriff', 1], ['Abwehr', -1])];
+    expect([...effectiveStats(character, cards).dynamic]).toEqual([
+      ['Angriff', 2],
+      ['angriff', 1],
+      ['Abwehr', 0],
+    ]);
+  });
+
+  it('never lists Leben, Ruestung or Tempo as dynamic properties', () => {
+    const cards: Card[] = [card('Trank', ['Leben', 30], ['Ruestung', 2], ['Tempo', 1])];
+    expect(effectiveStats(character, cards).dynamic.size).toBe(0);
   });
 
   it('leaves the base values of the character unchanged', () => {
     const before: CharacterInfo = { ...character };
-    effectiveStats(character, RUNE_ARMOR.modifiers);
+    effectiveStats(character, [RUNE_ARMOR]);
     expect(character).toEqual(before);
   });
 });
 
+describe('activeCardsOf', () => {
+  it('lists the slot cards of one character in slot order', () => {
+    const assigned: AssignedCard[] = [
+      assignedCard(TOWER_SHIELD, 'a', 'amulet'),
+      assignedCard(RUNE_ARMOR, 'b', 'body'),
+      assignedCard(RUNE_ARMOR, 'a', 'head'),
+    ];
+    expect(activeCardsOf({ assigned, belt: [] }, 'a')).toEqual([RUNE_ARMOR, TOWER_SHIELD]);
+    expect(activeCardsOf({ assigned, belt: [] }, 'x')).toEqual([]);
+  });
+});
+
 describe('equipment helpers', () => {
-  const amulet: AssignedCard = assignedCard(
-    createEquipmentCard('e3', 'Schutzamulett', 'amulet', [{ stat: 'defense', value: 1 }]),
-    'a',
-    'amulet',
-  );
+  const amulet: Card = card('Schutzamulett', ['Abwehr', 1]);
   const assigned: AssignedCard[] = [
     assignedCard(TOWER_SHIELD, 'a', 'leftHand'),
     assignedCard(RUNE_ARMOR, 'b', 'body'),
-    amulet,
+    assignedCard(amulet, 'a', 'amulet'),
   ];
 
   it('finds the cards of one character', () => {
-    expect(cardsOf(assigned, 'a').map((entry) => entry.card.id)).toEqual(['e2', 'e3']);
-    expect(cardsOf(assigned, 'x')).toEqual([]);
+    expect(cardsOf(assigned, 'a').map((entry) => entry.card.name)).toEqual([
+      'Turmschild',
+      'Schutzamulett',
+    ]);
   });
 
-  it('sums the modifiers per stat', () => {
-    expect(bonusOf(modifiersOf(cardsOf(assigned, 'a')), 'defense')).toBe(3);
-    expect(bonusOf([], 'defense')).toBe(0);
+  it('sums the properties per name', () => {
+    expect(bonusOf(propertiesOf([TOWER_SHIELD, amulet]), 'Abwehr')).toBe(3);
+    expect(bonusOf([], 'Abwehr')).toBe(0);
   });
 
-  it('names the cards that change a stat', () => {
-    expect(bonusSources(cardsOf(assigned, 'a'), 'defense')).toEqual([
+  it('names the cards that change a property', () => {
+    expect(bonusSources([TOWER_SHIELD, amulet], 'Abwehr')).toEqual([
       { name: 'Turmschild', value: 2 },
       { name: 'Schutzamulett', value: 1 },
     ]);
-    expect(bonusSources(cardsOf(assigned, 'a'), 'speed')).toEqual([]);
+    expect(bonusSources([TOWER_SHIELD], 'Tempo')).toEqual([]);
   });
 });

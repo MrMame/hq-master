@@ -18,12 +18,11 @@ import { provideDefaultCardActions } from '../card-actions/default-card-actions'
 import { CardViewer } from '../components/card-viewer/card-viewer';
 import { CardViewerMenuStateService } from '../services/card-viewer-menu-state.service';
 
-/** Barbar mit Rüstung 6 (Grundmaximum 4), Abwehr 4, Tempo 5 (nur für Specs). */
+/** Barbar mit Rüstung 6 (davon +2 durch die Runenrüstung), Tempo 5 (nur für Specs). */
 export const EQUIPPED_BARBARIAN: CharacterInfo = {
   ...createTestCharacter('a'),
   name: 'Barbar',
-  armor: 6,
-  maxArmor: 4,
+  Ruestung: 6,
 };
 
 /** Deck mit Runenrüstung (Körper) und Turmschild (linke Hand) am Barbaren. */

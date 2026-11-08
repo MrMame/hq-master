@@ -83,14 +83,24 @@ export function equipmentText(
     : `${name} erhält ${cardName} (${slotLabel})`;
 }
 
-/** z. B. „Heiltrank ins Inventar von Zwerg“ bzw. „Heiltrank von Barbar ins Inventar von Zwerg“. */
+/** Wohin bzw. woher eine mitgeführte Karte kommt: Inventar oder Gürtel. */
+const CARRIED_TEXTS: Readonly<Record<'inventory' | 'belt', { into: string; out: string }>> = {
+  inventory: { into: 'ins Inventar', out: 'aus dem Inventar' },
+  belt: { into: 'in den Gürtel', out: 'aus dem Gürtel' },
+};
+
+/**
+ * z. B. „Heiltrank ins Inventar von Zwerg“, „Heiltrank von Barbar ins Inventar von Zwerg“ bzw. mit
+ * `container` = `belt` „Heiltrank in den Gürtel von Zwerg“.
+ */
 export function inventoryAddedText(
   cardName: string,
   receiverName: string | undefined,
   giverName: string | null,
+  container: 'inventory' | 'belt' = 'inventory',
 ): string {
   const from: string = giverName === null ? '' : ` von ${giverName || UNNAMED}`;
-  return `${cardName}${from} ins Inventar von ${receiverName || UNNAMED}`;
+  return `${cardName}${from} ${CARRIED_TEXTS[container].into} von ${receiverName || UNNAMED}`;
 }
 
 /**
@@ -101,9 +111,11 @@ export function inventoryRemovedText(
   cardName: string,
   ownerName: string | undefined,
   destination: string | null,
+  container: 'inventory' | 'belt' = 'inventory',
 ): string {
   const owner: string = ownerName || UNNAMED;
+  const out: string = CARRIED_TEXTS[container].out;
   return destination === null
-    ? `${cardName} von ${owner} aus dem Inventar angelegt`
-    : `${cardName} aus dem Inventar von ${owner} ${destination}`;
+    ? `${cardName} von ${owner} ${out} angelegt`
+    : `${cardName} ${out} von ${owner} ${destination}`;
 }

@@ -9,8 +9,11 @@ import { ConfirmationService } from '../../../shared/services/confirmation.servi
 import {
   assignedCard,
   createTwoDeckState,
+  RUNE_ARMOR,
   TOWER_SHIELD,
 } from '../../../core/testing/deck.fixtures';
+import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
+import { createTestCharacter } from '../../../core/testing/character.fixtures';
 
 describe('DeckActionsService', () => {
   let service: DeckActionsService;
@@ -56,6 +59,17 @@ describe('DeckActionsService', () => {
     );
     expect(cardManager.decks().map((deck) => deck.id)).toEqual(['deck-1']);
     expect(cardManager.assigned()).toEqual([]);
+  });
+
+  it('lowers the wearer by the values of the removed cards', async () => {
+    const charactersDb: CharactersDbService = TestBed.inject(CharactersDbService);
+    charactersDb.writeCharacter({ ...createTestCharacter('a'), Ruestung: 6 });
+    cardManager.restore({
+      ...createTwoDeckState(),
+      assigned: [assignedCard(RUNE_ARMOR, 'a', 'body', 'deck-2')],
+    });
+    await service.remove(cardManager.decks()[1]);
+    expect(charactersDb.characters()[0].Ruestung).toBe(4);
   });
 
   it('keeps the deck when removal is declined', async () => {

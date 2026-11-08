@@ -18,10 +18,12 @@
 
     <!-- Zahlenwerte (Grundwerte, mit Bonus durch Ausrüstung) -->
     <app-character-stats-editor
-      [character]="draft()"
-      [cards]="draftCards().equipped"
+      [character]="shown()"
+      [cards]="activeCards()"
       (statChange)="setStat($event)"
     />
+    <!-- Dynamische Eigenschaften der wirkenden Karten, nur zur Anzeige -->
+    <app-character-properties [character]="draft()" [cards]="activeCards()" variant="editor" />
 
     <hr class="character-editor__divider" />
 
@@ -41,6 +43,15 @@
 
     <!-- Ausrüstung -->
     <app-character-equipment-editor [cards]="draftCards().equipped" (view)="viewCard($event)" />
+
+    <hr class="character-editor__divider" />
+
+    <!-- Gürtel: Eigenschaften wirken wie in einem Slot -->
+    <app-character-inventory-editor
+      kind="belt"
+      [cards]="draftCards().belt"
+      (view)="viewCard($event)"
+    />
 
     <hr class="character-editor__divider" />
 

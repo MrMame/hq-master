@@ -11,12 +11,12 @@ export function slotOccupant(
   return assigned.find((entry) => entry.characterId === characterId && entry.slot === slot);
 }
 
-/** Slot- und Inventarkarten, deren Besitzer nicht (mehr) in der Session ist. */
+/** Slot-, Inventar- und Gürtelkarten, deren Besitzer nicht (mehr) in der Session ist. */
 export function orphanedCards(
-  s: Pick<DeckState, 'assigned' | 'inventory'>,
+  s: Pick<DeckState, 'assigned' | 'inventory' | 'belt'>,
   characterIds: readonly string[],
 ): CardRef[] {
-  return [...s.assigned, ...s.inventory]
+  return [...s.assigned, ...s.inventory, ...s.belt]
     .filter((entry) => !characterIds.includes(entry.characterId))
     .map(toCardRef);
 }

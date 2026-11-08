@@ -22,12 +22,11 @@ describe('EquipmentService – moveCard', () => {
   let service: EquipmentService;
   let cardManager: CardManagerService;
   let charactersDb: CharactersDbService;
-  // Rüstung 6/6 durch die Runenrüstung (Grundmaximum 4), Turmschild in der linken Hand.
+  // Ruestung 6, davon +2 durch die Runenrüstung; Turmschild in der linken Hand.
   const barbarian: CharacterInfo = {
     ...createTestCharacter('a'),
     name: 'Barbar',
-    armor: 6,
-    maxArmor: 4,
+    Ruestung: 6,
   };
 
   const character: () => CharacterInfo = () => charactersDb.characters()[0];
@@ -56,13 +55,13 @@ describe('EquipmentService – moveCard', () => {
     ['bank', { kind: 'bank' }, (d: DeckInstance): Card[] => d.bank],
     ['discard pile', { kind: 'discardPile' }, (d: DeckInstance): Card[] => d.discardPile],
   ] as const)(
-    'takes an equipped card into the %s, lowers armor to the new maximum and logs it (6/6 → 4/4)',
+    'takes an equipped card into the %s, lowers Ruestung by its value and logs it (6 → 4)',
     (_name, target, pile) => {
       service.moveCard(RUNE_ARMOR_REF, target);
 
       expect(pile(deck())).toEqual([RUNE_ARMOR]);
       expect(service.assigned().map((entry) => entry.card)).toEqual([TOWER_SHIELD]);
-      expect(character().armor).toBe(4);
+      expect(character().Ruestung).toBe(4);
       expect(logTexts()).toEqual(['Barbar legt Runenrüstung ab']);
     },
   );

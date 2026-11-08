@@ -20,9 +20,7 @@ function isAssignment(value: unknown): value is Omit<AssignedCard, 'deckId'> {
     isRecord(value) &&
     typeof value['characterId'] === 'string' &&
     EQUIPMENT_SLOTS.some((slot) => slot === value['slot']) &&
-    isRecord(value['card']) &&
-    value['card']['cardType'] === 'equipment' &&
-    Array.isArray(value['card']['modifiers'])
+    isRecord(value['card'])
   );
 }
 
@@ -69,8 +67,8 @@ function decodeHand(stored: Record<string, unknown>): HandCard[] {
 /**
  * Speichert den Deck-Zustand unverändert. Beim Laden wird ein älterer Zustand mit einem Deck zu einer
  * Instanz; ungültige Instanzen, Zuweisungen und Inventarkarten sowie Verweise auf fehlende Instanzen werden
- * verworfen; ohne Inventar (ältere Stände) ist es leer. Karten ohne Rückseite erhalten die ihres
- * Decks, `combat` wird `basic`. Kein Objekt → Startwert (keine Decks).
+ * verworfen; ohne Inventar bzw. Gürtel (ältere Stände) sind sie leer. Karten ohne Rückseite erhalten die ihres
+ * Decks; frühere Kartentypen und Slots an Karten entfallen. Kein Objekt → Startwert (keine Decks).
  */
 export const DECK_STATE_CODEC: StorageCodec<DeckState> = {
   encode: (state: DeckState): unknown => state,
@@ -85,6 +83,7 @@ export const DECK_STATE_CODEC: StorageCodec<DeckState> = {
       hand: decodeHand(stored),
       assigned: list(stored['assigned'], isAssignedCard),
       inventory: list(stored['inventory'], isInventoryCard),
+      belt: list(stored['belt'], isInventoryCard),
     });
     return withNormalizedCards(state);
   },

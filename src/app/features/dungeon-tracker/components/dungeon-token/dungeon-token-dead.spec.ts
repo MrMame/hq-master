@@ -7,8 +7,8 @@ describe('DungeonToken – dead', () => {
   let fixture: ComponentFixture<DungeonToken>;
   let host: HTMLElement;
 
-  const render: (health: number) => void = (health: number): void => {
-    fixture.componentRef.setInput('character', { ...createTestCharacter('a'), health });
+  const render: (Leben: number) => void = (Leben: number): void => {
+    fixture.componentRef.setInput('character', { ...createTestCharacter('a'), Leben });
     fixture.detectChanges();
   };
 
@@ -24,7 +24,7 @@ describe('DungeonToken – dead', () => {
     fixture.componentRef.setInput('tokenScale', 0.85);
   });
 
-  it('lays a cross named "Tot" over the portrait at 0 health and keeps the image', () => {
+  it('lays a cross named "Tot" over the portrait at 0 Leben and keeps the image', () => {
     render(0);
 
     expect(marker()?.getAttribute('aria-label')).toBe('Tot');
@@ -32,7 +32,7 @@ describe('DungeonToken – dead', () => {
     expect(host.querySelector('img.dungeon-token__image')).not.toBeNull();
   });
 
-  it('shows no cross while the character has health left', () => {
+  it('shows no cross while the character has Leben left', () => {
     render(1);
 
     expect(marker()).toBeNull();

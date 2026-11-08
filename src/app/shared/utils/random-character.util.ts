@@ -26,24 +26,18 @@ export function createRandomName(names: CharacterNameList): string {
 
 /**
  * Zufälliger Charakter mit Bild aus `CHARACTER_IMAGES` und einem Namen passend zur Klasse des Bildes.
- * Leben und Rüstung starten bei ihrem Maximum. Die `id` wird übernommen, damit die Arbeitskopie im Editor ihre ID behält.
+ * Die `id` wird übernommen, damit die Arbeitskopie im Editor ihre ID behält.
  */
 export function createRandomCharacter(id: string): CharacterInfo {
   const image: string = pick(CHARACTER_IMAGES);
   const name: string = createRandomName(CHARACTER_NAMES_BY_IMAGE[image]);
-  const health: number = randomInt(50, 200);
-  const armor: number = randomInt(5, 50);
 
   return {
     id,
     name,
-    health,
-    maxHealth: health,
-    armor,
-    maxArmor: armor,
-    attack: randomInt(10, 50),
-    defense: randomInt(5, 50),
-    speed: randomInt(5, 30),
+    Leben: randomInt(50, 200),
+    Ruestung: randomInt(5, 50),
+    Tempo: randomInt(5, 30),
     image,
     description: `Dies ist eine zufällige Beschreibung für ${name}.`,
     conditions: [],

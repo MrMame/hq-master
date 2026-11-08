@@ -1,4 +1,4 @@
-import { Card, EquipmentCard } from './card.model';
+import { Card } from './card.model';
 import { DeckConfig } from './deck-config.model';
 import { EquipmentSlot } from './equipment.model';
 
@@ -8,11 +8,11 @@ export interface CardRef {
   cardId: string;
 }
 
-/** Eine Ausrüstungskarte im Slot eines Charakters; einzige Stelle, an der der Besitz steht. */
+/** Eine Karte im Slot eines Charakters (jede Karte passt in jeden Slot, je Slot eine). */
 export interface AssignedCard {
   /** Deck-Instanz, in deren Ablagestapel die Karte beim Ablegen zurückkehrt. */
   deckId: string;
-  card: EquipmentCard;
+  card: Card;
   characterId: string;
   slot: EquipmentSlot;
 }
@@ -22,6 +22,13 @@ export interface AssignedCard {
  * `AssignedCard`, damit Boni nur aus Slots kommen.
  */
 export interface InventoryCard {
+  deckId: string;
+  card: Card;
+  characterId: string;
+}
+
+/** Eine Karte im Gürtel eines Charakters; jede Karte passt, ihre Eigenschaften wirken wie in einem Slot. */
+export interface BeltCard {
   deckId: string;
   card: Card;
   characterId: string;
@@ -54,4 +61,6 @@ export interface DeckState {
   assigned: AssignedCard[];
   /** Inventarkarten aller Charaktere; neueste Karte am Ende. */
   inventory: InventoryCard[];
+  /** Gürtelkarten aller Charaktere, unbegrenzt; neueste Karte am Ende. */
+  belt: BeltCard[];
 }

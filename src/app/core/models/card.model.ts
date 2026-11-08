@@ -1,16 +1,10 @@
-import { CardSlot, StatModifier } from './equipment.model';
+import { CardProperty } from './card-property.model';
 
-export type CardType = 'basic' | 'equipment';
-
-export const CARD_TYPES: readonly CardType[] = ['basic', 'equipment'];
-
-/** Unbekannte Kartentypen (auch das frühere `combat`) gelten als `basic`. */
-export function toCardType(value: string | null | undefined): CardType {
-  return CARD_TYPES.find((type) => type === value) ?? 'basic';
-}
-
-/** Eine Karte ist genau zwei Grafiken; die App zeichnet nichts auf sie. */
-export interface BaseCard {
+/**
+ * Eine Karte ist genau zwei Grafiken; die App zeichnet nichts auf sie. Es gibt nur einen Kartentyp: Jede Karte
+ * kann in Hand, Stapel, Bank, Inventar, Gürtel oder in jedem Slot eines Charakters liegen.
+ */
+export interface Card {
   id: string;
   name: string;
   /** Vorderseite, relativ zu `public/`. */
@@ -19,18 +13,6 @@ export interface BaseCard {
   backImagePath: string;
   /** Notiz des DM aus dem Deck-XML; wird nicht angezeigt. */
   description: string;
-  cardType: CardType;
+  /** Eigenschaften aus `<property>`; sie wirken am Charakter, solange die Karte bei ihm wirkt. */
+  properties: CardProperty[];
 }
-
-export interface BasicCard extends BaseCard {
-  cardType: 'basic';
-}
-
-/** Dauerhafte Ausrüstung: verändert die Werte des Charakters, solange sie in seinem Slot liegt. */
-export interface EquipmentCard extends BaseCard {
-  cardType: 'equipment';
-  slot: CardSlot;
-  modifiers: StatModifier[];
-}
-
-export type Card = BasicCard | EquipmentCard;

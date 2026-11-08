@@ -4,39 +4,36 @@ import { EquipmentService } from './equipment.service';
 import { CardManagerService } from '../card-deck/card-manager.service';
 import { CharactersDbService } from '../characters/characters-db.service';
 import { GameLogService } from '../game-log/game-log.service';
-import { EquipmentCard } from '../../models/card.model';
+import { Card } from '../../models/card.model';
 import { CharacterInfo } from '../../models/character-info.model';
 import { PileKind } from '../../models/card-location.model';
 import { AssignedCard, CardRef, DeckInstance, DeckState } from '../../models/deck-state.model';
 import { createTestCharacter } from '../../testing/character.fixtures';
 import {
   assignedCard,
-  createEquipmentCard,
+  createPropertyCard,
   createEquipmentDeckState,
   RUNE_ARMOR,
 } from '../../testing/deck.fixtures';
 
 const RUNE_ARMOR_REF: CardRef = { deckId: 'deck-1', cardId: 'e1' };
 // Handschuh: Hand, Rüstung +1.
-const GAUNTLET: EquipmentCard = createEquipmentCard('e7', 'Handschuh', 'hand', [
-  { stat: 'maxArmor', value: 1 },
-]);
+const GAUNTLET: Card = createPropertyCard('e7', 'Handschuh', [{ name: 'Ruestung', value: 1 }]);
 
 describe('EquipmentService – any origin', () => {
   let service: EquipmentService;
   let cardManager: CardManagerService;
   let charactersDb: CharactersDbService;
   // Rüstung 4/4; Zwerg 4/4 nur mit Runenrüstung (Grundwert 2).
-  const barbarian: CharacterInfo = { ...createTestCharacter('a'), name: 'Barbar', armor: 4 };
+  const barbarian: CharacterInfo = { ...createTestCharacter('a'), name: 'Barbar', Ruestung: 4 };
   const dwarf: CharacterInfo = {
     ...createTestCharacter('b'),
     name: 'Zwerg',
-    armor: 4,
-    maxArmor: 2,
+    Ruestung: 4,
   };
 
   const armorOf: (id: string) => number = (id) =>
-    charactersDb.characters().find((character) => character.id === id)!.armor;
+    charactersDb.characters().find((character) => character.id === id)!.Ruestung;
   const logTexts: () => string[] = () =>
     TestBed.inject(GameLogService)
       .entries()
@@ -63,7 +60,7 @@ describe('EquipmentService – any origin', () => {
   });
 
   it.each<PileKind>(['drawPile', 'discardPile', 'bank'])(
-    'assigns from the %s, raises armor and logs it (4/4 → 6/6)',
+    'assigns from the %s, raises Ruestung and logs it (4 → 6)',
     (pile) => {
       restore([], pile);
       service.assignCard(RUNE_ARMOR_REF, 'a', 'body');
@@ -75,7 +72,7 @@ describe('EquipmentService – any origin', () => {
     },
   );
 
-  it('takes the card from another character, limiting the giver to the new maximum', () => {
+  it('takes the card from another character, lowering the giver by its value', () => {
     restore([assignedCard(RUNE_ARMOR, 'b', 'body')]);
     service.assignCard(RUNE_ARMOR_REF, 'a', 'body');
 
@@ -89,7 +86,7 @@ describe('EquipmentService – any origin', () => {
   });
 
   it('keeps the values when a card only changes the hand of the same character', () => {
-    charactersDb.writeCharacter({ ...barbarian, armor: 5 });
+    charactersDb.writeCharacter({ ...barbarian, Ruestung: 5 });
     restore([assignedCard(GAUNTLET, 'a', 'leftHand')]);
     service.assignCard({ deckId: 'deck-1', cardId: 'e7' }, 'a', 'rightHand');
 

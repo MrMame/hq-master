@@ -8,32 +8,25 @@ import {
   Signal,
 } from '@angular/core';
 import { ControlContainer, FormsModule, NgForm } from '@angular/forms';
-import { CharacterInfo } from '../../../core/models/character-info.model';
-import { AssignedCard } from '../../../core/models/deck-state.model';
-import { CharacterStat } from '../../utils/character-stat.util';
+import {
+  CharacterInfo,
+  FIXED_PROPERTIES,
+  FixedProperty,
+} from '../../../core/models/character-info.model';
+import { Card } from '../../../core/models/card.model';
 import { StatBonusView, statBonusView } from '../../utils/stat-bonus.util';
 
 /** Neuer Zahlenwert eines Felds. */
 export interface StatChange {
-  stat: CharacterStat;
+  stat: FixedProperty;
   value: number;
 }
 
+/** Ein Eingabefeld; der Name des festen Werts ist zugleich seine Beschriftung. */
 interface StatRow {
-  key: CharacterStat;
-  label: string;
+  key: FixedProperty;
   bonus: StatBonusView | null;
 }
-
-const STATS: readonly { key: CharacterStat; label: string }[] = [
-  { key: 'health', label: 'Leben' },
-  { key: 'maxHealth', label: 'Max. Leben' },
-  { key: 'armor', label: 'Rüstung' },
-  { key: 'maxArmor', label: 'Max. Rüstung' },
-  { key: 'attack', label: 'Angriff' },
-  { key: 'defense', label: 'Abwehr' },
-  { key: 'speed', label: 'Tempo' },
-];
 
 /**
  * Zahlenwerte des Charakter-Editors: eingebbar ist immer der Grundwert; verändert Ausrüstung ihn, stehen
@@ -50,14 +43,14 @@ const STATS: readonly { key: CharacterStat; label: string }[] = [
 export class CharacterStatsEditor {
   /** Arbeitskopie des Editors. */
   readonly character: InputSignal<CharacterInfo> = input.required<CharacterInfo>();
-  /** Karten, die beim Übernehmen am Charakter bleiben. */
-  readonly cards: InputSignal<readonly AssignedCard[]> = input<readonly AssignedCard[]>([]);
+  /** Karten, die nach dem Übernehmen beim Charakter wirken. */
+  readonly cards: InputSignal<readonly Card[]> = input<readonly Card[]>([]);
   readonly statChange: OutputEmitterRef<StatChange> = output<StatChange>();
 
   protected readonly rows: Signal<StatRow[]> = computed(() =>
-    STATS.map((stat) => ({
-      ...stat,
-      bonus: statBonusView(this.character(), this.cards(), stat.key),
+    FIXED_PROPERTIES.map((key) => ({
+      key,
+      bonus: statBonusView(this.character(), this.cards(), key),
     })),
   );
 }

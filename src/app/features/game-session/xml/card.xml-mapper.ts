@@ -1,14 +1,8 @@
+import { Card } from '../../../core/models/card.model';
 import {
-  BaseCard,
-  Card,
-  CardType,
-  EquipmentCard,
-  toCardType,
-} from '../../../core/models/card.model';
-import {
-  readEquipmentCard,
-  writeEquipmentCard,
-} from '../../../core/services/card-deck/equipment-card-xml.util';
+  readCardProperties,
+  writeCardProperties,
+} from '../../../core/services/card-deck/card-property-xml.util';
 import {
   appendElement,
   appendTextElement,
@@ -36,34 +30,24 @@ export function writeCard(parent: Element, card: Card): Element {
     name: card.name,
     image: card.imagePath,
     backImage: card.backImagePath,
-    type: card.cardType,
   });
   appendTextElement(el, 'description', card.description);
-  if (card.cardType === 'equipment') writeEquipmentCard(el, card);
+  writeCardProperties(el, card.properties);
   return el;
 }
 
 /**
- * Eine ungültige Ausrüstungskarte wird wie im Deck-Loader als einfache Karte gelesen, ebenso `combat` (Werte
- * entfallen). Fehlt `backImage`, ergänzt `readDeck` die Rückseite des Decks.
+ * Attribute `type` und `slot` älterer Spielstände sowie `<modifier>` werden ignoriert. Fehlt `backImage`, ergänzt
+ * `readDeck` die Rückseite des Decks.
  */
 export function readCard(el: Element): Card {
-  const base: BaseCard = {
-    id: readString(el, 'id'),
+  const id: string = readString(el, 'id');
+  return {
+    id,
     name: readString(el, 'name'),
     imagePath: readString(el, 'image'),
     backImagePath: readString(el, 'backImage'),
     description: textOf(firstChild(el, 'description')),
-    cardType: readCardType(el, 'type'),
+    properties: readCardProperties(el, id),
   };
-  if (base.cardType === 'equipment') {
-    const equipment: EquipmentCard | null = readEquipmentCard(el, base);
-    if (equipment) return equipment;
-  }
-  return { ...base, cardType: 'basic' };
-}
-
-/** Unbekannte Kartentypen (auch `combat`) gelten als `basic`. */
-export function readCardType(el: Element, name: string): CardType {
-  return toCardType(el.getAttribute(name));
 }

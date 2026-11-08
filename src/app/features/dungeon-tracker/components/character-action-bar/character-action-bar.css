@@ -31,7 +31,7 @@
   }
 }
 
-.character-action-bar__button--health {
+.character-action-bar__button--leben {
   background-color: var(--color-red-600);
 
   &:hover {
@@ -39,7 +39,7 @@
   }
 }
 
-.character-action-bar__button--armor {
+.character-action-bar__button--ruestung {
   background-color: var(--color-blue-600);
 
   &:hover {

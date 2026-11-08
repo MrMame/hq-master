@@ -21,7 +21,7 @@ describe('CharacterCardDraftService', () => {
   let charactersDb: CharactersDbService;
   let draft: CardDraft;
   // Rüstung 4/4, Turmschild links, Runenrüstung (+2 Rüstung) im Inventar.
-  const barbarian: CharacterInfo = { ...createTestCharacter('a'), name: 'Barbar', armor: 4 };
+  const barbarian: CharacterInfo = { ...createTestCharacter('a'), name: 'Barbar', Ruestung: 4 };
 
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [CharacterCardDraftService] });
@@ -39,6 +39,7 @@ describe('CharacterCardDraftService', () => {
     expect(service.cards()).toEqual({
       equipped: [assignedCard(TOWER_SHIELD, 'a', 'leftHand')],
       inventory: [inventoryCard(RUNE_ARMOR, 'a')],
+      belt: [],
     });
     expect(draft.equipped()).toEqual(service.cards().equipped);
   });
@@ -52,11 +53,29 @@ describe('CharacterCardDraftService', () => {
     expect(service.cards()).toEqual({
       equipped: [assignedCard(RUNE_ARMOR, 'a', 'body')],
       inventory: [inventoryCard(TOWER_SHIELD, 'a')],
+      belt: [],
     });
     expect(cardManager.state()).toBe(before);
   });
 
-  it('applies the moves in order with bonus and limits (4/4 → 6/6)', () => {
+  it('reports the change of Leben/Ruestung that the moves will cause', () => {
+    expect(service.fixedChange()).toEqual([]);
+    draft.move({ deckId: 'deck-1', cardId: 'e1' }, { kind: 'equipped', slot: 'body' });
+    expect(service.fixedChange()).toEqual(RUNE_ARMOR.properties);
+    draft.move({ deckId: 'deck-1', cardId: 'e1' }, { kind: 'inventory' });
+    expect(service.fixedChange()).toEqual([]);
+  });
+
+  it('counts slot and belt cards of the draft as active cards', () => {
+    draft.move({ deckId: 'deck-1', cardId: 'e1' }, { kind: 'belt' });
+    expect(service.cards().belt).toEqual([inventoryCard(RUNE_ARMOR, 'a')]);
+    expect(service.activeCards()).toEqual([TOWER_SHIELD, RUNE_ARMOR]);
+    service.apply();
+    expect(cardManager.state().belt).toEqual([inventoryCard(RUNE_ARMOR, 'a')]);
+    expect(charactersDb.characters()[0].Ruestung).toBe(6);
+  });
+
+  it('applies the moves in order with their values (4 → 6)', () => {
     draft.move({ deckId: 'deck-1', cardId: 'e1' }, { kind: 'equipped', slot: 'body' });
     draft.move({ deckId: 'deck-1', cardId: 'e2' }, { kind: 'discardPile' });
     service.apply();
@@ -64,6 +83,6 @@ describe('CharacterCardDraftService', () => {
     expect(cardManager.state().assigned).toEqual([assignedCard(RUNE_ARMOR, 'a', 'body')]);
     expect(cardManager.state().inventory).toEqual([]);
     expect(cardManager.state().decks[0].discardPile).toEqual([TOWER_SHIELD]);
-    expect(charactersDb.characters()[0].armor).toBe(6);
+    expect(charactersDb.characters()[0].Ruestung).toBe(6);
   });
 });

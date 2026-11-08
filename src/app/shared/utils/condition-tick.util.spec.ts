@@ -6,16 +6,16 @@ import {
   createTestCondition,
 } from '../../core/testing/condition.fixtures';
 
-const poisoned: (health?: number) => CharacterInfo = (health: number = 12): CharacterInfo => ({
+const poisoned: (Leben?: number) => CharacterInfo = (Leben: number = 12): CharacterInfo => ({
   ...createConditionedCharacter('a'),
-  health,
+  Leben,
 });
 
 describe('advanceConditions', () => {
   it('applies one tick of damage after one interval and moves lastTickAt', () => {
     const { character, events }: ConditionAdvance = advanceConditions(poisoned(), afterStart(60));
 
-    expect(character.health).toBe(11);
+    expect(character.Leben).toBe(11);
     expect(character.conditions[0].lastTickAt).toBe(afterStart(60).toISOString());
     expect(events).toEqual([
       {
@@ -32,10 +32,10 @@ describe('advanceConditions', () => {
     const start: CharacterInfo = poisoned();
     const first: ConditionAdvance = advanceConditions(start, afterStart(30));
     expect(first.character).toBe(start);
-    expect(first.character.health).toBe(12);
+    expect(first.character.Leben).toBe(12);
     expect(first.events).toEqual([]);
 
-    expect(advanceConditions(first.character, afterStart(60)).character.health).toBe(11);
+    expect(advanceConditions(first.character, afterStart(60)).character.Leben).toBe(11);
   });
 
   it('catches up all ticks of a time jump up to the end and then removes the condition', () => {
@@ -44,7 +44,7 @@ describe('advanceConditions', () => {
       afterStart(3600),
     );
 
-    expect(character.health).toBe(10);
+    expect(character.Leben).toBe(10);
     expect(character.conditions).toEqual([]);
     expect(events.filter((e) => e.type === 'damage')).toHaveLength(10);
     expect(events.at(-1)).toEqual({
@@ -61,7 +61,7 @@ describe('advanceConditions', () => {
     ]);
     const { character, events }: ConditionAdvance = advanceConditions(almost, afterStart(600));
 
-    expect(character.health).toBe(11);
+    expect(character.Leben).toBe(11);
     expect(character.conditions).toEqual([]);
     expect(events.map((e) => e.type)).toEqual(['damage', 'expired']);
   });
@@ -72,7 +72,7 @@ describe('advanceConditions', () => {
     ]);
     const { character }: ConditionAdvance = advanceConditions(endless, afterStart(3600));
 
-    expect(character.health).toBe(0);
+    expect(character.Leben).toBe(0);
     expect(character.conditions).toHaveLength(1);
     expect(character.conditions[0].lastTickAt).toBe(afterStart(3600).toISOString());
   });
@@ -91,21 +91,21 @@ describe('advanceConditions', () => {
     expect(before.character).toBe(dazed);
 
     const after: ConditionAdvance = advanceConditions(dazed, afterStart(30));
-    expect(after.character.health).toBe(12);
+    expect(after.character.Leben).toBe(12);
     expect(after.character.conditions).toEqual([]);
     expect(after.events.map((e) => e.type)).toEqual(['expired']);
   });
 
-  it('applies no damage at 0 health but still moves lastTickAt and expires', () => {
+  it('applies no damage at 0 Leben but still moves lastTickAt and expires', () => {
     const dead: ConditionAdvance = advanceConditions(poisoned(0), afterStart(120));
-    expect(dead.character.health).toBe(0);
+    expect(dead.character.Leben).toBe(0);
     expect(dead.events).toEqual([]);
     expect(dead.character.conditions[0].lastTickAt).toBe(afterStart(120).toISOString());
 
     expect(advanceConditions(poisoned(0), afterStart(600)).character.conditions).toEqual([]);
   });
 
-  it('stops damage events once the health reaches 0 during a jump', () => {
+  it('stops damage events once the Leben reaches 0 during a jump', () => {
     const { events }: ConditionAdvance = advanceConditions(poisoned(2), afterStart(300));
     expect(events.filter((e) => e.type === 'damage')).toHaveLength(2);
   });
@@ -137,7 +137,7 @@ describe('advanceConditions', () => {
     ]);
     const { character }: ConditionAdvance = advanceConditions(both, afterStart(90));
 
-    expect(character.health).toBe(11);
+    expect(character.Leben).toBe(11);
     expect(character.conditions.map((c) => c.id)).toEqual(['poison']);
   });
 });

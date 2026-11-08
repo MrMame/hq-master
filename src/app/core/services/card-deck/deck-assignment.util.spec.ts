@@ -2,6 +2,7 @@ import { DeckState } from '../../models/deck-state.model';
 import {
   assignedCard,
   BASIC_CARD,
+  SWORD_CARD,
   createDeckInstance,
   createEquipmentDeckState,
   inventoryCard,
@@ -26,14 +27,16 @@ describe('deck assignment', () => {
     expect(slotOccupant(s.assigned, 'a', 'rightHand')).toBeUndefined();
   });
 
-  it('lists the slot and inventory cards of missing owners with their deck', () => {
+  it('lists the slot, inventory and belt cards of missing owners with their deck', () => {
     const s: DeckState = {
       ...twoDeckEquipment(),
       inventory: [inventoryCard(BASIC_CARD, 'a'), inventoryCard(BASIC_CARD, 'b', 'deck-2')],
+      belt: [inventoryCard(SWORD_CARD, 'a'), inventoryCard(SWORD_CARD, 'b', 'deck-2')],
     };
     expect(orphanedCards(s, ['a'])).toEqual([
       { deckId: 'deck-2', cardId: 'e2' },
       { deckId: 'deck-2', cardId: 'b1' },
+      { deckId: 'deck-2', cardId: 'c1' },
     ]);
   });
 });

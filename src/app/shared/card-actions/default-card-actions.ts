@@ -1,5 +1,6 @@
 import { Provider } from '@angular/core';
 import { assignAction } from './assign.card-action';
+import { beltAction, draftBeltAction } from './belt.card-action';
 import { draftDiscardAction } from './draft-discard.card-action';
 import { draftEquipAction, draftStowAction } from './draft-inventory.card-action';
 import { giveToInventoryAction, stowAction } from './inventory.card-action';
@@ -22,9 +23,11 @@ export function provideDefaultCardActions(): Provider[] {
     bankAction,
     assignAction,
     giveToInventoryAction,
+    beltAction,
     stowAction,
     draftDiscardAction,
     draftStowAction,
+    draftBeltAction,
     draftEquipAction,
   );
 }
