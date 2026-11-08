@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Deck „Zwerg“: Jede Karte ist genau zwei Grafiken. `image` ist die Vorderseite, `backImage` am <deck> die
+  Rückseite aller Karten; eine <card> darf mit eigenem `backImage` davon abweichen. Pfade relativ zu public/.
+  <description> ist eine Notiz für den DM (z. B. der Regeltext als durchsuchbare Kopie); die App zeigt sie nicht an.
+  Jede <card> darf Eigenschaften haben: <property name="Leben" value="+30"/> (ganze Zahl mit optionalem Vorzeichen).
+  Der Name gilt exakt (Groß-/Kleinschreibung zählt); `Leben`, `Ruestung` und `Tempo` sind die festen Werte des
+  Charakters, jeder andere Name (z. B. „Angriff“) ist eine dynamische Eigenschaft.
+-->
+<deck id="schaetze" name="Schaetze" backImage="decks/schaetze/treasure.png">
+
+  <card id="chestOfGold" name="Goldkiste" image="decks/schaetze/chest-of-gold.png">
+    <description>Eine Kiste mit 300 Goldstücken, bewacht von einem Monster</description>
+    <property name="Gold" value="+300"/>
+  </card>
+  <card id="kleinerGoldnugget" name="Kleiner Goldnugget" image="decks/schaetze/gold.png">
+    <description>Ein kleiner Goldnugget im Wert von 20</description>
+    <property name="Gold" value="+20"/>
+  </card>
+  <card id="goblinsGold" name="Goblin Gold" image="decks/schaetze/goblins-gold.png">
+    <description>Ein Goldhaufen von 100 Gold, bewacht von zwei Goblins</description>
+    <property name="Gold" value="+100"/>
+  </card>
+  <card id="goblinsGold" name="Goblin Gold" image="decks/schaetze/goblins-gold.png">
+    <description>Ein Goldhaufen von 100 Gold, bewacht von zwei Goblins</description>
+    <property name="Gold" value="+100"/>
+  </card>
+    <card id="kleinerGoldnugget" name="Kleiner Goldnugget" image="decks/schaetze/gold.png">
+    <description>Ein kleiner Goldnugget im Wert von 20</description>
+    <property name="Gold" value="+20"/>
+  </card>
+    <card id="kleinerGoldnugget" name="Kleiner Goldnugget" image="decks/schaetze/gold.png">
+    <description>Ein kleiner Goldnugget im Wert von 20</description>
+    <property name="Gold" value="+20"/>
+  </card>
+    <card id="kleinerGoldnugget" name="Kleiner Goldnugget" image="decks/schaetze/gold.png">
+    <description>Ein kleiner Goldnugget im Wert von 20</description>
+    <property name="Gold" value="+20"/>
+  </card>
+    <card id="kleinerGoldnugget" name="Kleiner Goldnugget" image="decks/schaetze/gold.png">
+    <description>Ein kleiner Goldnugget im Wert von 20</description>
+    <property name="Gold" value="+20"/>
+  </card>
+
+</deck>
