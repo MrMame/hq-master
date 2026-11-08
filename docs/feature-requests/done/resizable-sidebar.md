@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-08  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** done (2026-11-08 21:12)  
 **Bezug:** `src/app/shared/components/collapsible-sidebar/collapsible-sidebar.ts`,
 `src/app/shared/services/collapsible-sidebar-state.service.ts`, `src/styles/components/sidebar.css`,
 `src/app/core/session-state/tool-state-keys.ts`, `docs/feature-requests/done/collapsible-sidebar.md`
@@ -37,7 +37,7 @@
 
 ## Anforderungen
 
-### 1. Ziehen am bestehenden Griff
+### 1. Ziehen am bestehenden Griff ✅ done (2026-11-08 21:12)
 
 - Der Streifen `.collapsible-sidebar__toggle` ist im ausgeklappten Zustand zugleich Ziehgriff.
 - Bedienung über Pointer-Events (`pointerdown`/`pointermove`/`pointerup`, Pointer-Capture), damit
@@ -52,7 +52,7 @@
 - Enter/Leertaste auf dem fokussierten Griff klappt weiterhin ein und aus. Eine Tastatursteuerung
   der Breite gibt es nicht (bewusst nicht gewünscht).
 
-### 2. Grenzen
+### 2. Grenzen ✅ done (2026-11-08 21:12)
 
 - Mindestbreite: **200px**. Unter 200px bleibt die Leiste bei 200px stehen; sie klappt dabei
   **nicht** automatisch ein.
@@ -63,7 +63,7 @@
 - Wird das Fenster kleiner, wird eine zu große Breite in der **Anzeige** auf die Höchstbreite
   gekürzt. Die gespeicherte Breite bleibt unverändert und gilt wieder, sobald das Fenster groß genug ist.
 
-### 3. Speichern je Feature
+### 3. Speichern je Feature ✅ done (2026-11-08 21:12)
 
 - Die gezogene Breite wird je `stateId` im localStorage gespeichert. Neuer Key in
   `TOOL_STATE_KEYS`, z. B. `sidebarWidths: 'sidebar_widths'`. Werkzeug-Zustand außerhalb der
@@ -74,14 +74,14 @@
 - Ein Codec für `Record<string, number>` wird neben den bestehenden Codecs in
   `core/session-state/` ergänzt (ungültige Einträge werden verworfen).
 
-### 4. Zusammenspiel mit Ein-/Ausklappen
+### 4. Zusammenspiel mit Ein-/Ausklappen ✅ done (2026-11-08 21:12)
 
 - Einklappen setzt die Breite nicht zurück. Beim Ausklappen erscheint die Leiste in der zuletzt
   gezogenen Breite.
 - Eingeklappt lässt sich nicht ziehen: Der Zeiger bleibt normal, ein Klick klappt nur aus.
 - Eine Funktion zum Zurücksetzen gibt es nicht (auch kein Doppelklick).
 
-### 5. Umsetzung / Struktur
+### 5. Umsetzung / Struktur ✅ done (2026-11-08 21:12)
 
 - Die Breite wird über eine Inline-Breite bzw. eine CSS-Variable an der `aside` gesetzt. Der
   Standardwert in `sidebar.css` (`width: var(--space-64)`) bleibt als Fallback erhalten.
@@ -96,17 +96,17 @@
 
 ## Akzeptanzkriterien
 
-- [ ] In allen vier Features lässt sich die ausgeklappte Leiste am Griff mit der Maus breiter und
+- [x] In allen vier Features lässt sich die ausgeklappte Leiste am Griff mit der Maus breiter und
       schmaler ziehen; die Breite folgt live.
-- [ ] Touch-Ziehen funktioniert (Pointer-Events, `touch-action: none`).
-- [ ] Ein Klick ohne Bewegung (< 4px) klappt ein; ein Ziehen klappt nicht ein.
-- [ ] Die Breite bleibt zwischen 200px und `max(200px, 50 % Fensterbreite)`.
-- [ ] Nach dem Neuladen hat jede Leiste ihre eigene zuletzt gezogene Breite; andere Features bleiben
+- [x] Touch-Ziehen funktioniert (Pointer-Events, `touch-action: none`).
+- [x] Ein Klick ohne Bewegung (< 4px) klappt ein; ein Ziehen klappt nicht ein.
+- [x] Die Breite bleibt zwischen 200px und `max(200px, 50 % Fensterbreite)`.
+- [x] Nach dem Neuladen hat jede Leiste ihre eigene zuletzt gezogene Breite; andere Features bleiben
       unberührt.
-- [ ] Nach Ein- und Ausklappen ist die Breite unverändert.
-- [ ] Eingeklappt ist kein Ziehen möglich; der Zeiger zeigt kein `col-resize`.
-- [ ] Beim Verkleinern des Fensters wird die Anzeige gekürzt, der gespeicherte Wert bleibt.
-- [ ] Während des Ziehens wird kein Text markiert.
-- [ ] Specs: Schwelle Klick/Ziehen, Begrenzung (inkl. schmales Fenster), Persistenz je `stateId`,
+- [x] Nach Ein- und Ausklappen ist die Breite unverändert.
+- [x] Eingeklappt ist kein Ziehen möglich; der Zeiger zeigt kein `col-resize`.
+- [x] Beim Verkleinern des Fensters wird die Anzeige gekürzt, der gespeicherte Wert bleibt.
+- [x] Während des Ziehens wird kein Text markiert.
+- [x] Specs: Schwelle Klick/Ziehen, Begrenzung (inkl. schmales Fenster), Persistenz je `stateId`,
       Codec mit ungültigen Werten, eingeklappt kein Ziehen. Pointer-Events werden im Spec per
       `dispatchEvent` ausgelöst. Zusätzlich eine Playwright-Probe für echtes Ziehen.

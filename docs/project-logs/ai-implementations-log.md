@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-08 21:13) - Feature: Seitenleiste am Griff in der Breite ziehen (resizable-sidebar #1–#5)
+
+- **Was wurde gemacht:** Der bestehende Griff `‹` der `CollapsibleSidebar` ist ausgeklappt zugleich Ziehgriff (Maus und Touch über Pointer-Events). Unter 4px Bewegung bleibt es ein Klick zum Einklappen; ein Ziehen klappt nicht ein. Die Breite folgt live, liegt zwischen 200px und max(200px, 50 % Fenster), wird je `stateId` beim Loslassen gespeichert und bleibt nach Ein-/Ausklappen und Reload erhalten. Wird das Fenster kleiner, wird nur die Anzeige gekürzt.
+- **Dateien geändert:** `core/session-state/tool-state-keys.ts`, `number-record-codec.util.ts` (neu, +spec), `shared/directives/sidebar-resize.ts` (neu, +spec), `shared/services/sidebar-width.service.ts` (neu, +spec), `shared/utils/sidebar-width.util.ts` (neu, +spec), `shared/components/collapsible-sidebar/collapsible-sidebar.ts`, `collapsible-sidebar-resize.spec.ts` (neu), `src/styles/components/sidebar.css`, `REQUIREMENTS.md`, `.claude/rules/architecture.md`, Feature Request nach `docs/feature-requests/done/`
+- **Wichtige Entscheidung:** Eigener `SidebarWidthService`, damit `CollapsibleSidebarStateService` nur fürs Ein- und Ausklappen zuständig bleibt. Die Direktive kennt keine Grenzen und meldet nur rohe Breiten; Begrenzen und Speichern übernimmt die Komponente. Klicks ersetzt ein `activate`-Output, damit ein Klick nach einem Ziehen verschluckt wird, Tastatur-Klicks (`detail === 0`) aber immer zählen. Ohne gezogene Breite gilt weiter die CSS-Standardbreite, auch auf schmalen Handys.
+- **Statistik:** 10 min · 2 Runden · 0 Rückfragen · 38 Tools · Dateien 9 neu / 5 geändert · 5 Fehlschläge (+1 erwartet) · Tokens 4.282.740 (Output 30.776)
+
 ### (2026-11-08 20:45) - Feature: Aktionsmenü startet zugeklappt, klappbare Bereiche im Card Manager (card-viewer-menu-and-table-sections #1–#6)
 
 - **Was wurde gemacht:** Das Aktionsmenü des Card Viewers ist bei jedem Öffnen zugeklappt und bleibt nur, solange der Viewer offen ist, wie eingestellt (nach Aktionen, Blättern, Umdrehen); es wird nicht mehr gespeichert. Hand, „Ausgerüstet“, „Inventar“, „Gürtel“ und „Spieltisch“ stehen im Card Manager in getrennten Flächen, klappen über ihre Überschrift (mit Anzahl) auf und zu, der Zustand bleibt im Browser außerhalb der Spielesession; ein Button oben rechts klappt alle Bereiche des Hauptbereichs. Die neue Seitenleisten-Gruppe „Bereiche“ springt zu einem Bereich: nur dieser klappt auf, alle anderen zu, der Hauptbereich scrollt hin und die Überschrift erhält den Fokus; leere Bereiche sind ausgegraut mit Tooltip. Ein Klick auf ein Deck in der Deckliste öffnet ebenso nur den Spieltisch und die Reihe des Decks.

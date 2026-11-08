@@ -8,6 +8,7 @@ export const TOOL_STATE_KEYS: {
   readonly dungeonBuilderRecent: 'dungeon_builder_recent';
   readonly sidebarSections: 'sidebar_sections';
   readonly collapsedSidebars: 'collapsed_sidebars';
+  readonly sidebarWidths: 'sidebar_widths';
 } = {
   dungeonBuilderLayout: 'dungeon_builder_layout',
   /** Zuletzt verwendete Türen und Möbel der Bibliothek (Katalog-IDs, neueste zuerst). */
@@ -16,6 +17,8 @@ export const TOOL_STATE_KEYS: {
   sidebarSections: 'sidebar_sections',
   /** Eingeklappte Seitenleisten (`CollapsibleSidebar`) je Feature. */
   collapsedSidebars: 'collapsed_sidebars',
+  /** Gezogene Breiten (px) der Seitenleisten (`CollapsibleSidebar`) je Feature. */
+  sidebarWidths: 'sidebar_widths',
 };
 
 export type ToolStateKey = (typeof TOOL_STATE_KEYS)[keyof typeof TOOL_STATE_KEYS];

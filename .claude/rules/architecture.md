@@ -38,6 +38,7 @@ core/
                     tool-state-keys.ts (TOOL_STATE_KEYS: Werkzeug-Zustand außerhalb der Spielesession),
                     string-list-codec.util.ts (STRING_LIST_CODEC: gespeicherte ID-Listen prüfen),
                     boolean-codec.util.ts (BOOLEAN_CODEC: gespeicherte Schalter prüfen),
+                    number-record-codec.util.ts (NUMBER_RECORD_CODEC: Zahlen je ID, ungültige Einträge verwerfen),
                     session-state-slice.ts (SessionStateSlice), session-slices.ts (SessionSliceData)
     testing/      → describe-persisted-state.ts (Vertragstest für Regel 8, nur für Specs)
   services/
@@ -197,7 +198,8 @@ features/
 
 shared/
   components/          → Feature-unabhängige UI (z. B. ConfirmationDialog, CharacterEditorDialog,
-                         CollapsibleSidebar (einklappbare `.general-sidebar`, Zustand je `stateId` = Feature gespeichert),
+                         CollapsibleSidebar (einklappbare `.general-sidebar`, Zustand je `stateId` = Feature gespeichert;
+                         ausgeklappt ist der Griff per `SidebarResize` Ziehgriff, Breite als `--sidebar-width` an der `aside`),
                          SidebarSection (auf-/zuklappbare Gruppe der Seitenleiste, `sectionId` = `<feature>.<abschnitt>`;
                          `variant="area"`: eigene Fläche und Region im Hauptbereich),
                          SidebarSectionToggleAll (alle Gruppen eines Features auf-/zuklappen, in `.general-sidebar__header`),
@@ -239,7 +241,9 @@ shared/
                          draft-discard, draft-inventory: Ablegen, Ins Inventar legen, Anlegen (Slot-Untermenü) im Entwurf),
                          default-card-actions.ts (`provideDefaultCardActions()`, registriert in app.config.ts)
   directives/          → board-pan.ts (BoardPan: Ausschnitt eines Scroll-Containers per Ziehen verschieben),
-                         repeat-on-hold.ts (RepeatOnHold: Schritt-Button wiederholt beim Gedrückthalten)
+                         repeat-on-hold.ts (RepeatOnHold: Schritt-Button wiederholt beim Gedrückthalten),
+                         sidebar-resize.ts (SidebarResize: Griff als Ziehgriff für eine Breite, unter 4px Klick → `activate`;
+                         während des Ziehens `html.sidebar-resizing`)
   models/              → confirmation-dialog-data.model.ts (Texte der Rückfrage),
                          card-action.model.ts (`CardAction` = `CardActionInfo` + `run` oder `choices` (Untermenü aus `CardChoice`), `CardActionContext`, Modus `live`/`draft`, `CardDraft` mit
                          vorgemerkten `DraftMove`s,
@@ -262,6 +266,7 @@ shared/
                          sidebar-section-state.service.ts (zugeklappte Abschnitte per persistedState mit TOOL_STATE_KEYS;
                          `expandOnly`: nur einen Abschnitt eines Bereichs offen, für Sprünge),
                          collapsible-sidebar-state.service.ts (eingeklappte Seitenleisten je Feature per persistedState mit TOOL_STATE_KEYS),
+                         sidebar-width.service.ts (gezogene Breiten der Seitenleisten je Feature per persistedState mit TOOL_STATE_KEYS),
                          round.service.ts (RoundService: „Neue Runde“ → Log `round`, +10 s, `clearMovedThisRound`; einziger
                          Rücksetzer des Rundenstands)
   utils/               → new-character.util.ts (Startwerte für neue Charaktere),
@@ -284,7 +289,8 @@ shared/
                          undo-hint-text.util.ts (Text des Rückgängig-Hinweises),
                          card-viewer-title.util.ts (Deck und Ort über der Karte, „wird abgelegt“ im Entwurf),
                          card-draft.util.ts (Entwurfsbewegungen: Ort im Entwurf, Slot-, Inventar- und Gürtelkarten laut Entwurf),
-                         reveal-section.util.ts (Abschnitt nach oben scrollen und Überschrift fokussieren, `prefersReducedMotion`)
+                         reveal-section.util.ts (Abschnitt nach oben scrollen und Überschrift fokussieren, `prefersReducedMotion`),
+                         sidebar-width.util.ts (Mindest-/Höchstbreite der Seitenleiste, Begrenzen, Zieh-Schwelle)
   testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
                          scroll-into-view.fixtures.ts (Spy für das in jsdom fehlende scrollIntoView),
                          character-editor-dialog.fixtures.ts, character-conditions-editor.fixtures.ts,

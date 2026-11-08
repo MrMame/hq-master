@@ -9,10 +9,18 @@
   flex-shrink: 0;
   align-self: stretch;
   gap: var(--space-4);
-  width: var(--space-64);
+  /* `--sidebar-width` setzt `CollapsibleSidebar` nach dem Ziehen; sonst gilt die Standardbreite. */
+  width: var(--sidebar-width, var(--space-64));
   padding: var(--space-4);
   overflow-y: auto;
   background-color: var(--color-general-sidebar);
+}
+
+/* Während des Ziehens am Griff (`SidebarResize`): Zeiger überall `col-resize`, kein Text wird markiert. */
+html.sidebar-resizing,
+html.sidebar-resizing * {
+  cursor: col-resize !important;
+  user-select: none;
 }
 
 /* Kopfzeile: Titel links, z. B. „alle Gruppen auf-/zuklappen“ rechts */
