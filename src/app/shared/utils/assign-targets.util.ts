@@ -1,10 +1,8 @@
-import { EquipmentCard } from '../../core/models/card.model';
 import { CardLocation } from '../../core/models/card-location.model';
 import { CharacterInfo } from '../../core/models/character-info.model';
 import { AssignedCard } from '../../core/models/deck-state.model';
-import { EquipmentSlot } from '../../core/models/equipment.model';
+import { EQUIPMENT_SLOTS, EquipmentSlot } from '../../core/models/equipment.model';
 import { slotOccupant } from '../../core/services/card-deck/deck-assignment.util';
-import { slotsForCard } from '../../core/services/equipment/equipment-slots.util';
 
 /** Ein Slot, in den die Karte kommen kann, mit dem Namen der Karte, die dort bisher liegt. */
 export interface SlotTarget {
@@ -13,38 +11,39 @@ export interface SlotTarget {
   replaces: string | null;
 }
 
-/** Ein Charakter, dem die Karte angelegt werden kann, mit den passenden Slots. */
+/** Ein Charakter, dem die Karte angelegt werden kann, mit seinen Slots. */
 export interface AssignTarget {
   character: CharacterInfo;
-  /** Freie Slots zuerst; nie leer. */
   slots: SlotTarget[];
 }
 
 /**
- * Wem und wohin eine Ausrüstungskarte angelegt werden kann: alle Charaktere mit den Slots der Karte, außer
- * dem Slot, in dem sie gerade liegt. Charaktere ohne möglichen Slot fehlen.
+ * Slots eines Charakters fürs Anlegen in `EQUIPMENT_SLOTS`-Reihenfolge; jede Karte passt in jeden Slot. Der Slot,
+ * in dem die Karte gerade liegt, fehlt.
  */
+export function slotTargets(
+  characterId: string,
+  location: CardLocation,
+  assigned: readonly AssignedCard[],
+): SlotTarget[] {
+  return EQUIPMENT_SLOTS.filter((slot) => !isCurrentSlot(location, characterId, slot)).map(
+    (slot) => ({ slot, replaces: slotOccupant(assigned, characterId, slot)?.card.name ?? null }),
+  );
+}
+
+/** Wem und wohin eine Karte angelegt werden kann: alle Charaktere mit ihren Slots. */
 export function assignTargets(
-  card: EquipmentCard,
   location: CardLocation,
   characters: readonly CharacterInfo[],
   assigned: readonly AssignedCard[],
 ): AssignTarget[] {
-  return characters
-    .map((character) => ({
-      character,
-      slots: slotsForCard(card.slot)
-        .filter((slot) => !isCurrentSlot(location, character.id, slot))
-        .map((slot) => ({
-          slot,
-          replaces: slotOccupant(assigned, character.id, slot)?.card.name ?? null,
-        }))
-        .sort((a, b) => Number(a.replaces !== null) - Number(b.replaces !== null)),
-    }))
-    .filter((target) => target.slots.length > 0);
+  return characters.map((character) => ({
+    character,
+    slots: slotTargets(character.id, location, assigned),
+  }));
 }
 
-/** Beschriftung eines Ziels, z. B. „Barbar“ oder „Barbar – ersetzt Turmschild“. */
+/** Beschriftung eines Ziels, z. B. „Kopf“ oder „Kopf – ersetzt Turmschild“. */
 export function replacingLabel(label: string, replaces: string | null): string {
   return replaces ? `${label} – ersetzt ${replaces}` : label;
 }

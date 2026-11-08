@@ -1,3 +1,4 @@
+import { MockInstance } from 'vitest';
 import { readCharacters, writeCharacters } from './characters.xml-mapper';
 import { CharacterInfo } from '../../../core/models/character-info.model';
 import { createTestCharacter } from '../../../core/testing/character.fixtures';
@@ -40,28 +41,33 @@ describe('characters.xml-mapper', () => {
     expect(condition.querySelector('description')?.textContent).toBe('Gift <&>');
   });
 
-  it('writes neither a type attribute nor <ability> elements', () => {
+  it('writes neither type, maxima, attack, defense nor <ability> elements', () => {
     const doc: XMLDocument = document.implementation.createDocument(null, 'root', null);
     const el: Element = writeCharacters(doc, [createTestCharacter('a')]);
     const character: Element = el.querySelector('character') as Element;
 
-    expect(character.hasAttribute('type')).toBe(false);
+    ['type', 'maxHealth', 'maxArmor', 'attack', 'defense'].forEach((attribute) =>
+      expect(character.hasAttribute(attribute)).toBe(false),
+    );
     expect(character.querySelector('ability')).toBeNull();
   });
 
   it('ignores the type and the abilities of older saves', () => {
     const [character]: CharacterInfo[] = read(
-      '<characters><character id="a" name="Alt" type="Feuer" health="4">' +
+      '<characters><character id="a" name="Alt" type="Feuer" Leben="4" Ruestung="0" Tempo="0">' +
         '<description>Notiz</description><ability>Flammenwerfer</ability><ability>Windstoß</ability>' +
         '</character></characters>',
     );
-    expect(character).toMatchObject({ id: 'a', name: 'Alt', health: 4, description: 'Notiz' });
+    expect(character).toMatchObject({ id: 'a', name: 'Alt', Leben: 4, description: 'Notiz' });
     expect(character).not.toHaveProperty('type');
     expect(character).not.toHaveProperty('abilities');
   });
 
   it('reads older saves without conditions as an empty list', () => {
-    expect(read('<characters><character id="a"/></characters>')[0].conditions).toEqual([]);
+    expect(
+      read(`<characters><character id="a" Leben="1" Ruestung="0" Tempo="0"/></characters>`)[0]
+        .conditions,
+    ).toEqual([]);
   });
 
   it('keeps the round flag in a round trip', () => {
@@ -70,32 +76,61 @@ describe('characters.xml-mapper', () => {
   });
 
   it('reads older saves without the round flag as not moved', () => {
-    expect(read('<characters><character id="a"/></characters>')[0].movedThisRound).toBe(false);
+    expect(
+      read(`<characters><character id="a" Leben="1" Ruestung="0" Tempo="0"/></characters>`)[0]
+        .movedThisRound,
+    ).toBe(false);
   });
 
-  it('keeps the maxima of health and armor in a round trip', () => {
-    const hurt: CharacterInfo = { ...createTestCharacter('a'), health: 3, maxHealth: 10, armor: 0 };
+  it('writes the fixed properties under their own names', () => {
+    const doc: XMLDocument = document.implementation.createDocument(null, 'root', null);
+    const el: Element = writeCharacters(doc, [createTestCharacter('a')]);
+    const character: Element = el.querySelector('character') as Element;
+
+    expect(['Leben', 'Ruestung', 'Tempo'].map((name) => character.getAttribute(name))).toEqual([
+      '12',
+      '2',
+      '5',
+    ]);
+    ['health', 'armor', 'speed'].forEach((name) =>
+      expect(character.hasAttribute(name)).toBe(false),
+    );
+  });
+
+  it.each<[string, string]>([
+    ['only the old names', 'health="7" armor="3" speed="5"'],
+    ['no Tempo', 'Leben="7" Ruestung="3"'],
+    ['a text in Leben', 'Leben="viel" Ruestung="3" Tempo="5"'],
+  ])('drops a character with %s and warns', (_case, values) => {
+    const warn: MockInstance<(...data: unknown[]) => void> = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+    const characters: CharacterInfo[] = read(
+      `<characters><character id="old" ${values}/><character id="b" ${'Leben="1" Ruestung="0" Tempo="0"'}/></characters>`,
+    );
+    expect(characters.map((character) => character.id)).toEqual(['b']);
+    expect(warn).toHaveBeenCalledExactlyOnceWith(expect.stringContaining('„old“'));
+    warn.mockRestore();
+  });
+
+  it('keeps Leben and Ruestung in a round trip', () => {
+    const hurt: CharacterInfo = { ...createTestCharacter('a'), Leben: 3, Ruestung: 0 };
     expect(roundTrip([hurt])).toEqual([hurt]);
   });
 
-  it('reads older saves without maxima with the current values as maxima', () => {
+  it('ignores maxima, attack and defense of older saves and raises negative values to 0', () => {
     const [character]: CharacterInfo[] = read(
-      '<characters><character id="a" health="7" armor="3"/></characters>',
+      '<characters><character id="a" Leben="9" maxHealth="5" Ruestung="-1" maxArmor="2" attack="3" defense="1" Tempo="4"/></characters>',
     );
-    expect(character).toMatchObject({ health: 7, maxHealth: 7, armor: 3, maxArmor: 3 });
-  });
-
-  // Über dem Grundmaximum ist erlaubt (Ausrüstungsbonus); begrenzt wird mit den Modifikatoren im EquipmentSyncService.
-  it('keeps current values above the base maximum and raises negative ones to 0', () => {
-    const [character]: CharacterInfo[] = read(
-      '<characters><character id="a" health="9" maxHealth="5" armor="-1" maxArmor="2"/></characters>',
-    );
-    expect(character).toMatchObject({ health: 9, maxHealth: 5, armor: 0, maxArmor: 2 });
+    expect(character).toMatchObject({ Leben: 9, Ruestung: 0 });
+    expect(Object.keys(character)).not.toContain('maxHealth');
+    expect(Object.keys(character)).not.toContain('attack');
+    expect(Object.keys(character)).not.toContain('defense');
   });
 
   it('skips unknown conditions and falls back to startedAt for a missing lastTickAt', () => {
     const [character]: CharacterInfo[] = read(
-      '<characters><character id="a">' +
+      `<characters><character id="a" Leben="1" Ruestung="0" Tempo="0">` +
         '<condition id="frozen"/>' +
         '<condition id="dazed" duration="30" startedAt="2381-01-01T11:00:00.000Z"/>' +
         '</character></characters>',

@@ -7,6 +7,7 @@ import {
   CARD_ACTIONS,
   CardAction,
   CardActionContext,
+  CardChoice,
   CardDraft,
   DraftMove,
   DraftTarget,
@@ -60,16 +61,17 @@ describe('draft card actions', () => {
       moves,
       equipped: computed(() => {
         const s: DeckState = cardManager.state();
-        return draftCards('a', s.assigned, s.inventory, moves()).equipped;
+        return draftCards('a', s, moves()).equipped;
       }),
       move: (ref: CardRef, target: DraftTarget): void =>
         moves.update((m) => withDraftMove(m, ref, target)),
     };
   });
 
-  it('offers discard and stow for an own slot card, discard and equip for an own inventory card', () => {
-    expect(offered(deck1Ref('h5'))).toEqual(['draft-discard', 'draft-stow']);
-    expect(offered(deck1Ref('h6'))).toEqual(['draft-discard', 'draft-equip']);
+  it('offers the moves for own slot, inventory and belt cards', () => {
+    expect(offered(deck1Ref('h5'))).toEqual(['draft-discard', 'draft-stow', 'draft-belt']);
+    expect(offered(deck1Ref('h6'))).toEqual(['draft-discard', 'draft-belt', 'draft-equip']);
+    expect(offered(deck1Ref('h7'))).toEqual(['draft-discard', 'draft-stow', 'draft-equip']);
     // Karten anderer Orte oder anderer Charaktere bietet der Entwurf nicht an.
     expect(offered(deck1Ref('h1'))).toEqual([]);
     expect(offered({ deckId: 'deck-2', cardId: 'h6' })).toEqual([]);
@@ -79,39 +81,51 @@ describe('draft card actions', () => {
     const before: DeckState = cardManager.state();
     await action('draft-stow').run!(context(deck1Ref('h5')));
     expect(moves()).toEqual([{ ref: deck1Ref('h5'), target: { kind: 'inventory' } }]);
-    expect(offered(deck1Ref('h5'))).toEqual(['draft-discard', 'draft-equip']);
+    expect(offered(deck1Ref('h5'))).toEqual(['draft-discard', 'draft-belt', 'draft-equip']);
+
+    await action('draft-belt').run!(context(deck1Ref('h5')));
+    expect(moves()).toEqual([{ ref: deck1Ref('h5'), target: { kind: 'belt' } }]);
 
     await action('draft-discard').run!(context(deck1Ref('h6')));
     expect(offered(deck1Ref('h6'))).toEqual([]);
     expect(cardManager.state()).toBe(before);
   });
 
-  it('equips into the free hand without asking', async () => {
-    await action('draft-equip').run!(context(deck1Ref('h6')));
-    expect(chooseDisplaced).not.toHaveBeenCalled();
-    expect(moves()).toEqual([
-      { ref: deck1Ref('h6'), target: { kind: 'equipped', slot: 'rightHand' } },
+  /** Untermenü „Anlegen“ der Karte im Entwurf. */
+  const equipChoices: (ref: CardRef) => readonly CardChoice[] = (ref) =>
+    action('draft-equip').choices!(context(ref));
+
+  it('offers all 5 slots in order, naming the card it replaces in the draft', () => {
+    expect(equipChoices(deck1Ref('h6')).map((choice) => choice.label)).toEqual([
+      'Kopf',
+      'Körper',
+      'Linke Hand – ersetzt Schild 5',
+      'Rechte Hand',
+      'Amulett',
     ]);
   });
 
-  it('asks where the previous card goes when both hands are taken, and stops on cancel', async () => {
-    cardManager.moveCard(deck1Ref('h4'), { kind: 'equipped', characterId: 'a', slot: 'rightHand' });
+  it('equips into a free slot without asking', async () => {
+    await equipChoices(deck1Ref('h6'))[0].run!();
+    expect(chooseDisplaced).not.toHaveBeenCalled();
+    expect(moves()).toEqual([{ ref: deck1Ref('h6'), target: { kind: 'equipped', slot: 'head' } }]);
+  });
+
+  it('asks where the previous card goes for a taken slot, and stops on cancel', async () => {
     chooseDisplaced.mockResolvedValueOnce(undefined);
-    await action('draft-equip').run!(context(deck1Ref('h6')));
+    await equipChoices(deck1Ref('h6'))[2].run!();
     expect(chooseDisplaced).toHaveBeenCalledWith('Schild 5', 'a');
     expect(moves()).toEqual([]);
 
     chooseDisplaced.mockResolvedValueOnce('inventory');
-    await action('draft-equip').run!(context(deck1Ref('h6')));
+    await equipChoices(deck1Ref('h6'))[2].run!();
     expect(moves()).toEqual([
       { ref: deck1Ref('h5'), target: { kind: 'inventory' } },
       { ref: deck1Ref('h6'), target: { kind: 'equipped', slot: 'leftHand' } },
     ]);
   });
 
-  it('does nothing without a draft or for a card that is no equipment', async () => {
-    await action('draft-equip').run!({ ...context(deck1Ref('h6')), draft: null });
-    await action('draft-equip').run!({ ...context(deck1Ref('b1')) });
-    expect(moves()).toEqual([]);
+  it('offers no slots without a draft', () => {
+    expect(action('draft-equip').choices!({ ...context(deck1Ref('h6')), draft: null })).toEqual([]);
   });
 });

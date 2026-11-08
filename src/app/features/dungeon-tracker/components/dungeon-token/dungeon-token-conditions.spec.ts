@@ -50,6 +50,7 @@ describe('DungeonToken – conditions', () => {
       'app-character-conditions',
       'app-character-status',
       'app-character-conditions',
+      'app-character-properties',
       'app-character-action-bar',
     ]);
     expect(conditions('selected')?.textContent).toContain('Gift');

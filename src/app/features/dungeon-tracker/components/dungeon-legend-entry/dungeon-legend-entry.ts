@@ -15,17 +15,24 @@ import { CharacterStatus } from '../character-status/character-status';
 import { CharacterActionBar } from '../character-action-bar/character-action-bar';
 import { CharacterConditions } from '../character-conditions/character-conditions';
 import { DeadMarker } from '../dead-marker/dead-marker';
+import { CharacterProperties } from '../../../../shared/components/character-properties/character-properties';
 
 /**
  * Ein Eintrag der Charakter-Legende: Bild, Name, Zustandswerte und Spielfeld-Position.
  * Ein Klick auf die Zeile schaltet die Markierung um; der markierte Eintrag zeigt die Menüleiste.
  * Ein Klick auf Leben oder Rüstung meldet die Schadensart (Schnellschaden ohne Markierung).
- * Aktive Zustände stehen in einer zweiten Zeile mit Symbol und Restdauer; bei 0 Leben liegt ein Kreuz auf dem Bild.
+ * Aktive Zustände stehen in einer zweiten Zeile mit Symbol und Restdauer, dynamische Eigenschaften darunter; bei 0 Leben liegt ein Kreuz auf dem Bild.
  */
 @Component({
   selector: 'app-dungeon-legend-entry',
   standalone: true,
-  imports: [CharacterStatus, CharacterActionBar, CharacterConditions, DeadMarker],
+  imports: [
+    CharacterStatus,
+    CharacterActionBar,
+    CharacterConditions,
+    CharacterProperties,
+    DeadMarker,
+  ],
   host: {
     '[class.legend-entry--selected]': 'selected()',
     '[class.legend-entry--moved]': 'token().character.movedThisRound',
@@ -40,7 +47,7 @@ import { DeadMarker } from '../dead-marker/dead-marker';
           [alt]="token().character.name"
           class="legend-entry__avatar"
         />
-        @if (token().character.health === 0) {
+        @if (token().character.Leben === 0) {
           <app-dead-marker data-testid="legend-dead-marker" />
         }
       </span>
@@ -64,6 +71,12 @@ import { DeadMarker } from '../dead-marker/dead-marker';
         class="legend-entry__conditions"
       />
     }
+    <!-- Dynamische Eigenschaften der wirkenden Karten als weitere Zeile, ohne solche leer -->
+    <app-character-properties
+      [character]="token().character"
+      variant="legend"
+      class="legend-entry__properties"
+    />
     @if (selected()) {
       <app-character-action-bar [character]="token().character" class="legend-entry__actions" />
     }

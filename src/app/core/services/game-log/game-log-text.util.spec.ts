@@ -58,7 +58,7 @@ describe('game-log-text.util', () => {
     expect(conditionText('damage', '', 'dazed')).toBe('Unbenannt: 0 Schaden durch Benommen');
   });
 
-  it('describes manual damage on armor and on health', () => {
+  it('describes manual damage on Ruestung and on Leben', () => {
     expect(damageText('Lyra', 3, DamageTypes.Normal)).toBe('Lyra: 3 Schaden auf Rüstung');
     expect(damageText(undefined, 2, DamageTypes.Critical)).toBe('Unbenannt: 2 Schaden auf Leben');
   });
@@ -80,6 +80,18 @@ describe('game-log-text.util', () => {
     );
     expect(inventoryRemovedText('Heiltrank', undefined, 'in die Hand')).toBe(
       'Heiltrank aus dem Inventar von Unbenannt in die Hand',
+    );
+  });
+
+  it('describes moves into and out of a belt', () => {
+    expect(inventoryAddedText('Heiltrank', 'Zwerg', 'Barbar', 'belt')).toBe(
+      'Heiltrank von Barbar in den Gürtel von Zwerg',
+    );
+    expect(inventoryRemovedText('Runenrüstung', 'Barbar', null, 'belt')).toBe(
+      'Runenrüstung von Barbar aus dem Gürtel angelegt',
+    );
+    expect(inventoryRemovedText('Heiltrank', 'Zwerg', 'in die Bank', 'belt')).toBe(
+      'Heiltrank aus dem Gürtel von Zwerg in die Bank',
     );
   });
 });

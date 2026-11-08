@@ -20,11 +20,13 @@ describe('default card actions', () => {
     assignDisabledReason: WritableSignal<string | null>;
     characters: WritableSignal<CharacterInfo[]>;
     inventoryTargets: ReturnType<typeof vi.fn>;
+    beltTargets: ReturnType<typeof vi.fn>;
     assignTo: ReturnType<typeof vi.fn>;
   } = {
     assignDisabledReason: signal<string | null>(null),
     characters: signal<CharacterInfo[]>([createTestCharacter('a')]),
     inventoryTargets: vi.fn(() => [createTestCharacter('b')]),
+    beltTargets: vi.fn(() => [createTestCharacter('b')]),
     assignTo: vi.fn(),
   };
 
@@ -54,7 +56,7 @@ describe('default card actions', () => {
     cardManager.restore(createMoveState());
   });
 
-  const give: string[] = ['assign', 'give-to-inventory'];
+  const give: string[] = ['assign', 'give-to-inventory', 'belt'];
   it.each<[string, string[]]>([
     ['h1', ['discard', 'shuffle-back', 'draw-pile-top', 'bank', ...give]],
     ['h2', ['take-into-hand', 'discard', 'bank', ...give]],
@@ -62,6 +64,7 @@ describe('default card actions', () => {
     ['h4', ['take-into-hand', 'discard', 'shuffle-back', 'draw-pile-top', ...give]],
     ['h5', ['take-into-hand', 'discard', 'shuffle-back', 'draw-pile-top', 'bank', ...give, 'stow']],
     ['h6', ['take-into-hand', 'discard', 'shuffle-back', 'draw-pile-top', 'bank', ...give]],
+    ['h7', ['take-into-hand', 'discard', 'shuffle-back', 'draw-pile-top', 'bank', ...give]],
   ])('offers for %s every move except to where it lies', (cardId, ids) => {
     expect(available(deck1Ref(cardId))).toEqual(ids);
   });
@@ -83,14 +86,26 @@ describe('default card actions', () => {
     expect(cardManager.state().hand.map((entry) => entry.card.id)).toEqual(['b1']);
   });
 
-  it('offers no assignment for cards that are no equipment, but the inventory', () => {
-    expect(available(deck1Ref('b1'))).not.toContain('assign');
+  it('offers assigning and the inventory for every card', () => {
+    expect(available(deck1Ref('b1'))).toContain('assign');
     expect(available(deck1Ref('b1'))).toContain('give-to-inventory');
   });
 
   it('hides giving to an inventory when only its owner could take the card', () => {
     assignment.inventoryTargets.mockReturnValueOnce([]);
     expect(available(deck1Ref('h6'))).not.toContain('give-to-inventory');
+  });
+
+  it('puts a card into the belt of the chosen character and hides it without other characters', async () => {
+    const [dwarf] = action('belt').choices!(context(deck1Ref('h1')));
+    expect(dwarf.label).toBe(createTestCharacter('b').name);
+    await dwarf.run!();
+    expect(findCardAt(cardManager.state(), deck1Ref('h1'))?.location).toEqual({
+      kind: 'belt',
+      characterId: 'b',
+    });
+    assignment.beltTargets.mockReturnValueOnce([]);
+    expect(available(deck1Ref('h7'))).not.toContain('belt');
   });
 
   it.each<[string, CardLocation]>([

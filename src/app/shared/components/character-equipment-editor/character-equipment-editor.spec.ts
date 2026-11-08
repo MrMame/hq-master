@@ -50,7 +50,7 @@ describe('CharacterEquipmentEditor', () => {
       Array.from(overlay.querySelectorAll('[role="menuitem"]')).map((item) =>
         item.textContent?.trim(),
       ),
-    ).toEqual(['In den Ablagestapel legen', 'Ins Inventar legen']);
+    ).toEqual(['In den Ablagestapel legen', 'In den Gürtel legen', 'Ins Inventar legen']);
   });
 
   it('shows a card discarded in the viewer as pending and its slot as free', async () => {
@@ -60,8 +60,7 @@ describe('CharacterEquipmentEditor', () => {
     expect(location(overlay)).toBe('Testdeck · wird abgelegt');
     expect(viewerAction(overlay, 'In den Ablagestapel legen')).toBeUndefined();
     expect(equipmentRows(setup.host)[1]).toBe('Körper frei');
-    expect(statBonus(setup.host, 'maxArmor')).toBeNull();
-    expect(statBonus(setup.host, 'defense')?.textContent?.trim()).toBe('+2 = 6');
+    expect(statBonus(setup.host, 'Tempo')).toBeNull();
   });
 
   it('shows all slots as free for a character without equipment', async () => {

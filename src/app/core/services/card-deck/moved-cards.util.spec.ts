@@ -25,7 +25,7 @@ describe('movedCards', () => {
     const reordered: DeckState = moveCard(before, deck1Ref('b1'), { kind: 'drawPile', top: true });
     expect(movedCards(before, reordered)).toEqual([]);
     expect(
-      movedCards(before, { ...before, decks: [], hand: [], assigned: [], inventory: [] }),
+      movedCards(before, { ...before, decks: [], hand: [], assigned: [], inventory: [], belt: [] }),
     ).toEqual([]);
   });
 

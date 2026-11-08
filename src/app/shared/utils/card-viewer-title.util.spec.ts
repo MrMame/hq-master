@@ -37,4 +37,13 @@ describe('card-viewer-title.util', () => {
     const slot: CardLocation = { kind: 'equipped', characterId: 'a', slot: 'body' };
     expect(cardViewerTitle('Monster', slot, 'Barbar', true)).toBe('Monster · wird abgelegt');
   });
+
+  it('names the belt with its owner', () => {
+    expect(cardViewerTitle('Zwerg', { kind: 'belt', characterId: 'a' }, 'Barbar', false)).toBe(
+      'Zwerg · Gürtel von Barbar',
+    );
+    expect(cardViewerTitle('Zwerg', { kind: 'belt', characterId: 'x' }, undefined, false)).toBe(
+      'Zwerg · Gürtel von Unbekannt',
+    );
+  });
 });

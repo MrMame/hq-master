@@ -44,17 +44,17 @@ describe('DeckXmlLoaderService', () => {
       expect(deck.cards.map((c: Card) => c.id)).toEqual(['c1', 'b1']);
     });
 
-    it('loads former combat cards as basic cards without values', () => {
+    it('loads cards of decks with a type without type and without old values', () => {
       const deck: DeckConfig = service.parseXml(DECK_XML);
 
-      expect(deck.defaultCardType).toBe('basic');
+      expect(Object.keys(deck)).not.toContain('defaultCardType');
       expect(deck.cards[0]).toEqual({
         id: 'c1',
         name: 'Schwert',
         imagePath: 'sword.svg',
         backImagePath: 'back.svg',
         description: 'Scharf',
-        cardType: 'basic',
+        properties: [],
       });
     });
 
@@ -62,14 +62,22 @@ describe('DeckXmlLoaderService', () => {
       const card: Card = service.parseXml(DECK_XML).cards[1];
 
       expect(card.backImagePath).toBe('torch-back.svg');
-      expect(card.cardType).toBe('basic');
+      expect(Object.keys(card)).not.toContain('cardType');
     });
 
-    it('defaults the deck type to basic', () => {
-      const deck: DeckConfig = service.parseXml('<deck><card id="x" /></deck>');
+    it('loads an old equipment card with type and slot without errors as an ordinary card', () => {
+      const card: Card = service.parseXml(
+        '<deck type="equipment"><card id="h" type="equipment" slot="head"><property name="Ruestung" value="1"/></card></deck>',
+      ).cards[0];
 
-      expect(deck.defaultCardType).toBe('basic');
-      expect(deck.cards[0].cardType).toBe('basic');
+      expect(card).toEqual({
+        id: 'h',
+        name: '',
+        imagePath: '',
+        backImagePath: '',
+        description: '',
+        properties: [{ name: 'Ruestung', value: 1 }],
+      });
     });
 
     it('falls back to empty strings and generated ids for missing attributes', () => {

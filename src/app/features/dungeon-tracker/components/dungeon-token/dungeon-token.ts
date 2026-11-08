@@ -16,6 +16,7 @@ import { DungeonPosition } from '../../models/dungeon-position.model';
 import { scrollIntoViewIfNeeded } from '../../utils/scroll-into-view.util';
 import { fieldAt } from '../../utils/grid-origin.util';
 import { CharacterStatus } from '../character-status/character-status';
+import { CharacterProperties } from '../../../../shared/components/character-properties/character-properties';
 import { CharacterActionBar } from '../character-action-bar/character-action-bar';
 import { CharacterConditions } from '../character-conditions/character-conditions';
 import { DeadMarker } from '../dead-marker/dead-marker';
@@ -29,6 +30,7 @@ import { DeadMarker } from '../dead-marker/dead-marker';
     CharacterStatus,
     CharacterActionBar,
     CharacterConditions,
+    CharacterProperties,
     DeadMarker,
   ],
   templateUrl: './dungeon-token.html',

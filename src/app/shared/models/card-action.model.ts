@@ -7,9 +7,12 @@ import { EquipmentSlot } from '../../core/models/equipment.model';
 /** `live` wirkt sofort auf die Session, `draft` nur auf den Entwurf des Charakter-Editors. */
 export type CardViewerMode = 'live' | 'draft';
 
-/** Ziel einer Karte im Entwurf: Ablagestapel ihres Decks, Inventar oder ein Slot des bearbeiteten Charakters. */
+/** Ziel einer Karte im Entwurf: Ablagestapel ihres Decks, Inventar, Gürtel oder Slot des bearbeiteten Charakters. */
 export type DraftTarget =
-  { kind: 'discardPile' } | { kind: 'inventory' } | { kind: 'equipped'; slot: EquipmentSlot };
+  | { kind: 'discardPile' }
+  | { kind: 'inventory' }
+  | { kind: 'belt' }
+  | { kind: 'equipped'; slot: EquipmentSlot };
 
 /** Eine vorgemerkte Bewegung; beim Übernehmen laufen sie in Reihenfolge. */
 export interface DraftMove {

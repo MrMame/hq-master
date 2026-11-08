@@ -7,10 +7,10 @@ describe('DungeonLegendEntry – dead', () => {
   let fixture: ComponentFixture<DungeonLegendEntry>;
   let host: HTMLElement;
 
-  const render: (health: number) => void = (health: number): void => {
+  const render: (Leben: number) => void = (Leben: number): void => {
     fixture.componentRef.setInput('token', {
       position: { characterId: 'a', col: 0, row: 0 },
-      character: { ...createTestCharacter('a'), health },
+      character: { ...createTestCharacter('a'), Leben },
     });
     fixture.detectChanges();
   };
@@ -24,14 +24,14 @@ describe('DungeonLegendEntry – dead', () => {
     host = fixture.nativeElement as HTMLElement;
   });
 
-  it('lays a cross named "Tot" over the avatar at 0 health', () => {
+  it('lays a cross named "Tot" over the avatar at 0 Leben', () => {
     render(0);
 
     expect(marker()?.getAttribute('aria-label')).toBe('Tot');
     expect(marker()?.parentElement?.querySelector('img.legend-entry__avatar')).not.toBeNull();
   });
 
-  it('shows no cross while the character has health left', () => {
+  it('shows no cross while the character has Leben left', () => {
     render(1);
 
     expect(marker()).toBeNull();

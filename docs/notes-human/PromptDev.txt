@@ -1,44 +1,17 @@
-Feature : Charakter zustände mit zeitlichem effekt
+ich möchte die karten überarbeiten 
 
-    - Zustände der Charaktere
-        Gift, Benommen, blind 
-    - Auswirkungen der Zustände
-        Schaden über Zeit
-        Zustandswechsel
-        Duaer des zustands in InGame Zeit
+- Eigenschaften, welche in der xml. datei einer karte definert sind, sollen nur durch die karte in ihrer auswirkung definiert werden. 
+d.h. wenn 30 Leben dazu, dann soll in der eigenschaft der karten etwa stehe : leben +30
+- Unbekannte oder neue Eigenschaften, die in der dec xml definiert sind und 
+die das model nicht kennt, sollen dynamisch dem character hinzugefügt werden können.
+Nur die grundeigenschaften Lebenspunkte, Rüstung und tempo sollen fest in das modell eingetragen werden.
+- die eigenschaftswerte max-leben und max-rüstung entfallen komplett und müsssen überall entfernt werden.
+- Angriff und Abwehr werden aus dem model komplett entnommen. Diese sind später dynamische Eigenschaften einer kartendefinition,
+welche erst bei anlegen dem character zur verfügung gestellt werden.
+- Dynamische Eigenschaften werden im character erst aktiv, wenn sie entweder angelegt wurden oder in den neuen Inventarplatz "gürtel"
+hinzugefügt wurden. Die Anzahl an karten, welche an den Gürtel angelegt werden können ist unbegrenzt.
+- Achte darauf, das die dynamischen karten eigenschaftsnamen, die in einer deck.xml stehen auch genau so im charcter editro übernommen werden. es gibt nur einen namen. Das soll auch für die fixen modellwerte so sein.
 
-    - Im Editorfenster sollen die Verschiedenen Zustände per Checkboxen Ein/Auschaltbar sein
-    - Zustände, die mit der InGame Zeit gekoppelt sind, sollenn zu ihren Wirkmomenten schaden automatisch
-    - Zustände können auch eine begrenzte InGame Zeit bleiben und sollen automatisch nach 
-        verstreichen dieser zeit verschwinden
+prüfe alle anforderungen genau. es handelt sich hierbei nämlich um einen grundlegenden umbau. Wichtig ist das wir uns an die architekurregeln halten, damit der impleentierungscode jederzeit leicht verständlich bleibt.
 
-    Effekt Eigenschaft:
-            Effekt-Abklingzeitpunkt-In-Runden
-            Effekt-Dauer
-            Effekt-Schaden-Pro-Sekunden
-            Effekt-Beschreibung
-
-
-
-Feature : Rundensteuerung in Dungeon Tracker eibinden
-
-    - Eine neue Eigenschaft eines Charakters soll anzeigen, ob der Charakter im Aktuellen Zeitabschnitt
-    auf dem dungeon tracker board verschoben wurde. cih möchte damit sehen, welche figr ich in der runde bereits gezogen habe.
-    Dieses Flag werde ich im weiteren Verlauf "Charakter-in-diesr-runde-bewegt" Flag nennen. Du schllägst bei der lanung aber bitte eibinden
-    passenden Namen dafür vor.
-
-    - Über ein Runden-Menü im Dungeon Tracker soll eine neue Runde ausgelöst werden können
-        -> Das Runden-Menü wird beim anklicken des zusätzlichen Runden-menü-Buttons (quick-access-button) unterhalb des "neuen Charakter" Plus buttons in der schnellleiste geöffnet.
-        Dort werden alle wichtigen Buttons für die Schnellsteuerung der Zeit zusammengefasst.
-        Einer der dortigen Buttons heisst "Neue Runde".
-        -> Neue Runde heisst
-            + +10sek InGame zeit im globalen inGameTimer
-            + "Charakter-in-diesr-runde-bewegt" Flag wird automatisch für alle Charaktere zurückgesezt
-
-    - Wenn Charaktere ihre Position innerhalb einer Runde auf dem DungeonTracker verändern,
-        soll ein "Charakter-in-diesr-runde-bewegt" Flag gesetzt werden.
-    - Ist das "Charakter-in-diesr-runde-bewegt" Flag gesetzt, soll die Gelbe Charakter-Token Umrandung
-        sich in eine andere Farbe ändern um zu verdeutlichen , das der Charakter in dieser Runde bereits bewegt wurde.
-    - Das "Charakter-in-diesr-runde-bewegt" Flag kann im Charakter Editor über eine checkbox jederzeit entfernt werden.
-    - Das "Charakter-in-diesr-runde-bewegt" Flag wird automatisch zu beginn einer neuen Runde zurückgesetzt.
-
+/interview-me  

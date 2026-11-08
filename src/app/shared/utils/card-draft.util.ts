@@ -1,5 +1,11 @@
 import { CardLocation } from '../../core/models/card-location.model';
-import { AssignedCard, CardRef, InventoryCard } from '../../core/models/deck-state.model';
+import {
+  AssignedCard,
+  BeltCard,
+  CardRef,
+  DeckState,
+  InventoryCard,
+} from '../../core/models/deck-state.model';
 import { isSameCard, isSameRef } from '../../core/services/card-deck/deck-state.util';
 import { DraftMove, DraftTarget } from '../models/card-action.model';
 
@@ -7,6 +13,7 @@ import { DraftMove, DraftTarget } from '../models/card-action.model';
 export interface DraftCards {
   equipped: AssignedCard[];
   inventory: InventoryCard[];
+  belt: BeltCard[];
 }
 
 /** Ort, den ein Entwurfsziel beim Übernehmen bedeutet. */
@@ -15,7 +22,8 @@ export function draftTargetLocation(characterId: string, target: DraftTarget): C
     case 'discardPile':
       return target;
     case 'inventory':
-      return { kind: 'inventory', characterId };
+    case 'belt':
+      return { kind: target.kind, characterId };
     case 'equipped':
       return { kind: 'equipped', characterId, slot: target.slot };
   }
@@ -47,33 +55,31 @@ export function withDraftMove(
 }
 
 /**
- * Slot- und Inventarkarten des Charakters, wie sie nach dem Übernehmen lägen; abgelegte Karten fehlen.
- * Nur Ausrüstungskarten kommen in Slots.
+ * Slot-, Inventar- und Gürtelkarten des Charakters, wie sie nach dem Übernehmen lägen; abgelegte Karten fehlen.
  */
 export function draftCards(
   characterId: string,
-  assigned: readonly AssignedCard[],
-  inventory: readonly InventoryCard[],
+  s: Pick<DeckState, 'assigned' | 'inventory' | 'belt'>,
   moves: readonly DraftMove[],
 ): DraftCards {
-  const own: InventoryCard[] = [...assigned, ...inventory].filter(
-    (entry) => entry.characterId === characterId,
-  );
-  const result: DraftCards = { equipped: [], inventory: [] };
-  own.forEach((entry) => {
-    const move: DraftMove | undefined = moves.find((m) => isSameCard(entry, m.ref));
-    const slotted: AssignedCard | undefined = assigned.find((a) => a === entry);
-    if (!move) {
-      if (slotted) result.equipped.push(slotted);
-      else result.inventory.push(entry);
-      return;
-    }
-    const { target } = move;
+  const mine: <T extends { characterId: string }>(list: readonly T[]) => T[] = (list) =>
+    list.filter((entry) => entry.characterId === characterId);
+  const result: DraftCards = { equipped: [], inventory: [], belt: [] };
+  const place: (entry: InventoryCard, target: DraftTarget) => void = (entry, target) => {
     const { deckId, card } = entry;
-    if (target.kind === 'inventory') result.inventory.push({ deckId, card, characterId });
-    if (target.kind === 'equipped' && card.cardType === 'equipment') {
-      result.equipped.push({ deckId, card, characterId, slot: target.slot });
+    if (target.kind === 'inventory' || target.kind === 'belt') {
+      result[target.kind].push({ deckId, card, characterId });
     }
-  });
+    if (target.kind === 'equipped')
+      result.equipped.push({ deckId, card, characterId, slot: target.slot });
+  };
+  const visit: (entry: InventoryCard, unmoved: () => void) => void = (entry, unmoved) => {
+    const move: DraftMove | undefined = moves.find((m) => isSameCard(entry, m.ref));
+    if (move) place(entry, move.target);
+    else unmoved();
+  };
+  mine(s.assigned).forEach((entry) => visit(entry, () => result.equipped.push(entry)));
+  mine(s.inventory).forEach((entry) => visit(entry, () => result.inventory.push(entry)));
+  mine(s.belt).forEach((entry) => visit(entry, () => result.belt.push(entry)));
   return result;
 }

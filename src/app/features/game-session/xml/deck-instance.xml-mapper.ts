@@ -7,7 +7,7 @@ import {
   readString,
   setAttributes,
 } from '../../../shared/utils/xml.util';
-import { readCard, readCardList, readCardType, writeCard, writeCardList } from './card.xml-mapper';
+import { readCard, readCardList, writeCard, writeCardList } from './card.xml-mapper';
 
 /** `<deck id name source><config …/><drawPile/><discardPile/><bank/></deck>` */
 export function writeDeckInstance(parent: Element, deck: DeckInstance): void {
@@ -45,7 +45,6 @@ export function readDeckConfig(configEl: Element | null): DeckConfig {
     id: configEl ? readString(configEl, 'id') : '',
     name: configEl ? readString(configEl, 'name') : '',
     backImagePath: configEl ? readString(configEl, 'backImage') : '',
-    defaultCardType: configEl ? readCardType(configEl, 'defaultCardType') : 'basic',
     cards: configEl ? childElements(configEl, 'card').map(readCard) : [],
   };
 }
@@ -56,7 +55,6 @@ function writeDeckConfig(parent: Element, config: DeckConfig): void {
     id: config.id,
     name: config.name,
     backImage: config.backImagePath,
-    defaultCardType: config.defaultCardType,
   });
   config.cards.forEach((card) => writeCard(configEl, card));
 }

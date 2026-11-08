@@ -14,8 +14,8 @@ function parse(xml: string): Element {
 const RUNE_ARMOR_XML: string = `
   <card id="e1" name="Runenrüstung" image="cards/e1.svg" backImage="cards/back.svg" type="equipment" slot="body">
     <description>Runenrüstung &lt;&amp;&gt;</description>
-    <modifier stat="maxArmor" value="2"/>
-    <modifier stat="speed" value="-1"/>
+    <property name="Ruestung" value="2"/>
+    <property name="Tempo" value="-1"/>
   </card>`;
 
 describe('assigned-cards.xml-mapper', () => {
@@ -35,7 +35,7 @@ describe('assigned-cards.xml-mapper', () => {
     expect(readAssignedCards(parse('<cardDeck/>'))).toEqual([]);
   });
 
-  it('drops assignments without valid slot or equipment card and reads a missing deck as empty', () => {
+  it('drops assignments without valid slot or card and reads a missing deck as empty', () => {
     const xml: string = `<cardDeck><assigned>
       <assignment characterId="a" slot="tail">
         <card id="e1" type="equipment" slot="body"/>
@@ -45,18 +45,20 @@ describe('assigned-cards.xml-mapper', () => {
       <assignment characterId="a" slot="body">${RUNE_ARMOR_XML}</assignment>
       <assignment deckId="d2" characterId="b" slot="body">${RUNE_ARMOR_XML}</assignment>
     </assigned></cardDeck>`;
-    expect(readAssignedCards(parse(xml))).toEqual([
+    expect(readAssignedCards(parse(xml)).map((entry) => entry.card.id)).toEqual(['b1', 'e1', 'e1']);
+    expect(readAssignedCards(parse(xml)).slice(1)).toEqual([
       assignedCard(RUNE_ARMOR, 'a', 'body', ''),
       assignedCard(RUNE_ARMOR, 'b', 'body', 'd2'),
     ]);
   });
 
-  it('reads an invalid equipment card as basic card', () => {
+  it('reads an old equipment card with type and slot as an ordinary card', () => {
     const deck: DeckState = readDeck(
       parse(
-        '<cardDeck><deck id="d"><bank><card id="x" type="equipment"/></bank></deck></cardDeck>',
+        '<cardDeck><deck id="d"><bank><card id="x" type="equipment" slot="head"/></bank></deck></cardDeck>',
       ),
     );
-    expect(deck.decks[0].bank[0].cardType).toBe('basic');
+    expect(Object.keys(deck.decks[0].bank[0])).not.toContain('cardType');
+    expect(Object.keys(deck.decks[0].bank[0])).not.toContain('slot');
   });
 });

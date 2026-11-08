@@ -1,5 +1,5 @@
 <fieldset class="inventory-editor">
-  <legend class="inventory-editor__caption">Inventar</legend>
+  <legend class="inventory-editor__caption">{{ texts().caption }}</legend>
   @for (entry of cards(); track entry.deckId + '/' + entry.card.id) {
     <!-- Öffnet die Karte im Card Viewer; Aktionen wirken dort erst mit „Übernehmen“. -->
     <button
@@ -12,6 +12,6 @@
       <span class="inventory-editor__name">{{ entry.card.name }}</span>
     </button>
   } @empty {
-    <span class="inventory-editor__empty">Keine Karten im Inventar</span>
+    <span class="inventory-editor__empty">{{ texts().empty }}</span>
   }
 </fieldset>

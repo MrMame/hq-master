@@ -20,16 +20,16 @@ export function applyDamage(
 
 /** Rüstung fängt den Schaden zuerst ab, der Rest geht auf die Lebenspunkte. */
 function applyNormalDamage(character: CharacterInfo, damage: number): CharacterInfo {
-  const absorbed: number = Math.min(character.armor, damage);
+  const absorbed: number = Math.min(character.Ruestung, damage);
   return {
     ...character,
-    armor: character.armor - absorbed,
-    health: Math.max(0, character.health - (damage - absorbed)),
+    Ruestung: character.Ruestung - absorbed,
+    Leben: Math.max(0, character.Leben - (damage - absorbed)),
   };
 }
 
 /** Kritischer Schaden ignoriert die Rüstung und geht direkt auf die Lebenspunkte. */
 function applyCriticalDamage(character: CharacterInfo, damage: number): CharacterInfo {
   const finalDamage: number = Math.round(damage * CRITICAL_DAMAGE_MULTIPLIER);
-  return { ...character, health: Math.max(0, character.health - finalDamage) };
+  return { ...character, Leben: Math.max(0, character.Leben - finalDamage) };
 }

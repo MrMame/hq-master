@@ -6,9 +6,9 @@ import { MockInstance, vi } from 'vitest';
 import { CardManagerService } from '../../../core/services/card-deck/card-manager.service';
 import { GameLogService } from '../../../core/services/game-log/game-log.service';
 import { DeckState } from '../../../core/models/deck-state.model';
-import { EquipmentCard } from '../../../core/models/card.model';
+import { Card } from '../../../core/models/card.model';
 import {
-  createEquipmentCard,
+  createPropertyCard,
   inventoryCard,
   RUNE_ARMOR,
   TOWER_SHIELD,
@@ -25,9 +25,7 @@ import {
   viewerAction,
 } from '../../testing/character-equipment.fixtures';
 
-const CHAIN_MAIL: EquipmentCard = createEquipmentCard('e5', 'Kettenhemd', 'body', [
-  { stat: 'maxArmor', value: 1 },
-]);
+const CHAIN_MAIL: Card = createPropertyCard('e5', 'Kettenhemd', [{ name: 'Ruestung', value: 1 }]);
 
 /** Barbar mit Turmschild links; die Runenrüstung liegt im Inventar statt am Körper. */
 function inventoryDeck(): DeckState {
@@ -54,25 +52,26 @@ describe('CharacterEditorDialog – inventory', () => {
   it('lists the inventory under the equipment; a card there gives no bonus', async () => {
     const { host }: CharacterEditorDialogSetup = await setupEquippedEditor(inventoryDeck());
     expect(inventoryNames(host)).toEqual(['Runenrüstung']);
-    expect(statBonus(host, 'maxArmor')).toBeNull();
+    expect(statBonus(host, 'Tempo')).toBeNull();
   });
 
-  it('equips from the inventory in the draft and raises armor only on apply', async () => {
+  it('equips from the inventory in the draft and raises Ruestung only on apply', async () => {
     const setup: CharacterEditorDialogSetup = await setupEquippedEditor(inventoryDeck());
-    const overlay: HTMLElement = await open(setup, 'Anlegen');
+    const overlay: HTMLElement = await open(setup, 'Anlegen›');
+    await setup.click(viewerAction(overlay, 'Körper')!);
 
     expect(overlay.querySelector('[data-testid="card-viewer-location"]')?.textContent).toContain(
       'Barbar · Körper',
     );
     expect(equipmentRows(setup.host)).toContain('Körper Runenrüstung');
     expect(setup.host.textContent).toContain('Keine Karten im Inventar');
-    expect(statBonus(setup.host, 'maxArmor')?.textContent).toContain('+2');
+    expect(statBonus(setup.host, 'Tempo')?.textContent).toContain('−1');
     expect(deck().inventory).toHaveLength(1);
 
     await (await setup.button('Übernehmen')).click();
     expect(deck().inventory).toEqual([]);
-    // 6/4 mit Grundmaximum 4: am Körper → 6 + 2 = 8 auf das Maximum 6 begrenzt.
-    expect(setup.characters()[0]).toMatchObject({ armor: 6 });
+    // Rüstung 6, am Körper → 6 + 2 = 8, ohne Obergrenze.
+    expect(setup.characters()[0]).toMatchObject({ Ruestung: 8 });
     expect(TestBed.inject(GameLogService).entries()[0].text).toBe(
       'Runenrüstung von Barbar aus dem Inventar angelegt',
     );
@@ -107,7 +106,8 @@ describe('CharacterEditorDialog – inventory', () => {
       .mockReturnValue({ afterClosed: () => of('inventory') } as never);
     const overlay: HTMLElement = await renderCardViewer();
     await setup.click(viewButton(setup.host, 'Kettenhemd'));
-    await setup.click(viewerAction(overlay, 'Anlegen')!);
+    await setup.click(viewerAction(overlay, 'Anlegen›')!);
+    await setup.click(viewerAction(overlay, 'Körper – ersetzt Runenrüstung')!);
     expect(open).toHaveBeenCalledTimes(1);
     expect(inventoryNames(setup.host)).toEqual(['Runenrüstung']);
     expect(equipmentRows(setup.host)).toContain('Körper Kettenhemd');

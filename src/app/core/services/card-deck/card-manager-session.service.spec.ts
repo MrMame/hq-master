@@ -5,7 +5,7 @@ import { DeckState } from '../../models/deck-state.model';
 import { createDeckState } from '../../testing/deck.fixtures';
 import { SESSION_KEYS } from '../../session-state/session-keys';
 
-const EMPTY: DeckState = { decks: [], hand: [], assigned: [], inventory: [] };
+const EMPTY: DeckState = { decks: [], hand: [], assigned: [], inventory: [], belt: [] };
 
 const readStored: () => DeckState = (): DeckState =>
   JSON.parse(localStorage.getItem(SESSION_KEYS.deckState) ?? 'null') as DeckState;

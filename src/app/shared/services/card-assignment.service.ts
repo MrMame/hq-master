@@ -2,7 +2,7 @@ import { computed, inject, Injectable, Signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import { Card } from '../../core/models/card.model';
-import { CardLocation } from '../../core/models/card-location.model';
+import { CardLocation, CarriedKind } from '../../core/models/card-location.model';
 import { CharacterInfo } from '../../core/models/character-info.model';
 import { AssignedCard, CardRef } from '../../core/models/deck-state.model';
 import { EquipmentSlot } from '../../core/models/equipment.model';
@@ -16,8 +16,8 @@ import { SlotOccupiedDialog } from '../components/slot-occupied-dialog/slot-occu
 import { SlotOccupiedChoice, SlotOccupiedDialogData } from '../models/slot-occupied.model';
 
 /**
- * Abläufe rund um Karten der Charaktere: Anlegen mit Rückfrage bei belegtem Slot (Inventar, Ablagestapel oder
- * Abbrechen) und mögliche Inventarziele. Geschrieben wird über den `EquipmentService`.
+ * Abläufe rund um Karten der Charaktere: Anlegen mit Rückfrage bei belegtem Slot (Gürtel, Inventar, Ablagestapel
+ * oder Abbrechen) und mögliche Inventar- und Gürtelziele. Geschrieben wird über den `EquipmentService`.
  */
 @Injectable({
   providedIn: 'root',
@@ -40,11 +40,11 @@ export class CardAssignmentService {
 
   /**
    * Legt die Karte `characterId` in `slot` an. Liegt dort eine andere Karte, wählt der DM, wohin sie kommt
-   * (Inventar, Ablagestapel oder Abbrechen). Ohne Charaktere oder für andere Karten keine Änderung.
+   * (Gürtel, Inventar, Ablagestapel oder Abbrechen). Ohne Charaktere oder unbekannte Karte keine Änderung.
    */
   async assignTo(ref: CardRef, characterId: string, slot: EquipmentSlot): Promise<void> {
     const card: Card | undefined = findCard(this.cardManager.state(), ref);
-    if (card?.cardType !== 'equipment' || this.assignDisabledReason() !== null) return;
+    if (!card || this.assignDisabledReason() !== null) return;
     const previous: AssignedCard | undefined = slotOccupant(
       this.cardManager.assigned(),
       characterId,
@@ -59,7 +59,17 @@ export class CardAssignmentService {
 
   /** Charaktere, in deren Inventar eine Karte von `location` kommen kann. */
   inventoryTargets(location: CardLocation): CharacterInfo[] {
-    const owner: string | null = location.kind === 'inventory' ? location.characterId : null;
+    return this.carriedTargets(location, 'inventory');
+  }
+
+  /** Charaktere, in deren Gürtel eine Karte von `location` kommen kann. */
+  beltTargets(location: CardLocation): CharacterInfo[] {
+    return this.carriedTargets(location, 'belt');
+  }
+
+  /** Alle Charaktere außer dem, bei dem die Karte schon an diesem Ort liegt. */
+  private carriedTargets(location: CardLocation, kind: CarriedKind): CharacterInfo[] {
+    const owner: string | null = location.kind === kind ? location.characterId : null;
     return this.characters().filter((character) => character.id !== owner);
   }
 

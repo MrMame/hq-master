@@ -11,20 +11,16 @@ import {
 const orc: CharacterInfo = {
   id: 'orc-1',
   name: 'Orc',
-  health: 42,
-  maxHealth: 50,
-  armor: 7,
-  maxArmor: 7,
-  attack: 3,
-  defense: 4,
-  speed: 5,
+  Leben: 42,
+  Ruestung: 7,
+  Tempo: 5,
   image: './img/monster-icon-Orc.png',
   description: 'Grimmig',
   conditions: [],
   movedThisRound: false,
 };
 
-const STAT_CAPTIONS: string[] = ['Leben', 'Rüstung', 'Angriff', 'Abwehr', 'Tempo'];
+const STAT_CAPTIONS: string[] = ['Leben', 'Ruestung', 'Tempo'];
 
 describe('CharacterEditorDialog', () => {
   let data: CharacterInfo;
@@ -43,8 +39,6 @@ describe('CharacterEditorDialog', () => {
     expect(STAT_CAPTIONS.map((caption) => editorField(host, caption).value)).toEqual([
       '42',
       '7',
-      '3',
-      '4',
       '5',
     ]);
     expect(editorField(host, 'Beschreibung').value).toBe('Grimmig');
@@ -77,11 +71,9 @@ describe('CharacterEditorDialog', () => {
     const edited: CharacterInfo = {
       ...orc,
       name: 'Grimgor',
-      health: 1,
-      armor: 2,
-      attack: 3,
-      defense: 4,
-      speed: 5,
+      Leben: 1,
+      Ruestung: 2,
+      Tempo: 3,
       image: CHARACTER_IMAGES[0],
       description: 'Neu im Dungeon',
     };

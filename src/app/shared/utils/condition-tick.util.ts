@@ -32,10 +32,10 @@ export function advanceConditions(character: CharacterInfo, now: Date): Conditio
     const end: number | null = conditionEnd(condition);
     const ticks: number[] = dueTicks(condition, Math.min(now.getTime(), end ?? Infinity));
     for (const tick of ticks) {
-      const before: number = current.health;
+      const before: number = current.Leben;
       current = applyDamage(current, DamageTypes.Critical, condition.damagePerTick);
-      if (current.health < before) {
-        events.push(event('damage', character, condition, tick, before - current.health));
+      if (current.Leben < before) {
+        events.push(event('damage', character, condition, tick, before - current.Leben));
       }
     }
     if (end !== null && now.getTime() >= end) {

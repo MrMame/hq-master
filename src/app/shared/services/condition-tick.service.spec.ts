@@ -30,14 +30,14 @@ describe('ConditionTickService', () => {
     TestBed.tick();
   });
 
-  it('applies due ticks to health and conditions in the session on addTime()', () => {
+  it('applies due ticks to Leben and conditions in the session on addTime()', () => {
     gameTime.addTime({ minutes: 2 });
     TestBed.tick();
 
     const [character] = charactersDb.characters();
-    expect(character.health).toBe(10);
+    expect(character.Leben).toBe(10);
     expect(character.conditions[0].lastTickAt).toBe(afterStart(120).toISOString());
-    expect(JSON.parse(localStorage.getItem('characters') ?? '[]')[0].health).toBe(10);
+    expect(JSON.parse(localStorage.getItem('characters') ?? '[]')[0].Leben).toBe(10);
   });
 
   it('logs the time step first and each tick at its own moment', () => {
@@ -62,7 +62,7 @@ describe('ConditionTickService', () => {
     gameTime.addTime({ hours: 1 });
     TestBed.tick();
 
-    expect(charactersDb.characters()[0].health).toBe(2);
+    expect(charactersDb.characters()[0].Leben).toBe(2);
     expect(charactersDb.characters()[0].conditions).toEqual([]);
     expect(logTypes().filter((type) => type === 'condition-damage')).toHaveLength(10);
     expect(gameLog.entries().at(-1)).toEqual(
@@ -102,7 +102,7 @@ describe('ConditionTickService', () => {
     gameTime.restore(TEST_CONDITION_START);
     TestBed.tick();
 
-    expect(charactersDb.characters()[0].health).toBe(11);
+    expect(charactersDb.characters()[0].Leben).toBe(11);
     expect(gameLog.entries()).toEqual([]);
   });
 

@@ -20,8 +20,8 @@ import {
 describe('EquipmentSyncService', () => {
   let cardManager: CardManagerService;
   let charactersDb: CharactersDbService;
-  // Grundmaximum Rüstung 4; mit Runenrüstung 6.
-  const owner: CharacterInfo = { ...createTestCharacter('a'), armor: 6 };
+  // Rüstung 6, davon +2 durch die Runenrüstung.
+  const owner: CharacterInfo = { ...createTestCharacter('a'), Ruestung: 6 };
 
   const deck: () => DeckState = () => cardManager.state();
   const discardPile: () => Card[] = () => deck().decks[0].discardPile;
@@ -47,8 +47,14 @@ describe('EquipmentSyncService', () => {
     expect(discardPile()).toEqual([TOWER_SHIELD]);
   });
 
-  it('keeps current values within the effective maximum', () => {
-    expect(charactersDb.characters()[0].armor).toBe(6);
+  it('keeps current values without an upper limit', () => {
+    expect(charactersDb.characters()[0].Ruestung).toBe(6);
+  });
+
+  it('turns Leben and Ruestung into whole numbers of at least 0', () => {
+    charactersDb.writeCharacter({ ...owner, Leben: 4.5, Ruestung: -2 });
+    sync();
+    expect(charactersDb.characters()[0]).toMatchObject({ Leben: 4, Ruestung: 0 });
   });
 
   it('discards the inventory cards of a removed or missing character', () => {
@@ -69,11 +75,5 @@ describe('EquipmentSyncService', () => {
     sync();
     expect(deck().assigned).toEqual([]);
     expect(discardPile()).toEqual([TOWER_SHIELD, RUNE_ARMOR]);
-  });
-
-  it('lowers armor to the base maximum when the deck of the equipment is removed', () => {
-    cardManager.removeDeck('deck-1');
-    sync();
-    expect(charactersDb.characters()[0].armor).toBe(4);
   });
 });

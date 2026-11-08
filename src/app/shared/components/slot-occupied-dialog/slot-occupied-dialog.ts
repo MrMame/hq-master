@@ -4,8 +4,8 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { SlotOccupiedChoice, SlotOccupiedDialogData } from '../../models/slot-occupied.model';
 
 /**
- * Rückfrage beim Anlegen in einen belegten Slot: Die bisherige Karte kommt ins Inventar des Charakters oder
- * in den Ablagestapel ihres Decks; „Abbrechen“ (Fokus beim Öffnen) schließt ohne Wert.
+ * Rückfrage beim Anlegen in einen belegten Slot: Die bisherige Karte kommt in den Gürtel oder ins Inventar des
+ * Charakters oder in den Ablagestapel ihres Decks; „Abbrechen“ (Fokus beim Öffnen) schließt ohne Wert.
  */
 @Component({
   selector: 'app-slot-occupied-dialog',
@@ -21,8 +21,11 @@ import { SlotOccupiedChoice, SlotOccupiedDialogData } from '../../models/slot-oc
       <button mat-button class="general-dialog__confirm" (click)="close('discardPile')">
         In den Ablagestapel
       </button>
-      <button mat-flat-button class="general-dialog__confirm" (click)="close('inventory')">
+      <button mat-button class="general-dialog__confirm" (click)="close('inventory')">
         Ins Inventar
+      </button>
+      <button mat-flat-button class="general-dialog__confirm" (click)="close('belt')">
+        In den Gürtel
       </button>
     </mat-dialog-actions>
   `,

@@ -31,7 +31,7 @@ import { DamageTypes } from '../../../../core/models/damage-types.model';
       type="button"
       aria-label="Schaden auf Leben"
       title="Schaden auf Leben"
-      class="character-action-bar__button character-action-bar__button--health"
+      class="character-action-bar__button character-action-bar__button--leben"
       (click)="onDamage(damageTypes.Critical)"
     >
       <img src="./img/hit-critical.svg" alt="" class="character-action-bar__icon" />
@@ -40,7 +40,7 @@ import { DamageTypes } from '../../../../core/models/damage-types.model';
       type="button"
       aria-label="Schaden auf Rüstung"
       title="Schaden auf Rüstung"
-      class="character-action-bar__button character-action-bar__button--armor"
+      class="character-action-bar__button character-action-bar__button--ruestung"
       (click)="onDamage(damageTypes.Normal)"
     >
       <img src="./img/hit-normal.svg" alt="" class="character-action-bar__icon" />

@@ -1,26 +1,31 @@
 <div class="character-editor__stats">
-  @for (row of rows(); track row.key) {
+  @for (field of fields(); track field.key) {
     <div class="character-editor__stat">
       <label class="character-editor__field">
-        <span class="character-editor__caption">{{ row.label }}</span>
+        <span class="character-editor__caption">{{ field.key }}</span>
         <input
           type="number"
-          min="0"
           required
           class="character-editor__input"
-          [name]="row.key"
-          [ngModel]="character()[row.key]"
-          (ngModelChange)="statChange.emit({ stat: row.key, value: $event })"
+          [class.character-editor__input--base]="field.bonus"
+          [name]="field.key"
+          [min]="field.min"
+          [ngModel]="field.value"
+          (ngModelChange)="change(field, $event)"
         />
       </label>
       <!-- Außerhalb des Labels, damit der Feldname nur die Beschriftung bleibt -->
-      @if (row.bonus; as bonus) {
+      @if (field.bonus; as bonus) {
         <span
-          class="character-editor__bonus"
-          [class.character-editor__bonus--negative]="!bonus.positive"
-          [attr.data-testid]="'stat-bonus-' + row.key"
+          class="character-editor__breakdown"
+          [attr.data-testid]="'stat-bonus-' + field.key"
           [title]="bonus.sources"
-          >{{ bonus.bonus }} = {{ bonus.effective }}</span
+          ><span
+            class="character-editor__bonus"
+            [class.character-editor__bonus--negative]="!bonus.positive"
+            >{{ bonus.bonus }}</span
+          >
+          = <span class="character-editor__effective">{{ bonus.effective }}</span></span
         >
       }
     </div>

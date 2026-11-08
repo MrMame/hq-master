@@ -13,7 +13,9 @@ export type GameLogEntryType =
   | 'equipment-assigned'
   | 'equipment-removed'
   | 'inventory-added'
-  | 'inventory-removed';
+  | 'inventory-removed'
+  | 'belt-added'
+  | 'belt-removed';
 
 export const GAME_LOG_ENTRY_TYPES: readonly GameLogEntryType[] = [
   'time',
@@ -27,6 +29,8 @@ export const GAME_LOG_ENTRY_TYPES: readonly GameLogEntryType[] = [
   'equipment-removed',
   'inventory-added',
   'inventory-removed',
+  'belt-added',
+  'belt-removed',
 ];
 
 /** Ein Ereignis der Spielesession mit der Spielzeit, zu der es eingetreten ist. */

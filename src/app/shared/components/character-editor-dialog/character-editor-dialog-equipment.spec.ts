@@ -21,7 +21,7 @@ describe('CharacterEditorDialog – equipment', () => {
       .entries()
       .map((entry) => entry.text);
 
-  it('discards the card from the viewer on apply, lowers armor to the new maximum and logs it (6/6 → 4/4)', async () => {
+  it('discards the card from the viewer on apply, lowers Ruestung by its value and logs it (6 → 4)', async () => {
     const setup: CharacterEditorDialogSetup = await setupEquippedEditor();
     const { button, characters, close } = setup;
 
@@ -32,7 +32,7 @@ describe('CharacterEditorDialog – equipment', () => {
 
     expect(deck().decks[0].discardPile).toEqual([RUNE_ARMOR]);
     expect(deck().assigned.map((entry) => entry.card.name)).toEqual(['Turmschild']);
-    expect(characters()[0]).toMatchObject({ armor: 4, maxArmor: 4, speed: 5, defense: 4 });
+    expect(characters()[0]).toMatchObject({ Ruestung: 4, Tempo: 5 });
     expect(logTexts()).toEqual(['Barbar legt Runenrüstung ab']);
     expect(close).toHaveBeenCalledWith(characters()[0]);
   });
@@ -49,16 +49,15 @@ describe('CharacterEditorDialog – equipment', () => {
     expect(characters()[0]).toEqual(EQUIPPED_BARBARIAN);
   });
 
-  it('keeps armor above the base maximum on apply while the card stays', async () => {
+  it('saves an entered Ruestung base value plus the card bonus without upper limit', async () => {
     const { host, enter, button, characters }: CharacterEditorDialogSetup =
       await setupEquippedEditor();
 
-    await enter('Rüstung', '9');
-    expect((editorField(host, 'Rüstung') as HTMLInputElement).value).toBe('9');
+    await enter('Ruestung', '9');
+    expect((editorField(host, 'Ruestung') as HTMLInputElement).value).toBe('9');
     await (await button('Übernehmen')).click();
 
-    // Grundmaximum 4 + Runenrüstung 2 = 6
-    expect(characters()[0]).toMatchObject({ armor: 6, maxArmor: 4 });
+    expect(characters()[0]).toMatchObject({ Ruestung: 11 });
     expect(logTexts()).toEqual([]);
   });
 });

@@ -1,3 +1,4 @@
+import { MockInstance } from 'vitest';
 import { CharacterInfo } from '../../models/character-info.model';
 import { CHARACTERS_CODEC, readConditions } from './characters-codec.util';
 import { createTestCharacter } from '../../testing/character.fixtures';
@@ -44,26 +45,42 @@ describe('CHARACTERS_CODEC', () => {
     expect(CHARACTERS_CODEC.decode([moved])).toEqual([moved]);
   });
 
-  it('uses the stored current values as maxima for characters of older sessions', () => {
-    const older: Partial<CharacterInfo> = createTestCharacter('a');
-    delete older.maxHealth;
-    delete older.maxArmor;
-    expect(CHARACTERS_CODEC.decode([older])).toEqual([
-      { ...createTestCharacter('a'), maxHealth: 12, maxArmor: 2 },
+  it('drops the maxima, attack and defense of older sessions', () => {
+    const older: unknown = [
+      { ...createTestCharacter('a'), maxHealth: 10, maxArmor: 4, attack: 3, defense: 4 },
+    ];
+    const [decoded]: CharacterInfo[] = CHARACTERS_CODEC.decode(older) ?? [];
+
+    expect(decoded).toEqual(createTestCharacter('a'));
+    expect(Object.keys(decoded)).not.toContain('maxHealth');
+    expect(Object.keys(decoded)).not.toContain('maxArmor');
+    expect(Object.keys(decoded)).not.toContain('attack');
+    expect(Object.keys(decoded)).not.toContain('defense');
+  });
+
+  it('keeps high current values and makes negative ones and fractions whole numbers of at least 0', () => {
+    const stored: CharacterInfo = { ...createTestCharacter('a'), Leben: 300, Ruestung: -2 };
+    expect(CHARACTERS_CODEC.decode([{ ...stored, Leben: 300.5 }])).toEqual([
+      { ...stored, Ruestung: 0 },
     ]);
   });
 
-  it('replaces invalid maxima with the current value', () => {
-    const invalid: unknown = { ...createTestCharacter('a'), maxHealth: '20', maxArmor: -1 };
-    expect(CHARACTERS_CODEC.decode([invalid])).toEqual([
-      { ...createTestCharacter('a'), maxHealth: 12, maxArmor: 2 },
-    ]);
-  });
+  it.each<[string, Record<string, unknown>]>([
+    ['only the old names', { health: 7, armor: 3, speed: 5 }],
+    ['no Tempo', { Leben: 7, Ruestung: 3 }],
+    ['a text in Leben', { Leben: '7', Ruestung: 3, Tempo: 5 }],
+    ['an infinite Ruestung', { Leben: 7, Ruestung: Infinity, Tempo: 5 }],
+  ])('drops a character with %s and warns', (_case, values) => {
+    const warn: MockInstance<(...data: unknown[]) => void> = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+    const { Leben, Ruestung, Tempo, ...rest } = createTestCharacter('old');
+    const stored: unknown[] = [{ ...rest, ...values }, createTestCharacter('b')];
 
-  // Über dem Grundmaximum ist erlaubt (Ausrüstungsbonus); begrenzt wird mit den Modifikatoren im EquipmentSyncService.
-  it('keeps stored current values above the base maximum and raises negative ones to 0', () => {
-    const above: CharacterInfo = { ...createTestCharacter('a'), health: 30, armor: -2 };
-    expect(CHARACTERS_CODEC.decode([above])).toEqual([{ ...above, armor: 0 }]);
+    expect(CHARACTERS_CODEC.decode(stored)).toEqual([createTestCharacter('b')]);
+    expect(warn).toHaveBeenCalledExactlyOnceWith(expect.stringContaining('„old“'));
+    expect([Leben, Ruestung, Tempo]).toEqual([12, 2, 5]);
+    warn.mockRestore();
   });
 
   it('drops entries that are no objects', () => {

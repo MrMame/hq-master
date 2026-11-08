@@ -26,10 +26,10 @@
   }
 }
 
-.character-status__health {
+.character-status__leben {
   color: var(--color-red-400);
 }
 
-.character-status__armor {
+.character-status__ruestung {
   color: var(--color-blue-500);
 }

@@ -1,4 +1,4 @@
-import { EquipmentCard } from '../../models/card.model';
+import { Card } from '../../models/card.model';
 import { InventoryLocation } from '../../models/card-location.model';
 import { CharacterInfo } from '../../models/character-info.model';
 import { NewGameLogEntry } from '../../models/game-log-entry.model';
@@ -70,7 +70,7 @@ describe('inventory log', () => {
 
   it('writes one entry per move and none without the characters involved', () => {
     const inventoryA: InventoryLocation = { kind: 'inventory', characterId: 'a' };
-    const base: { card: EquipmentCard; now: Date } = { card: RUNE_ARMOR, now };
+    const base: { card: Card; now: Date } = { card: RUNE_ARMOR, now };
     expect(
       texts(
         moveEntries({

@@ -64,7 +64,7 @@ describe('CharacterActionBar', () => {
     expect(toolbar().getAttribute('aria-label')).toBe('Aktionen für Goblin');
   });
 
-  it('shows edit, health damage and armor damage in this order, with titles and icons', () => {
+  it('shows edit, Leben damage and Ruestung damage in this order, with titles and icons', () => {
     const buttons: HTMLButtonElement[] = Array.from(toolbar().querySelectorAll('button'));
 
     expect(buttons.map((b) => [b.getAttribute('aria-label'), b.title])).toEqual([

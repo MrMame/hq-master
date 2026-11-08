@@ -10,7 +10,7 @@ import { CardRef, DeckState } from '../../models/deck-state.model';
 import { createTestCharacter } from '../../testing/character.fixtures';
 import {
   assignedCard,
-  createEquipmentCard,
+  createPropertyCard,
   createEquipmentDeckState,
   RUNE_ARMOR,
   TOWER_SHIELD,
@@ -23,7 +23,7 @@ describe('EquipmentService', () => {
   let cardManager: CardManagerService;
   let charactersDb: CharactersDbService;
   // Rüstung 4/4, Turmschild in der linken Hand, Runenrüstung in der Hand.
-  const barbarian: CharacterInfo = { ...createTestCharacter('a'), name: 'Barbar', armor: 4 };
+  const barbarian: CharacterInfo = { ...createTestCharacter('a'), name: 'Barbar', Ruestung: 4 };
 
   const character: () => CharacterInfo = () => charactersDb.characters()[0];
   const deck: () => DeckState = () => cardManager.state();
@@ -41,33 +41,33 @@ describe('EquipmentService', () => {
     cardManager.restore(createEquipmentDeckState('a'));
   });
 
-  it('assigns a hand card, raises armor by its bonus and logs it (4/4 → 6/6)', () => {
+  it('assigns a hand card, raises Ruestung by its value and logs it (4 → 6)', () => {
     service.assignCard(RUNE_ARMOR_REF, 'a', 'body');
 
     expect(deck().hand).toEqual([]);
     expect(service.assigned().map((entry) => entry.card)).toEqual([TOWER_SHIELD, RUNE_ARMOR]);
-    expect(character()).toEqual({ ...barbarian, armor: 6 });
+    expect(character()).toEqual({ ...barbarian, Ruestung: 6 });
     expect(logTexts()).toEqual(['Barbar erhält Runenrüstung (Körper)']);
   });
 
   it('discards the card of an occupied slot first and logs both', () => {
-    const armor: CharacterInfo = { ...barbarian, armor: 6 };
-    charactersDb.writeCharacter(armor);
+    const armored: CharacterInfo = { ...barbarian, Ruestung: 6 };
+    charactersDb.writeCharacter(armored);
     cardManager.restore({
       ...createEquipmentDeckState('a'),
       assigned: [assignedCard(RUNE_ARMOR, 'a', 'body')],
       hand: [
         {
           deckId: 'deck-1',
-          card: createEquipmentCard('e5', 'Kettenhemd', 'body', [{ stat: 'maxArmor', value: 1 }]),
+          card: createPropertyCard('e5', 'Kettenhemd', [{ name: 'Ruestung', value: 1 }]),
         },
       ],
     });
 
     service.assignCard({ deckId: 'deck-1', cardId: 'e5' }, 'a', 'body');
 
-    // 6/6 → Runenrüstung ab → 4/4 → Kettenhemd +1 → 5/5
-    expect(character().armor).toBe(5);
+    // 6 → Runenrüstung ab → 4 → Kettenhemd +1 → 5
+    expect(character().Ruestung).toBe(5);
     expect(discardPile()).toEqual([RUNE_ARMOR]);
     expect(logTexts()).toEqual([
       'Barbar legt Runenrüstung ab',
@@ -75,14 +75,21 @@ describe('EquipmentService', () => {
     ]);
   });
 
-  it('ignores an unknown character, a non-equipment or unknown card and an unfitting slot', () => {
+  it('ignores an unknown character or an unknown card', () => {
     service.assignCard(RUNE_ARMOR_REF, 'x', 'body');
-    service.assignCard({ deckId: 'deck-1', cardId: 'b1' }, 'a', 'body');
     service.assignCard({ deckId: 'deck-2', cardId: 'e1' }, 'a', 'body');
-    service.assignCard(RUNE_ARMOR_REF, 'a', 'head');
     expect(deck().hand.map((entry) => entry.card)).toEqual([RUNE_ARMOR]);
     expect(service.assigned()).toHaveLength(1);
     expect(character()).toEqual(barbarian);
     expect(logTexts()).toEqual([]);
+  });
+
+  it('puts any card into any slot, e.g. a card without properties onto the head', () => {
+    service.assignCard({ deckId: 'deck-1', cardId: 'b1' }, 'a', 'head');
+    expect(service.assigned().map((entry) => [entry.card.id, entry.slot])).toContainEqual([
+      'b1',
+      'head',
+    ]);
+    expect(character()).toEqual(barbarian);
   });
 });

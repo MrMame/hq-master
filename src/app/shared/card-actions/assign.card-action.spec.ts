@@ -45,57 +45,52 @@ describe('assign and give-to-inventory card actions – submenus', () => {
     cardManager.restore(createMoveState());
   });
 
-  it('offers the characters and then the hands, the free one first, naming the replaced card', () => {
+  it('offers the characters and then all 5 slots in order, naming the replaced card', () => {
     const characters: CardMenuEntry[] = submenu('assign', deck1Ref('h1'));
     expect(labels(characters)).toEqual(['Barbar', 'Zwerg']);
     expect(labels(characters[0].choices!())).toEqual([
-      'Rechte Hand',
+      'Kopf',
+      'Körper',
       'Linke Hand – ersetzt Schild 5',
+      'Rechte Hand',
+      'Amulett',
     ]);
     expect(labels(characters[1].choices!())).toEqual([
+      'Kopf',
+      'Körper',
       'Linke Hand',
       'Rechte Hand – ersetzt Schild 5',
+      'Amulett',
     ]);
   });
 
-  it('assigns in at most three clicks: action, character, hand', async () => {
+  it('assigns in three clicks: action, character, slot', async () => {
     const [barbarian] = submenu('assign', deck1Ref('h1'));
     await barbarian.choices!()[0].run!();
     expect(findCardAt(cardManager.state(), deck1Ref('h1'))?.location).toEqual({
       kind: 'equipped',
       characterId: 'a',
-      slot: 'rightHand',
+      slot: 'head',
     });
   });
 
-  it('offers only the other hand of the wearer for an equipped hand card', () => {
+  it('leaves out the slot the card lies in', () => {
     const characters: CardMenuEntry[] = submenu('assign', deck1Ref('h5'));
-    expect(labels(characters[0].choices!())).toEqual(['Rechte Hand']);
+    expect(labels(characters[0].choices!())).toEqual(['Kopf', 'Körper', 'Rechte Hand', 'Amulett']);
   });
 
-  it('assigns a card with a single slot directly from the character entry', async () => {
-    cardManager.restore({
-      ...createMoveState(),
-      hand: [{ deckId: 'deck-1', card: RUNE_ARMOR }],
-      assigned: [],
-    });
-    const characters: CardMenuEntry[] = submenu('assign', deck1Ref('e1'));
-    expect(characters.map((entry) => entry.choices)).toEqual([null, null]);
-    await characters[1].run!();
-    expect(cardManager.state().assigned).toEqual([assignedCard(RUNE_ARMOR, 'b', 'body')]);
-
-    expect(labels(submenu('assign', deck1Ref('e1')))).toEqual(['Barbar']);
+  it.each<[string, string]>([
+    ['the inventory', 'h6'],
+    ['the bank', 'h4'],
+  ])('offers assigning for a card from %s as well', (_case, cardId) => {
+    expect(labels(submenu('assign', deck1Ref(cardId)))).toEqual(['Barbar', 'Zwerg']);
   });
 
-  it('hides assigning when the only character already wears the card in its only slot', () => {
-    charactersDb.reset();
-    charactersDb.writeCharacter({ ...createTestCharacter('a'), name: 'Barbar' });
-    cardManager.restore({
-      ...createMoveState(),
-      assigned: [assignedCard(RUNE_ARMOR, 'a', 'body')],
-    });
-    const actions: CardAction[] = TestBed.inject(CARD_ACTIONS).filter((a) => a.id === 'assign');
-    expect(cardMenuEntries(actions, context(deck1Ref('e1')))).toEqual([]);
+  it('puts a card without slot information into any slot of the chosen character', async () => {
+    cardManager.restore({ ...createMoveState(), hand: [{ deckId: 'deck-1', card: RUNE_ARMOR }] });
+    const [, dwarf] = submenu('assign', deck1Ref('e1'));
+    await dwarf.choices!()[4].run!();
+    expect(cardManager.state().assigned).toContainEqual(assignedCard(RUNE_ARMOR, 'b', 'amulet'));
   });
 
   it('gives a card to the inventory of the chosen character, without the current owner', async () => {

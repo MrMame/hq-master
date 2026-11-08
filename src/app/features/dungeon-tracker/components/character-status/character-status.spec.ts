@@ -28,37 +28,36 @@ describe('CharacterStatus', () => {
   });
 
   it.each<[string, string, string]>([
-    ['Leben', 'character-status__health', '12/12'],
-    ['Rüstung', 'character-status__armor', '2/4'],
-  ])('shows %s as current/max with its class and title', (label, className, expected) => {
-    render(createTestCharacter('a'));
+    ['Leben', 'character-status__leben', '12'],
+    ['Rüstung', 'character-status__ruestung', '2'],
+  ])(
+    'shows %s as current value without maximum, with its class and title',
+    (label, className, expected) => {
+      render(createTestCharacter('a'));
 
-    expect(value(label).classList).toContain(className);
-    expect(value(label).title).toBe(label);
-    expect(value(label).textContent?.trim()).toBe(expected);
-  });
+      expect(value(label).classList).toContain(className);
+      expect(value(label).title).toBe(label);
+      expect(value(label).textContent?.trim()).toBe(expected);
+    },
+  );
 
-  it('shows the effective maximum including equipment and follows assignment changes', () => {
-    const cardManager: CardManagerService = TestBed.inject(CardManagerService);
-    cardManager.restore({
+  it('shows the stored value regardless of equipment', () => {
+    TestBed.inject(CardManagerService).restore({
       ...createEquipmentDeckState('a'),
       assigned: [assignedCard(RUNE_ARMOR, 'a', 'body')],
     });
-    render({ ...createTestCharacter('a'), armor: 6 });
-    expect(value('Rüstung').textContent?.trim()).toBe('6/6');
-    expect(value('Leben').textContent?.trim()).toBe('12/12');
+    render({ ...createTestCharacter('a'), Ruestung: 6 });
 
-    cardManager.discardOwnedCards([{ deckId: 'deck-1', cardId: 'e1' }]);
-    fixture.detectChanges();
-    expect(value('Rüstung').textContent?.trim()).toBe('6/4');
+    expect(value('Rüstung').textContent?.trim()).toBe('6');
+    expect(value('Leben').textContent?.trim()).toBe('12');
   });
 
   it('updates when the character input changes', () => {
     render(createTestCharacter('a'));
-    render({ ...createTestCharacter('a'), health: 5, armor: 3 });
+    render({ ...createTestCharacter('a'), Leben: 5, Ruestung: 3 });
 
-    expect(value('Leben').textContent?.trim()).toBe('5/12');
-    expect(value('Rüstung').textContent?.trim()).toBe('3/4');
+    expect(value('Leben').textContent?.trim()).toBe('5');
+    expect(value('Rüstung').textContent?.trim()).toBe('3');
   });
 
   it('shows the values without buttons by default', () => {
@@ -85,17 +84,47 @@ describe('CharacterStatus', () => {
     expect(requested).toHaveBeenCalledExactlyOnceWith(damageType);
   });
 
-  it('shows the value 0 and the maximum', () => {
-    render({ ...createTestCharacter('a'), health: 0, armor: 0 });
+  it('shows the value 0', () => {
+    render({ ...createTestCharacter('a'), Leben: 0, Ruestung: 0 });
 
-    expect(value('Leben').textContent?.trim()).toBe('0/12');
-    expect(value('Rüstung').textContent?.trim()).toBe('0/4');
+    expect(value('Leben').textContent?.trim()).toBe('0');
+    expect(value('Rüstung').textContent?.trim()).toBe('0');
   });
 
-  it('shows current/max inside the damage buttons as well', () => {
+  it('shows the current value inside the damage buttons as well', () => {
     fixture.componentRef.setInput('damageable', true);
-    render({ ...createTestCharacter('a'), health: 7, maxHealth: 10 });
+    render({ ...createTestCharacter('a'), Leben: 7 });
 
-    expect(value('Leben').textContent?.trim()).toBe('7/10');
+    expect(value('Leben').textContent?.trim()).toBe('7');
+  });
+
+  describe('with a card changing Ruestung', () => {
+    beforeEach(() => {
+      TestBed.inject(CardManagerService).restore({
+        ...createEquipmentDeckState('a'),
+        assigned: [assignedCard(RUNE_ARMOR, 'a', 'body')],
+      });
+    });
+
+    it('explains the value in the tooltip and keeps Leben plain', () => {
+      render({ ...createTestCharacter('a'), Ruestung: 6 });
+
+      expect(value('Rüstung').title).toBe('Ruestung: 4 +2 = 6 (Runenrüstung +2)');
+      expect(value('Leben').title).toBe('Leben');
+    });
+
+    it('adds the breakdown to the damage button title', () => {
+      fixture.componentRef.setInput('damageable', true);
+      render({ ...createTestCharacter('a'), Ruestung: 1 });
+      const button: (label: string) => HTMLButtonElement = (label) =>
+        (fixture.nativeElement as HTMLElement).querySelector(
+          `button[aria-label="${label}"]`,
+        ) as HTMLButtonElement;
+
+      expect(button('Schaden auf Rüstung').title).toBe(
+        'Schaden auf Rüstung – Ruestung: −1 +2 = 1 (Runenrüstung +2)',
+      );
+      expect(button('Schaden auf Leben').title).toBe('Schaden auf Leben');
+    });
   });
 });

@@ -44,13 +44,17 @@ describe('DungeonToken – status and selection', () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it('shows health and armor below the portrait, above the action bar, when selected', () => {
+  it('shows Leben and Ruestung below the portrait, above the action bar, when selected', () => {
     render(true);
 
-    expect(host.querySelector('[aria-label="Leben"]')?.textContent?.trim()).toBe('12/12');
-    expect(host.querySelector('[aria-label="Rüstung"]')?.textContent?.trim()).toBe('2/4');
+    expect(host.querySelector('[aria-label="Leben"]')?.textContent?.trim()).toBe('12');
+    expect(host.querySelector('[aria-label="Rüstung"]')?.textContent?.trim()).toBe('2');
     const parts: string[] = Array.from(token().children).map((c) => c.tagName.toLowerCase());
-    expect(parts.slice(1)).toEqual(['app-character-status', 'app-character-action-bar']);
+    expect(parts.slice(1)).toEqual([
+      'app-character-status',
+      'app-character-properties',
+      'app-character-action-bar',
+    ]);
   });
 
   it('shows only the portrait without values, action bar or highlight while not selected', () => {

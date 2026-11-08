@@ -22,17 +22,17 @@ function legendEntry(page: Page): Locator {
   return page.locator('aside app-dungeon-legend-entry');
 }
 
-/** Legende und – solange markiert – das Token zeigen dieselben Werte als `aktuell/max`. */
+/** Legende und – solange markiert – das Token zeigen dieselben aktuellen Werte. */
 async function expectValues(
   page: Page,
-  health: string,
-  armor: string,
+  Leben: string,
+  Ruestung: string,
   tokenSelected: boolean = true,
 ): Promise<void> {
   if (!tokenSelected) await expect(token(page).getByLabel('Leben', { exact: true })).toHaveCount(0);
   for (const scope of tokenSelected ? [token(page), legendEntry(page)] : [legendEntry(page)]) {
-    await expect(scope.getByLabel('Leben', { exact: true })).toHaveText(health);
-    await expect(scope.getByLabel('Rüstung', { exact: true })).toHaveText(armor);
+    await expect(scope.getByLabel('Leben', { exact: true })).toHaveText(Leben);
+    await expect(scope.getByLabel('Rüstung', { exact: true })).toHaveText(Ruestung);
   }
 }
 
@@ -57,34 +57,34 @@ for (const device of INPUT_DEVICES) {
     test('damage via the action bar at the token changes token and legend and survives a reload', async ({
       page,
     }) => {
-      await createCharacter(page, 'Ork', { health: 20, armor: 5 });
-      await expectValues(page, '20/20', '5/5', false);
+      await createCharacter(page, 'Ork', { Leben: 20, Ruestung: 5 });
+      await expectValues(page, '20', '5', false);
       await expect(token(page).getByRole('button')).toHaveCount(0);
 
       await device.press(token(page).getByRole('img', { name: 'Ork' }));
 
       await hit(page, device.press, 'Schaden auf Leben', 7);
-      await expectValues(page, '13/20', '5/5');
+      await expectValues(page, '13', '5');
 
       await hit(page, device.press, 'Schaden auf Rüstung', 7);
-      await expectValues(page, '11/20', '0/5');
+      await expectValues(page, '11', '0');
 
       await page.reload();
 
       // Die Markierung ist UI-Zustand und nach dem Reload weg.
-      await expectValues(page, '11/20', '0/5', false);
+      await expectValues(page, '11', '0', false);
     });
 
     test('a click on a legend value applies damage without selecting the token', async ({
       page,
     }) => {
-      await createCharacter(page, 'Ork', { health: 20, armor: 5 });
+      await createCharacter(page, 'Ork', { Leben: 20, Ruestung: 5 });
 
       await hit(page, device.press, 'Schaden auf Leben', 4, legendEntry(page));
-      await expectValues(page, '16/20', '5/5', false);
+      await expectValues(page, '16', '5', false);
 
       await hit(page, device.press, 'Schaden auf Rüstung', 7, legendEntry(page));
-      await expectValues(page, '14/20', '0/5', false);
+      await expectValues(page, '14', '0', false);
       await expect(token(page).getByRole('button')).toHaveCount(0);
       await expect(page.getByRole('toolbar')).toHaveCount(0);
     });

@@ -24,8 +24,8 @@ describe('EquipmentService – inventory', () => {
   let service: EquipmentService;
   let cardManager: CardManagerService;
   let charactersDb: CharactersDbService;
-  const barbarian: CharacterInfo = { ...createTestCharacter('a'), name: 'Barbar', armor: 4 };
-  const dwarf: CharacterInfo = { ...createTestCharacter('b'), name: 'Zwerg', armor: 4 };
+  const barbarian: CharacterInfo = { ...createTestCharacter('a'), name: 'Barbar', Ruestung: 4 };
+  const dwarf: CharacterInfo = { ...createTestCharacter('b'), name: 'Zwerg', Ruestung: 4 };
 
   const character: (id: string) => CharacterInfo = (id) =>
     charactersDb.characters().find((c) => c.id === id)!;
@@ -47,17 +47,17 @@ describe('EquipmentService – inventory', () => {
     cardManager.restore({ ...s, decks: [{ ...s.decks[0], drawPile: [] }] });
   });
 
-  it('follows the example of REQUIREMENTS: 4/4 → inventory 4/4 → equip 6/6 → 3 damage 3/6 → stow 3/4', () => {
+  it('follows the example of REQUIREMENTS: 4 → inventory 4 → equip 6 → 3 damage → stow 1', () => {
     service.moveCard(RUNE_ARMOR_REF, { kind: 'inventory', characterId: 'a' });
-    expect(character('a').armor).toBe(4);
+    expect(character('a').Ruestung).toBe(4);
     expect(service.inventory()).toEqual([inventoryCard(RUNE_ARMOR, 'a')]);
 
     service.assignCard(RUNE_ARMOR_REF, 'a', 'body');
-    expect(character('a').armor).toBe(6);
-    charactersDb.writeCharacter({ ...character('a'), armor: 3 });
+    expect(character('a').Ruestung).toBe(6);
+    charactersDb.writeCharacter({ ...character('a'), Ruestung: 3 });
 
     service.moveCard(RUNE_ARMOR_REF, { kind: 'inventory', characterId: 'a' });
-    expect(character('a').armor).toBe(3);
+    expect(character('a').Ruestung).toBe(1);
     expect(service.assigned()).toEqual([assignedCard(TOWER_SHIELD, 'a', 'leftHand')]);
     expect(log()).toEqual([
       ['inventory-added', 'Runenrüstung ins Inventar von Barbar'],
@@ -66,16 +66,16 @@ describe('EquipmentService – inventory', () => {
     ]);
   });
 
-  it('limits the owner to the new maximum when a slot card goes into an inventory', () => {
-    charactersDb.writeCharacter({ ...barbarian, armor: 6 });
+  it('lowers the owner by the card value when a slot card goes into an inventory', () => {
+    charactersDb.writeCharacter({ ...barbarian, Ruestung: 6 });
     cardManager.restore({
       ...deck(),
       hand: [],
       assigned: [assignedCard(RUNE_ARMOR, 'a', 'body')],
     });
     service.moveCard(RUNE_ARMOR_REF, { kind: 'inventory', characterId: 'b' });
-    expect(character('a').armor).toBe(4);
-    expect(character('b').armor).toBe(4);
+    expect(character('a').Ruestung).toBe(4);
+    expect(character('b').Ruestung).toBe(4);
     expect(log()).toEqual([['inventory-added', 'Runenrüstung von Barbar ins Inventar von Zwerg']]);
   });
 
@@ -98,8 +98,8 @@ describe('EquipmentService – inventory', () => {
   it('equips an inventory card of one character to another and names both', () => {
     cardManager.restore({ ...deck(), hand: [], inventory: [inventoryCard(RUNE_ARMOR, 'a')] });
     service.assignCard(RUNE_ARMOR_REF, 'b', 'body');
-    expect(character('b').armor).toBe(6);
-    expect(character('a').armor).toBe(4);
+    expect(character('b').Ruestung).toBe(6);
+    expect(character('a').Ruestung).toBe(4);
     expect(log()).toEqual([
       ['inventory-removed', 'Runenrüstung aus dem Inventar von Barbar an Zwerg angelegt'],
     ]);

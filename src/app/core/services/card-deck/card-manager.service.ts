@@ -11,6 +11,7 @@ import {
   DeckInstance,
   DeckState,
   HandCard,
+  BeltCard,
   InventoryCard,
 } from '../../models/deck-state.model';
 import { DECK_STATE_CODEC } from './deck-state-codec.util';
@@ -50,6 +51,8 @@ export class CardManagerService implements SessionStateSlice<DeckState> {
   public readonly assigned: Signal<AssignedCard[]> = computed(() => this.state().assigned);
   /** Inventarkarten aller Charaktere. */
   public readonly inventory: Signal<InventoryCard[]> = computed(() => this.state().inventory);
+  /** Gürtelkarten aller Charaktere. */
+  public readonly belt: Signal<BeltCard[]> = computed(() => this.state().belt);
 
   /** Lädt eine Deck-XML-Datei als neue Instanz am Ende des Tischs. */
   async addDeck(url: string): Promise<void> {

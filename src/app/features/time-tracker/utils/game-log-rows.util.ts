@@ -6,12 +6,14 @@ import { GameLogFilter, GameLogRow } from '../models/game-log-row.model';
 
 const CLOCK_ICON: string = './img/clock.svg';
 const EQUIPMENT_ICON: string = './img/equipment.svg';
-/** Ausrüstung und Inventar: nur unter „Alle“, mit Schild-Symbol. */
+/** Ausrüstung, Inventar und Gürtel: nur unter „Alle“, mit Schild-Symbol. */
 const EQUIPMENT_TYPES: readonly GameLogEntryType[] = [
   'equipment-assigned',
   'equipment-removed',
   'inventory-added',
   'inventory-removed',
+  'belt-added',
+  'belt-removed',
 ];
 
 /** Welche Eintragsarten ein Filter zeigt; Zustands-Schaden zählt zu „Zustände“ und zu „Schaden“. */

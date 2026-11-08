@@ -11,7 +11,7 @@ export interface PlacePosition {
 
 /**
  * Alle Karten am Ort `location` in Anzeigereihenfolge: Hand (alle Decks), Stapel und Bank des Decks `deckId`,
- * Slots eines Charakters (Kopf bis Amulett) oder sein Inventar.
+ * Slots eines Charakters (Kopf bis Amulett), sein Inventar oder sein Gürtel.
  */
 export function cardsAtPlace(s: DeckState, deckId: string, location: CardLocation): CardRef[] {
   switch (location.kind) {
@@ -23,7 +23,8 @@ export function cardsAtPlace(s: DeckState, deckId: string, location: CardLocatio
         .sort((a, b) => EQUIPMENT_SLOTS.indexOf(a.slot) - EQUIPMENT_SLOTS.indexOf(b.slot))
         .map(toCardRef);
     case 'inventory':
-      return s.inventory
+    case 'belt':
+      return s[location.kind]
         .filter((entry) => entry.characterId === location.characterId)
         .map(toCardRef);
     default:

@@ -1,16 +1,16 @@
 @if (groups().length > 0) {
-  <section class="inventory" aria-label="Inventar">
-    <h2 class="section-heading">Inventar</h2>
+  <section class="inventory" [attr.aria-label]="caption()">
+    <h2 class="section-heading">{{ caption() }}</h2>
     <div class="inventory__groups">
       @for (group of groups(); track group.characterId) {
-        <section class="inventory__group" [attr.aria-label]="'Inventar von ' + group.name">
+        <section class="inventory__group" [attr.aria-label]="caption() + ' von ' + group.name">
           <h3 class="inventory__owner">{{ group.name }} ({{ group.cards.length }})</h3>
           <div class="inventory__cards">
             @for (entry of group.cards; track entry.deckId + '/' + entry.card.id) {
               @let deck = decksById().get(entry.deckId);
               <app-card-display
                 class="card-strip__card"
-                data-testid="inventory-card"
+                [attr.data-testid]="kind() === 'belt' ? 'belt-card' : 'inventory-card'"
                 [card]="entry.card"
                 [origin]="deck?.name ?? null"
                 (cardClick)="view(entry)"

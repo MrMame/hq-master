@@ -34,7 +34,7 @@ export function renameDeck(s: DeckState, deckId: string, name: string): DeckStat
   return updateDeck(s, deckId, (d) => (d.name === trimmed ? d : { ...d, name: trimmed }));
 }
 
-/** Entfernt die Instanz samt ihrer Hand-, Slot- und Inventarkarten. */
+/** Entfernt die Instanz samt ihrer Hand-, Slot-, Inventar- und Gürtelkarten. */
 export function removeDeck(s: DeckState, deckId: string): DeckState {
   if (!findDeck(s, deckId)) return s;
   return {
@@ -42,6 +42,7 @@ export function removeDeck(s: DeckState, deckId: string): DeckState {
     hand: s.hand.filter((entry) => entry.deckId !== deckId),
     assigned: s.assigned.filter((entry) => entry.deckId !== deckId),
     inventory: s.inventory.filter((entry) => entry.deckId !== deckId),
+    belt: s.belt.filter((entry) => entry.deckId !== deckId),
   };
 }
 
@@ -60,7 +61,7 @@ export function shuffleDrawPile(s: DeckState, deckId: string): DeckState {
   return updateDeck(s, deckId, (d) => ({ ...d, drawPile: shuffled(d.drawPile) }));
 }
 
-/** Stapel, Ablage, Bank und Handkarten der Instanz zurück in den Nachziehstapel; Slots und Inventar bleiben. */
+/** Stapel, Ablage, Bank und Handkarten der Instanz zurück in den Nachziehstapel; Slots, Inventar und Gürtel bleiben. */
 export function resetDeck(s: DeckState, deckId: string): DeckState {
   if (!findDeck(s, deckId)) return s;
   const drawPile: Card[] = shuffled(unassignedCards(s, deckId));

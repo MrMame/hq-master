@@ -35,7 +35,6 @@ describe('deck-instance.xml-mapper', () => {
       id: '',
       name: '',
       backImagePath: '',
-      defaultCardType: 'basic',
       cards: [],
     });
     expect(deck.drawPile).toEqual([]);

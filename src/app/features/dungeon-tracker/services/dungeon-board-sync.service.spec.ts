@@ -66,7 +66,7 @@ describe('DungeonBoardService – character sync', () => {
     const before: DungeonPosition[] = service.positions();
     const write: MockInstance = vi.spyOn(TestBed.inject(StorageService), 'writeToLocalStorage');
 
-    characters.writeCharacter({ ...createTestCharacter('a'), health: 1 });
+    characters.writeCharacter({ ...createTestCharacter('a'), Leben: 1 });
     TestBed.tick();
 
     expect(service.positions()).toBe(before);

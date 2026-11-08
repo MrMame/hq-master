@@ -19,6 +19,7 @@ describe('deck.xml-mapper – card backs', () => {
       hand: [{ deckId: 'deck-1', card: OWN_BACK_CARD }],
       assigned: [],
       inventory: [inventoryCard(BASIC_CARD, 'a')],
+      belt: [],
     };
     const doc: XMLDocument = document.implementation.createDocument(null, null);
     const xml: string = new XMLSerializer().serializeToString(writeDeck(doc, state));
@@ -37,7 +38,8 @@ describe('deck.xml-mapper – card backs', () => {
     );
 
     expect(state.decks[0].drawPile[0].backImagePath).toBe(TEST_BACK);
-    expect(state.hand[0].card).toMatchObject({ backImagePath: TEST_BACK, cardType: 'basic' });
+    expect(state.hand[0].card).toMatchObject({ backImagePath: TEST_BACK });
+    expect('cardType' in state.hand[0].card).toBe(false);
     expect('attack' in state.hand[0].card).toBe(false);
     expect(state.inventory[0].card.backImagePath).toBe(TEST_BACK);
   });
