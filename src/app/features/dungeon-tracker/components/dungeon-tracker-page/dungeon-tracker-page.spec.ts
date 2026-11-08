@@ -9,7 +9,6 @@ import { clickButton } from '../../../../shared/testing/click-button';
 const createCharacter: (id: string) => CharacterInfo = (id: string): CharacterInfo => ({
   id,
   name: `Char ${id}`,
-  type: 'hero',
   health: 10,
   maxHealth: 10,
   armor: 1,
@@ -17,7 +16,6 @@ const createCharacter: (id: string) => CharacterInfo = (id: string): CharacterIn
   attack: 2,
   defense: 2,
   speed: 3,
-  abilities: [],
   image: '',
   description: '',
   conditions: [],

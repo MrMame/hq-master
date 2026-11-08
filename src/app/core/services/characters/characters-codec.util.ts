@@ -27,9 +27,18 @@ export function readConditions(stored: unknown): ActiveCondition[] {
   return Array.isArray(stored) ? stored.filter(isActiveCondition) : [];
 }
 
+/** Felder älterer Sessions, die es nicht mehr gibt: Typ und Fähigkeiten. */
+const REMOVED_FIELDS: readonly string[] = ['type', 'abilities'];
+
+function withoutRemovedFields(character: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(character).filter(([key]) => !REMOVED_FIELDS.includes(key)),
+  );
+}
+
 function readCharacter(character: Record<string, unknown>): CharacterInfo {
   const decoded: CharacterInfo = {
-    ...character,
+    ...withoutRemovedFields(character),
     conditions: readConditions(character['conditions']),
     movedThisRound: character['movedThisRound'] === true,
   } as unknown as CharacterInfo;
@@ -43,7 +52,7 @@ function readCharacter(character: Record<string, unknown>): CharacterInfo {
 /**
  * Speichert die Charaktere unverändert. Beim Laden bekommen ältere Einträge ohne `conditions` eine leere
  * Liste und ohne `movedThisRound` den Wert `false`; fehlt ein Maximum oder ist es ungültig, gilt der aktuelle Wert,
- * ein aktueller Wert darüber wird auf das Maximum gesenkt; ungültige Zustände und Einträge, die kein Objekt sind, werden verworfen; keine Liste → Startwert.
+ * ein aktueller Wert darüber wird auf das Maximum gesenkt; `type` und `abilities` werden entfernt; ungültige Zustände und Einträge, die kein Objekt sind, werden verworfen; keine Liste → Startwert.
  */
 export const CHARACTERS_CODEC: StorageCodec<CharacterInfo[]> = {
   encode: (characters: CharacterInfo[]): unknown => characters,

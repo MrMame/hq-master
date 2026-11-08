@@ -2,7 +2,7 @@
 
 <mat-dialog-content>
   <form #form="ngForm" class="character-editor__form">
-    <!-- Name und Typ -->
+    <!-- Name -->
     <label class="character-editor__field">
       <span class="character-editor__caption">Name</span>
       <input
@@ -12,20 +12,6 @@
         [ngModel]="draft().name"
         (ngModelChange)="setField('name', $event)"
       />
-    </label>
-
-    <label class="character-editor__field">
-      <span class="character-editor__caption">Typ</span>
-      <select
-        name="type"
-        class="character-editor__input"
-        [ngModel]="draft().type"
-        (ngModelChange)="setField('type', $event)"
-      >
-        @for (type of types; track type) {
-          <option [value]="type">{{ type }}</option>
-        }
-      </select>
     </label>
 
     <hr class="character-editor__divider" />
@@ -39,27 +25,8 @@
 
     <hr class="character-editor__divider" />
 
-    <!-- Fähigkeiten -->
-    <div class="character-editor__field">
-      <span class="character-editor__caption">Fähigkeiten</span>
-      <div class="character-editor__abilities">
-        @for (ability of abilities; track ability) {
-          <label class="character-editor__ability">
-            <input
-              type="checkbox"
-              [checked]="draft().abilities.includes(ability)"
-              (change)="toggleAbility(ability)"
-            />
-            {{ ability }}
-          </label>
-        }
-      </div>
-    </div>
-
-    <hr class="character-editor__divider" />
-
-    <!-- Rundenstand im Dungeon Tracker (Checkbox im Stil der Fähigkeiten); „Neue Runde“ hakt ihn aus -->
-    <label class="character-editor__ability">
+    <!-- Rundenstand im Dungeon Tracker (Checkbox in Akzentfarbe); „Neue Runde“ hakt ihn aus -->
+    <label class="character-editor__checkbox">
       <input
         #moved
         type="checkbox"

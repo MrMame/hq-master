@@ -106,17 +106,6 @@ export function editorField(host: HTMLElement, caption: string): EditorField {
   return field;
 }
 
-/** Checkbox der Fähigkeit mit dieser Beschriftung. */
-export function abilityCheckbox(host: HTMLElement, ability: string): HTMLInputElement {
-  const checkbox: HTMLInputElement | null | undefined = Array.from(
-    host.querySelectorAll('.character-editor__ability'),
-  )
-    .find((label) => label.textContent?.trim() === ability)
-    ?.querySelector('input');
-  if (!checkbox) throw new Error(`Fähigkeit "${ability}" nicht gefunden`);
-  return checkbox;
-}
-
 /** Bild-Button der Bildauswahl, gezählt ab 1 wie sein `aria-label`. */
 export function imageButton(host: HTMLElement, position: number): HTMLButtonElement {
   const button: HTMLButtonElement | null = host.querySelector(

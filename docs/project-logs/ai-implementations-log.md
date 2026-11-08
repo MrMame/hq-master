@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-08 09:20) - Feature: Typ und Fähigkeiten der Charaktere entfernen (remove-character-type-abilities #1–#5)
+
+- **Was wurde gemacht:** Charaktere haben keinen Typ (Feuer/Wasser/Erde/Luft) und keine Fähigkeiten mehr: weder im Model noch im Charakter-Editor, in der Session oder im XML-Spielstand. Der Zufallscharakter würfelt nur noch Name, Bild und Zahlenwerte. Ältere Spielstände und Browser-Sessions laden weiter; die Altfelder werden still verworfen. „In dieser Runde bewegt“ sieht unverändert aus.
+- **Dateien geändert:** `core/models/character-info.model.ts`, gelöscht: `elemental-types.model.ts`, `character-abilities.model.ts`, `core/services/characters/characters-codec.util.ts` (+spec), `characters-db.service.spec.ts`, `core/testing/character.fixtures.ts`, `features/game-session/xml/characters.xml-mapper.ts` (+spec), `dungeon-tracker-page.spec.ts`, `shared/components/character-editor-dialog/` (ts, html, css, Specs), `shared/testing/character-editor-dialog.fixtures.ts`, `shared/utils/new-character.util.ts`, `random-character.util.ts` (+specs), `damage.util.spec.ts`, `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/done/remove-character-type-abilities.md`
+- **Wichtige Entscheidung:** Der Codec entfernt die Altfelder über eine Liste `REMOVED_FIELDS`, statt den Spread durch ein vollständiges Feld-Mapping zu ersetzen, damit das bestehende Verhalten für alle anderen Felder gleich bleibt. Der XML-Mapper liest `type`/`<ability>` einfach nicht mehr. Das Akzeptanzkriterium „kein Treffer für `abilities` in `src/`“ gilt mit Ausnahme von Codec und Specs, die das Altfeld benennen müssen. Die Trennlinie zwischen Name und Zahlenwerten bleibt. Probe, Lint, 1575 Tests (Lines 99,62 % / Branches 97,95 %), Build und e2e (32) grün.
+- **Statistik:** 8 min · 1 Runden · 1 Rückfragen · 45 Tools · Dateien 1 neu / 22 geändert · 3 Fehlschläge (+1 erwartet) · Tokens 5.111.964 (Output 21.755)
+
 ### (2026-11-08 08:32) - Feature: Card Viewer zeigt die Karte so groß wie möglich (card-viewer-max-size #1–#6)
 
 - **Was wurde gemacht:** Die Karte im Card Viewer füllt das Fenster bis auf eine Bedienleiste und einen schmalen Rand (16 px), immer im Format 63 : 88 und auch über die Grafikauflösung hinaus. Alle Bedienelemente (Deck/Ort, ‹ Stelle ›, „Umdrehen“, „Aktionen“, ×) stehen in einer Leiste über der Karte. „Aktionen“ klappt das Menü über der Karte auf und zu, ohne dass die Karte springt; nach einer Aktion bleibt es offen. Der Zustand bleibt im Browser für alle Einsatzorte erhalten, ohne gespeicherten Wert ist das Menü zugeklappt. Ein Klick auf den Rand schließt den Viewer wie bisher.

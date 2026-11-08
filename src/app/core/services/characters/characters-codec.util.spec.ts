@@ -28,6 +28,17 @@ describe('CHARACTERS_CODEC', () => {
     expect(CHARACTERS_CODEC.decode([older])).toEqual([createTestCharacter('a')]);
   });
 
+  it('drops the type and the abilities of older sessions', () => {
+    const older: unknown = [
+      { ...createTestCharacter('a'), type: 'Feuer', abilities: ['Erdbeben'] },
+    ];
+    const [decoded]: CharacterInfo[] = CHARACTERS_CODEC.decode(older) ?? [];
+
+    expect(decoded).toEqual(createTestCharacter('a'));
+    expect(Object.keys(decoded)).not.toContain('type');
+    expect(Object.keys(decoded)).not.toContain('abilities');
+  });
+
   it('keeps a stored round flag', () => {
     const moved: CharacterInfo = { ...createTestCharacter('a'), movedThisRound: true };
     expect(CHARACTERS_CODEC.decode([moved])).toEqual([moved]);

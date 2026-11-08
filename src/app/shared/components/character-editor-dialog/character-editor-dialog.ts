@@ -4,8 +4,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
 import { CharacterInfo } from '../../../core/models/character-info.model';
-import { ElementalTypes } from '../../../core/models/elemental-types.model';
-import { CharacterAbilities } from '../../../core/models/character-abilities.model';
 import { CHARACTER_IMAGES } from '../../../core/models/character-images.model';
 import { createNewCharacter } from '../../utils/new-character.util';
 import { createRandomCharacter } from '../../utils/random-character.util';
@@ -78,8 +76,6 @@ export class CharacterEditorDialog {
   private readonly cardDraft: CardDraft = this.cardDraftService.start(this.draft().id);
   /** Slot- und Inventarkarten, wie sie nach dem Übernehmen lägen. */
   protected readonly draftCards: Signal<DraftCards> = this.cardDraftService.cards;
-  protected readonly types: string[] = Object.values(ElementalTypes);
-  protected readonly abilities: string[] = Object.values(CharacterAbilities);
   protected readonly images: string[] = CHARACTER_IMAGES;
 
   setField<K extends keyof CharacterInfo>(key: K, value: CharacterInfo[K]): void {
@@ -93,16 +89,6 @@ export class CharacterEditorDialog {
 
   viewCard(ref: CardRef): void {
     this.cardViewer.open(ref, { mode: 'draft', draft: this.cardDraft });
-  }
-
-  toggleAbility(ability: string): void {
-    const abilities: string[] = this.draft().abilities;
-    this.setField(
-      'abilities',
-      abilities.includes(ability)
-        ? abilities.filter((a) => a !== ability)
-        : [...abilities, ability],
-    );
   }
 
   /** Nur im Neu-Modus: überschreibt die Arbeitskopie ohne Rückfrage, die ID bleibt. */
