@@ -2,7 +2,7 @@
 
 **Datum:** 2026-11-08  
 **Priorität:** Mittel  
-**Status:** offen  
+**Status:** done (2026-11-08 08:32)  
 **Bezug:** `src/app/shared/components/card-viewer-panel/`, `src/app/shared/components/card-viewer/`,
 `src/app/shared/components/card-action-menu/`, `src/app/core/session-state/tool-state-keys.ts`, `REQUIREMENTS.md`
 (Abschnitt 5, Card Viewer), `docs/feature-requests/done/card-image-only.md` (Kartengrafik, „Umdrehen“)
@@ -27,7 +27,7 @@ immer im Format 63 : 88. Bedienelemente nehmen ihr so wenig Platz wie möglich.
 
 ## Anforderungen
 
-### 1. Karte füllt den verfügbaren Platz
+### 1. Karte füllt den verfügbaren Platz ✅ done (2026-11-08 08:32)
 
 - Die Karte ist so groß, wie es das Fenster abzüglich der Bedienleiste (Punkt 2) und eines schmalen Rands (Punkt 4)
   zulässt; das Format 63 : 88 bleibt immer erhalten (begrenzt wird durch Höhe oder Breite, je nachdem, was zuerst
@@ -36,7 +36,7 @@ immer im Format 63 : 88. Bedienelemente nehmen ihr so wenig Platz wie möglich.
 - Die Karte wird auch über die Pixelgröße der Grafik hinaus vergrößert (z. B. auf großen Monitoren).
 - Bei Größenänderung des Fensters oder Drehen des Geräts passt sich die Karte sofort an.
 
-### 2. Eine Bedienleiste über der Karte
+### 2. Eine Bedienleiste über der Karte ✅ done (2026-11-08 08:32)
 
 - Alle Bedienelemente stehen in einer Leiste über der Karte: Deck und Ort (z. B. „Zwerg · Hand“), ‹ Stelle am Ort
   (z. B. „3 / 12“) ›, „Umdrehen“, „Aktionen“, „Schließen“ (×).
@@ -45,7 +45,7 @@ immer im Format 63 : 88. Bedienelemente nehmen ihr so wenig Platz wie möglich.
 - Auf schmalen Bildschirmen darf die Leiste in zwei Zeilen umbrechen; es gibt keinen waagerechten Scroll.
 - Neben, unter oder auf der Karte stehen keine weiteren Bedienelemente.
 
-### 3. Einklappbares Aktionsmenü
+### 3. Einklappbares Aktionsmenü ✅ done (2026-11-08 08:32)
 
 - Das Aktionsmenü ist ein- und ausklappbar über den Button „Aktionen“ in der Leiste (`aria-expanded`).
 - Aufgeklappt liegt es als Fläche **über** der Karte (oben rechts, unter dem Button); die Karte behält ihre Größe und
@@ -55,12 +55,12 @@ immer im Format 63 : 88. Bedienelemente nehmen ihr so wenig Platz wie möglich.
   ändert sich nur über den Button „Aktionen“.
 - Ein Klick auf die Karte löst weiterhin nichts aus (klappt das Menü auch nicht zu).
 
-### 4. Schmaler Rand zum Schließen
+### 4. Schmaler Rand zum Schließen ✅ done (2026-11-08 08:32)
 
 - Rund um Leiste und Karte bleibt ein schmaler Rand (ca. 16 px) zum Fensterrand frei. Ein Klick auf den abgedunkelten
   Hintergrund schließt den Viewer wie bisher; ebenso „Schließen“ und Escape.
 
-### 5. Ein-/Ausklapp-Zustand bleibt im Browser erhalten
+### 5. Ein-/Ausklapp-Zustand bleibt im Browser erhalten ✅ done (2026-11-08 08:32)
 
 - Ob das Aktionsmenü ein- oder ausgeklappt ist, bleibt beim Schließen und Öffnen des Viewers, beim Wechsel des
   Features und nach dem Neuladen erhalten (wie der Ein-/Ausklapp-Zustand der Seitenleiste).
@@ -69,7 +69,7 @@ immer im Format 63 : 88. Bedienelemente nehmen ihr so wenig Platz wie möglich.
 - Ohne gespeicherten Zustand ist das Menü **zugeklappt**.
 - Er gilt für alle Einsatzorte des Viewers gleich (Card Manager, Dungeon Tracker, Charakter-Editor im Entwurf).
 
-### 6. Tests und Dokumentation
+### 6. Tests und Dokumentation ✅ done (2026-11-08 08:32)
 
 - Specs: Leiste mit allen Elementen (mit/ohne Pfeile), Menü auf-/zuklappen per Button inkl. `aria-expanded`,
   Startzustand zugeklappt, Zustand bleibt nach Schließen/Öffnen und aus dem Storage erhalten (`describePersistedState`),
@@ -94,11 +94,11 @@ immer im Format 63 : 88. Bedienelemente nehmen ihr so wenig Platz wie möglich.
 
 ## Akzeptanzkriterien
 
-- [ ] Die Karte füllt auf PC, Tablet (quer/hoch) und Handy den Platz bis auf Leiste und schmalen Rand, im Format 63 : 88.
-- [ ] Deck/Ort, Pfeile mit Stelle, „Umdrehen“, „Aktionen“ und × stehen in einer Leiste über der Karte.
-- [ ] „Aktionen“ klappt das Menü über der Karte auf und zu; die Karte ändert dabei ihre Größe nicht.
-- [ ] Ohne gespeicherten Zustand ist das Menü zugeklappt; der Zustand bleibt nach Schließen, Featurewechsel und
+- [x] Die Karte füllt auf PC, Tablet (quer/hoch) und Handy den Platz bis auf Leiste und schmalen Rand, im Format 63 : 88.
+- [x] Deck/Ort, Pfeile mit Stelle, „Umdrehen“, „Aktionen“ und × stehen in einer Leiste über der Karte.
+- [x] „Aktionen“ klappt das Menü über der Karte auf und zu; die Karte ändert dabei ihre Größe nicht.
+- [x] Ohne gespeicherten Zustand ist das Menü zugeklappt; der Zustand bleibt nach Schließen, Featurewechsel und
       Neuladen erhalten und gehört nicht zur Spielesession.
-- [ ] Nach einer Aktion bleibt das Menü offen.
-- [ ] Klick auf den Rand/Hintergrund, × und Escape schließen den Viewer.
-- [ ] Unit-Tests, Probe, E2E-Smoke und Coverage-Schwellen sind grün; `REQUIREMENTS.md` ist angepasst.
+- [x] Nach einer Aktion bleibt das Menü offen.
+- [x] Klick auf den Rand/Hintergrund, × und Escape schließen den Viewer.
+- [x] Unit-Tests, Probe, E2E-Smoke und Coverage-Schwellen sind grün; `REQUIREMENTS.md` ist angepasst.

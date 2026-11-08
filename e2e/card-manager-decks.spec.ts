@@ -31,6 +31,8 @@ test('keeps cards drawn from two decks in the hand and discards one via the card
 
   await hand.getByTestId('hand-card').first().click();
   await expect(location).toHaveText('Zwerg · Hand');
+  // Das Aktionsmenü ist ohne gespeicherten Zustand zugeklappt.
+  await viewer.getByRole('button', { name: 'Aktionen' }).click();
   await viewer.getByRole('menuitem', { name: 'In den Ablagestapel legen' }).click();
   // Der Viewer bleibt am Ort und zeigt die nachrückende Handkarte; „Rückgängig“ wird angeboten.
   await expect(location).toHaveText('Zwerg (2) · Hand');

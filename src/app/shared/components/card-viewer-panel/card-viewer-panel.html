@@ -1,4 +1,5 @@
 @let viewed = context();
+<!-- Leere Flächen um Leiste und Karte gehören zum Hintergrund: Ein Klick dort schließt den Viewer. -->
 <div
   class="card-viewer"
   role="dialog"
@@ -6,25 +7,15 @@
   aria-label="Card Viewer"
   cdkTrapFocus
   [cdkTrapFocusAutoCapture]="true"
+  (click)="closeOnBackground($event)"
 >
-  <header class="card-viewer__header">
+  <header class="card-viewer__toolbar" data-testid="card-viewer-toolbar">
     <span class="card-viewer__location" data-testid="card-viewer-location">{{ title() }}</span>
-    <button
-      type="button"
-      class="card-viewer__close"
-      aria-label="Schließen"
-      title="Schließen"
-      (click)="closed.emit()"
-    >
-      ×
-    </button>
-  </header>
-  <div class="card-viewer__body">
-    <div class="card-viewer__stage">
-      @if (position(); as pos) {
+    @if (position(); as pos) {
+      <span class="card-viewer__browse">
         <button
           type="button"
-          class="card-viewer__arrow"
+          class="card-viewer__tool"
           aria-label="Vorherige Karte"
           title="Vorherige Karte"
           [disabled]="pos.index === 0"
@@ -32,13 +23,12 @@
         >
           ‹
         </button>
-      }
-      <!-- Öffnet mit der Vorderseite, auch im Nachziehstapel; ein Klick auf die Karte löst nichts aus. -->
-      <app-card-display class="card-viewer__card" [card]="viewed.card" [side]="side()" />
-      @if (position(); as pos) {
+        <span class="card-viewer__position" data-testid="card-viewer-position"
+          >{{ pos.index + 1 }} / {{ pos.total }}</span
+        >
         <button
           type="button"
-          class="card-viewer__arrow"
+          class="card-viewer__tool"
           aria-label="Nächste Karte"
           title="Nächste Karte"
           [disabled]="pos.index === pos.total - 1"
@@ -46,19 +36,47 @@
         >
           ›
         </button>
-        <span class="card-viewer__position" data-testid="card-viewer-position"
-          >{{ pos.index + 1 }} / {{ pos.total }}</span
-        >
-      }
+      </span>
+    }
+    <button
+      type="button"
+      class="card-viewer__tool card-viewer__tool--text"
+      [attr.aria-pressed]="side() === 'back'"
+      (click)="flip()"
+    >
+      Umdrehen
+    </button>
+    <span class="card-viewer__actions">
       <button
         type="button"
-        class="card-viewer__flip"
-        [attr.aria-pressed]="side() === 'back'"
-        (click)="flip()"
+        class="card-viewer__tool card-viewer__tool--text"
+        [attr.aria-expanded]="menu.expanded()"
+        (click)="menu.toggle()"
       >
-        Umdrehen
+        Aktionen
       </button>
-    </div>
-    <app-card-action-menu [entries]="entries()" [cardKey]="cardKey()" (run)="run($event)" />
+      <!-- Liegt über der Karte; Zuklappen entfernt das Menü und damit offene Untermenü-Ebenen. -->
+      @if (menu.expanded()) {
+        <app-card-action-menu
+          class="card-viewer__menu"
+          [entries]="entries()"
+          [cardKey]="cardKey()"
+          (run)="run($event)"
+        />
+      }
+    </span>
+    <button
+      type="button"
+      class="card-viewer__tool"
+      aria-label="Schließen"
+      title="Schließen"
+      (click)="closed.emit()"
+    >
+      ×
+    </button>
+  </header>
+  <div class="card-viewer__stage">
+    <!-- Öffnet mit der Vorderseite, auch im Nachziehstapel; ein Klick auf die Karte löst nichts aus. -->
+    <app-card-display class="card-viewer__card" [card]="viewed.card" [side]="side()" />
   </div>
 </div>

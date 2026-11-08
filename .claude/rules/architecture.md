@@ -35,6 +35,7 @@ core/
   session-state/  → persisted-state.ts (persistedState), session-keys.ts (SESSION_KEYS),
                     tool-state-keys.ts (TOOL_STATE_KEYS: Werkzeug-Zustand außerhalb der Spielesession),
                     string-list-codec.util.ts (STRING_LIST_CODEC: gespeicherte ID-Listen prüfen),
+                    boolean-codec.util.ts (BOOLEAN_CODEC: gespeicherte Schalter prüfen),
                     session-state-slice.ts (SessionStateSlice), session-slices.ts (SessionSliceData)
     testing/      → describe-persisted-state.ts (Vertragstest für Regel 8, nur für Specs)
   services/
@@ -193,7 +194,9 @@ shared/
                          CharacterInventoryEditor (Abschnitt „Inventar“ unter „Ausrüstung“, öffnet den Viewer im Entwurf),
                          CardViewer (einmal im App-Template: Overlay mit Backdrop über allem, auch über Dialogen;
                          Ort per `viewerContext` bei jeder Änderung neu, schließt bei verschwundener Karte),
-                         CardViewerPanel (Inhalt des Viewers: Deck/Ort, Karte mit Blättern am Ort nur `live`, „Umdrehen“, `CardActionMenu`;
+                         CardViewerPanel (Inhalt des Viewers: Leiste über der Karte mit Deck/Ort, Blättern am Ort nur `live`,
+                         „Umdrehen“, „Aktionen“ (klappt `CardActionMenu` über der Karte auf, Zustand in
+                         `CardViewerMenuStateService`) und ×; Karte füllt den Rest des Fensters bis auf 16 px Rand;
                          Aktionen `live` über `CardUndoService.track`, danach nachrückende Karte; kennt keine einzelne Aktion),
                          CardActionMenu (Menüeinträge mit Trennlinien, ausgegraute mit Tooltip, Untermenüs mit „Zurück“),
                          SlotOccupiedDialog (belegter Slot: Inventar / Ablagestapel / Abbrechen),
@@ -238,6 +241,8 @@ shared/
                          confirmation.service.ts (Rückfrage über den ConfirmationDialog als Promise<boolean>),
                          sidebar-section-state.service.ts (zugeklappte Abschnitte per persistedState mit TOOL_STATE_KEYS),
                          collapsible-sidebar-state.service.ts (eingeklappte Seitenleisten je Feature per persistedState mit TOOL_STATE_KEYS),
+                         card-viewer-menu-state.service.ts (aufgeklapptes Aktionsmenü des Card Viewers per persistedState
+                         mit TOOL_STATE_KEYS, ohne Wert zugeklappt),
                          round.service.ts (RoundService: „Neue Runde“ → Log `round`, +10 s, `clearMovedThisRound`; einziger
                          Rücksetzer des Rundenstands)
   utils/               → new-character.util.ts (Startwerte für neue Charaktere),
@@ -263,7 +268,7 @@ shared/
                          scroll-into-view.fixtures.ts (Spy für das in jsdom fehlende scrollIntoView),
                          character-editor-dialog.fixtures.ts, character-conditions-editor.fixtures.ts,
                          character-equipment.fixtures.ts (inkl. Ablegen über den Card Viewer),
-                         card-viewer.fixtures.ts (Viewer mit echtem Deck-Zustand), snack-bar.fixtures.ts (steuerbare Snackbar),
+                         card-viewer.fixtures.ts (Viewer mit echtem Deck-Zustand, Aktionsmenü per Option aufgeklappt), snack-bar.fixtures.ts (steuerbare Snackbar),
                          main-nav.fixtures.ts)
 ```
 

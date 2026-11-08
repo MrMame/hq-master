@@ -16,6 +16,7 @@ import {
 } from './character-editor-dialog.fixtures';
 import { provideDefaultCardActions } from '../card-actions/default-card-actions';
 import { CardViewer } from '../components/card-viewer/card-viewer';
+import { CardViewerMenuStateService } from '../services/card-viewer-menu-state.service';
 
 /** Barbar mit Rüstung 6 (Grundmaximum 4), Abwehr 4, Tempo 5 (nur für Specs). */
 export const EQUIPPED_BARBARIAN: CharacterInfo = {
@@ -77,8 +78,10 @@ export function viewButton(host: HTMLElement, cardName: string): HTMLButtonEleme
   return button;
 }
 
-/** Card Viewer wie im App-Template; liefert den Overlay-Container, in dem er erscheint. */
+/** Card Viewer wie im App-Template mit aufgeklapptem Aktionsmenü; liefert den Overlay-Container. */
 export async function renderCardViewer(): Promise<HTMLElement> {
+  const menu: CardViewerMenuStateService = TestBed.inject(CardViewerMenuStateService);
+  if (!menu.expanded()) menu.toggle();
   const viewer: ComponentFixture<CardViewer> = TestBed.createComponent(CardViewer);
   await viewer.whenStable();
   return TestBed.inject(OverlayContainer).getContainerElement();
