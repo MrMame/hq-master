@@ -8,6 +8,7 @@ import {
   output,
   OutputEmitterRef,
   Signal,
+  signal,
   WritableSignal,
 } from '@angular/core';
 import { CdkTrapFocus } from '@angular/cdk/a11y';
@@ -19,7 +20,6 @@ import { isSameRef } from '../../../core/services/card-deck/deck-state.util';
 import { CharactersDbService } from '../../../core/services/characters/characters-db.service';
 import { CARD_ACTIONS, CardAction, CardActionContext } from '../../models/card-action.model';
 import { CardUndoService } from '../../services/card-undo.service';
-import { CardViewerMenuStateService } from '../../services/card-viewer-menu-state.service';
 import { CardViewerService } from '../../services/card-viewer.service';
 import { draftMoveOf } from '../../utils/card-draft.util';
 import { cardMenuEntries, CardMenuEntry, CardMenuRun } from '../../utils/card-menu-entries.util';
@@ -37,7 +37,8 @@ import { CardPropertiesStrip } from '../card-properties-strip/card-properties-st
 /**
  * Inhalt des Card Viewers: eine Leiste über der Karte (Deck und Ort, Blättern am Ort nur `live`, „Umdrehen“,
  * „Aktionen“, Schließen), die Karte so groß wie das Fenster erlaubt und darunter ihre Eigenschaften. Das Aktionsmenü klappt über der Karte
- * auf; sein Zustand ist gespeichert und bleibt auch nach einer Aktion. Aktionen im Modus `live` laufen mit „Rückgängig“; verlässt die Karte dabei ihren Ort,
+ * auf; es ist bei jedem Öffnen zugeklappt und bleibt, solange der Viewer offen ist, wie eingestellt
+ * (auch nach einer Aktion und beim Blättern). Aktionen im Modus `live` laufen mit „Rückgängig“; verlässt die Karte dabei ihren Ort,
  * zeigt der Viewer die nachrückende Karte desselben Ortes. „Umdrehen“ wechselt nur die Ansicht (keine Bewegung,
  * kein Log); jede andere Karte und jede Aktion zeigt wieder die Vorderseite.
  */
@@ -53,10 +54,12 @@ export class CardViewerPanel {
   private readonly undo: CardUndoService = inject(CardUndoService);
   private readonly characters: Signal<CharacterInfo[]> = inject(CharactersDbService).characters;
   private readonly actions: readonly CardAction[] = inject(CARD_ACTIONS, { optional: true }) ?? [];
-  protected readonly menu: CardViewerMenuStateService = inject(CardViewerMenuStateService);
 
   readonly context: InputSignal<CardActionContext> = input.required<CardActionContext>();
   readonly closed: OutputEmitterRef<void> = output<void>();
+
+  /** Aufgeklapptes Aktionsmenü; gehört zum geöffneten Viewer und wird nicht gespeichert. */
+  protected readonly menuExpanded: WritableSignal<boolean> = signal<boolean>(false);
 
   protected readonly cardKey: Signal<string> = computed(
     () => `${this.context().ref.deckId}/${this.context().ref.cardId}`,
@@ -100,6 +103,10 @@ export class CardViewerPanel {
 
   protected flip(): void {
     this.side.update((side) => (side === 'front' ? 'back' : 'front'));
+  }
+
+  protected toggleMenu(): void {
+    this.menuExpanded.update((expanded) => !expanded);
   }
 
   protected step(offset: number): void {

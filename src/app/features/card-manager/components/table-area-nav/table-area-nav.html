@@ -1,0 +1,15 @@
+<ul class="area-nav">
+  @for (area of areas(); track area.key) {
+    <li>
+      <button
+        type="button"
+        class="area-nav__entry"
+        [disabled]="area.emptyReason !== null"
+        [attr.title]="area.emptyReason"
+        (click)="selected.emit(area)"
+      >
+        {{ area.navLabel }} ({{ area.emptyReason === null ? area.count : '–' }})
+      </button>
+    </li>
+  }
+</ul>

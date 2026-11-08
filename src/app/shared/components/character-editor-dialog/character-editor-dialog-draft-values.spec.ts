@@ -8,9 +8,9 @@ import {
   discardInViewer,
   equippedDeck,
   renderCardViewer,
+  viewInViewer,
   setupEquippedEditor,
   statBonus,
-  viewButton,
   viewerAction,
 } from '../../testing/character-equipment.fixtures';
 
@@ -26,7 +26,7 @@ function inventoryDeck(): DeckState {
 
 async function equipInDraft(setup: CharacterEditorDialogSetup): Promise<void> {
   const overlay: HTMLElement = await renderCardViewer();
-  await setup.click(viewButton(setup.host, 'Runenrüstung'));
+  await viewInViewer(setup, overlay, 'Runenrüstung');
   await setup.click(viewerAction(overlay, 'Anlegen›')!);
   await setup.click(viewerAction(overlay, 'Kopf')!);
 }

@@ -4,6 +4,10 @@
       <h2 class="general-sidebar__title">Card Manager</h2>
       <app-sidebar-section-toggle-all scope="card-manager" />
     </div>
+    <app-sidebar-section title="Bereiche" sectionId="card-manager.areas">
+      <app-table-area-nav [areas]="areas()" (selected)="onJump($event)" />
+    </app-sidebar-section>
+    <hr class="general-sidebar__divider" />
     <!-- Steht über der Deckliste, damit die Liste beliebig wachsen kann. -->
     <app-sidebar-section title="Deck Management" sectionId="card-manager.deck-management">
       <app-add-deck-form />
@@ -16,28 +20,52 @@
 
   <div class="feature-page__main">
     <div class="card-table">
-      <app-dm-hand />
-      <app-equipped-cards />
-      <app-inventory-cards />
-      <app-inventory-cards kind="belt" />
-
-      <section class="card-table__decks" aria-label="Spieltisch">
-        <h2 class="section-heading">Spieltisch</h2>
-        @for (deck of decks(); track deck.id) {
-          <app-deck-row
-            [deck]="deck"
-            [expanded]="expandedDeckId() === deck.id"
-            [first]="$first"
-            [last]="$last"
-            (toggled)="onToggle(deck.id)"
-          />
-        } @empty {
-          <div class="card-table__empty">
-            <p class="empty-hint empty-hint--sm">Noch keine Decks auf dem Tisch.</p>
-            <app-add-deck-form />
-          </div>
-        }
-      </section>
+      <div class="card-table__header" data-testid="card-table-toggle-all">
+        <app-sidebar-section-toggle-all [scope]="tableScope" />
+      </div>
+      <!-- Jeder Bereich ist eine eigene, auf-/zuklappbare Fläche; leere Kartenbereiche fehlen ganz. -->
+      @for (area of shownAreas(); track area.key) {
+        <app-sidebar-section
+          variant="area"
+          [id]="area.elementId"
+          [title]="area.title"
+          [sectionId]="area.sectionId"
+          [count]="area.count"
+        >
+          @switch (area.key) {
+            @case ('hand') {
+              <app-dm-hand />
+            }
+            @case ('equipped') {
+              <app-equipped-cards />
+            }
+            @case ('inventory') {
+              <app-inventory-cards />
+            }
+            @case ('belt') {
+              <app-inventory-cards kind="belt" />
+            }
+            @case ('decks') {
+              <div class="card-table__decks">
+                @for (deck of decks(); track deck.id) {
+                  <app-deck-row
+                    [deck]="deck"
+                    [expanded]="expandedDeckId() === deck.id"
+                    [first]="$first"
+                    [last]="$last"
+                    (toggled)="onToggle(deck.id)"
+                  />
+                } @empty {
+                  <div class="card-table__empty">
+                    <p class="empty-hint empty-hint--sm">Noch keine Decks auf dem Tisch.</p>
+                    <app-add-deck-form />
+                  </div>
+                }
+              </div>
+            }
+          }
+        </app-sidebar-section>
+      }
     </div>
   </div>
 </div>

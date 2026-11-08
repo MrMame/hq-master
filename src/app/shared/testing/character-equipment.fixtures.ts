@@ -16,7 +16,6 @@ import {
 } from './character-editor-dialog.fixtures';
 import { provideDefaultCardActions } from '../card-actions/default-card-actions';
 import { CardViewer } from '../components/card-viewer/card-viewer';
-import { CardViewerMenuStateService } from '../services/card-viewer-menu-state.service';
 
 /** Barbar mit Rüstung 6 (davon +2 durch die Runenrüstung), Tempo 5 (nur für Specs). */
 export const EQUIPPED_BARBARIAN: CharacterInfo = {
@@ -77,13 +76,24 @@ export function viewButton(host: HTMLElement, cardName: string): HTMLButtonEleme
   return button;
 }
 
-/** Card Viewer wie im App-Template mit aufgeklapptem Aktionsmenü; liefert den Overlay-Container. */
+/** Card Viewer wie im App-Template; liefert den Overlay-Container. */
 export async function renderCardViewer(): Promise<HTMLElement> {
-  const menu: CardViewerMenuStateService = TestBed.inject(CardViewerMenuStateService);
-  if (!menu.expanded()) menu.toggle();
   const viewer: ComponentFixture<CardViewer> = TestBed.createComponent(CardViewer);
   await viewer.whenStable();
   return TestBed.inject(OverlayContainer).getContainerElement();
+}
+
+/** Öffnet die Karte aus dem Editor im Viewer und klappt dort das Aktionsmenü auf. */
+export async function viewInViewer(
+  { host, click }: CharacterEditorDialogSetup,
+  overlay: HTMLElement,
+  cardName: string,
+): Promise<void> {
+  await click(viewButton(host, cardName));
+  const toggle: HTMLButtonElement | undefined = Array.from(
+    overlay.querySelectorAll<HTMLButtonElement>('.card-viewer__toolbar button'),
+  ).find((button) => button.textContent?.trim() === 'Aktionen');
+  if (toggle?.getAttribute('aria-expanded') === 'false') await click(toggle);
 }
 
 /** Menüeintrag des Card Viewers mit genau dieser Beschriftung, `undefined` wenn er fehlt. */
@@ -98,11 +108,11 @@ export function viewerAction(overlay: HTMLElement, label: string): HTMLButtonEle
  * Overlay-Container des Viewers.
  */
 export async function discardInViewer(
-  { host, click }: CharacterEditorDialogSetup,
+  setup: CharacterEditorDialogSetup,
   cardName: string,
 ): Promise<HTMLElement> {
   const overlay: HTMLElement = await renderCardViewer();
-  await click(viewButton(host, cardName));
-  await click(viewerAction(overlay, 'In den Ablagestapel legen')!);
+  await viewInViewer(setup, overlay, cardName);
+  await setup.click(viewerAction(overlay, 'In den Ablagestapel legen')!);
   return overlay;
 }

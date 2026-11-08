@@ -7,47 +7,35 @@ import { CardViewerService } from '../../../../shared/services/card-viewer.servi
 import { CardDisplay } from '../../../../shared/components/card-display/card-display';
 
 /**
- * Gemeinsamer Bereich „Ausgerüstet“ aller Decks über dem Spieltisch: Besitzer und Herkunftsdeck je Karte,
+ * Inhalt des gemeinsamen Bereichs „Ausgerüstet“ aller Decks über dem Spieltisch (Überschrift und Ausblenden
+ * übernimmt die Seite): Besitzer und Herkunftsdeck je Karte,
  * höchstens zwei Reihen sichtbar, weitere scrollen in sich. Ein Klick öffnet die Karte im Card Viewer.
  */
 @Component({
   selector: 'app-equipped-cards',
   imports: [CardDisplay],
-  // Ohne Karten nimmt der Bereich auch keinen Abstand in der Spalte ein.
-  host: { '[class.equipped--empty]': 'assigned().length === 0' },
   template: `
-    @if (assigned().length > 0) {
-      <section class="card-strip" aria-label="Ausgerüstet">
-        <h2 class="section-heading">Ausgerüstet ({{ assigned().length }})</h2>
-        <div class="card-strip__cards">
-          @for (entry of assigned(); track entry.deckId + '/' + entry.card.id) {
-            @let deck = decksById().get(entry.deckId);
-            <app-card-display
-              class="card-strip__card"
-              [card]="entry.card"
-              [owner]="ownerNames().get(entry.characterId) ?? null"
-              [origin]="deck?.name ?? null"
-              (cardClick)="view(entry)"
-            />
-          }
-        </div>
-      </section>
-    }
+    <div class="card-strip__cards">
+      @for (entry of assigned(); track entry.deckId + '/' + entry.card.id) {
+        @let deck = decksById().get(entry.deckId);
+        <app-card-display
+          class="card-strip__card"
+          [card]="entry.card"
+          [owner]="ownerNames().get(entry.characterId) ?? null"
+          [origin]="deck?.name ?? null"
+          (cardClick)="view(entry)"
+        />
+      }
+    </div>
   `,
   styles: `
-    /* Behält in der Spalte des Spieltischs seine Höhe. */
     :host {
       display: block;
-      flex-shrink: 0;
     }
 
     /* Zwei Zeilen unter jeder Karte: Besitzer und Herkunftsdeck. */
     .card-strip__cards {
       --card-strip-caption-height: 2rem;
-    }
-
-    :host(.equipped--empty) {
-      display: none;
     }
   `,
 })

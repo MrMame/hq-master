@@ -154,8 +154,11 @@ features/
                          game-log-rows.util.ts (Spielzeit absteigend, Datums-Trennzeile, Filter, Symbol je Eintrag)
 
   card-manager/        → Kartenverwaltung: beliebig viele Decks (XML + Kartengrafiken) auf dem Spieltisch
-    components/        → CardManagerPage (`feature-page`, Spieltisch mit Deck-Reihen, höchstens eine aufgeklappt als
-                         UI-Zustand; Klick in der Deckliste klappt auf und scrollt), DmHand („Hand des Dungeon Masters“
+    components/        → CardManagerPage (`feature-page`, Bereiche als `SidebarSection` mit `variant="area"` und
+                         `sectionId` `card-manager-table.<bereich>`, leere Kartenbereiche fehlen; „alle auf-/zuklappen“ des
+                         Hauptbereichs; Spieltisch mit Deck-Reihen, höchstens eine aufgeklappt als
+                         UI-Zustand; Klick in der Deckliste klappt nur den Spieltisch und die Reihe auf und scrollt), TableAreaNav (Gruppe „Bereiche“ der
+                         Seitenleiste: Sprung zum Bereich, leere deaktiviert mit Tooltip), DmHand (Inhalt „Hand des Dungeon Masters“
                          über „Ausgerüstet“, Klick öffnet den Card Viewer), DeckRow (kompakte Reihe: Name,
                          Nachziehstapel zieht per Klick in die Hand und öffnet den Viewer, oberste Ablagekarte öffnet den
                          Viewer, Bank-Anzahl, ⋮), DeckPiles (aufgeklappte Stapel und Bank; Klick auf eine Karte öffnet den
@@ -164,10 +167,14 @@ features/
                          „Deck Management“ darüber),
                          AddDeckForm (Deck aus der Auswahlliste der Deckliste als neue Instanz laden), RenameDeckDialog, EquippedCards (gemeinsamer
                          Bereich „Ausgerüstet“ über dem Spieltisch mit Besitzer und Herkunftsdeck, höchstens zwei
-                         Reihen sichtbar, weitere scrollen in sich; ohne Karten ausgeblendet; Klick öffnet den Viewer;
-                         Hand und Ausgerüstet nutzen `.card-strip` aus `src/styles/components/card-strip.css`),
+                         Reihen sichtbar, weitere scrollen in sich; Klick öffnet den Viewer;
+                         Hand und Ausgerüstet nutzen `.card-strip__cards` aus `src/styles/components/card-strip.css`),
                          InventoryCards (Bereich „Inventar“ unter „Ausgerüstet“ bzw. mit `kind="belt"` „Gürtel“ darunter:
-                         Karten aller Charaktere gruppiert, Höhe begrenzt, ohne Karten ausgeblendet; Klick öffnet den Viewer)
+                         Karten aller Charaktere gruppiert, Höhe begrenzt; Klick öffnet den Viewer); Überschrift und
+                         Ausblenden ohne Karten übernimmt bei DmHand, EquippedCards und InventoryCards die Seite
+    models/            → card-table-area.model.ts (`CardTableArea`: Bereiche des Hauptbereichs)
+    utils/             → card-table-areas.util.ts (`cardTableAreas`: Titel, IDs, Anzahl, Grund für leer; `CARD_TABLE_SCOPE`;
+                         `ownedCount`: Karten vorhandener Charaktere)
     services/          → deck-actions.service.ts (Umbenennen per Dialog, Entfernen nach Rückfrage);
                          Deck-Zustand und Loader liegen in core/services/card-deck/
     testing/           → card-manager-page.fixtures.ts (echter Deck-Zustand, gemockter Loader, Deckliste und Zuweisungsablauf;
@@ -191,7 +198,8 @@ features/
 shared/
   components/          → Feature-unabhängige UI (z. B. ConfirmationDialog, CharacterEditorDialog,
                          CollapsibleSidebar (einklappbare `.general-sidebar`, Zustand je `stateId` = Feature gespeichert),
-                         SidebarSection (auf-/zuklappbare Gruppe der Seitenleiste, `sectionId` = `<feature>.<abschnitt>`),
+                         SidebarSection (auf-/zuklappbare Gruppe der Seitenleiste, `sectionId` = `<feature>.<abschnitt>`;
+                         `variant="area"`: eigene Fläche und Region im Hauptbereich),
                          SidebarSectionToggleAll (alle Gruppen eines Features auf-/zuklappen, in `.general-sidebar__header`),
                          CharacterConditionsEditor (Abschnitt „Zustände“ im Editor, Felder hängen per
                          `viewProviders` am Formular des Editors),
@@ -204,8 +212,8 @@ shared/
                          CardViewer (einmal im App-Template: Overlay mit Backdrop über allem, auch über Dialogen;
                          Ort per `viewerContext` bei jeder Änderung neu, schließt bei verschwundener Karte),
                          CardViewerPanel (Inhalt des Viewers: Leiste über der Karte mit Deck/Ort, Blättern am Ort nur `live`,
-                         „Umdrehen“, „Aktionen“ (klappt `CardActionMenu` über der Karte auf, Zustand in
-                         `CardViewerMenuStateService`) und ×; Karte füllt den Rest des Fensters bis auf 16 px Rand;
+                         „Umdrehen“, „Aktionen“ (klappt `CardActionMenu` über der Karte auf; lokales Signal, bei jedem
+                         Öffnen zugeklappt, nicht gespeichert) und ×; Karte füllt den Rest des Fensters bis auf 16 px Rand;
                          Aktionen `live` über `CardUndoService.track`, danach nachrückende Karte; kennt keine einzelne Aktion),
                          CardPropertiesStrip (Eigenschaften einer Karte als Chips unter der Karte im Card Viewer),
                          CardActionMenu (Menüeinträge mit Trennlinien, ausgegraute mit Tooltip, Untermenüs mit „Zurück“),
@@ -251,10 +259,9 @@ shared/
                          → CharactersDbService; app-weit in app.config.ts gestartet, Ereignisse → GameLogService),
                          file-transfer.service.ts (Dateien herunterladen und lesen),
                          confirmation.service.ts (Rückfrage über den ConfirmationDialog als Promise<boolean>),
-                         sidebar-section-state.service.ts (zugeklappte Abschnitte per persistedState mit TOOL_STATE_KEYS),
+                         sidebar-section-state.service.ts (zugeklappte Abschnitte per persistedState mit TOOL_STATE_KEYS;
+                         `expandOnly`: nur einen Abschnitt eines Bereichs offen, für Sprünge),
                          collapsible-sidebar-state.service.ts (eingeklappte Seitenleisten je Feature per persistedState mit TOOL_STATE_KEYS),
-                         card-viewer-menu-state.service.ts (aufgeklapptes Aktionsmenü des Card Viewers per persistedState
-                         mit TOOL_STATE_KEYS, ohne Wert zugeklappt),
                          round.service.ts (RoundService: „Neue Runde“ → Log `round`, +10 s, `clearMovedThisRound`; einziger
                          Rücksetzer des Rundenstands)
   utils/               → new-character.util.ts (Startwerte für neue Charaktere),
@@ -276,12 +283,13 @@ shared/
                          card-viewer-context.util.ts (Kontext der angesehenen Karte, im Entwurf Ort laut Entwurf),
                          undo-hint-text.util.ts (Text des Rückgängig-Hinweises),
                          card-viewer-title.util.ts (Deck und Ort über der Karte, „wird abgelegt“ im Entwurf),
-                         card-draft.util.ts (Entwurfsbewegungen: Ort im Entwurf, Slot-, Inventar- und Gürtelkarten laut Entwurf)
+                         card-draft.util.ts (Entwurfsbewegungen: Ort im Entwurf, Slot-, Inventar- und Gürtelkarten laut Entwurf),
+                         reveal-section.util.ts (Abschnitt nach oben scrollen und Überschrift fokussieren, `prefersReducedMotion`)
   testing/             → feature-übergreifende Spec-Helfer (z. B. click-button.ts,
                          scroll-into-view.fixtures.ts (Spy für das in jsdom fehlende scrollIntoView),
                          character-editor-dialog.fixtures.ts, character-conditions-editor.fixtures.ts,
-                         character-equipment.fixtures.ts (inkl. Ablegen über den Card Viewer),
-                         card-viewer.fixtures.ts (Viewer mit echtem Deck-Zustand, Aktionsmenü per Option aufgeklappt), snack-bar.fixtures.ts (steuerbare Snackbar),
+                         character-equipment.fixtures.ts (inkl. Ablegen über den Card Viewer, `viewInViewer`),
+                         card-viewer.fixtures.ts (Viewer mit echtem Deck-Zustand, Aktionsmenü per Option per Klick aufgeklappt, `expandViewerMenu`), snack-bar.fixtures.ts (steuerbare Snackbar),
                          main-nav.fixtures.ts)
 ```
 

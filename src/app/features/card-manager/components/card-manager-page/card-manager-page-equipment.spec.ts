@@ -19,7 +19,7 @@ describe('CardManagerPage – hand and equipment', () => {
 
   const overlay: () => HTMLElement = () => TestBed.inject(OverlayContainer).getContainerElement();
   const section: (label: string) => HTMLElement | null = (label) =>
-    host.querySelector(`section[aria-label="${label}"]`);
+    host.querySelector(`[role="region"][aria-label="${label}"]`);
   const follows: (first: Element, second: Element) => boolean = (first, second) =>
     !!(first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING);
 
@@ -37,7 +37,7 @@ describe('CardManagerPage – hand and equipment', () => {
     await harness.render(state);
 
     const equipped: HTMLElement | null = section('Ausgerüstet');
-    expect(equipped?.querySelector('h2')?.textContent).toBe('Ausgerüstet (1)');
+    expect(equipped?.querySelector('h3')?.textContent?.trim()).toBe('Ausgerüstet (1)');
     expect(equipped?.querySelector('.card-owner')?.textContent).toBe('Im Besitz von Barbar');
     expect(equipped?.querySelector('.card-origin')?.textContent).toBe('aus Testdeck (2)');
   });
@@ -67,7 +67,7 @@ describe('CardManagerPage – hand and equipment', () => {
     harness.cardManager.draw('deck-2');
     await harness.fixture.whenStable();
 
-    expect(section('Hand des Dungeon Masters')?.querySelector('h2')?.textContent).toBe(
+    expect(section('Hand des Dungeon Masters')?.querySelector('h3')?.textContent?.trim()).toBe(
       'Hand des Dungeon Masters (3)',
     );
     expect(harness.cardManager.decks().map((deck) => deck.discardPile)).toEqual([[], []]);

@@ -33,8 +33,6 @@ describe('DmHand', () => {
     });
     await fixture.whenStable();
 
-    expect(host.querySelector('h2')?.textContent).toBe('Hand des Dungeon Masters (3)');
-    expect(host.classList).not.toContain('dm-hand--empty');
     expect(handCards().map((card) => card.querySelector('.card-origin')?.textContent)).toEqual([
       'aus Testdeck',
       'aus Testdeck (2)',
@@ -61,10 +59,9 @@ describe('DmHand', () => {
     expect(testbed.cardManager.hand()).toHaveLength(2);
   });
 
-  it('is hidden without hand cards', async () => {
+  it('renders no cards without hand cards', async () => {
     testbed.cardManager.restore(createTwoDeckState());
     await fixture.whenStable();
-    expect(host.querySelector('section')).toBeNull();
-    expect(host.classList).toContain('dm-hand--empty');
+    expect(handCards()).toEqual([]);
   });
 });

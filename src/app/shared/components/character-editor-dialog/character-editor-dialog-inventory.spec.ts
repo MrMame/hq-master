@@ -19,9 +19,9 @@ import {
   EQUIPPED_BARBARIAN,
   equipmentRows,
   renderCardViewer,
+  viewInViewer,
   setupEquippedEditor,
   statBonus,
-  viewButton,
   viewerAction,
 } from '../../testing/character-equipment.fixtures';
 
@@ -44,7 +44,7 @@ describe('CharacterEditorDialog – inventory', () => {
 
   async function open(setup: CharacterEditorDialogSetup, label: string): Promise<HTMLElement> {
     const overlay: HTMLElement = await renderCardViewer();
-    await setup.click(viewButton(setup.host, 'Runenrüstung'));
+    await viewInViewer(setup, overlay, 'Runenrüstung');
     await setup.click(viewerAction(overlay, label)!);
     return overlay;
   }
@@ -105,7 +105,7 @@ describe('CharacterEditorDialog – inventory', () => {
       .spyOn(TestBed.inject(MatDialog), 'open')
       .mockReturnValue({ afterClosed: () => of('inventory') } as never);
     const overlay: HTMLElement = await renderCardViewer();
-    await setup.click(viewButton(setup.host, 'Kettenhemd'));
+    await viewInViewer(setup, overlay, 'Kettenhemd');
     await setup.click(viewerAction(overlay, 'Anlegen›')!);
     await setup.click(viewerAction(overlay, 'Körper – ersetzt Runenrüstung')!);
     expect(open).toHaveBeenCalledTimes(1);

@@ -1,12 +1,5 @@
-/* Kartenreihe über dem Spieltisch (Hand des Dungeon Masters, Ausgerüstet): Überschrift und Karten, die in
-   Reihen umbrechen; höchstens zwei Reihen sind sichtbar, weitere scrollen senkrecht in sich. Unter jeder Karte
-   steht ihre Beschriftung (--card-strip-caption-height: eine Zeile, zwei bei „Ausgerüstet“). */
-.card-strip {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
+/* Kartenreihe über dem Spieltisch (Hand des Dungeon Masters, Ausgerüstet): Karten, die in Reihen umbrechen;
+   höchstens zwei Reihen sind sichtbar, weitere scrollen senkrecht in sich. Unter jeder Karte steht ihre Beschriftung (--card-strip-caption-height: eine Zeile, zwei bei „Ausgerüstet“). */
 .card-strip__cards {
   --card-strip-card-height: 12rem;
   --card-strip-caption-height: 1.125rem;

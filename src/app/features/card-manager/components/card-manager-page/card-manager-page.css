@@ -3,11 +3,18 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-4);
   min-width: 0;
   padding: var(--space-4);
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+/* „Alle auf-/zuklappen“ oben rechts über den Bereichen */
+.card-table__header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: calc(-1 * var(--space-2));
 }
 
 .card-table__decks {

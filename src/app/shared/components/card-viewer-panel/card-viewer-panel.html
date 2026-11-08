@@ -50,13 +50,13 @@
       <button
         type="button"
         class="card-viewer__tool card-viewer__tool--text"
-        [attr.aria-expanded]="menu.expanded()"
-        (click)="menu.toggle()"
+        [attr.aria-expanded]="menuExpanded()"
+        (click)="toggleMenu()"
       >
         Aktionen
       </button>
       <!-- Liegt über der Karte; Zuklappen entfernt das Menü und damit offene Untermenü-Ebenen. -->
-      @if (menu.expanded()) {
+      @if (menuExpanded()) {
         <app-card-action-menu
           class="card-viewer__menu"
           [entries]="entries()"

@@ -6,7 +6,6 @@ import { CardRef, DeckState } from '../../core/models/deck-state.model';
 import { CardManagerService } from '../../core/services/card-deck/card-manager.service';
 import { CardViewer } from '../components/card-viewer/card-viewer';
 import { CardViewerContext } from '../models/card-action.model';
-import { CardViewerMenuStateService } from '../services/card-viewer-menu-state.service';
 import { CardViewerService } from '../services/card-viewer.service';
 
 /** Card Viewer mit echtem Deck-Zustand (nur für Specs). */
@@ -29,18 +28,16 @@ export interface CardViewerSetup {
 
 /**
  * Rendert den Viewer wie im App-Template mit `providers` (z. B. `provideCardActions(...)`).
- * Das Aktionsmenü ist aufgeklappt, außer `menuExpanded` ist `false`; `'stored'` lässt den gespeicherten Zustand.
+ * `open` klappt das Aktionsmenü per Klick auf „Aktionen“ auf, außer `menuExpanded` ist `false`.
  */
 export async function setupCardViewer(
   state: DeckState,
   providers: Provider[] = [],
-  { menuExpanded = true }: { menuExpanded?: boolean | 'stored' } = {},
+  { menuExpanded = true }: { menuExpanded?: boolean } = {},
 ): Promise<CardViewerSetup> {
   TestBed.configureTestingModule({ providers });
   const cardManager: CardManagerService = TestBed.inject(CardManagerService);
   const viewer: CardViewerService = TestBed.inject(CardViewerService);
-  const menu: CardViewerMenuStateService = TestBed.inject(CardViewerMenuStateService);
-  if (menuExpanded !== 'stored' && menu.expanded() !== menuExpanded) menu.toggle();
   cardManager.restore(state);
   const fixture: ComponentFixture<CardViewer> = TestBed.createComponent(CardViewer);
   const overlay: HTMLElement = TestBed.inject(OverlayContainer).getContainerElement();
@@ -57,6 +54,8 @@ export async function setupCardViewer(
     open: async (ref: CardRef, context?: CardViewerContext): Promise<void> => {
       viewer.open(ref, context);
       await stable();
+      if (menuExpanded) await expandViewerMenu(overlay);
+      await stable();
     },
     stable,
     location: () =>
@@ -70,4 +69,12 @@ export async function setupCardViewer(
       return item;
     },
   };
+}
+
+/** Klappt das Aktionsmenü des offenen Viewers per Klick auf „Aktionen“ auf, falls es zugeklappt ist. */
+export async function expandViewerMenu(overlay: HTMLElement): Promise<void> {
+  const toggle: HTMLButtonElement | undefined = Array.from(
+    overlay.querySelectorAll<HTMLButtonElement>('.card-viewer__toolbar button'),
+  ).find((button) => button.textContent?.trim() === 'Aktionen');
+  if (toggle?.getAttribute('aria-expanded') === 'false') toggle.click();
 }

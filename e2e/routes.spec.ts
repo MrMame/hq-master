@@ -5,7 +5,7 @@ const pages: { path: string; marker: string }[] = [
   { path: '/timetracker', marker: 'Time Tracker' },
   { path: '/dungeontracker', marker: 'Dungeon Tracker' },
   { path: '/dungeonbuilder', marker: 'Dungeon Builder' },
-  { path: '/cardmanager', marker: 'Spieltisch' },
+  { path: '/cardmanager', marker: 'Noch keine Decks auf dem Tisch.' },
   { path: '/gamesession', marker: 'Aktuelle Session' },
 ];
 

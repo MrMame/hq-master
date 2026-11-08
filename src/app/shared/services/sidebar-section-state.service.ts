@@ -37,6 +37,18 @@ export class SidebarSectionStateService {
     );
   }
 
+  /**
+   * Klappt nur diesen Abschnitt seines Bereichs auf, alle anderen angezeigten Abschnitte des Bereichs zu
+   * (gespeichert wie Klicks auf die Überschriften). Abschnitte anderer Bereiche bleiben unverändert.
+   */
+  expandOnly(scope: string, sectionId: string): void {
+    const others: string[] = this._collapsedIds.current().filter((id) => !inScope(id, scope));
+    const shown: string[] = untracked(this._registeredIds).filter(
+      (id) => inScope(id, scope) && id !== sectionId,
+    );
+    this._collapsedIds.set([...others, ...new Set(shown)]);
+  }
+
   register(sectionId: string): void {
     this._registeredIds.update((ids) => [...ids, sectionId]);
   }
