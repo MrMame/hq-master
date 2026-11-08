@@ -1,5 +1,10 @@
 [
   {
+    "id": "schaetze",
+    "name": "Schaetze",
+    "url": "decks/schaetze/schaetze.xml"
+  },
+  {
     "id": "zwerg",
     "name": "Zwerg",
     "url": "decks/zwerg/zwerg.xml"
