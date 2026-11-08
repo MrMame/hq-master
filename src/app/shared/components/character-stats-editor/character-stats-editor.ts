@@ -14,23 +14,18 @@ import {
   FixedProperty,
 } from '../../../core/models/character-info.model';
 import { Card } from '../../../core/models/card.model';
-import { StatBonusView, statBonusView } from '../../utils/stat-bonus.util';
+import { StatField, statField, storedValue } from '../../utils/stat-bonus.util';
 
-/** Neuer Zahlenwert eines Felds. */
+/** Neuer gespeicherter Zahlenwert eines Felds (bei Leben/Ruestung Grundwert plus Kartenbonus). */
 export interface StatChange {
   stat: FixedProperty;
   value: number;
 }
 
-/** Ein Eingabefeld; der Name des festen Werts ist zugleich seine Beschriftung. */
-interface StatRow {
-  key: FixedProperty;
-  bonus: StatBonusView | null;
-}
-
 /**
- * Zahlenwerte des Charakter-Editors: eingebbar ist immer der Grundwert; verändert Ausrüstung ihn, stehen
- * darunter Bonus und wirksamer Wert (`+2 = 6`, Quellen im Tooltip). Die Felder hängen über
+ * Zahlenwerte des Charakter-Editors: eingebbar ist immer der Grundwert (blau); verändern wirkende Karten den Wert,
+ * stehen darunter Bonus (grün, negativ orange) und Endwert (rot), z. B. `+30 = 50`, Quellen im Tooltip.
+ * Leben/Ruestung speichern den Endwert, das Feld zeigt ihn ohne Karten. Die Felder hängen über
  * `viewProviders` am Formular des Editors, damit ungültige Werte „Übernehmen“ sperren.
  */
 @Component({
@@ -41,16 +36,17 @@ interface StatRow {
   styleUrl: './character-stats-editor.css',
 })
 export class CharacterStatsEditor {
-  /** Arbeitskopie des Editors. */
+  /** Arbeitskopie des Editors (Leben/Ruestung laut Kartenentwurf). */
   readonly character: InputSignal<CharacterInfo> = input.required<CharacterInfo>();
   /** Karten, die nach dem Übernehmen beim Charakter wirken. */
   readonly cards: InputSignal<readonly Card[]> = input<readonly Card[]>([]);
   readonly statChange: OutputEmitterRef<StatChange> = output<StatChange>();
 
-  protected readonly rows: Signal<StatRow[]> = computed(() =>
-    FIXED_PROPERTIES.map((key) => ({
-      key,
-      bonus: statBonusView(this.character(), this.cards(), key),
-    })),
+  protected readonly fields: Signal<StatField[]> = computed(() =>
+    FIXED_PROPERTIES.map((key) => statField(this.character(), this.cards(), key)),
   );
+
+  protected change(field: StatField, value: number): void {
+    this.statChange.emit({ stat: field.key, value: storedValue(field, value) });
+  }
 }

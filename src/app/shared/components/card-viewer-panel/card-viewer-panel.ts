@@ -32,17 +32,18 @@ import {
 import { cardViewerTitle } from '../../utils/card-viewer-title.util';
 import { CardActionMenu } from '../card-action-menu/card-action-menu';
 import { CardDisplay, CardSide } from '../card-display/card-display';
+import { CardPropertiesStrip } from '../card-properties-strip/card-properties-strip';
 
 /**
  * Inhalt des Card Viewers: eine Leiste über der Karte (Deck und Ort, Blättern am Ort nur `live`, „Umdrehen“,
- * „Aktionen“, Schließen) und die Karte so groß wie das Fenster erlaubt. Das Aktionsmenü klappt über der Karte
+ * „Aktionen“, Schließen), die Karte so groß wie das Fenster erlaubt und darunter ihre Eigenschaften. Das Aktionsmenü klappt über der Karte
  * auf; sein Zustand ist gespeichert und bleibt auch nach einer Aktion. Aktionen im Modus `live` laufen mit „Rückgängig“; verlässt die Karte dabei ihren Ort,
  * zeigt der Viewer die nachrückende Karte desselben Ortes. „Umdrehen“ wechselt nur die Ansicht (keine Bewegung,
  * kein Log); jede andere Karte und jede Aktion zeigt wieder die Vorderseite.
  */
 @Component({
   selector: 'app-card-viewer-panel',
-  imports: [CardActionMenu, CardDisplay, CdkTrapFocus],
+  imports: [CardActionMenu, CardDisplay, CardPropertiesStrip, CdkTrapFocus],
   templateUrl: './card-viewer-panel.html',
   styleUrl: './card-viewer-panel.css',
 })

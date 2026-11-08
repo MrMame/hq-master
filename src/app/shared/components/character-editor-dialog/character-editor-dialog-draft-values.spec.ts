@@ -9,6 +9,7 @@ import {
   equippedDeck,
   renderCardViewer,
   setupEquippedEditor,
+  statBonus,
   viewButton,
   viewerAction,
 } from '../../testing/character-equipment.fixtures';
@@ -34,22 +35,24 @@ describe('CharacterEditorDialog – draft values', () => {
   const ruestung: (setup: CharacterEditorDialogSetup) => string = (setup) =>
     (editorField(setup.host, 'Ruestung') as HTMLInputElement).value;
 
-  it('shows Ruestung including a card equipped in the draft and saves it on apply (6 → 8)', async () => {
+  it('shows the base value and the card bonus equipped in the draft and saves the total on apply (6 → 8)', async () => {
     const setup: CharacterEditorDialogSetup = await setupEquippedEditor(inventoryDeck());
     await equipInDraft(setup);
 
-    expect(ruestung(setup)).toBe('8');
+    expect(ruestung(setup)).toBe('6');
+    expect(statBonus(setup.host, 'Ruestung')?.textContent?.trim()).toBe('+2 = 8');
     await (await setup.button('Übernehmen')).click();
     expect(setup.characters()[0].Ruestung).toBe(8);
   });
 
-  it('saves exactly the value entered while a card is equipped in the draft', async () => {
+  it('saves the entered base value plus the bonus of a card equipped in the draft', async () => {
     const setup: CharacterEditorDialogSetup = await setupEquippedEditor(inventoryDeck());
     await equipInDraft(setup);
     await setup.enter('Ruestung', '5');
+    expect(statBonus(setup.host, 'Ruestung')?.textContent?.trim()).toBe('+2 = 7');
     await (await setup.button('Übernehmen')).click();
 
-    expect(setup.characters()[0].Ruestung).toBe(5);
+    expect(setup.characters()[0].Ruestung).toBe(7);
   });
 
   it('shows Ruestung without a card discarded in the draft and keeps it on cancel', async () => {
@@ -57,6 +60,7 @@ describe('CharacterEditorDialog – draft values', () => {
     await discardInViewer(setup, 'Runenrüstung');
 
     expect(ruestung(setup)).toBe('4');
+    expect(statBonus(setup.host, 'Ruestung')).toBeNull();
     await (await setup.button('Abbrechen')).click();
     expect(setup.characters()[0].Ruestung).toBe(6);
   });

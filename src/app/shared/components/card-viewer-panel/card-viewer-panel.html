@@ -79,4 +79,6 @@
     <!-- Öffnet mit der Vorderseite, auch im Nachziehstapel; ein Klick auf die Karte löst nichts aus. -->
     <app-card-display class="card-viewer__card" [card]="viewed.card" [side]="side()" />
   </div>
+  <!-- Eigenschaften der Karte (auf beiden Seiten); ohne Eigenschaften nimmt die Leiste keinen Platz ein. -->
+  <app-card-properties-strip [properties]="viewed.card.properties" />
 </div>

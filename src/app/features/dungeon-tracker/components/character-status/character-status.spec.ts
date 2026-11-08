@@ -97,4 +97,34 @@ describe('CharacterStatus', () => {
 
     expect(value('Leben').textContent?.trim()).toBe('7');
   });
+
+  describe('with a card changing Ruestung', () => {
+    beforeEach(() => {
+      TestBed.inject(CardManagerService).restore({
+        ...createEquipmentDeckState('a'),
+        assigned: [assignedCard(RUNE_ARMOR, 'a', 'body')],
+      });
+    });
+
+    it('explains the value in the tooltip and keeps Leben plain', () => {
+      render({ ...createTestCharacter('a'), Ruestung: 6 });
+
+      expect(value('Rüstung').title).toBe('Ruestung: 4 +2 = 6 (Runenrüstung +2)');
+      expect(value('Leben').title).toBe('Leben');
+    });
+
+    it('adds the breakdown to the damage button title', () => {
+      fixture.componentRef.setInput('damageable', true);
+      render({ ...createTestCharacter('a'), Ruestung: 1 });
+      const button: (label: string) => HTMLButtonElement = (label) =>
+        (fixture.nativeElement as HTMLElement).querySelector(
+          `button[aria-label="${label}"]`,
+        ) as HTMLButtonElement;
+
+      expect(button('Schaden auf Rüstung').title).toBe(
+        'Schaden auf Rüstung – Ruestung: −1 +2 = 1 (Runenrüstung +2)',
+      );
+      expect(button('Schaden auf Leben').title).toBe('Schaden auf Leben');
+    });
+  });
 });

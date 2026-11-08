@@ -1,5 +1,4 @@
-/* Gleiche Optik wie die übrigen Felder des Charakter-Editors.
-   Oben Leben und Rüstung je mit Maximum, darunter Angriff, Abwehr, Tempo. */
+/* Gleiche Optik wie die übrigen Felder des Charakter-Editors: Leben, Ruestung, Tempo nebeneinander. */
 .character-editor__stats {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -44,15 +43,30 @@
   }
 }
 
-/* Bonus durch Ausrüstung: positiv grün, negativ rot */
-.character-editor__bonus {
-  color: var(--color-green-400);
+/* Mit Kartenbonus ist das Feld der Grundwert (blau). */
+.character-editor__input--base {
+  border-color: var(--color-blue-600);
+  color: var(--color-blue-500);
+  font-weight: 600;
+}
+
+/* Grundwert + Bonus = Endwert: Bonus grün (negativ orange), Endwert rot */
+.character-editor__breakdown {
+  color: var(--color-gray-400);
   font-size: var(--text-xs);
   line-height: var(--text-xs--line-height);
   font-weight: 600;
   cursor: help;
 }
 
+.character-editor__bonus {
+  color: var(--color-green-400);
+}
+
 .character-editor__bonus--negative {
+  color: var(--color-orange-300);
+}
+
+.character-editor__effective {
   color: var(--color-red-400);
 }

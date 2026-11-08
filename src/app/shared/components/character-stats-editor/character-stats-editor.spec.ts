@@ -19,6 +19,11 @@ function bootsDeck(): DeckState {
   return { ...equippedDeck(), assigned: [assignedCard(boots, 'a', 'body')] };
 }
 
+/** Bonus-Teil der Aufschlüsselung (`+2`), farbig je Vorzeichen. */
+function bonusPart(host: HTMLElement, stat: string): Element | null | undefined {
+  return statBonus(host, stat)?.querySelector('.character-editor__bonus');
+}
+
 // Über den Editor als Formular-Host gerendert, wie der Abschnitt „Zustände“.
 describe('CharacterStatsEditor', () => {
   it('offers only Leben, Ruestung and Tempo as fields', async () => {
@@ -36,22 +41,61 @@ describe('CharacterStatsEditor', () => {
     expect((editorField(host, 'Tempo') as HTMLInputElement).value).toBe('5');
     expect(statBonus(host, 'Tempo')?.textContent?.trim()).toBe('+2 = 7');
     expect(statBonus(host, 'Tempo')?.title).toBe('Stiefel +2');
-    expect(statBonus(host, 'Tempo')?.classList).not.toContain('character-editor__bonus--negative');
+    expect(bonusPart(host, 'Tempo')?.classList).not.toContain('character-editor__bonus--negative');
   });
 
-  it('colours a negative bonus red', async () => {
+  it('marks a negative bonus apart from the positive one', async () => {
     const { host }: CharacterEditorDialogSetup = await setupEquippedEditor();
 
     expect(statBonus(host, 'Tempo')?.textContent?.trim()).toBe('−1 = 4');
-    expect(statBonus(host, 'Tempo')?.classList).toContain('character-editor__bonus--negative');
+    expect(bonusPart(host, 'Tempo')?.classList).toContain('character-editor__bonus--negative');
   });
 
-  it('shows no bonus for Leben and Ruestung and keeps the field name plain', async () => {
+  it('shows the base value of Ruestung in the field and the card bonus with the stored total', async () => {
     const { host }: CharacterEditorDialogSetup = await setupEquippedEditor();
 
+    expect((editorField(host, 'Ruestung') as HTMLInputElement).value).toBe('4');
+    expect(editorField(host, 'Ruestung').classList).toContain('character-editor__input--base');
+    expect(statBonus(host, 'Ruestung')?.textContent?.trim()).toBe('+2 = 6');
+    expect(statBonus(host, 'Ruestung')?.title).toBe('Runenrüstung +2');
     expect(statBonus(host, 'Leben')).toBeNull();
-    expect(statBonus(host, 'Ruestung')).toBeNull();
+    expect(editorField(host, 'Leben').classList).not.toContain('character-editor__input--base');
     expect(editorField(host, 'Tempo').closest('label')?.textContent?.trim()).toBe('Tempo');
+  });
+
+  it('marks the effective value and the bonus separately', async () => {
+    const { host }: CharacterEditorDialogSetup = await setupEquippedEditor();
+    const breakdown: HTMLElement = statBonus(host, 'Ruestung')!;
+
+    expect(breakdown.querySelector('.character-editor__bonus')?.textContent).toBe('+2');
+    expect(breakdown.querySelector('.character-editor__effective')?.textContent).toBe('6');
+  });
+
+  it('updates the total while the base value of Ruestung is edited', async () => {
+    const { host, enter }: CharacterEditorDialogSetup = await setupEquippedEditor();
+
+    await enter('Ruestung', '-2');
+
+    expect(statBonus(host, 'Ruestung')?.textContent?.trim()).toBe('+2 = 0');
+    expect(editorField(host, 'Ruestung').classList).toContain('ng-valid');
+  });
+
+  it('rejects a base value whose total would fall below 0', async () => {
+    const { host, enter, button }: CharacterEditorDialogSetup = await setupEquippedEditor();
+
+    await enter('Ruestung', '-3');
+
+    expect(editorField(host, 'Ruestung').classList).toContain('ng-invalid');
+    expect(await (await button('Übernehmen')).isDisabled()).toBe(true);
+  });
+
+  it('keeps an empty field empty instead of showing the bonus as base', async () => {
+    const { host, enter }: CharacterEditorDialogSetup = await setupEquippedEditor();
+
+    await enter('Ruestung', '');
+
+    expect((editorField(host, 'Ruestung') as HTMLInputElement).value).toBe('');
+    expect(statBonus(host, 'Ruestung')).toBeNull();
   });
 
   it('updates the effective value while the base value is edited', async () => {

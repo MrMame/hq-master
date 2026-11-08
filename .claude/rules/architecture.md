@@ -93,7 +93,7 @@ features/
                          oder Zahl, Token-Größe, Spalten über Bildbreite), GridSlider (Raster-Regler mit „−“/„+“ in feinster Stufe),
                          GridOriginMarker (ziehbarer Nullpunkt-Marker, nur im Modus „Nullpunkt verschieben“),
                          DungeonLegendEntry (Legendeneintrag),
-                         CharacterStatus (aktuelles Leben/Rüstung an Token und Legende, dahinter `CharacterCards`),
+                         CharacterStatus (aktuelles Leben/Rüstung an Token und Legende, Kartenbonus im Tooltip, dahinter `CharacterCards`),
                          CharacterCards (ausgerüstete Karten als kleine Bilder, Gürtel- und Inventaranzahl; Klick öffnet den Card Viewer),
                          DeadMarker (rotes Kreuz „Tot“ bei 0 Leben über Porträt und Legendenbild, lässt Klicks durch),
                          CharacterConditions (Zustände mit Restdauer: `token` Symbole am Porträt, „+n“ ab 4,
@@ -193,7 +193,7 @@ shared/
                          SidebarSectionToggleAll (alle Gruppen eines Features auf-/zuklappen, in `.general-sidebar__header`),
                          CharacterConditionsEditor (Abschnitt „Zustände“ im Editor, Felder hängen per
                          `viewProviders` am Formular des Editors),
-                         CharacterStatsEditor (Felder für `FIXED_PROPERTIES`, Tempo mit Bonus `+1 = 7`, per `viewProviders`),
+                         CharacterStatsEditor (Felder für `FIXED_PROPERTIES` mit Grundwert, darunter Bonus und Endwert `+30 = 50`, per `viewProviders`),
                          CharacterProperties (dynamische Eigenschaften nur zur Anzeige, z. B. „Angriff 3“, Quellkarten im
                          Tooltip; Editor (Entwurf), Legende und markiertes Token; ohne Eigenschaften leer),
                          CharacterEquipmentEditor (Abschnitt „Ausrüstung“: Slots; Bild/Name öffnen den Card Viewer im
@@ -205,6 +205,7 @@ shared/
                          „Umdrehen“, „Aktionen“ (klappt `CardActionMenu` über der Karte auf, Zustand in
                          `CardViewerMenuStateService`) und ×; Karte füllt den Rest des Fensters bis auf 16 px Rand;
                          Aktionen `live` über `CardUndoService.track`, danach nachrückende Karte; kennt keine einzelne Aktion),
+                         CardPropertiesStrip (Eigenschaften einer Karte als Chips unter der Karte im Card Viewer),
                          CardActionMenu (Menüeinträge mit Trennlinien, ausgegraute mit Tooltip, Untermenüs mit „Zurück“),
                          SlotOccupiedDialog (belegter Slot: Gürtel / Inventar / Ablagestapel / Abbrechen),
                          CardDisplay (eine Karte: nur die Grafik der gewählten Seite, Platzhalter bei Ladefehler, „Im Besitz von“ und
@@ -259,7 +260,8 @@ shared/
                          `withDraftChange`: Leben/Ruestung laut Kartenentwurf anzeigen),
                          random-character.util.ts (Zufallscharakter, Name passend zur Bildklasse),
                          damage.util.ts (reine Schadensberechnung),
-                         stat-bonus.util.ts (Bonus, wirksamer Wert und Quellen für Tempo im Editor),
+                         stat-bonus.util.ts (Grundwert, Bonus, Endwert und Quellen von Leben/Ruestung/Tempo: `statField` für den Editor,
+                         `statBreakdownOf` für Tooltips; Leben/Ruestung speichern den Endwert, Grundwert = Endwert − Bonus),
                          condition-tick.util.ts (advanceConditions: Wirkmomente nachholen, Ablauf, Ereignisse),
                          condition-time.util.ts (Ende, Restdauer, nächster Wirkmoment, `m:ss`),
                          condition-draft.util.ts (Vorlage kopieren, Start beim Übernehmen, Minuten/Sekunden),

@@ -2,6 +2,13 @@
 
 ## 🛠️ Letzte Änderungen (Chronologisch)
 
+### (2026-11-08 15:35) - Feature: Kartenboni im Card Viewer, Editor und Tooltip sichtbar (card-bonus-breakdown #1–#5)
+
+- **Was wurde gemacht:** Der Card Viewer zeigt die Eigenschaften der Karte als Chips unter der Karte („Leben +30“, positiv grün, negativ orange; auf beiden Seiten, ohne Eigenschaften keine Leiste). Im Charakter-Editor zeigen Leben, Ruestung und Tempo im Feld den Grundwert (blau), darunter Bonus (grün) = Endwert (rot), z. B. `20` / `+30 = 50`, Quellkarten im Tooltip; eine Eingabe ändert den Grundwert, gespeichert wird Grundwert + Bonus, der Endwert darf nicht unter 0 fallen. Token und Legende erklären Leben/Rüstung im Tooltip („Leben: 20 +30 = 50 (Kettenhemd +30)“).
+- **Dateien geändert:** `shared/utils/stat-bonus.util.ts` (+spec), `shared/components/character-stats-editor/` (ts, html, css, spec), `shared/components/card-properties-strip/` (neu, +spec), `shared/components/card-viewer-panel/` (ts, html, `card-viewer-panel-properties.spec.ts` neu), `features/dungeon-tracker/components/character-status/` (ts, spec), `character-editor-dialog-draft-values.spec.ts`, `character-editor-dialog-equipment.spec.ts`, `REQUIREMENTS.md`, `.claude/rules/architecture.md`, `docs/feature-requests/done/card-bonus-breakdown.md`
+- **Wichtige Entscheidung:** Kein Modellumbau: Leben/Ruestung speichern weiter den Endwert, der Grundwert wird als Endwert − Kartenbonus berechnet und darf nach Schaden negativ sein (`−20 +30 = 10`). `statField`/`storedValue` rechnen zwischen Feld und gespeichertem Wert um, `withStat` und das Übernehmen blieben unverändert; ein leeres Feld bleibt leer. Negativer Bonus orange statt rot, weil Rot den Endwert markiert. Die Dateizahlen der Statistik zählen ab `5d1af8e` und enthalten den vorher getrennt committeten card-properties-Umbau. Probe, Lint, 1668 Tests (Lines 99,05 % / Branches 97,98 %), Build und e2e (33) grün.
+- **Statistik:** 33 min · 2 Runden · 2 Rückfragen · 85 Tools · Dateien 21 neu / 154 geändert · 6 Fehlschläge (+1 erwartet) · Tokens 12.163.556 (Output 64.068)
+
 ### (2026-11-08 09:20) - Feature: Typ und Fähigkeiten der Charaktere entfernen (remove-character-type-abilities #1–#5)
 
 - **Was wurde gemacht:** Charaktere haben keinen Typ (Feuer/Wasser/Erde/Luft) und keine Fähigkeiten mehr: weder im Model noch im Charakter-Editor, in der Session oder im XML-Spielstand. Der Zufallscharakter würfelt nur noch Name, Bild und Zahlenwerte. Ältere Spielstände und Browser-Sessions laden weiter; die Altfelder werden still verworfen. „In dieser Runde bewegt“ sieht unverändert aus.

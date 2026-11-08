@@ -49,7 +49,7 @@ describe('CharacterEditorDialog – equipment', () => {
     expect(characters()[0]).toEqual(EQUIPPED_BARBARIAN);
   });
 
-  it('saves an entered Ruestung value without upper limit while the card stays', async () => {
+  it('saves an entered Ruestung base value plus the card bonus without upper limit', async () => {
     const { host, enter, button, characters }: CharacterEditorDialogSetup =
       await setupEquippedEditor();
 
@@ -57,7 +57,7 @@ describe('CharacterEditorDialog – equipment', () => {
     expect((editorField(host, 'Ruestung') as HTMLInputElement).value).toBe('9');
     await (await button('Übernehmen')).click();
 
-    expect(characters()[0]).toMatchObject({ Ruestung: 9 });
+    expect(characters()[0]).toMatchObject({ Ruestung: 11 });
     expect(logTexts()).toEqual([]);
   });
 });
