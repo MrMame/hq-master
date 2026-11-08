@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height:512px;width:512px;">
-  <circle cx="256" cy="256" r="256" fill="#5c1010"/>
-  <g transform="translate(256 256)"><rect x="-28" y="-150" width="56" height="22" rx="6" fill="#8b5a2b"/><rect x="-22" y="-130" width="44" height="80" fill="#dff6ff" fill-opacity="0.85"/><circle cx="0" cy="40" r="100" fill="#dff6ff" fill-opacity="0.85"/><path d="M-96,55 A97,97 0 0 0 96,55Z" fill="#e03131"/><circle cx="-40" cy="0" r="14" fill="#ffffff" fill-opacity="0.7"/></g>
-</svg>

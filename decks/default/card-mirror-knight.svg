@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height:512px;width:512px;">
-  <circle cx="256" cy="256" r="256" fill="#334155"/>
-  <g transform="translate(256 256)"><polygon points="0,-150 110,0 0,150 -110,0" fill="#94a3b8"/><polygon points="0,-110 70,0 0,110 -70,0" fill="#e2e8f0"/><path d="M-30,-40 L10,-80" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/></g>
-</svg>

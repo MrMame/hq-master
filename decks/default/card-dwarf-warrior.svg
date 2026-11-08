@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height:512px;width:512px;">
-  <circle cx="256" cy="256" r="256" fill="#4a3216"/>
-  <g transform="translate(256 256)"><rect x="-10" y="-150" width="20" height="300" rx="8" fill="#7a4a1e"/><path d="M10,-130 C110,-140 140,-40 120,20 C80,-10 40,-20 10,-20Z" fill="#adb5bd"/><path d="M-10,-130 C-90,-120 -110,-60 -100,-20 C-70,-40 -40,-40 -10,-40Z" fill="#adb5bd"/></g>
-</svg>

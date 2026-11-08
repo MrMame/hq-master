@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height:512px;width:512px;">
-  <circle cx="256" cy="256" r="256" fill="#3c1f5c"/>
-  <g transform="translate(256 256)"><rect x="-110" y="-90" width="220" height="180" fill="#ede0ff"/><rect x="-130" y="-110" width="260" height="34" rx="17" fill="#5f3dc4"/><rect x="-130" y="76" width="260" height="34" rx="17" fill="#5f3dc4"/><g transform="translate(0 0) scale(0.55)"><path d="M0,0 C20,-20 40,0 30,25 C15,60 -40,55 -55,15 C-75,-40 -20,-85 35,-75 C100,-60 120,20 85,70 C40,130 -60,135 -110,80 C-160,20 -140,-90 -60,-125" fill="none" stroke="#7048e8" stroke-width="16" stroke-linecap="round"/></g></g>
-</svg>

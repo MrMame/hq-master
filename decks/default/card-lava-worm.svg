@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height:512px;width:512px;">
-  <circle cx="256" cy="256" r="256" fill="#3a0d00"/>
-  <g transform="translate(256 256)"><g transform="translate(0 0) scale(1)"><path d="M-150,70 C-100,-40 -50,150 0,40 S100,-90 130,-50" fill="none" stroke="#ff5a1f" stroke-width="44" stroke-linecap="round"/><circle cx="135" cy="-55" r="39.6" fill="#ff5a1f"/><circle cx="145" cy="-65" r="6" fill="#111111"/></g><path d="M-150,70 C-100,-40 -50,150 0,40 S100,-90 130,-50" fill="none" stroke="#ffd166" stroke-width="8" stroke-dasharray="20 30"/></g>
-</svg>
